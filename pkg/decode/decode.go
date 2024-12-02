@@ -4,10 +4,10 @@ import (
 	"bytes"
 )
 
-const (
-	Sep = byte(',')
+var (
+	Sep = []byte{','}
 )
 
 func Decode(byt []byte) [][]byte {
-	return bytes.Split(byt, []byte{Sep})
+	return bytes.Split(byt, Sep)
 }
