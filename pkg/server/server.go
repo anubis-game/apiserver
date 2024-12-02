@@ -1,6 +1,7 @@
 package server
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"net"
@@ -16,6 +17,10 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/xh3b4sd/logger"
 	"github.com/xh3b4sd/tracer"
+)
+
+var (
+	Ping = []byte("ping,")
 )
 
 type Config struct {
@@ -229,7 +234,9 @@ func (s *Server) stream(add string, con *websocket.Conn) error {
 					return
 				}
 			} else {
-				{
+				if bytes.HasPrefix(byt, Ping) {
+					cli.Write(typ, byt)
+				} else {
 					go s.str.Wri(add, typ, byt)
 				}
 			}
