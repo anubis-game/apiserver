@@ -21,9 +21,9 @@ func (r *run) runE(cmd *cobra.Command, arg []string) error {
 		env = envvar.Load(r.flag.Env)
 	}
 
-	var sig chan os.Signal
+	var don chan struct{}
 	{
-		sig = make(chan os.Signal, 2)
+		don = make(chan struct{})
 	}
 
 	// --------------------------------------------------------------------- //
@@ -31,8 +31,8 @@ func (r *run) runE(cmd *cobra.Command, arg []string) error {
 	var dae *daemon.Daemon
 	{
 		dae = daemon.New(daemon.Config{
+			Don: don,
 			Env: env,
-			Sig: sig,
 		})
 	}
 
@@ -42,12 +42,21 @@ func (r *run) runE(cmd *cobra.Command, arg []string) error {
 
 	// --------------------------------------------------------------------- //
 
+	var sig chan os.Signal
+	{
+		sig = make(chan os.Signal, 2)
+	}
+
 	{
 		signal.Notify(sig, os.Interrupt, syscall.SIGTERM)
 	}
 
 	{
 		<-sig
+	}
+
+	{
+		close(don)
 	}
 
 	select {

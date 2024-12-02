@@ -3,9 +3,9 @@ module github.com/anubis-game/apiserver
 go 1.22.5
 
 require (
+	github.com/coder/websocket v1.8.12
 	github.com/ethereum/go-ethereum v1.14.12
 	github.com/gorilla/mux v1.8.1
-	github.com/gorilla/websocket v1.5.3
 	github.com/joho/godotenv v1.5.1
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/miguelmota/go-ethereum-hdwallet v0.1.2
