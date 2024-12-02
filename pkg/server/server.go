@@ -183,7 +183,7 @@ func (s *Server) stream(add string, con *websocket.Conn) error {
 	var cli stream.Client
 	{
 		cli = stream.Client{
-			Clo: func(add bool) {
+			Close: func(add bool) {
 				onc.Do(func() {
 					// If close is called by Add, then we do not want to call Rem again in
 					// the read loop below.
@@ -197,7 +197,7 @@ func (s *Server) stream(add string, con *websocket.Conn) error {
 					}
 				})
 			},
-			Wri: func(typ websocket.MessageType, byt []byte) {
+			Write: func(typ websocket.MessageType, byt []byte) {
 				err := con.Write(s.ctx, typ, byt)
 				if err != nil {
 					go s.str.Rem(add)
@@ -277,7 +277,6 @@ func reqHea(lis []string) []string {
 	var spl []string
 
 	for _, x := range lis {
-		// Split comma-separated values and trim whitespace
 		for _, y := range strings.Split(x, ",") {
 			spl = append(spl, strings.TrimSpace(y))
 		}

@@ -38,14 +38,14 @@ func (s *Stream) Add(add string, cli Client) {
 	s.mut.Unlock()
 
 	if exi {
-		old.Clo(true)
+		old.Close(true)
 	}
 }
 
 func (s *Stream) Wri(add string, typ websocket.MessageType, byt []byte) {
 	s.mut.RLock()
 	for _, x := range s.cli {
-		x.Wri(typ, byt)
+		x.Write(typ, byt)
 	}
 	s.mut.RUnlock()
 }
@@ -57,6 +57,6 @@ func (s *Stream) Rem(add string) {
 	s.mut.Unlock()
 
 	if exi {
-		old.Clo(false)
+		old.Close(false)
 	}
 }
