@@ -3,6 +3,7 @@ package daemon
 import (
 	"net"
 
+	"github.com/anubis-game/apiserver/pkg/contract/registry"
 	"github.com/anubis-game/apiserver/pkg/envvar"
 	"github.com/anubis-game/apiserver/pkg/stream"
 	"github.com/gorilla/mux"
@@ -16,8 +17,6 @@ type Config struct {
 }
 
 type Daemon struct {
-	don chan struct{}
-	env envvar.Env
 	lis net.Listener
 	log logger.Interface
 	rtr *mux.Router
@@ -42,6 +41,16 @@ func New(c Config) *Daemon {
 		}
 	}
 
+	var reg *registry.Registry
+	{
+		reg = registry.New(registry.Config{
+			Add: c.Env.ChainRegistryContract,
+			Key: c.Env.SignerPrivateKey,
+			Log: log,
+			RPC: c.Env.ChainRpcEndpoint,
+		})
+	}
+
 	var rtr *mux.Router
 	{
 		rtr = mux.NewRouter()
@@ -50,13 +59,13 @@ func New(c Config) *Daemon {
 	var str *stream.Stream
 	{
 		str = stream.New(stream.Config{
+			Don: c.Don,
 			Log: log,
+			Reg: reg,
 		})
 	}
 
 	return &Daemon{
-		don: c.Don,
-		env: c.Env,
 		lis: lis,
 		log: log,
 		rtr: rtr,
