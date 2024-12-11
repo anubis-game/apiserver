@@ -6,7 +6,6 @@ import (
 
 func (d *Daemon) Server() *server.Server {
 	return server.New(server.Config{
-		Don: d.don,
 		Lis: d.lis,
 		Log: d.log,
 		Rtr: d.rtr,

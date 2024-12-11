@@ -14,6 +14,7 @@ type Env struct {
 	HttpHost              string `split_words:"true" required:"true"`
 	HttpPort              string `split_words:"true" required:"true"`
 	LogLevel              string `split_words:"true" required:"true"`
+	SignerAddress         string `split_words:"true" required:"true"`
 	SignerPrivateKey      string `split_words:"true" required:"true"`
 }
 
