@@ -3,7 +3,6 @@ package runtime
 import "runtime"
 
 var (
-	src = "https://github.com/anubis-game/apiserver"
 	sha = "n/a"
 	tag = "n/a"
 )
@@ -18,10 +17,6 @@ func Gos() string {
 
 func Sha() string {
 	return sha
-}
-
-func Src() string {
-	return src
 }
 
 func Tag() string {

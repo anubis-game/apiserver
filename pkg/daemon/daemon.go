@@ -17,6 +17,7 @@ type Config struct {
 }
 
 type Daemon struct {
+	env envvar.Env
 	lis net.Listener
 	log logger.Interface
 	rtr *mux.Router
@@ -66,6 +67,7 @@ func New(c Config) *Daemon {
 	}
 
 	return &Daemon{
+		env: c.Env,
 		lis: lis,
 		log: log,
 		rtr: rtr,

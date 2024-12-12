@@ -6,32 +6,17 @@ import (
 	"github.com/xh3b4sd/tracer"
 )
 
-var (
-	byt []byte = nil
-)
+func Json() []byte {
+	return byt
+}
 
-var (
-	dic = map[string]string{
-		"arc": Arc(),
-		"gos": Gos(),
-		"sha": Sha(),
-		"src": Src(),
-		"tag": Tag(),
-		"ver": Ver(),
-	}
-)
-
-func init() {
+func marshal() {
 	var err error
 
 	{
-		byt, err = json.Marshal(dic)
+		byt, err = json.MarshalIndent(dic, "", "  ")
 		if err != nil {
 			tracer.Panic(tracer.Mask(err))
 		}
 	}
-}
-
-func JSON() []byte {
-	return byt
 }
