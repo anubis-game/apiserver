@@ -55,6 +55,8 @@ func (r *run) runE(cmd *cobra.Command, arg []string) error {
 		<-sig
 	}
 
+	// Closing the done channel allows all listening goroutines to stop as soon as
+	// we get the first instruction to shutdown the process.
 	{
 		close(don)
 	}
@@ -63,11 +65,7 @@ func (r *run) runE(cmd *cobra.Command, arg []string) error {
 	case <-time.After(10 * time.Second):
 		// One SIGTERM gives the daemon some time to tear down gracefully.
 	case <-sig:
-		// Two SIGTERMs stop the immediatelly.
-	}
-
-	{
-		close(sig)
+		// Two SIGTERMs stop the daemon immediately.
 	}
 
 	return nil
