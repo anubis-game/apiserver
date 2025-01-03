@@ -31,7 +31,7 @@ var (
 
 // RegistryBindingMetaData contains all meta data concerning the RegistryBinding contract.
 var RegistryBindingMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"own\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"tok\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"AccessControlBadConfirmation\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"neededRole\",\"type\":\"bytes32\"}],\"name\":\"AccessControlUnauthorizedAccount\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"why\",\"type\":\"string\"}],\"name\":\"Address\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"why\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"bal\",\"type\":\"uint256\"}],\"name\":\"Balance\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ECDSAInvalidSignature\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"length\",\"type\":\"uint256\"}],\"name\":\"ECDSAInvalidSignatureLength\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"s\",\"type\":\"bytes32\"}],\"name\":\"ECDSAInvalidSignatureS\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"why\",\"type\":\"string\"}],\"name\":\"Process\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"length\",\"type\":\"uint256\"}],\"name\":\"StringsInsufficientHexLength\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"pla\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"grd\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"kil\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"win\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"los\",\"type\":\"address\"}],\"name\":\"Report\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"grd\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"kil\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"win\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"los\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"avl\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"bin\",\"type\":\"uint256\"}],\"name\":\"Resolve\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"previousAdminRole\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"newAdminRole\",\"type\":\"bytes32\"}],\"name\":\"RoleAdminChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleGranted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleRevoked\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"BASIS_FEE\",\"outputs\":[{\"internalType\":\"uint16\",\"name\":\"\",\"type\":\"uint16\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"BASIS_GUARDIAN\",\"outputs\":[{\"internalType\":\"uint16\",\"name\":\"\",\"type\":\"uint16\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"BASIS_PROTOCOL\",\"outputs\":[{\"internalType\":\"uint16\",\"name\":\"\",\"type\":\"uint16\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"BASIS_SPLIT\",\"outputs\":[{\"internalType\":\"uint16\",\"name\":\"\",\"type\":\"uint16\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"BASIS_TOTAL\",\"outputs\":[{\"internalType\":\"uint16\",\"name\":\"\",\"type\":\"uint16\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"DEFAULT_ADMIN_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"wal\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"grd\",\"type\":\"address\"}],\"name\":\"balHash\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"buyin\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"bal\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"sig\",\"type\":\"address\"}],\"name\":\"deposit\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"getRoleAdmin\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"name\":\"getRoleMember\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"getRoleMemberCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"getRoleMembers\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"grantRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"hasRole\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"wog\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"kil\",\"type\":\"uint256\"}],\"name\":\"keyHash\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"mes\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"sgn\",\"type\":\"bytes\"}],\"name\":\"recoverSigner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"callerConfirmation\",\"type\":\"address\"}],\"name\":\"renounceRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"grd\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"kil\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"win\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"los\",\"type\":\"address\"}],\"name\":\"report\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"grd\",\"type\":\"address\"},{\"internalType\":\"uint64\",\"name\":\"tim\",\"type\":\"uint64\"},{\"internalType\":\"address\",\"name\":\"wal\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"sgn\",\"type\":\"bytes\"}],\"name\":\"request\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"grd\",\"type\":\"address\"},{\"internalType\":\"uint64\",\"name\":\"tim\",\"type\":\"uint64\"},{\"internalType\":\"address\",\"name\":\"pla\",\"type\":\"address\"}],\"name\":\"requestMessage\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"kil\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"win\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"los\",\"type\":\"address\"}],\"name\":\"resolve\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"revokeRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"wal\",\"type\":\"address\"}],\"name\":\"searchBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"wal\",\"type\":\"address\"}],\"name\":\"searchSigner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"token\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"sig\",\"type\":\"address\"}],\"name\":\"updateSigner\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"win\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"los\",\"type\":\"address\"}],\"name\":\"valHash\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"bal\",\"type\":\"uint256\"}],\"name\":\"withdraw\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
+	ABI: "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"own\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"tok\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"buy\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"AccessControlBadConfirmation\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"neededRole\",\"type\":\"bytes32\"}],\"name\":\"AccessControlUnauthorizedAccount\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"why\",\"type\":\"string\"}],\"name\":\"Address\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"why\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"bal\",\"type\":\"uint256\"}],\"name\":\"Balance\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ECDSAInvalidSignature\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"length\",\"type\":\"uint256\"}],\"name\":\"ECDSAInvalidSignatureLength\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"s\",\"type\":\"bytes32\"}],\"name\":\"ECDSAInvalidSignatureS\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"why\",\"type\":\"string\"}],\"name\":\"Process\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"length\",\"type\":\"uint256\"}],\"name\":\"StringsInsufficientHexLength\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"pla\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"grd\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"kil\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"win\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"los\",\"type\":\"address\"}],\"name\":\"Report\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"grd\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"kil\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"win\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"los\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"dep\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"bin\",\"type\":\"uint256\"}],\"name\":\"Resolve\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"previousAdminRole\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"newAdminRole\",\"type\":\"bytes32\"}],\"name\":\"RoleAdminChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleGranted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleRevoked\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"BASIS_FEE\",\"outputs\":[{\"internalType\":\"uint16\",\"name\":\"\",\"type\":\"uint16\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"BASIS_GUARDIAN\",\"outputs\":[{\"internalType\":\"uint16\",\"name\":\"\",\"type\":\"uint16\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"BASIS_PROTOCOL\",\"outputs\":[{\"internalType\":\"uint16\",\"name\":\"\",\"type\":\"uint16\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"BASIS_SPLIT\",\"outputs\":[{\"internalType\":\"uint16\",\"name\":\"\",\"type\":\"uint16\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"BASIS_TOTAL\",\"outputs\":[{\"internalType\":\"uint16\",\"name\":\"\",\"type\":\"uint16\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"DEFAULT_ADMIN_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VERSION\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"wal\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"grd\",\"type\":\"address\"}],\"name\":\"balHash\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"buyin\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"bal\",\"type\":\"uint256\"},{\"internalType\":\"uint64\",\"name\":\"tim\",\"type\":\"uint64\"},{\"internalType\":\"address\",\"name\":\"sig\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"sgn\",\"type\":\"bytes\"}],\"name\":\"deposit\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"tim\",\"type\":\"uint64\"},{\"internalType\":\"address\",\"name\":\"wal\",\"type\":\"address\"}],\"name\":\"depositMessage\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"getRoleAdmin\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"name\":\"getRoleMember\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"getRoleMemberCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"getRoleMembers\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"grantRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"hasRole\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"wog\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"kil\",\"type\":\"uint256\"}],\"name\":\"keyHash\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"mes\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"sgn\",\"type\":\"bytes\"}],\"name\":\"recoverSigner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"callerConfirmation\",\"type\":\"address\"}],\"name\":\"renounceRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"grd\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"kil\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"win\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"los\",\"type\":\"address\"}],\"name\":\"report\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"grd\",\"type\":\"address\"},{\"internalType\":\"uint64\",\"name\":\"tim\",\"type\":\"uint64\"},{\"internalType\":\"address\",\"name\":\"wal\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"sgn\",\"type\":\"bytes\"}],\"name\":\"request\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"grd\",\"type\":\"address\"},{\"internalType\":\"uint64\",\"name\":\"tim\",\"type\":\"uint64\"},{\"internalType\":\"address\",\"name\":\"pla\",\"type\":\"address\"}],\"name\":\"requestMessage\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"kil\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"win\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"los\",\"type\":\"address\"}],\"name\":\"resolve\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"revokeRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"wal\",\"type\":\"address\"}],\"name\":\"searchBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"wal\",\"type\":\"address\"}],\"name\":\"searchSigner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"token\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"win\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"los\",\"type\":\"address\"}],\"name\":\"valHash\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"bal\",\"type\":\"uint256\"}],\"name\":\"withdraw\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
 }
 
 // RegistryBindingABI is the input ABI used to generate the binding from.
@@ -366,6 +366,37 @@ func (_RegistryBinding *RegistryBindingCallerSession) DEFAULTADMINROLE() ([32]by
 	return _RegistryBinding.Contract.DEFAULTADMINROLE(&_RegistryBinding.CallOpts)
 }
 
+// VERSION is a free data retrieval call binding the contract method 0xffa1ad74.
+//
+// Solidity: function VERSION() view returns(string)
+func (_RegistryBinding *RegistryBindingCaller) VERSION(opts *bind.CallOpts) (string, error) {
+	var out []interface{}
+	err := _RegistryBinding.contract.Call(opts, &out, "VERSION")
+
+	if err != nil {
+		return *new(string), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(string)).(*string)
+
+	return out0, err
+
+}
+
+// VERSION is a free data retrieval call binding the contract method 0xffa1ad74.
+//
+// Solidity: function VERSION() view returns(string)
+func (_RegistryBinding *RegistryBindingSession) VERSION() (string, error) {
+	return _RegistryBinding.Contract.VERSION(&_RegistryBinding.CallOpts)
+}
+
+// VERSION is a free data retrieval call binding the contract method 0xffa1ad74.
+//
+// Solidity: function VERSION() view returns(string)
+func (_RegistryBinding *RegistryBindingCallerSession) VERSION() (string, error) {
+	return _RegistryBinding.Contract.VERSION(&_RegistryBinding.CallOpts)
+}
+
 // BalHash is a free data retrieval call binding the contract method 0xa2f9262e.
 //
 // Solidity: function balHash(address wal, address grd) pure returns(bytes32)
@@ -426,6 +457,37 @@ func (_RegistryBinding *RegistryBindingSession) Buyin() (*big.Int, error) {
 // Solidity: function buyin() view returns(uint256)
 func (_RegistryBinding *RegistryBindingCallerSession) Buyin() (*big.Int, error) {
 	return _RegistryBinding.Contract.Buyin(&_RegistryBinding.CallOpts)
+}
+
+// DepositMessage is a free data retrieval call binding the contract method 0x25a998c5.
+//
+// Solidity: function depositMessage(uint64 tim, address wal) pure returns(bytes)
+func (_RegistryBinding *RegistryBindingCaller) DepositMessage(opts *bind.CallOpts, tim uint64, wal common.Address) ([]byte, error) {
+	var out []interface{}
+	err := _RegistryBinding.contract.Call(opts, &out, "depositMessage", tim, wal)
+
+	if err != nil {
+		return *new([]byte), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new([]byte)).(*[]byte)
+
+	return out0, err
+
+}
+
+// DepositMessage is a free data retrieval call binding the contract method 0x25a998c5.
+//
+// Solidity: function depositMessage(uint64 tim, address wal) pure returns(bytes)
+func (_RegistryBinding *RegistryBindingSession) DepositMessage(tim uint64, wal common.Address) ([]byte, error) {
+	return _RegistryBinding.Contract.DepositMessage(&_RegistryBinding.CallOpts, tim, wal)
+}
+
+// DepositMessage is a free data retrieval call binding the contract method 0x25a998c5.
+//
+// Solidity: function depositMessage(uint64 tim, address wal) pure returns(bytes)
+func (_RegistryBinding *RegistryBindingCallerSession) DepositMessage(tim uint64, wal common.Address) ([]byte, error) {
+	return _RegistryBinding.Contract.DepositMessage(&_RegistryBinding.CallOpts, tim, wal)
 }
 
 // GetRoleAdmin is a free data retrieval call binding the contract method 0x248a9ca3.
@@ -865,25 +927,25 @@ func (_RegistryBinding *RegistryBindingCallerSession) ValHash(win common.Address
 	return _RegistryBinding.Contract.ValHash(&_RegistryBinding.CallOpts, win, los)
 }
 
-// Deposit is a paid mutator transaction binding the contract method 0x6e553f65.
+// Deposit is a paid mutator transaction binding the contract method 0x94cf840b.
 //
-// Solidity: function deposit(uint256 bal, address sig) returns()
-func (_RegistryBinding *RegistryBindingTransactor) Deposit(opts *bind.TransactOpts, bal *big.Int, sig common.Address) (*types.Transaction, error) {
-	return _RegistryBinding.contract.Transact(opts, "deposit", bal, sig)
+// Solidity: function deposit(uint256 bal, uint64 tim, address sig, bytes sgn) returns()
+func (_RegistryBinding *RegistryBindingTransactor) Deposit(opts *bind.TransactOpts, bal *big.Int, tim uint64, sig common.Address, sgn []byte) (*types.Transaction, error) {
+	return _RegistryBinding.contract.Transact(opts, "deposit", bal, tim, sig, sgn)
 }
 
-// Deposit is a paid mutator transaction binding the contract method 0x6e553f65.
+// Deposit is a paid mutator transaction binding the contract method 0x94cf840b.
 //
-// Solidity: function deposit(uint256 bal, address sig) returns()
-func (_RegistryBinding *RegistryBindingSession) Deposit(bal *big.Int, sig common.Address) (*types.Transaction, error) {
-	return _RegistryBinding.Contract.Deposit(&_RegistryBinding.TransactOpts, bal, sig)
+// Solidity: function deposit(uint256 bal, uint64 tim, address sig, bytes sgn) returns()
+func (_RegistryBinding *RegistryBindingSession) Deposit(bal *big.Int, tim uint64, sig common.Address, sgn []byte) (*types.Transaction, error) {
+	return _RegistryBinding.Contract.Deposit(&_RegistryBinding.TransactOpts, bal, tim, sig, sgn)
 }
 
-// Deposit is a paid mutator transaction binding the contract method 0x6e553f65.
+// Deposit is a paid mutator transaction binding the contract method 0x94cf840b.
 //
-// Solidity: function deposit(uint256 bal, address sig) returns()
-func (_RegistryBinding *RegistryBindingTransactorSession) Deposit(bal *big.Int, sig common.Address) (*types.Transaction, error) {
-	return _RegistryBinding.Contract.Deposit(&_RegistryBinding.TransactOpts, bal, sig)
+// Solidity: function deposit(uint256 bal, uint64 tim, address sig, bytes sgn) returns()
+func (_RegistryBinding *RegistryBindingTransactorSession) Deposit(bal *big.Int, tim uint64, sig common.Address, sgn []byte) (*types.Transaction, error) {
+	return _RegistryBinding.Contract.Deposit(&_RegistryBinding.TransactOpts, bal, tim, sig, sgn)
 }
 
 // GrantRole is a paid mutator transaction binding the contract method 0x2f2ff15d.
@@ -1010,27 +1072,6 @@ func (_RegistryBinding *RegistryBindingSession) RevokeRole(role [32]byte, accoun
 // Solidity: function revokeRole(bytes32 role, address account) returns()
 func (_RegistryBinding *RegistryBindingTransactorSession) RevokeRole(role [32]byte, account common.Address) (*types.Transaction, error) {
 	return _RegistryBinding.Contract.RevokeRole(&_RegistryBinding.TransactOpts, role, account)
-}
-
-// UpdateSigner is a paid mutator transaction binding the contract method 0xa7ecd37e.
-//
-// Solidity: function updateSigner(address sig) returns()
-func (_RegistryBinding *RegistryBindingTransactor) UpdateSigner(opts *bind.TransactOpts, sig common.Address) (*types.Transaction, error) {
-	return _RegistryBinding.contract.Transact(opts, "updateSigner", sig)
-}
-
-// UpdateSigner is a paid mutator transaction binding the contract method 0xa7ecd37e.
-//
-// Solidity: function updateSigner(address sig) returns()
-func (_RegistryBinding *RegistryBindingSession) UpdateSigner(sig common.Address) (*types.Transaction, error) {
-	return _RegistryBinding.Contract.UpdateSigner(&_RegistryBinding.TransactOpts, sig)
-}
-
-// UpdateSigner is a paid mutator transaction binding the contract method 0xa7ecd37e.
-//
-// Solidity: function updateSigner(address sig) returns()
-func (_RegistryBinding *RegistryBindingTransactorSession) UpdateSigner(sig common.Address) (*types.Transaction, error) {
-	return _RegistryBinding.Contract.UpdateSigner(&_RegistryBinding.TransactOpts, sig)
 }
 
 // Withdraw is a paid mutator transaction binding the contract method 0x2e1a7d4d.
@@ -1283,14 +1324,14 @@ type RegistryBindingResolve struct {
 	Kil *big.Int
 	Win common.Address
 	Los common.Address
-	Avl *big.Int
+	Dep *big.Int
 	Bin *big.Int
 	Raw types.Log // Blockchain specific contextual infos
 }
 
 // FilterResolve is a free log retrieval operation binding the contract event 0xbed1befae87ab8df925e4bb84fac5c0d21dbbc27a1b9d379f3f731f29b0a2cde.
 //
-// Solidity: event Resolve(address indexed grd, uint256 kil, address win, address los, uint256 avl, uint256 bin)
+// Solidity: event Resolve(address indexed grd, uint256 kil, address win, address los, uint256 dep, uint256 bin)
 func (_RegistryBinding *RegistryBindingFilterer) FilterResolve(opts *bind.FilterOpts, grd []common.Address) (*RegistryBindingResolveIterator, error) {
 
 	var grdRule []interface{}
@@ -1307,7 +1348,7 @@ func (_RegistryBinding *RegistryBindingFilterer) FilterResolve(opts *bind.Filter
 
 // WatchResolve is a free log subscription operation binding the contract event 0xbed1befae87ab8df925e4bb84fac5c0d21dbbc27a1b9d379f3f731f29b0a2cde.
 //
-// Solidity: event Resolve(address indexed grd, uint256 kil, address win, address los, uint256 avl, uint256 bin)
+// Solidity: event Resolve(address indexed grd, uint256 kil, address win, address los, uint256 dep, uint256 bin)
 func (_RegistryBinding *RegistryBindingFilterer) WatchResolve(opts *bind.WatchOpts, sink chan<- *RegistryBindingResolve, grd []common.Address) (event.Subscription, error) {
 
 	var grdRule []interface{}
@@ -1349,7 +1390,7 @@ func (_RegistryBinding *RegistryBindingFilterer) WatchResolve(opts *bind.WatchOp
 
 // ParseResolve is a log parse operation binding the contract event 0xbed1befae87ab8df925e4bb84fac5c0d21dbbc27a1b9d379f3f731f29b0a2cde.
 //
-// Solidity: event Resolve(address indexed grd, uint256 kil, address win, address los, uint256 avl, uint256 bin)
+// Solidity: event Resolve(address indexed grd, uint256 kil, address win, address los, uint256 dep, uint256 bin)
 func (_RegistryBinding *RegistryBindingFilterer) ParseResolve(log types.Log) (*RegistryBindingResolve, error) {
 	event := new(RegistryBindingResolve)
 	if err := _RegistryBinding.contract.UnpackLog(event, "Resolve", log); err != nil {
