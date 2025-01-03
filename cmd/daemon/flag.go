@@ -2,6 +2,7 @@ package daemon
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -15,8 +16,8 @@ func (f *flag) Init(cmd *cobra.Command) {
 }
 
 func (f *flag) Validate() error {
-	if f.Env != "local" && f.Env != "sepolia" {
-		return fmt.Errorf("--env must be either local or sepolia")
+	if !strings.HasPrefix(f.Env, "local") && !strings.HasPrefix(f.Env, "sepolia") {
+		return fmt.Errorf("--env must be either local* or sepolia*")
 	}
 
 	return nil

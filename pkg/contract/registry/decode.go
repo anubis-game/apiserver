@@ -10,37 +10,42 @@ import (
 	"github.com/xh3b4sd/tracer"
 )
 
-// Decode takes the input data of of a types.Transaction object and returns
-// parameters used to conduct the associated contract write on the
+const (
+	Method = "request"
+)
+
+// Decode takes the calldata of a types.Transaction object and returns all
+// decoded arguments contained in the associated contract write on the
 // Registry.request function based on the ABI below.
 //
-//     function request(address grd, uint64 tim, address wal, bytes memory sgn) public
+//     function request(address,uint64,address,bytes memory) public
 //
 
 func (r *Registry) Decode(byt []byte) (common.Address, time.Time, common.Address, []byte, error) {
 	var err error
+	var exi bool
 
-	var reg abi.ABI
+	var prs abi.ABI
 	{
-		reg, err = abi.JSON(strings.NewReader(RegistryBindingABI))
+		prs, err = abi.JSON(strings.NewReader(RegistryBindingABI))
 		if err != nil {
-			return common.Address{}, time.Time{}, common.Address{}, nil, err
+			return common.Address{}, time.Time{}, common.Address{}, nil, tracer.Mask(err)
 		}
 	}
 
-	var met *abi.Method
+	var mth abi.Method
 	{
-		met, err = reg.MethodById(byt[:4])
-		if err != nil {
-			return common.Address{}, time.Time{}, common.Address{}, nil, err
+		mth, exi = prs.Methods[Method]
+		if !exi {
+			return common.Address{}, time.Time{}, common.Address{}, nil, tracer.Mask(fmt.Errorf("method %q not found in transaction calldata", Method))
 		}
 	}
 
 	unp := map[string]interface{}{}
 	{
-		err = met.Inputs.UnpackIntoMap(unp, byt[4:])
+		err = mth.Inputs.UnpackIntoMap(unp, byt[4:])
 		if err != nil {
-			return common.Address{}, time.Time{}, common.Address{}, nil, err
+			return common.Address{}, time.Time{}, common.Address{}, nil, tracer.Mask(err)
 		}
 	}
 
@@ -48,7 +53,7 @@ func (r *Registry) Decode(byt []byte) (common.Address, time.Time, common.Address
 	{
 		grd, err = decAdd(unp, "grd")
 		if err != nil {
-			return common.Address{}, time.Time{}, common.Address{}, nil, err
+			return common.Address{}, time.Time{}, common.Address{}, nil, tracer.Mask(err)
 		}
 	}
 
@@ -56,7 +61,7 @@ func (r *Registry) Decode(byt []byte) (common.Address, time.Time, common.Address
 	{
 		tim, err = decTim(unp, "tim")
 		if err != nil {
-			return common.Address{}, time.Time{}, common.Address{}, nil, err
+			return common.Address{}, time.Time{}, common.Address{}, nil, tracer.Mask(err)
 		}
 	}
 
@@ -64,7 +69,7 @@ func (r *Registry) Decode(byt []byte) (common.Address, time.Time, common.Address
 	{
 		wal, err = decAdd(unp, "wal")
 		if err != nil {
-			return common.Address{}, time.Time{}, common.Address{}, nil, err
+			return common.Address{}, time.Time{}, common.Address{}, nil, tracer.Mask(err)
 		}
 	}
 
@@ -72,7 +77,7 @@ func (r *Registry) Decode(byt []byte) (common.Address, time.Time, common.Address
 	{
 		sgn, err = decByt(unp, "sgn")
 		if err != nil {
-			return common.Address{}, time.Time{}, common.Address{}, nil, err
+			return common.Address{}, time.Time{}, common.Address{}, nil, tracer.Mask(err)
 		}
 	}
 

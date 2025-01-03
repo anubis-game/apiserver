@@ -52,6 +52,9 @@ Running the apiserver locally with a proper `.env.local` in place.
 Generating smart contract bindings using [abigen].
 
 ```
+abigen --abi pkg/contract/aggregator/Aggregator.ABI.json --pkg aggregator --type AggregatorBinding --out pkg/contract/aggregator/aggregator_binding.go
+abigen --abi pkg/contract/entrypoint/EntryPoint.Alchemy.ABI.json --pkg entrypoint --type AlchemyBinding --out pkg/contract/entrypoint/alchemy_binding.go
+abigen --abi pkg/contract/entrypoint/EntryPoint.Biconomy.ABI.json --pkg entrypoint --type BiconomyBinding --out pkg/contract/entrypoint/biconomy_binding.go
 abigen --abi pkg/contract/registry/Registry.ABI.json --pkg registry --type RegistryBinding --out pkg/contract/registry/registry_binding.go
 ```
 

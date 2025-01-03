@@ -12,8 +12,19 @@ func (s *Server) router() {
 	// Add a simple health check response to the root.
 	{
 		s.rtr.NewRoute().Methods("GET").Path("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			w.WriteHeader(http.StatusOK)
-			_, _ = w.Write(linBrk([]byte("OK")))
+			{
+				w.Header().Set("Access-Control-Allow-Origin", "*") // TODO change this for production
+				w.Header().Set("Access-Control-Allow-Methods", "GET")
+				w.Header().Set("Content-Type", "plain/text")
+			}
+
+			{
+				w.WriteHeader(http.StatusOK)
+			}
+
+			{
+				_, _ = w.Write(linBrk([]byte("OK")))
+			}
 		})
 	}
 
@@ -36,9 +47,19 @@ func (s *Server) router() {
 	// Add a simple version response for the runtime.
 	{
 		s.rtr.NewRoute().Methods("GET").Path("/version").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Set("Content-Type", "application/json")
-			w.WriteHeader(http.StatusOK)
-			_, _ = w.Write(linBrk(runtime.Json()))
+			{
+				w.Header().Set("Access-Control-Allow-Origin", "*") // TODO change this for production
+				w.Header().Set("Access-Control-Allow-Methods", "GET")
+				w.Header().Set("Content-Type", "application/json")
+			}
+
+			{
+				w.WriteHeader(http.StatusOK)
+			}
+
+			{
+				_, _ = w.Write(linBrk(runtime.Json()))
+			}
 		})
 	}
 }
