@@ -24,6 +24,9 @@ func (c *Registry) Search(hsh common.Hash) (*types.Transaction, error) {
 		}
 	}
 
+	// We cannot accept the provided transaction as long as it is not successfully
+	// included in a block. So as long as the provided transaction is still
+	// pending, we reject it.
 	if pen {
 		return nil, tracer.Mask(transactionNotSuccessfulError)
 	}
@@ -38,16 +41,16 @@ func (c *Registry) Search(hsh common.Hash) (*types.Transaction, error) {
 		}
 	}
 
-	// At this point the transaction was found and there was no error, which
-	// means we have a receipt for a mined transaction. What we want to see now
-	// is the status field set to 1, which is the specified success status code
-	// as per EIP-658.
+	// At this point the transaction was found and there was no error, which means
+	// we have a receipt for a mined transaction. What we want to see now is the
+	// status field set to 1, which is the specified success status code as per
+	// EIP-658.
 	//
 	//     https://eips.ethereum.org/EIPS/eip-658
 	//
-	if rec.Status == types.ReceiptStatusSuccessful {
-		return txn, nil
+	if rec.Status != types.ReceiptStatusSuccessful {
+		return nil, tracer.Mask(transactionNotSuccessfulError)
 	}
 
-	return nil, tracer.Mask(transactionNotSuccessfulError)
+	return txn, nil
 }
