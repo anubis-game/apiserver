@@ -2,11 +2,6 @@ package stream
 
 import "github.com/xh3b4sd/tracer"
 
-var handshakeFailedError = &tracer.Error{
-	Kind: "handshakeFailedError",
-	Desc: "The request expects the dual-handshake to succeed for any player to participate in the game. The dual-handshake was not found to comply with the specified requirements. Therefore the request failed.",
-}
-
 var handshakeHeaderInvalidError = &tracer.Error{
 	Kind: "handshakeHeaderInvalidError",
 	Desc: "The request expects the Sec-Websocket-Protocol header to contain exactly 3 elements. The Sec-Websocket-Protocol header was not found to comply with this requirement. Therefore the request failed.",
@@ -15,6 +10,11 @@ var handshakeHeaderInvalidError = &tracer.Error{
 var handshakeMethodInvalidError = &tracer.Error{
 	Kind: "handshakeMethodInvalidError",
 	Desc: "The request expects the signature method to be one of [dual-handshake]. The signature method was not found to be one of those options. Therefore the request failed.",
+}
+
+var handshakeValidationFailedError = &tracer.Error{
+	Kind: "handshakeValidationFailedError",
+	Desc: "The request expects the dual-handshake to succeed for any player to participate in the game. The dual-handshake was not found to comply with the specified requirements. Therefore the request failed.",
 }
 
 var signatureHashLengthError = &tracer.Error{

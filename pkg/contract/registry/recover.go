@@ -29,7 +29,7 @@ func Recover(pre string, tim time.Time, grd common.Address, pla common.Address, 
 	{
 		byt, err = crypto.Ecrecover(digHsh(msg), sgnHsh(sgn))
 		if err != nil {
-			return common.Address{}, tracer.Mask(signatureHashInvalidError)
+			return common.Address{}, tracer.Mask(signatureInvalidError)
 		}
 	}
 

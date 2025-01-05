@@ -129,10 +129,11 @@ func (s *Stream) verify(hea []string) (string, error) {
 				}
 			}
 
-			// At this point we recovered the addresses from first "request" signature
-			// and the second "connect" signature. Only if those two addresses are
-			// actually the same, only then have we proven that the requesting user
-			// controls all involved wallets, and is therefore considered valid.
+			// At this point we recovered the addresses from the first "request"
+			// signature and the second "connect" signature. Only if those two
+			// addresses are actually the same, only then have we proven that the
+			// requesting user controls all involved wallets, and is therefore
+			// considered valid.
 			if !bytes.Equal(si1.Bytes(), si2.Bytes()) {
 				return "", tracer.Maskf(signerAddressMatchError, "%s != %s", si1.Hex(), si2.Hex())
 			}
@@ -143,7 +144,7 @@ func (s *Stream) verify(hea []string) (string, error) {
 		}
 	}
 
-	return "", tracer.Mask(handshakeFailedError)
+	return "", tracer.Mask(handshakeValidationFailedError)
 }
 
 func verHea(hea []string) error {
@@ -172,16 +173,17 @@ func verHea(hea []string) error {
 }
 
 func verTim(now time.Time, mes time.Time) error {
-	if abs(now.Sub(mes)) > 60*time.Second {
+	if absDur(now.Sub(mes)) > 60*time.Second {
 		return tracer.Mask(signatureTimeInvalidError)
 	}
 
 	return nil
 }
 
-func abs(d time.Duration) time.Duration {
+func absDur(d time.Duration) time.Duration {
 	if d < 0 {
 		return -d
 	}
+
 	return d
 }
