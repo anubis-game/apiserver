@@ -2,7 +2,6 @@ package stream
 
 import (
 	"bytes"
-	"sync"
 
 	"github.com/coder/websocket"
 )
@@ -12,64 +11,46 @@ var (
 )
 
 func (s *Stream) process(add string, con *websocket.Conn) error {
-	var onc sync.Once
-
-	var don chan struct{}
-	var rep chan struct{}
+	var rea chan struct{}
+	var wri chan struct{}
 	{
-		don = make(chan struct{})
-		rep = make(chan struct{})
+		rea = make(chan struct{})
+		wri = make(chan struct{})
 	}
 
 	var cli Client
 	{
 		cli = Client{
-			Close: func(add bool) {
-				onc.Do(func() {
-					// If close is called by Add, then we do not want to call Rem again in
-					// the read loop below.
-					if add {
-						close(rep)
-					}
-
-					{
-						close(don)
-						con.CloseNow() //nolint:errcheck
-					}
-				})
+			Close: func() {
+				con.CloseNow() //nolint:errcheck
 			},
 			Write: func(typ websocket.MessageType, byt []byte) {
 				err := con.Write(s.ctx, typ, byt)
 				if err != nil {
-					go s.remove(add)
+					close(wri)
 				}
 			},
 		}
 	}
 
+	// The first functional step in our websocket management process is to
+	// associate the user's client connection with their verified Wallet address.
+	// Creating this association adds the user to the system and provides them
+	// with realtime data primitives.
 	{
-		s.add(add, cli)
+		s.create(add, cli)
 	}
 
+	// Here we manage the connection specific read loop.
 	go func() {
 		for {
 			typ, byt, err := con.Read(s.ctx)
 			if err != nil {
-				// If this connection is closed from the outside, then we want to remove
-				// the client from our internal state. If the same client replaces
-				// itself, then we are reading from a closed connection and do not want
-				// to remove the client again.
-				select {
-				case <-rep:
-					// fall through
-				default:
-					go s.remove(add)
-				}
+				close(rea)
+				return
+			}
 
-				{
-					return
-				}
-			} else {
+			{
 				if bytes.HasPrefix(byt, Ping) {
 					cli.Write(typ, byt)
 				} else {
@@ -79,10 +60,16 @@ func (s *Stream) process(add string, con *websocket.Conn) error {
 		}
 	}()
 
+	// We block this websocket connection specific goroutine until either the
+	// client or the server shuts down.
 	select {
-	case <-don:
+	case <-rea:
+	case <-wri:
 	case <-s.don:
-		s.remove(add)
+	}
+
+	{
+		s.delete(add)
 	}
 
 	return nil

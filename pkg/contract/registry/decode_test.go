@@ -32,17 +32,12 @@ func Test_Registry_Decode(t *testing.T) {
 		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
 			var err error
 
-			var reg *Registry
-			{
-				reg = &Registry{}
-			}
-
 			var grd common.Address
 			var tim time.Time
 			var wal common.Address
 			var sgn []byte
 			{
-				grd, tim, wal, sgn, err = reg.Decode(tc.byt)
+				grd, tim, wal, sgn, err = Decode(tc.byt)
 				if err != nil {
 					t.Fatal(err)
 				}

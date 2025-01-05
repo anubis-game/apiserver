@@ -21,7 +21,7 @@ const (
 //     function request(address,uint64,address,bytes memory) public
 //
 
-func (r *Registry) Decode(byt []byte) (common.Address, time.Time, common.Address, []byte, error) {
+func Decode(byt []byte) (common.Address, time.Time, common.Address, []byte, error) {
 	var err error
 	var exi bool
 

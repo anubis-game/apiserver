@@ -3,6 +3,6 @@ package stream
 import "github.com/coder/websocket"
 
 type Client struct {
-	Close func(bool)
+	Close func()
 	Write func(websocket.MessageType, []byte)
 }
