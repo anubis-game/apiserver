@@ -76,17 +76,11 @@ func (s *Stream) client(add string, con *websocket.Conn) error {
 
 			switch schema.Action(byt[0]) {
 			case schema.Ping:
-				{
-					err = s.ping(con)
-				}
+				err = s.ping(con)
 			case schema.Auth:
-				{
-					err = s.auth(con, add)
-				}
+				err = s.auth(con, add)
 			case schema.Cast:
-				{
-					err = s.cast(byt, add)
-				}
+				err = s.cast(byt, add)
 			case schema.Move:
 				// TODO
 			case schema.Kill:
