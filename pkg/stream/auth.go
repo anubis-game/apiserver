@@ -7,7 +7,7 @@ import (
 	"github.com/xh3b4sd/tracer"
 )
 
-func (s *Stream) auth(con *websocket.Conn, add string) error {
+func (s *Stream) auth(con *websocket.Conn, wal string) error {
 	var err error
 
 	// Create a new session token using V4 UUIDs for the requesting Wallet
@@ -49,7 +49,7 @@ func (s *Stream) auth(con *websocket.Conn, add string) error {
 	// the expiration callbacks.
 
 	{
-		old := s.ind.Search(add)
+		old := s.ind.Search(wal)
 		if old != "" {
 			s.exp.Delete(old)
 			s.tok.Delete(old)
@@ -57,14 +57,14 @@ func (s *Stream) auth(con *websocket.Conn, add string) error {
 	}
 
 	{
-		s.tok.Update(tok, add)
-		s.ind.Update(add, tok)
+		s.tok.Update(tok, wal)
+		s.ind.Update(wal, tok)
 	}
 
 	{
 		s.exp.Ensure(tok, func() {
 			s.tok.Delete(tok)
-			s.ind.Delete(add)
+			s.ind.Delete(wal)
 		})
 	}
 
