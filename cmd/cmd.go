@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/anubis-game/apiserver/cmd/daemon"
+	"github.com/anubis-game/apiserver/cmd/release"
 	"github.com/anubis-game/apiserver/cmd/version"
 	"github.com/anubis-game/apiserver/cmd/wallet"
 	"github.com/spf13/cobra"
@@ -24,6 +25,16 @@ func New() (*cobra.Command, error) {
 		c := daemon.Config{}
 
 		dae, err = daemon.New(c)
+		if err != nil {
+			return nil, tracer.Mask(err)
+		}
+	}
+
+	var rel *cobra.Command
+	{
+		c := release.Config{}
+
+		rel, err = release.New(c)
 		if err != nil {
 			return nil, tracer.Mask(err)
 		}
@@ -76,6 +87,7 @@ func New() (*cobra.Command, error) {
 
 	{
 		c.AddCommand(dae)
+		c.AddCommand(rel)
 		c.AddCommand(ver)
 		c.AddCommand(wal)
 	}

@@ -18,7 +18,7 @@ func (c *Registry) Search(hsh common.Hash) (*types.Transaction, error) {
 	{
 		txn, pen, err = c.cli.TransactionByHash(context.Background(), hsh)
 		if errors.Is(err, ethereum.NotFound) {
-			return nil, tracer.Mask(transactionNotFoundError)
+			return nil, tracer.Maskf(transactionNotFoundError, "%s", hsh)
 		} else if err != nil {
 			return nil, tracer.Mask(err)
 		}

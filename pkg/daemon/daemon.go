@@ -2,6 +2,7 @@ package daemon
 
 import (
 	"net"
+	"time"
 
 	"github.com/anubis-game/apiserver/pkg/contract/registry"
 	"github.com/anubis-game/apiserver/pkg/envvar"
@@ -62,6 +63,7 @@ func New(c Config) *Daemon {
 		str = stream.New(stream.Config{
 			Don: c.Don,
 			Log: log,
+			Out: musDur(c.Env.ConnectionTimeout, "s"),
 			Reg: reg,
 		})
 	}
@@ -73,4 +75,13 @@ func New(c Config) *Daemon {
 		rtr: rtr,
 		str: str,
 	}
+}
+
+func musDur(str string, uni string) time.Duration {
+	dur, err := time.ParseDuration(str + uni)
+	if err != nil {
+		tracer.Panic(err)
+	}
+
+	return dur
 }

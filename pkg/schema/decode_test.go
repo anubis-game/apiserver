@@ -1,4 +1,4 @@
-package decode
+package schema
 
 import (
 	"fmt"
@@ -46,15 +46,15 @@ func Test_Decode_Decode(t *testing.T) {
 	}
 }
 
-func Benchmark_Decode(b *testing.B) {
+func Benchmark_Decode_Decode(b *testing.B) {
 	testCases := []struct {
 		b []byte
 	}{
-		// Case 000 ~57.5 ns/op
+		// Case 000 ~57 ns/op
 		{
 			b: []byte("1,2,3,4"),
 		},
-		// Case 001 ~100.0 ns/op
+		// Case 001 ~100 ns/op
 		{
 			b: []byte("1234,abcd,5678,2347652171,jsdgwfxwqjdwb, 23ftgdbhed282  ,10"),
 		},
