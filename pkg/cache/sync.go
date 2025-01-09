@@ -28,9 +28,11 @@ func (d *Sync[T]) Delete(key string) {
 // Escape is a Search-and-Delete, returning the value of the deleted key. Escape
 // uses a write-lock. Escape uses sync.Map's LoadAndDelete.
 func (d *Sync[T]) Escape(key string) T {
-	if val, ok := d.dic.LoadAndDelete(key); ok {
+	val, exi := d.dic.LoadAndDelete(key)
+	if exi {
 		return val.(T)
 	}
+
 	var zer T
 	return zer
 }
@@ -67,9 +69,11 @@ func (d *Sync[T]) Ranger(fnc func(key string, val T)) {
 // Search returns the value of the given key, whether that key exists or not.
 // Search uses a read-lock. Search uses sync.Map's Load.
 func (d *Sync[T]) Search(key string) T {
-	if v, ok := d.dic.Load(key); ok {
-		return v.(T)
+	val, exi := d.dic.Load(key)
+	if exi {
+		return val.(T)
 	}
+
 	var zer T
 	return zer
 }

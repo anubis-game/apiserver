@@ -24,17 +24,17 @@ func (s *Stream) HandlerFunc(w http.ResponseWriter, r *http.Request) error {
 		hea = reqHea(r.Header["Sec-Websocket-Protocol"])
 	}
 
-	var add string
+	var wal string
 	switch schema.Header(hea[0]) {
 	case schema.DualHandshake:
 		{
-			add, err = s.verify(hea)
+			wal, err = s.verify(hea)
 			if err != nil {
 				return tracer.Mask(err)
 			}
 		}
 	case schema.UserChallenge:
-		add, err = s.search(hea)
+		wal, err = s.search(hea)
 		if err != nil {
 			return tracer.Mask(err)
 		}
@@ -51,7 +51,7 @@ func (s *Stream) HandlerFunc(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	{
-		err = s.client(add, con)
+		err = s.client(wal, con)
 		if err != nil {
 			return tracer.Mask(err)
 		}

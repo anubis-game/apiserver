@@ -11,7 +11,7 @@ type Client struct {
 	Write func([]byte)
 }
 
-func (s *Stream) client(add string, con *websocket.Conn) error {
+func (s *Stream) client(wal string, con *websocket.Conn) error {
 	var clo chan struct{}
 	var exp chan struct{}
 	var rea chan struct{}
@@ -46,11 +46,11 @@ func (s *Stream) client(add string, con *websocket.Conn) error {
 	// the connection lifetime of every client.
 
 	{
-		s.cli.Update(add, cli)
+		s.cli.Update(wal, cli)
 	}
 
 	{
-		s.exp.Ensure(add, func() {
+		s.exp.Ensure(wal, func() {
 			defer close(exp)
 		})
 	}
@@ -78,9 +78,9 @@ func (s *Stream) client(add string, con *websocket.Conn) error {
 			case schema.Ping:
 				err = s.ping(con)
 			case schema.Auth:
-				err = s.auth(con, add)
+				err = s.auth(con, wal)
 			case schema.Cast:
-				err = s.cast(byt, add)
+				err = s.cast(byt)
 			case schema.Move:
 				// TODO
 			case schema.Kill:
@@ -107,8 +107,8 @@ func (s *Stream) client(add string, con *websocket.Conn) error {
 	}
 
 	{
-		s.cli.Delete(add)
-		s.exp.Delete(add)
+		s.cli.Delete(wal)
+		s.exp.Delete(wal)
 	}
 
 	{

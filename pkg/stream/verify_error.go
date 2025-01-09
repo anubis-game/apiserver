@@ -7,14 +7,14 @@ var handshakeHeaderInvalidError = &tracer.Error{
 	Desc: "The request expects the Sec-Websocket-Protocol header to contain exactly 3 elements. The Sec-Websocket-Protocol header was not found to comply with this requirement. Therefore the request failed.",
 }
 
-var protocolMethodInvalidError = &tracer.Error{
-	Kind: "protocolMethodInvalidError",
-	Desc: "The request expects the signature method to be one of [dual-handshake user-challenge]. The signature method was not found to be one of those options. Therefore the request failed.",
-}
-
 var handshakeValidationFailedError = &tracer.Error{
 	Kind: "handshakeValidationFailedError",
 	Desc: "The request expects the dual-handshake to succeed for any player to participate in the game. The dual-handshake was not found to comply with the specified requirements. Therefore the request failed.",
+}
+
+var protocolMethodInvalidError = &tracer.Error{
+	Kind: "protocolMethodInvalidError",
+	Desc: "The request expects the signature method to be one of [dual-handshake user-challenge]. The signature method was not found to be one of those options. Therefore the request failed.",
 }
 
 var signatureHashLengthError = &tracer.Error{
@@ -35,4 +35,9 @@ var signerAddressMatchError = &tracer.Error{
 var transactionHashLengthError = &tracer.Error{
 	Kind: "transactionHashLengthError",
 	Desc: "The request expects the transaction hash to have 66 characters. The transaction hash was not found to have 66 characters. Therefore the request failed.",
+}
+
+var walletAddressRegisteredError = &tracer.Error{
+	Kind: "walletAddressRegisteredError",
+	Desc: "The request expects the associated Wallet addresses to not be registered already. The associated Wallet addresses was found to be registered already. Therefore the request failed.",
 }
