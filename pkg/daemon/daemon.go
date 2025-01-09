@@ -2,6 +2,7 @@ package daemon
 
 import (
 	"net"
+	"strings"
 	"time"
 
 	"github.com/anubis-game/apiserver/pkg/contract/registry"
@@ -78,7 +79,7 @@ func New(c Config) *Daemon {
 }
 
 func musDur(str string, uni string) time.Duration {
-	dur, err := time.ParseDuration(str + uni)
+	dur, err := time.ParseDuration(strings.ReplaceAll(str, "_", "") + uni)
 	if err != nil {
 		tracer.Panic(err)
 	}

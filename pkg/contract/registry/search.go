@@ -28,14 +28,14 @@ func (c *Registry) Search(hsh common.Hash) (*types.Transaction, error) {
 	// included in a block. So as long as the provided transaction is still
 	// pending, we reject it.
 	if pen {
-		return nil, tracer.Mask(transactionNotSuccessfulError)
+		return nil, tracer.Maskf(transactionNotSuccessfulError, "%s", hsh)
 	}
 
 	var rec *types.Receipt
 	{
 		rec, err = c.cli.TransactionReceipt(context.Background(), hsh)
 		if errors.Is(err, ethereum.NotFound) {
-			return nil, tracer.Mask(transactionNotFoundError)
+			return nil, tracer.Maskf(transactionNotFoundError, "%s", hsh)
 		} else if err != nil {
 			return nil, tracer.Mask(err)
 		}
@@ -49,7 +49,7 @@ func (c *Registry) Search(hsh common.Hash) (*types.Transaction, error) {
 	//     https://eips.ethereum.org/EIPS/eip-658
 	//
 	if rec.Status != types.ReceiptStatusSuccessful {
-		return nil, tracer.Mask(transactionNotSuccessfulError)
+		return nil, tracer.Maskf(transactionNotSuccessfulError, "%s", hsh)
 	}
 
 	return txn, nil
