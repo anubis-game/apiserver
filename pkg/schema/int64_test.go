@@ -1,4 +1,4 @@
-package decode
+package schema
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func Test_Int64(t *testing.T) {
+func Test_Decode_Int64(t *testing.T) {
 	testCases := []struct {
 		b []byte
 		d int64
@@ -42,19 +42,19 @@ func Test_Int64(t *testing.T) {
 	}
 }
 
-func Benchmark_Int64(b *testing.B) {
+func Benchmark_Decode_Int64(b *testing.B) {
 	testCases := []struct {
 		b []byte
 	}{
-		// Case 000 ~57.5 ns/op
+		// Case 000 ~57 ns/op
 		{
 			b: []byte("1"),
 		},
-		// Case 001 ~100.0 ns/op
+		// Case 001 ~100 ns/op
 		{
 			b: []byte("1234"),
 		},
-		// Case 002 ~100.0 ns/op
+		// Case 002 ~100 ns/op
 		{
 			b: []byte("98732347652171"),
 		},

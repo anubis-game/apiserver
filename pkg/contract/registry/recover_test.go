@@ -28,6 +28,15 @@ func Test_Registry_Recover(t *testing.T) {
 			sgn: hexutil.MustDecode("0xc3849f2ade6d5a10924d98ebd9931194849cdd5199f4c0abd0b058d56cda71f44b891e445d8b1be99fdb22bf654220b540957a527a9552066a31b7f7a52c49631c"),
 			sig: common.HexToAddress("0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc"),
 		},
+		// Case 001
+		{
+			pre: "request",
+			grd: common.HexToAddress("0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266"),
+			tim: time.Unix(1736273649, 0).UTC(),
+			pla: common.HexToAddress("0x90f79bf6eb2c4f870365e785982e1f101e93b906"),
+			sgn: hexutil.MustDecode("0xb9148b4148ffcfb598ac7d2fba3987fb5b47757068f7d45f8373e453119befeb10c623e88c2771c40fd043101d968cdba130d047ee0892461f4df9ef433c2e361b"),
+			sig: common.HexToAddress("0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc"),
+		},
 	}
 
 	for i, tc := range testCases {

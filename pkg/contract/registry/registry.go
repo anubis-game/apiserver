@@ -113,3 +113,25 @@ func New(c Config) *Registry {
 		sig: sig,
 	}
 }
+
+func (r *Registry) writerOption() *bind.TransactOpts {
+	return &bind.TransactOpts{
+		From: r.opt.From,
+
+		// Here we are trying to set some reasonable gas limits, specifically for
+		// the EIP-1559 enabled minting transaction.
+		//
+		//     GasFeeCap is the max gas fee we are willing to pay
+		//     GasTipCap is the max priority fee we are willing to pay
+		//
+		// Below is a testnet transaction providing some real world insight into
+		// effective gas usage.
+		//
+		//     TODO
+		//
+		GasFeeCap: big.NewInt(5_000_000_000), // 5.00 gwei
+		GasTipCap: big.NewInt(500_000_000),   // 0.50 gwei
+
+		Signer: r.opt.Signer,
+	}
+}

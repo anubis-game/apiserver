@@ -11,14 +11,14 @@ import (
 )
 
 const (
-	Method = "request"
+	Method = "Request"
 )
 
 // Decode takes the calldata of a types.Transaction object and returns all
 // decoded arguments contained in the associated contract write on the
 // Registry.request function based on the ABI below.
 //
-//     function request(address,uint64,address,bytes memory) public
+//     function Request(address,uint64,address,bytes memory) public
 //
 
 func Decode(byt []byte) (common.Address, time.Time, common.Address, []byte, error) {

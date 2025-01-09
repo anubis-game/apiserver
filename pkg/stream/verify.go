@@ -14,6 +14,9 @@ import (
 	"github.com/xh3b4sd/tracer"
 )
 
+// verify is to process the dual-handshake protocol method, which requires all
+// clients to allocate certain onchain and offchain resources, as well as
+// generating several cryptographic signatures.
 func (s *Stream) verify(hea []string) (string, error) {
 	var err error
 
@@ -138,6 +141,16 @@ func (s *Stream) verify(hea []string) (string, error) {
 				return "", tracer.Maskf(signerAddressMatchError, "%s != %s", si1.Hex(), si2.Hex())
 			}
 
+			// TODO ensure that the Wallet address is not already cached
+			//
+			// if exi {
+			// 	s.log.Log(
+			// 		s.ctx,
+			// 		"level", "error",
+			// 		"message", fmt.Sprintf("Wallet %q added twice", add),
+			// 	)
+			// }
+
 			// The dual-handshake is valid. We have proven that the returned address
 			// represents the user's Wallet address.
 			return wal.Hex(), nil
@@ -155,10 +168,6 @@ func verHea(hea []string) error {
 	//
 	if len(hea) != 3 {
 		return tracer.Maskf(handshakeHeaderInvalidError, "%d", len(hea))
-	}
-
-	if hea[0] != "dual-handshake" {
-		return tracer.Mask(handshakeMethodInvalidError)
 	}
 
 	if len(hea[1]) != 66 {
