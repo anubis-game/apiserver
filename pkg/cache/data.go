@@ -16,8 +16,8 @@ func NewData[T any]() Interface[T] {
 	}
 }
 
-// Create sets the given key-value pair and returns whether the provided key
-// already existed. Create uses a write-lock.
+// Create stores the given key-value pair if it does not already exist and
+// returns whether the provided key already existed. Create uses a write-lock.
 func (d *Data[T]) Create(key string, val T) bool {
 	var exi bool
 
@@ -93,7 +93,7 @@ func (d *Data[T]) Search(key string) T {
 	return val
 }
 
-// Create sets the given key-value pair or overwrites it in case the given key
+// Update sets the given key-value pair or overwrites it in case the given key
 // existed before. Update uses a write-lock.
 func (d *Data[T]) Update(key string, val T) {
 	d.mut.Lock()

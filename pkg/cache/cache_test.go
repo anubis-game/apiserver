@@ -3,6 +3,7 @@ package cache
 import (
 	"fmt"
 	"reflect"
+	"sync"
 	"testing"
 )
 
@@ -73,6 +74,30 @@ func Benchmark_Cache_Ranger(b *testing.B) {
 			b.ResetTimer()
 			for i := 0; i < b.N; i++ {
 				ranger(b, tc.c)
+			}
+		})
+	}
+}
+
+func Benchmark_Cache_Read_More_Than_Write(b *testing.B) {
+	testCases := []struct {
+		c Interface[int]
+	}{
+		// Case 000 ~336,000 ns/op
+		{
+			c: NewData[int](),
+		},
+		// Case 001 ~92,500 ns/op
+		{
+			c: NewSync[int](),
+		},
+	}
+
+	for i, tc := range testCases {
+		b.Run(fmt.Sprintf("%03d", i), func(b *testing.B) {
+			b.ResetTimer()
+			for i := 0; i < b.N; i++ {
+				readMoreThanWrite(b, tc.c)
 			}
 		})
 	}
@@ -388,4 +413,134 @@ func ranger(t Testing, cac Interface[int]) {
 			t.Fatal("expected", 0, "got", siz)
 		}
 	}
+}
+
+func readMoreThanWrite(t Testing, cac Interface[int]) {
+	var w sync.WaitGroup
+
+	{
+		cac.Update("foo", 33)
+		cac.Update("bar", 47)
+		cac.Update("baz", 99)
+	}
+
+	w.Add(1)
+	go func() {
+		defer w.Done()
+		for i := 0; i < 1000; i++ {
+			{
+				exi := cac.Exists("foo")
+				if !exi {
+					t.Fatal("expected", true, "got", false)
+				}
+			}
+
+			{
+				exi := cac.Exists("bar")
+				if !exi {
+					t.Fatal("expected", true, "got", false)
+				}
+			}
+
+			{
+				exi := cac.Exists("baz")
+				if !exi {
+					t.Fatal("expected", true, "got", false)
+				}
+			}
+
+			{
+				exi := cac.Exists("zap")
+				if exi {
+					t.Fatal("expected", false, "got", true)
+				}
+			}
+
+			{
+				exi := cac.Exists("pah")
+				if exi {
+					t.Fatal("expected", false, "got", true)
+				}
+			}
+		}
+	}()
+
+	w.Add(1)
+	go func() {
+		defer w.Done()
+		cac.Update("foo", 33)
+	}()
+
+	w.Add(1)
+	go func() {
+		defer w.Done()
+		cac.Update("bar", 47)
+	}()
+
+	w.Add(1)
+	go func() {
+		defer w.Done()
+		cac.Update("baz", 99)
+	}()
+
+	w.Add(1)
+	go func() {
+		defer w.Done()
+		for i := 0; i < 1000; i++ {
+			{
+				val := cac.Search("foo")
+				if val != 33 {
+					t.Fatal("expected", 33, "got", val)
+				}
+			}
+
+			{
+				val := cac.Search("bar")
+				if val != 47 {
+					t.Fatal("expected", 47, "got", val)
+				}
+			}
+
+			{
+				val := cac.Search("baz")
+				if val != 99 {
+					t.Fatal("expected", 99, "got", val)
+				}
+			}
+
+			{
+				val := cac.Search("zap")
+				if val != 0 {
+					t.Fatal("expected", 0, "got", val)
+				}
+			}
+
+			{
+				val := cac.Search("pah")
+				if val != 0 {
+					t.Fatal("expected", 0, "got", val)
+				}
+			}
+		}
+	}()
+
+	w.Add(1)
+	go func() {
+		defer w.Done()
+		cac.Update("foo", 33)
+	}()
+
+	w.Add(1)
+	go func() {
+		defer w.Done()
+		cac.Update("bar", 47)
+	}()
+
+	w.Add(1)
+	go func() {
+		defer w.Done()
+		cac.Update("baz", 99)
+	}()
+
+	w.Wait()
 }

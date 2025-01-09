@@ -79,14 +79,14 @@ func New(c Config) *Stream {
 	}
 
 	return &Stream{
-		cli: cache.NewData[Client](),
+		cli: cache.NewSync[Client](),
 		ctx: ctx,
 		don: c.Don,
 		exp: exp,
-		ind: cache.NewData[string](),
+		ind: cache.NewSync[string](),
 		log: c.Log,
 		opt: opt,
 		reg: c.Reg,
-		tok: cache.NewData[string](),
+		tok: cache.NewSync[string](),
 	}
 }

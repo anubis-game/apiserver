@@ -15,3 +15,7 @@ func Test_Cache_Data_Lifecycle(t *testing.T) {
 func Test_Cache_Data_Ranger(t *testing.T) {
 	ranger(t, NewData[int]())
 }
+
+func Test_Cache_Data_Read_More_Than_Write(t *testing.T) {
+	readMoreThanWrite(t, NewData[int]())
+}

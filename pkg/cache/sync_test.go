@@ -15,3 +15,7 @@ func Test_Cache_Sync_Lifecycle(t *testing.T) {
 func Test_Cache_Sync_Ranger(t *testing.T) {
 	ranger(t, NewSync[int]())
 }
+
+func Test_Cache_Sync_Read_More_Than_Write(t *testing.T) {
+	readMoreThanWrite(t, NewSync[int]())
+}
