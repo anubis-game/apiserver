@@ -10,7 +10,7 @@ func (s *Stream) ping(con *websocket.Conn) error {
 	var err error
 
 	{
-		err = con.Write(s.ctx, websocket.MessageText, []byte{byte(schema.Pong)})
+		err = con.Write(s.ctx, websocket.MessageBinary, []byte{byte(schema.Pong)})
 		if err != nil {
 			return tracer.Mask(err)
 		}

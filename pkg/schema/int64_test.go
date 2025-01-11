@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func Test_Decode_Int64(t *testing.T) {
+func Test_Schema_Int64(t *testing.T) {
 	testCases := []struct {
 		b []byte
 		d int64
@@ -42,7 +42,7 @@ func Test_Decode_Int64(t *testing.T) {
 	}
 }
 
-func Benchmark_Decode_Int64(b *testing.B) {
+func Benchmark_Schema_Int64(b *testing.B) {
 	testCases := []struct {
 		b []byte
 	}{

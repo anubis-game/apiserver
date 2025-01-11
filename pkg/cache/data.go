@@ -2,6 +2,12 @@ package cache
 
 import "sync"
 
+// TODO make keys and values generic
+
+// TODO benchmark with common.Address keys
+
+// TODO if address types perform better, adapt /stream logic
+
 // Data is a typed cache implementation, optimized for simple read-write access
 // patterns.
 type Data[T any] struct {

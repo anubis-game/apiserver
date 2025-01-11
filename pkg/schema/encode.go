@@ -1,7 +1,14 @@
 package schema
 
-import "bytes"
-
 func Encode(act Action, mes ...[]byte) []byte {
-	return bytes.Join(append([][]byte{{byte(act)}}, mes...), Comma)
+	var byt []byte
+	{
+		byt = []byte{byte(act)}
+	}
+
+	for _, x := range mes {
+		byt = append(byt, x...)
+	}
+
+	return byt
 }
