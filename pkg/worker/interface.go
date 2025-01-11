@@ -4,10 +4,10 @@ type Daemon interface {
 	Daemon()
 }
 
-type Ensure[T any] interface {
-	Ensure(T)
+type Create[T any] interface {
+	Create(T)
 }
 
-type Router[T any] interface {
-	Router(T) (T, bool)
+type Ensure[T any] interface {
+	Ensure(T) (T, bool)
 }

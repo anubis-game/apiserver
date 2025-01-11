@@ -2,21 +2,21 @@ package worker
 
 type Config[T any] struct {
 	Don <-chan struct{}
-	Rtr Router[T]
+	Ens Ensure[T]
 }
 
 type Worker[T any] struct {
 	don <-chan struct{}
+	ens Ensure[T]
 	que chan T
-	rtr Router[T]
 	sem chan struct{}
 }
 
 func NewWorker[T any](c Config[T]) *Worker[T] {
 	return &Worker[T]{
 		don: c.Don,
+		ens: c.Ens,
 		que: make(chan T, 1000),
-		rtr: c.Rtr,
 		sem: make(chan struct{}, 10),
 	}
 }
@@ -66,7 +66,7 @@ func (w *Worker[T]) Daemon() {
 				// processed packet ought to be processed once more.
 				var req bool
 				{
-					pac, req = w.rtr.Router(pac)
+					pac, req = w.ens.Ensure(pac)
 				}
 
 				// Once a packet was processed, we may receive the instruction to

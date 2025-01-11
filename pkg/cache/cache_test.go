@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func Test_Cache_Data_Create_And_Escape(t *testing.T) {
+func Test_Cache_Create_And_Escape(t *testing.T) {
 	testCases := []struct {
 		c Interface[int]
 	}{
@@ -32,7 +32,7 @@ func Test_Cache_Data_Create_And_Escape(t *testing.T) {
 	}
 }
 
-func Test_Cache_Data_Lifecycle(t *testing.T) {
+func Test_Cache_Lifecycle(t *testing.T) {
 	testCases := []struct {
 		c Interface[int]
 	}{
@@ -57,7 +57,7 @@ func Test_Cache_Data_Lifecycle(t *testing.T) {
 	}
 }
 
-func Test_Cache_Data_Ranger(t *testing.T) {
+func Test_Cache_Ranger(t *testing.T) {
 	testCases := []struct {
 		c Interface[int]
 	}{
@@ -82,7 +82,7 @@ func Test_Cache_Data_Ranger(t *testing.T) {
 	}
 }
 
-func Test_Cache_Data_Read_More_Than_Write(t *testing.T) {
+func Test_Cache_Read_More_Than_Write(t *testing.T) {
 	testCases := []struct {
 		c Interface[int]
 	}{

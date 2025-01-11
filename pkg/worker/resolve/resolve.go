@@ -20,6 +20,8 @@ func New(log logger.Logger) *Release {
 func (r *Release) Router(pac Packet) (Packet, bool) {
 	var err error
 
+	// TODO return (pac, true) if pac.Timeout (int64) is still in the future
+
 	var req bool
 	{
 		pac, req, err = r.resolve(pac)
