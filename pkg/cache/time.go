@@ -10,35 +10,35 @@ type V struct {
 	Fnc func()
 }
 
-type Time struct {
-	dic map[string]V
+type Time[K comparable] struct {
+	dic map[K]V
 	mut sync.Mutex
 	now func() time.Time
 	ttl time.Duration
 }
 
-func NewTime(ttl time.Duration) *Time {
-	return &Time{
-		dic: map[string]V{},
+func NewTime[K comparable](ttl time.Duration) *Time[K] {
+	return &Time[K]{
+		dic: map[K]V{},
 		mut: sync.Mutex{},
 		now: func() time.Time { return time.Now() },
 		ttl: ttl,
 	}
 }
 
-func (t *Time) Delete(key string) {
+func (t *Time[K]) Delete(key K) {
 	t.mut.Lock()
 	delete(t.dic, key)
 	t.mut.Unlock()
 }
 
-func (t *Time) Ensure(key string, fnc func()) {
+func (t *Time[K]) Ensure(key K, fnc func()) {
 	t.mut.Lock()
 	t.dic[key] = V{Exp: t.now().Add(t.ttl).Unix(), Fnc: fnc}
 	t.mut.Unlock()
 }
 
-func (t *Time) Expire(cyc time.Duration) {
+func (t *Time[K]) Expire(cyc time.Duration) {
 	var tic *time.Ticker
 	{
 		tic = time.NewTicker(cyc)
@@ -67,7 +67,7 @@ func (t *Time) Expire(cyc time.Duration) {
 
 // Length returns the amount of key-value pairs currently maintained in the
 // underlying cache.
-func (t *Time) Length() int {
+func (t *Time[K]) Length() int {
 	t.mut.Lock()
 	siz := len(t.dic)
 	t.mut.Unlock()

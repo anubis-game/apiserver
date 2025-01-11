@@ -1,29 +1,29 @@
 package cache
 
-type Interface[T any] interface {
+type Interface[K comparable, V any] interface {
 	//
-	Create(key string, val T) bool
+	Create(K, V) bool
 
 	//
-	Delete(key string)
+	Delete(K)
 
 	//
-	Escape(key string) T
+	Escape(K) V
 
 	//
-	Exists(key string) bool
+	Exists(K) bool
 
 	//
 	Length() int
 
 	//
-	Ranger(fnc func(key string, val T))
+	Ranger(fnc func(K, V))
 
 	//
-	Search(key string) T
+	Search(K) (V, bool)
 
 	//
-	Update(key string, val T)
+	Update(K, V)
 }
 
 type Testing interface {

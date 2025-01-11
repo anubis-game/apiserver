@@ -3,6 +3,7 @@ package stream
 import (
 	"github.com/anubis-game/apiserver/pkg/schema"
 	"github.com/coder/websocket"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/xh3b4sd/tracer"
 )
 
@@ -11,7 +12,7 @@ type Client struct {
 	Write func([]byte)
 }
 
-func (s *Stream) client(wal string, con *websocket.Conn) error {
+func (s *Stream) client(wal common.Address, con *websocket.Conn) error {
 	var clo chan struct{}
 	var exp chan struct{}
 	var rea chan struct{}
@@ -50,7 +51,7 @@ func (s *Stream) client(wal string, con *websocket.Conn) error {
 	}
 
 	{
-		s.exp.Ensure(wal, func() {
+		s.wxp.Ensure(wal, func() {
 			defer close(exp)
 		})
 	}
@@ -108,7 +109,7 @@ func (s *Stream) client(wal string, con *websocket.Conn) error {
 
 	{
 		s.cli.Delete(wal)
-		s.exp.Delete(wal)
+		s.wxp.Delete(wal)
 	}
 
 	{

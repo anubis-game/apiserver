@@ -2,11 +2,10 @@ package daemon
 
 import (
 	"net"
-	"strings"
-	"time"
 
 	"github.com/anubis-game/apiserver/pkg/contract/registry"
 	"github.com/anubis-game/apiserver/pkg/envvar"
+	"github.com/anubis-game/apiserver/pkg/server"
 	"github.com/anubis-game/apiserver/pkg/stream"
 	"github.com/gorilla/mux"
 	"github.com/xh3b4sd/logger"
@@ -19,10 +18,11 @@ type Config struct {
 }
 
 type Daemon struct {
-	env envvar.Env
 	lis net.Listener
 	log logger.Interface
+	reg *registry.Registry
 	rtr *mux.Router
+	ser *server.Server
 	str *stream.Stream
 }
 
@@ -63,26 +63,29 @@ func New(c Config) *Daemon {
 	{
 		str = stream.New(stream.Config{
 			Don: c.Don,
+			Env: c.Env,
 			Log: log,
-			Out: musDur(c.Env.ConnectionTimeout, "s"),
 			Reg: reg,
 		})
 	}
 
+	var ser *server.Server
+	{
+		ser = server.New(server.Config{
+			Env: c.Env,
+			Lis: lis,
+			Log: log,
+			Rtr: rtr,
+			Str: str,
+		})
+	}
+
 	return &Daemon{
-		env: c.Env,
 		lis: lis,
 		log: log,
+		reg: reg,
 		rtr: rtr,
+		ser: ser,
 		str: str,
 	}
-}
-
-func musDur(str string, uni string) time.Duration {
-	dur, err := time.ParseDuration(strings.ReplaceAll(str, "_", "") + uni)
-	if err != nil {
-		tracer.Panic(err)
-	}
-
-	return dur
 }

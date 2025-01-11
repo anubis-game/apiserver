@@ -3,11 +3,12 @@ package stream
 import (
 	"github.com/anubis-game/apiserver/pkg/schema"
 	"github.com/coder/websocket"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/google/uuid"
 	"github.com/xh3b4sd/tracer"
 )
 
-func (s *Stream) auth(con *websocket.Conn, wal string) error {
+func (s *Stream) auth(con *websocket.Conn, wal common.Address) error {
 	var err error
 
 	// Create a new session token using V4 UUIDs for the requesting Wallet
@@ -17,17 +18,12 @@ func (s *Stream) auth(con *websocket.Conn, wal string) error {
 	// happen, then we are dealing with a rather unlucky, but severe internal
 	// error.
 
-	var uid uuid.UUID
+	var tok uuid.UUID
 	{
-		uid, err = uuid.NewRandom()
+		tok, err = uuid.NewRandom()
 		if err != nil {
 			return tracer.Mask(err)
 		}
-	}
-
-	var tok string
-	{
-		tok = uid.String()
 	}
 
 	{
@@ -49,9 +45,9 @@ func (s *Stream) auth(con *websocket.Conn, wal string) error {
 	// the expiration callbacks.
 
 	{
-		old := s.ind.Search(wal)
-		if old != "" {
-			s.exp.Delete(old)
+		old, exi := s.ind.Search(wal)
+		if exi {
+			s.txp.Delete(old)
 			s.tok.Delete(old)
 		}
 	}
@@ -62,7 +58,7 @@ func (s *Stream) auth(con *websocket.Conn, wal string) error {
 	}
 
 	{
-		s.exp.Ensure(tok, func() {
+		s.txp.Ensure(tok, func() {
 			s.tok.Delete(tok)
 			s.ind.Delete(wal)
 		})
@@ -73,7 +69,7 @@ func (s *Stream) auth(con *websocket.Conn, wal string) error {
 
 	var byt []byte
 	{
-		byt = schema.Encode(schema.Auth, []byte(tok))
+		byt = schema.Encode(schema.Auth, []byte(tok.String()))
 	}
 
 	{

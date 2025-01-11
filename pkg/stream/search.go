@@ -2,38 +2,47 @@ package stream
 
 import (
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/google/uuid"
 	"github.com/xh3b4sd/tracer"
 )
 
 // search is to process the user-challenge protocol method, which requires all
 // clients to provide a valid session token, as can be obtained after a
 // successful dual-handshake.
-func (s *Stream) search(hea []string) (string, error) {
+func (s *Stream) search(hea []string) (common.Address, error) {
 	var err error
 
 	{
 		err = seaHea(hea)
 		if err != nil {
-			return "", tracer.Mask(err)
+			return common.Address{}, tracer.Mask(err)
+		}
+	}
+
+	var tok uuid.UUID
+	{
+		tok, err = uuid.Parse(hea[1])
+		if err != nil {
+			return common.Address{}, tracer.Mask(err)
 		}
 	}
 
 	// TODO remove
 	{
-		fak := "f47ac10b-58cc-4372-a567-0e02b2c3d479"
-		if hea[1] == fak {
+		fak := uuid.MustParse("f47ac10b-58cc-4372-a567-0e02b2c3d479")
+		if tok.String() == fak.String() {
 			wal := common.HexToAddress("0xAD63B2262EB7D1591Ee8E6a85959a523dEce7983")
-			s.tok.Update(fak, wal.Hex())
+			s.tok.Update(fak, wal)
 		}
 	}
 
-	var wal string
+	var wal common.Address
+	var exi bool
 	{
-		wal = s.tok.Search(hea[1])
-	}
-
-	if wal == "" {
-		return "", tracer.Mask(challengeValidationFailedError)
+		wal, exi = s.tok.Search(tok)
+		if !exi {
+			return common.Address{}, tracer.Mask(challengeValidationFailedError)
+		}
 	}
 
 	return wal, nil
