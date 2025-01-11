@@ -6,6 +6,7 @@ import (
 
 	"github.com/anubis-game/apiserver/pkg/schema"
 	"github.com/coder/websocket"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/xh3b4sd/tracer"
 )
 
@@ -24,7 +25,7 @@ func (s *Stream) HandlerFunc(w http.ResponseWriter, r *http.Request) error {
 		hea = reqHea(r.Header["Sec-Websocket-Protocol"])
 	}
 
-	var wal string
+	var wal common.Address
 	switch schema.Header(hea[0]) {
 	case schema.DualHandshake:
 		{

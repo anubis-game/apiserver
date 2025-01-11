@@ -17,13 +17,13 @@ import (
 // verify is to process the dual-handshake protocol method, which requires all
 // clients to allocate certain onchain and offchain resources, as well as
 // generating several cryptographic signatures.
-func (s *Stream) verify(hea []string) (string, error) {
+func (s *Stream) verify(hea []string) (common.Address, error) {
 	var err error
 
 	{
 		err = verHea(hea)
 		if err != nil {
-			return "", tracer.Mask(err)
+			return common.Address{}, tracer.Mask(err)
 		}
 	}
 
@@ -35,7 +35,7 @@ func (s *Stream) verify(hea []string) (string, error) {
 	{
 		txn, err = s.reg.Search(common.HexToHash(hea[1]))
 		if err != nil {
-			return "", tracer.Mask(err)
+			return common.Address{}, tracer.Mask(err)
 		}
 	}
 
@@ -47,7 +47,7 @@ func (s *Stream) verify(hea []string) (string, error) {
 	{
 		sg2, err = hex.DecodeString(strings.TrimPrefix(hea[2], "0x"))
 		if err != nil {
-			return "", tracer.Mask(err)
+			return common.Address{}, tracer.Mask(err)
 		}
 	}
 
@@ -59,7 +59,7 @@ func (s *Stream) verify(hea []string) (string, error) {
 	{
 		ops, _, err = entrypoint.Decode(txn.Data())
 		if err != nil {
-			return "", tracer.Mask(err)
+			return common.Address{}, tracer.Mask(err)
 		}
 	}
 
@@ -68,7 +68,7 @@ func (s *Stream) verify(hea []string) (string, error) {
 		{
 			agg, err = aggregator.Decode(x.CallData)
 			if err != nil {
-				return "", tracer.Mask(err)
+				return common.Address{}, tracer.Mask(err)
 			}
 		}
 
@@ -94,7 +94,7 @@ func (s *Stream) verify(hea []string) (string, error) {
 			{
 				grd, tim, wal, sg1, err = registry.Decode(y.CallData)
 				if err != nil {
-					return "", tracer.Mask(err)
+					return common.Address{}, tracer.Mask(err)
 				}
 			}
 
@@ -104,7 +104,7 @@ func (s *Stream) verify(hea []string) (string, error) {
 			{
 				err = verTim(time.Now().UTC(), tim)
 				if err != nil {
-					return "", tracer.Mask(err)
+					return common.Address{}, tracer.Mask(err)
 				}
 			}
 
@@ -120,7 +120,7 @@ func (s *Stream) verify(hea []string) (string, error) {
 			{
 				si1, err = registry.Recover("request", tim, grd, pla, sg1)
 				if err != nil {
-					return "", tracer.Mask(err)
+					return common.Address{}, tracer.Mask(err)
 				}
 			}
 
@@ -128,7 +128,7 @@ func (s *Stream) verify(hea []string) (string, error) {
 			{
 				si2, err = registry.Recover("connect", tim, grd, pla, sg2)
 				if err != nil {
-					return "", tracer.Mask(err)
+					return common.Address{}, tracer.Mask(err)
 				}
 			}
 
@@ -138,23 +138,23 @@ func (s *Stream) verify(hea []string) (string, error) {
 			// requesting user controls all involved wallets, and is therefore
 			// considered valid.
 			if !bytes.Equal(si1.Bytes(), si2.Bytes()) {
-				return "", tracer.Maskf(signerAddressMatchError, "%s != %s", si1.Hex(), si2.Hex())
+				return common.Address{}, tracer.Maskf(signerAddressMatchError, "%s != %s", si1.Hex(), si2.Hex())
 			}
 
 			{
-				exi := s.cli.Exists(wal.Hex())
+				exi := s.cli.Exists(wal)
 				if exi {
-					return "", tracer.Mask(walletAddressRegisteredError)
+					return common.Address{}, tracer.Mask(walletAddressRegisteredError)
 				}
 			}
 
 			// The dual-handshake is valid. We have proven that the returned address
 			// represents the user's Wallet address.
-			return wal.Hex(), nil
+			return wal, nil
 		}
 	}
 
-	return "", tracer.Mask(handshakeValidationFailedError)
+	return common.Address{}, tracer.Mask(handshakeValidationFailedError)
 }
 
 func verHea(hea []string) error {

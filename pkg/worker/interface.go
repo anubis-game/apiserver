@@ -1,13 +1,13 @@
 package worker
 
-type Create[T any] interface {
-	Create(T)
+type Create[P any] interface {
+	Create(P)
 }
 
 type Daemon interface {
 	Daemon()
 }
 
-type Ensure[T any] interface {
-	Ensure(T) (T, bool)
+type Ensure[P any] interface {
+	Ensure(P) (P, bool)
 }

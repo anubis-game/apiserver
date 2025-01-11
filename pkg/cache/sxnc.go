@@ -6,54 +6,54 @@ import (
 
 // Sxnc is a typed cache implementation, leveraging xsync.MapOf for concurrency
 // safety.
-type Sxnc[T any] struct {
-	dic *xsync.MapOf[string, T]
+type Sxnc[K comparable, V any] struct {
+	dic *xsync.MapOf[K, V]
 }
 
-func NewSxnc[T any]() Interface[T] {
-	return &Sxnc[T]{
-		dic: xsync.NewMapOf[string, T](),
+func NewSxnc[K comparable, V any]() Interface[K, V] {
+	return &Sxnc[K, V]{
+		dic: xsync.NewMapOf[K, V](),
 	}
 }
 
 // Create stores the given key-value pair if it does not already exist and
 // returns whether the provided key already existed. Create uses xsync.MapOf's
 // LoadOrStore.
-func (d *Sxnc[T]) Create(key string, val T) bool {
+func (d *Sxnc[K, V]) Create(key K, val V) bool {
 	_, exi := d.dic.LoadOrStore(key, val)
 	return exi
 }
 
 // Delete simply removes the given key from the typed cache. Delete uses a
 // write-lock. Delete uses xsync.MapOf's Delete.
-func (d *Sxnc[T]) Delete(key string) {
+func (d *Sxnc[K, V]) Delete(key K) {
 	d.dic.Delete(key)
 }
 
 // Escape is a Search-and-Delete, returning the value of the deleted key. Escape
 // uses a write-lock. Escape uses xsync.MapOf's LoadAndDelete.
-func (d *Sxnc[T]) Escape(key string) T {
+func (d *Sxnc[K, V]) Escape(key K) V {
 	val, _ := d.dic.LoadAndDelete(key)
 	return val
 }
 
 // Exists returns whether the given key is already set. Exists uses
 // xsync.MapOf's Load.
-func (d *Sxnc[T]) Exists(key string) bool {
+func (d *Sxnc[K, V]) Exists(key K) bool {
 	_, exi := d.dic.Load(key)
 	return exi
 }
 
 // Length returns the amount of key-value pairs currently maintained in the
 // underlying cache. Length uses xsync.MapOf's Size.
-func (d *Sxnc[T]) Length() int {
+func (d *Sxnc[K, V]) Length() int {
 	return d.dic.Size()
 }
 
 // Ranger executes the given callback for every key-value pair in the underlying
 // cache. Ranger uses xsync.MapOf's Range.
-func (d *Sxnc[T]) Ranger(fnc func(key string, val T)) {
-	d.dic.Range(func(k string, v T) bool {
+func (d *Sxnc[K, V]) Ranger(fnc func(K, V)) {
+	d.dic.Range(func(k K, v V) bool {
 		fnc(k, v)
 		return true
 	})
@@ -61,13 +61,12 @@ func (d *Sxnc[T]) Ranger(fnc func(key string, val T)) {
 
 // Search returns the value of the given key, whether that key exists or not.
 // Search uses a read-lock. Search uses xsync.MapOf's Load.
-func (d *Sxnc[T]) Search(key string) T {
-	val, _ := d.dic.Load(key)
-	return val
+func (d *Sxnc[K, V]) Search(key K) (V, bool) {
+	return d.dic.Load(key)
 }
 
 // Update sets the given key-value pair or overwrites it in case the given key
 // existed before. Update uses xsync.MapOf's Store.
-func (d *Sxnc[T]) Update(key string, val T) {
+func (d *Sxnc[K, V]) Update(key K, val V) {
 	d.dic.Store(key, val)
 }

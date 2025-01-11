@@ -1,31 +1,31 @@
 package worker
 
-type Config[T any] struct {
+type Config[P any] struct {
 	Don <-chan struct{}
-	Ens Ensure[T]
+	Ens Ensure[P]
 }
 
-type Worker[T any] struct {
+type Worker[P any] struct {
 	don <-chan struct{}
-	ens Ensure[T]
-	que chan T
+	ens Ensure[P]
+	que chan P
 	sem chan struct{}
 }
 
-func NewWorker[T any](c Config[T]) *Worker[T] {
-	return &Worker[T]{
+func NewWorker[P any](c Config[P]) *Worker[P] {
+	return &Worker[P]{
 		don: c.Don,
 		ens: c.Ens,
-		que: make(chan T, 1000),
+		que: make(chan P, 1000),
 		sem: make(chan struct{}, 10),
 	}
 }
 
-func (w *Worker[T]) Create(pac T) {
+func (w *Worker[P]) Create(pac P) {
 	w.que <- pac
 }
 
-func (w *Worker[T]) Daemon() {
+func (w *Worker[P]) Daemon() {
 	for {
 		select {
 		case <-w.don:
@@ -54,7 +54,7 @@ func (w *Worker[T]) Daemon() {
 			// work on packets in parallel. Note that the received packet must be
 			// injected into the goroutine as an argument, in order to work on the
 			// exact packet that we received in this asynchronous environment.
-			go func(pac T) {
+			go func(pac P) {
 				// Ensure we remove our ticket from the semaphore once all work was
 				// completed.
 				defer func() {

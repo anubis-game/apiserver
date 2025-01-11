@@ -24,7 +24,7 @@ func (r *Release) Ensure(pac Packet) (Packet, bool) {
 
 	var req bool
 	{
-		pac, req, err = r.resolve(pac)
+		pac, req, err = r.ensure(pac)
 		if err != nil {
 			r.log.Log(
 				context.Background(),
@@ -38,7 +38,7 @@ func (r *Release) Ensure(pac Packet) (Packet, bool) {
 	return pac, req
 }
 
-func (r *Release) resolve(pac Packet) (Packet, bool, error) {
+func (r *Release) ensure(pac Packet) (Packet, bool, error) {
 	// TODO resolve player
 	return pac, false, nil
 }

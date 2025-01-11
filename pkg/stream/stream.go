@@ -9,6 +9,8 @@ import (
 	"github.com/anubis-game/apiserver/pkg/contract/registry"
 	"github.com/anubis-game/apiserver/pkg/schema"
 	"github.com/coder/websocket"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/google/uuid"
 	"github.com/xh3b4sd/logger"
 	"github.com/xh3b4sd/tracer"
 )
@@ -28,15 +30,16 @@ type Config struct {
 }
 
 type Stream struct {
-	cli cache.Interface[Client]
+	cli cache.Interface[common.Address, Client]
 	ctx context.Context
 	don <-chan struct{}
-	exp *cache.Time
-	ind cache.Interface[string]
+	ind cache.Interface[common.Address, uuid.UUID]
 	log logger.Interface
 	opt *websocket.AcceptOptions
 	reg *registry.Registry
-	tok cache.Interface[string]
+	txp *cache.Time[uuid.UUID]
+	tok cache.Interface[uuid.UUID, common.Address]
+	wxp *cache.Time[common.Address]
 }
 
 func New(c Config) *Stream {
@@ -58,11 +61,6 @@ func New(c Config) *Stream {
 		ctx = context.Background()
 	}
 
-	var exp *cache.Time
-	{
-		exp = cache.NewTime(c.Out)
-	}
-
 	var opt *websocket.AcceptOptions
 	{
 		opt = &websocket.AcceptOptions{
@@ -74,19 +72,28 @@ func New(c Config) *Stream {
 		}
 	}
 
+	var txp *cache.Time[uuid.UUID]
+	var wxp *cache.Time[common.Address]
 	{
-		go exp.Expire(time.Minute)
+		txp = cache.NewTime[uuid.UUID](c.Out)
+		wxp = cache.NewTime[common.Address](c.Out)
+	}
+
+	{
+		go txp.Expire(time.Minute)
+		go wxp.Expire(time.Minute)
 	}
 
 	return &Stream{
-		cli: cache.NewSync[Client](),
+		cli: cache.NewSxnc[common.Address, Client](),
 		ctx: ctx,
 		don: c.Don,
-		exp: exp,
-		ind: cache.NewSync[string](),
+		ind: cache.NewSxnc[common.Address, uuid.UUID](),
 		log: c.Log,
 		opt: opt,
 		reg: c.Reg,
-		tok: cache.NewSync[string](),
+		txp: txp,
+		tok: cache.NewSxnc[uuid.UUID, common.Address](),
+		wxp: wxp,
 	}
 }
