@@ -21,7 +21,7 @@ func NewWorker[T any](c Config[T]) *Worker[T] {
 	}
 }
 
-func (w *Worker[T]) Ensure(pac T) {
+func (w *Worker[T]) Create(pac T) {
 	w.que <- pac
 }
 
