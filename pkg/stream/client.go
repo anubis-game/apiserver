@@ -30,7 +30,7 @@ func (s *Stream) client(wal string, con *websocket.Conn) error {
 				close(clo)
 			},
 			Write: func(byt []byte) {
-				err := con.Write(s.ctx, websocket.MessageText, byt)
+				err := con.Write(s.ctx, websocket.MessageBinary, byt)
 				if err != nil {
 					close(wri)
 				}

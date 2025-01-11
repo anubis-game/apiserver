@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func Test_Decode_Decode(t *testing.T) {
+func Test_Schema_Decode(t *testing.T) {
 	testCases := []struct {
 		b []byte
 		d [][]byte
@@ -46,7 +46,7 @@ func Test_Decode_Decode(t *testing.T) {
 	}
 }
 
-func Benchmark_Decode_Decode(b *testing.B) {
+func Benchmark_Schema_Decode(b *testing.B) {
 	testCases := []struct {
 		b []byte
 	}{

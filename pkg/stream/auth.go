@@ -77,7 +77,7 @@ func (s *Stream) auth(con *websocket.Conn, wal string) error {
 	}
 
 	{
-		err = con.Write(s.ctx, websocket.MessageText, byt)
+		err = con.Write(s.ctx, websocket.MessageBinary, byt)
 		if err != nil {
 			return tracer.Mask(err)
 		}

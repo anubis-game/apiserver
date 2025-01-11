@@ -7,15 +7,119 @@ import (
 	"testing"
 )
 
+func Test_Cache_Data_Create_And_Escape(t *testing.T) {
+	testCases := []struct {
+		c Interface[int]
+	}{
+		// Case 000
+		{
+			c: NewData[int](),
+		},
+		// Case 001
+		{
+			c: NewSxnc[int](),
+		},
+		// Case 002
+		{
+			c: NewSync[int](),
+		},
+	}
+
+	for i, tc := range testCases {
+		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
+			createAndEscape(t, tc.c)
+		})
+	}
+}
+
+func Test_Cache_Data_Lifecycle(t *testing.T) {
+	testCases := []struct {
+		c Interface[int]
+	}{
+		// Case 000
+		{
+			c: NewData[int](),
+		},
+		// Case 001
+		{
+			c: NewSxnc[int](),
+		},
+		// Case 002
+		{
+			c: NewSync[int](),
+		},
+	}
+
+	for i, tc := range testCases {
+		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
+			lifecycle(t, tc.c)
+		})
+	}
+}
+
+func Test_Cache_Data_Ranger(t *testing.T) {
+	testCases := []struct {
+		c Interface[int]
+	}{
+		// Case 000
+		{
+			c: NewData[int](),
+		},
+		// Case 001
+		{
+			c: NewSxnc[int](),
+		},
+		// Case 002
+		{
+			c: NewSync[int](),
+		},
+	}
+
+	for i, tc := range testCases {
+		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
+			ranger(t, tc.c)
+		})
+	}
+}
+
+func Test_Cache_Data_Read_More_Than_Write(t *testing.T) {
+	testCases := []struct {
+		c Interface[int]
+	}{
+		// Case 000
+		{
+			c: NewData[int](),
+		},
+		// Case 001
+		{
+			c: NewSxnc[int](),
+		},
+		// Case 002
+		{
+			c: NewSync[int](),
+		},
+	}
+
+	for i, tc := range testCases {
+		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
+			readMoreThanWrite(t, tc.c)
+		})
+	}
+}
+
 func Benchmark_Cache_Create_And_Escape(b *testing.B) {
 	testCases := []struct {
 		c Interface[int]
 	}{
-		// Case 000 ~230 ns/op
+		// Case 000 ~165 ns/op
 		{
 			c: NewData[int](),
 		},
-		// Case 001 ~335 ns/op
+		// Case 001 ~120 ns/op
+		{
+			c: NewSxnc[int](),
+		},
+		// Case 002 ~265 ns/op
 		{
 			c: NewSync[int](),
 		},
@@ -35,11 +139,15 @@ func Benchmark_Cache_Lifecycle(b *testing.B) {
 	testCases := []struct {
 		c Interface[int]
 	}{
-		// Case 000 ~475 ns/op
+		// Case 000 ~365 ns/op
 		{
 			c: NewData[int](),
 		},
-		// Case 001 ~750 ns/op
+		// Case 001 ~295 ns/op
+		{
+			c: NewSxnc[int](),
+		},
+		// Case 002 ~650 ns/op
 		{
 			c: NewSync[int](),
 		},
@@ -59,11 +167,15 @@ func Benchmark_Cache_Ranger(b *testing.B) {
 	testCases := []struct {
 		c Interface[int]
 	}{
-		// Case 000 ~785 ns/op
+		// Case 000 ~725 ns/op
 		{
 			c: NewData[int](),
 		},
-		// Case 001 ~1035 ns/op
+		// Case 001 ~1000 ns/op
+		{
+			c: NewSxnc[int](),
+		},
+		// Case 002 ~1000 ns/op
 		{
 			c: NewSync[int](),
 		},
@@ -83,11 +195,15 @@ func Benchmark_Cache_Read_More_Than_Write(b *testing.B) {
 	testCases := []struct {
 		c Interface[int]
 	}{
-		// Case 000 ~336,000 ns/op
+		// Case 000 ~340,000 ns/op
 		{
 			c: NewData[int](),
 		},
-		// Case 001 ~92,500 ns/op
+		// Case 001 ~65,000 ns/op
+		{
+			c: NewSxnc[int](),
+		},
+		// Case 002 ~92,000 ns/op
 		{
 			c: NewSync[int](),
 		},
