@@ -115,7 +115,7 @@ func Test_Cache_String_Read_More_Than_Write(t *testing.T) {
 	}
 }
 
-func Benchmark_String_Cache_Create_And_Escape(b *testing.B) {
+func Benchmark_Cache_String_Create_And_Escape(b *testing.B) {
 	testCases := []struct {
 		c Interface[string, int]
 	}{
@@ -143,7 +143,7 @@ func Benchmark_String_Cache_Create_And_Escape(b *testing.B) {
 	}
 }
 
-func Benchmark_String_Cache_Lifecycle(b *testing.B) {
+func Benchmark_Cache_String_Lifecycle(b *testing.B) {
 	testCases := []struct {
 		c Interface[string, int]
 	}{
@@ -171,7 +171,7 @@ func Benchmark_String_Cache_Lifecycle(b *testing.B) {
 	}
 }
 
-func Benchmark_String_Cache_Ranger(b *testing.B) {
+func Benchmark_Cache_String_Ranger(b *testing.B) {
 	testCases := []struct {
 		c Interface[string, int]
 	}{
@@ -199,7 +199,7 @@ func Benchmark_String_Cache_Ranger(b *testing.B) {
 	}
 }
 
-func Benchmark_String_Cache_Read_More_Than_Write(b *testing.B) {
+func Benchmark_Cache_String_Read_More_Than_Write(b *testing.B) {
 	testCases := []struct {
 		c Interface[string, int]
 	}{

@@ -3,10 +3,12 @@ package stream
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/anubis-game/apiserver/pkg/cache"
 	"github.com/anubis-game/apiserver/pkg/contract/registry"
+	"github.com/anubis-game/apiserver/pkg/envvar"
 	"github.com/anubis-game/apiserver/pkg/schema"
 	"github.com/coder/websocket"
 	"github.com/ethereum/go-ethereum/common"
@@ -19,12 +21,10 @@ type Config struct {
 	// Don is the global channel to signal program termination. If this channel is
 	// closed, then all streaming connections should be terminated gracefully.
 	Don <-chan struct{}
+	//
+	Env envvar.Env
 	// Log is the logger interface for printing structured log messages.
 	Log logger.Interface
-	// Out is the connection timeout that the stream engine should enforce upon
-	// connected clients. All associated onchain and offchain resources must be
-	// released after having served clients successfully for this amount of time.
-	Out time.Duration
 	// Reg is the onchain interface for the Registry smart contract.
 	Reg *registry.Registry
 }
@@ -49,9 +49,6 @@ func New(c Config) *Stream {
 	if c.Log == nil {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Log must not be empty", c)))
 	}
-	if c.Out == 0 {
-		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Out must not be empty", c)))
-	}
 	if c.Reg == nil {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Reg must not be empty", c)))
 	}
@@ -72,16 +69,12 @@ func New(c Config) *Stream {
 		}
 	}
 
-	var txp *cache.Time[uuid.UUID]
-	var wxp *cache.Time[common.Address]
+	// Out is the connection timeout that the stream engine should enforce upon
+	// connected clients. All associated onchain and offchain resources must be
+	// released after having served clients successfully for this amount of time.
+	var out time.Duration
 	{
-		txp = cache.NewTime[uuid.UUID](c.Out)
-		wxp = cache.NewTime[common.Address](c.Out)
-	}
-
-	{
-		go txp.Expire(time.Minute)
-		go wxp.Expire(time.Minute)
+		out = musDur(c.Env.ConnectionTimeout, "s")
 	}
 
 	return &Stream{
@@ -92,8 +85,17 @@ func New(c Config) *Stream {
 		log: c.Log,
 		opt: opt,
 		reg: c.Reg,
-		txp: txp,
+		txp: cache.NewTime[uuid.UUID](out),
 		tok: cache.NewSxnc[uuid.UUID, common.Address](),
-		wxp: wxp,
+		wxp: cache.NewTime[common.Address](out),
 	}
+}
+
+func musDur(str string, uni string) time.Duration {
+	dur, err := time.ParseDuration(strings.ReplaceAll(str, "_", "") + uni)
+	if err != nil {
+		tracer.Panic(err)
+	}
+
+	return dur
 }

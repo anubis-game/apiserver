@@ -117,7 +117,7 @@ func Test_Cache_Address_Read_More_Than_Write(t *testing.T) {
 	}
 }
 
-func Benchmark_Address_Cache_Create_And_Escape(b *testing.B) {
+func Benchmark_Cache_Address_Create_And_Escape(b *testing.B) {
 	testCases := []struct {
 		c Interface[common.Address, int]
 	}{
@@ -145,7 +145,7 @@ func Benchmark_Address_Cache_Create_And_Escape(b *testing.B) {
 	}
 }
 
-func Benchmark_Address_Cache_Lifecycle(b *testing.B) {
+func Benchmark_Cache_Address_Lifecycle(b *testing.B) {
 	testCases := []struct {
 		c Interface[common.Address, int]
 	}{
@@ -173,7 +173,7 @@ func Benchmark_Address_Cache_Lifecycle(b *testing.B) {
 	}
 }
 
-func Benchmark_Address_Cache_Ranger(b *testing.B) {
+func Benchmark_Cache_Address_Ranger(b *testing.B) {
 	testCases := []struct {
 		c Interface[common.Address, int]
 	}{
@@ -201,7 +201,7 @@ func Benchmark_Address_Cache_Ranger(b *testing.B) {
 	}
 }
 
-func Benchmark_Address_Cache_Read_More_Than_Write(b *testing.B) {
+func Benchmark_Cache_Address_Read_More_Than_Write(b *testing.B) {
 	testCases := []struct {
 		c Interface[common.Address, int]
 	}{

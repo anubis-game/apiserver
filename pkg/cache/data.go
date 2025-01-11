@@ -2,8 +2,6 @@ package cache
 
 import "sync"
 
-// TODO if address types perform better, adapt /stream logic
-
 // Data is a typed cache implementation, optimized for simple read-write access
 // patterns.
 type Data[K comparable, V any] struct {
