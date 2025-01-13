@@ -14,15 +14,13 @@ type Time[K comparable] struct {
 	dic map[K]V
 	mut sync.Mutex
 	now func() time.Time
-	ttl time.Duration
 }
 
-func NewTime[K comparable](ttl time.Duration) *Time[K] {
+func NewTime[K comparable]() *Time[K] {
 	return &Time[K]{
 		dic: map[K]V{},
 		mut: sync.Mutex{},
 		now: func() time.Time { return time.Now() },
-		ttl: ttl,
 	}
 }
 
@@ -32,9 +30,9 @@ func (t *Time[K]) Delete(key K) {
 	t.mut.Unlock()
 }
 
-func (t *Time[K]) Ensure(key K, fnc func()) {
+func (t *Time[K]) Ensure(key K, ttl time.Duration, fnc func()) {
 	t.mut.Lock()
-	t.dic[key] = V{Exp: t.now().Add(t.ttl).Unix(), Fnc: fnc}
+	t.dic[key] = V{Exp: t.now().Add(ttl).Unix(), Fnc: fnc}
 	t.mut.Unlock()
 }
 

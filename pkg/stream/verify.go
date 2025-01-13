@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/anubis-game/apiserver/pkg/address"
 	"github.com/anubis-game/apiserver/pkg/contract/aggregator"
 	"github.com/anubis-game/apiserver/pkg/contract/entrypoint"
 	"github.com/anubis-game/apiserver/pkg/contract/registry"
@@ -78,7 +79,7 @@ func (s *Stream) verify(hea []string) (common.Address, error) {
 			// This target address must be the address of the Registry smart contract
 			// that this Guardian is serving. So if the target address and the
 			// Registry address don't match, we try the next transaction, if any.
-			if !bytes.Equal(y.Target.Bytes(), s.reg.Address().Bytes()) {
+			if !address.Equal(y.Target, s.reg.Address()) {
 				continue
 			}
 

@@ -2,29 +2,51 @@ package release
 
 import (
 	"context"
+	"fmt"
+	"time"
 
+	"github.com/anubis-game/apiserver/pkg/contract/registry"
+	"github.com/anubis-game/apiserver/pkg/transaction"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/xh3b4sd/logger"
 	"github.com/xh3b4sd/tracer"
 )
 
-type Release struct {
-	log logger.Logger
+const (
+	TTL = 10 * time.Second
+)
+
+type Config struct {
+	Log logger.Interface
+	Reg *registry.Registry
 }
 
-func New(log logger.Logger) *Release {
+type Release struct {
+	log logger.Interface
+	reg *registry.Registry
+}
+
+func New(c Config) *Release {
+	if c.Log == nil {
+		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Log must not be empty", c)))
+	}
+	if c.Reg == nil {
+		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Reg must not be empty", c)))
+	}
+
 	return &Release{
-		log: log,
+		log: c.Log,
+		reg: c.Reg,
 	}
 }
 
-func (r *Release) Ensure(pac Packet) (Packet, bool) {
+func (r *Release) Ensure(pac Packet) (Packet, common.Address, time.Duration) {
 	var err error
 
-	// TODO return (pac, true) if pac.Timeout (int64) is still in the future
-
-	var req bool
+	var ttl time.Duration
 	{
-		pac, req, err = r.ensure(pac)
+		pac, ttl, err = r.ensure(pac)
 		if err != nil {
 			r.log.Log(
 				context.Background(),
@@ -35,10 +57,44 @@ func (r *Release) Ensure(pac Packet) (Packet, bool) {
 		}
 	}
 
-	return pac, req
+	return pac, pac.Loser, ttl
 }
 
-func (r *Release) ensure(pac Packet) (Packet, bool, error) {
-	// TODO release player
-	return pac, false, nil
+func (r *Release) ensure(pac Packet) (Packet, time.Duration, error) {
+	var err error
+
+	if transaction.Empty(pac.Transaction) {
+		var txn *types.Transaction
+		{
+			txn, err = r.reg.Release(pac.Loser)
+			if err != nil {
+				return pac, TTL, tracer.Mask(err)
+			}
+		}
+
+		{
+			pac.Transaction = txn.Hash()
+		}
+
+		return pac, TTL, nil
+	}
+
+	{
+		_, err = r.reg.Search(pac.Transaction)
+		if registry.IsTransactionNotFoundError(err) {
+			return pac, TTL, nil
+		} else if registry.IsTransactionStillPending(err) {
+			return pac, TTL, nil
+		} else if registry.IsTransactionNotSuccessfulError(err) {
+			{
+				pac.Transaction = common.Hash{}
+			}
+
+			return pac, TTL, tracer.Mask(err)
+		} else if err != nil {
+			return pac, 0, tracer.Mask(err)
+		}
+	}
+
+	return pac, 0, nil
 }

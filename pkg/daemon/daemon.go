@@ -7,6 +7,10 @@ import (
 	"github.com/anubis-game/apiserver/pkg/envvar"
 	"github.com/anubis-game/apiserver/pkg/server"
 	"github.com/anubis-game/apiserver/pkg/stream"
+	"github.com/anubis-game/apiserver/pkg/worker"
+	"github.com/anubis-game/apiserver/pkg/worker/release"
+	"github.com/anubis-game/apiserver/pkg/worker/resolve"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/gorilla/mux"
 	"github.com/xh3b4sd/logger"
 	"github.com/xh3b4sd/tracer"
@@ -21,6 +25,8 @@ type Daemon struct {
 	lis net.Listener
 	log logger.Interface
 	reg *registry.Registry
+	rel *worker.Worker[common.Address, release.Packet]
+	res *worker.Worker[common.Address, resolve.Packet]
 	rtr *mux.Router
 	ser *server.Server
 	str *stream.Stream
@@ -54,6 +60,16 @@ func New(c Config) *Daemon {
 		})
 	}
 
+	var rel *worker.Worker[common.Address, release.Packet]
+	{
+		rel = newRel(c.Don, log, reg)
+	}
+
+	var res *worker.Worker[common.Address, resolve.Packet]
+	{
+		res = newRes(c.Don, log, reg)
+	}
+
 	var rtr *mux.Router
 	{
 		rtr = mux.NewRouter()
@@ -66,6 +82,8 @@ func New(c Config) *Daemon {
 			Env: c.Env,
 			Log: log,
 			Reg: reg,
+			Rel: rel,
+			Res: res,
 		})
 	}
 
@@ -84,8 +102,50 @@ func New(c Config) *Daemon {
 		lis: lis,
 		log: log,
 		reg: reg,
+		rel: rel,
+		res: res,
 		rtr: rtr,
 		ser: ser,
 		str: str,
 	}
+}
+
+func newRel(don <-chan struct{}, log logger.Interface, reg *registry.Registry) *worker.Worker[common.Address, release.Packet] {
+	var rel *release.Release
+	{
+		rel = release.New(release.Config{
+			Log: log,
+			Reg: reg,
+		})
+	}
+
+	var wrk *worker.Worker[common.Address, release.Packet]
+	{
+		wrk = worker.New(worker.Config[common.Address, release.Packet]{
+			Don: don,
+			Ens: rel,
+		})
+	}
+
+	return wrk
+}
+
+func newRes(don <-chan struct{}, log logger.Interface, reg *registry.Registry) *worker.Worker[common.Address, resolve.Packet] {
+	var res *resolve.Resolve
+	{
+		res = resolve.New(resolve.Config{
+			Log: log,
+			Reg: reg,
+		})
+	}
+
+	var wrk *worker.Worker[common.Address, resolve.Packet]
+	{
+		wrk = worker.New(worker.Config[common.Address, resolve.Packet]{
+			Don: don,
+			Ens: res,
+		})
+	}
+
+	return wrk
 }

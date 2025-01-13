@@ -51,7 +51,7 @@ func (s *Stream) client(wal common.Address, con *websocket.Conn) error {
 	}
 
 	{
-		s.wxp.Ensure(wal, func() {
+		s.wxp.Ensure(wal, s.ttl, func() {
 			defer close(exp)
 		})
 	}
