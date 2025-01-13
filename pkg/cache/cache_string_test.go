@@ -31,6 +31,10 @@ func Test_Cache_String_Create_And_Escape(t *testing.T) {
 		{
 			c: NewSync[string, int](),
 		},
+		// Case 003
+		{
+			c: NewCmap[string, int](),
+		},
 	}
 
 	for i, tc := range testCases {
@@ -55,6 +59,10 @@ func Test_Cache_String_Lifecycle(t *testing.T) {
 		// Case 002
 		{
 			c: NewSync[string, int](),
+		},
+		// Case 003
+		{
+			c: NewCmap[string, int](),
 		},
 	}
 
@@ -81,6 +89,10 @@ func Test_Cache_String_Ranger(t *testing.T) {
 		{
 			c: NewSync[string, int](),
 		},
+		// Case 003
+		{
+			c: NewCmap[string, int](),
+		},
 	}
 
 	for i, tc := range testCases {
@@ -106,11 +118,44 @@ func Test_Cache_String_Read_More_Than_Write(t *testing.T) {
 		{
 			c: NewSync[string, int](),
 		},
+		// Case 003
+		{
+			c: NewCmap[string, int](),
+		},
 	}
 
 	for i, tc := range testCases {
 		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
 			readMoreThanWrite(t, tc.c, stringKeys)
+		})
+	}
+}
+
+func Test_Cache_String_Exists(t *testing.T) {
+	testCases := []struct {
+		c Interface[string, int]
+	}{
+		// Case 000
+		{
+			c: NewData[string, int](),
+		},
+		// Case 001
+		{
+			c: NewSxnc[string, int](),
+		},
+		// Case 002
+		{
+			c: NewSync[string, int](),
+		},
+		// Case 003
+		{
+			c: NewCmap[string, int](),
+		},
+	}
+
+	for i, tc := range testCases {
+		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
+			exists(t, tc.c, stringKeys)
 		})
 	}
 }
@@ -130,6 +175,10 @@ func Benchmark_Cache_String_Create_And_Escape(b *testing.B) {
 		// Case 002 ~270 ns/op
 		{
 			c: NewSync[string, int](),
+		},
+		// Case 003 ~332 ns/op
+		{
+			c: NewCmap[string, int](),
 		},
 	}
 
@@ -159,6 +208,10 @@ func Benchmark_Cache_String_Lifecycle(b *testing.B) {
 		{
 			c: NewSync[string, int](),
 		},
+		// Case 003 ~918 ns/op
+		{
+			c: NewCmap[string, int](),
+		},
 	}
 
 	for i, tc := range testCases {
@@ -186,6 +239,10 @@ func Benchmark_Cache_String_Ranger(b *testing.B) {
 		// Case 002 ~1000 ns/op
 		{
 			c: NewSync[string, int](),
+		},
+		// Case 003 ~950 ns/op
+		{
+			c: NewCmap[string, int](),
 		},
 	}
 
@@ -215,6 +272,10 @@ func Benchmark_Cache_String_Read_More_Than_Write(b *testing.B) {
 		{
 			c: NewSync[string, int](),
 		},
+		// Case 003 ~1,522,000 ns/op
+		{
+			c: NewCmap[string, int](),
+		},
 	}
 
 	for i, tc := range testCases {
@@ -222,6 +283,38 @@ func Benchmark_Cache_String_Read_More_Than_Write(b *testing.B) {
 			b.ResetTimer()
 			for i := 0; i < b.N; i++ {
 				readMoreThanWrite(b, tc.c, stringKeys)
+			}
+		})
+	}
+}
+
+func Benchmark_Cache_String_Exists(b *testing.B) {
+	testCases := []struct {
+		c Interface[string, int]
+	}{
+		// Case 000 ~155 ns/op
+		{
+			c: NewData[string, int](),
+		},
+		// Case 001 ~144 ns/op
+		{
+			c: NewSxnc[string, int](),
+		},
+		// Case 002 ~229 ns/op
+		{
+			c: NewSync[string, int](),
+		},
+		// Case 003 ~335 ns/op
+		{
+			c: NewCmap[string, int](),
+		},
+	}
+
+	for i, tc := range testCases {
+		b.Run(fmt.Sprintf("%03d", i), func(b *testing.B) {
+			b.ResetTimer()
+			for i := 0; i < b.N; i++ {
+				exists(b, tc.c, stringKeys)
 			}
 		})
 	}

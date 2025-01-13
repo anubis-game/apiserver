@@ -1,80 +1,100 @@
 package worker
 
-type Config[P any] struct {
+import (
+	"runtime"
+	"time"
+
+	"github.com/anubis-game/apiserver/pkg/cache"
+)
+
+type Config[K comparable, P any] struct {
 	Don <-chan struct{}
-	Ens Ensure[P]
+	Ens Ensure[K, P]
 }
 
-type Worker[P any] struct {
+type Worker[K comparable, P any] struct {
 	don <-chan struct{}
-	ens Ensure[P]
+	ens Ensure[K, P]
 	que chan P
+	req *cache.Time[K]
 	sem chan struct{}
 }
 
-func NewWorker[P any](c Config[P]) *Worker[P] {
-	return &Worker[P]{
+func New[K comparable, P any](c Config[K, P]) *Worker[K, P] {
+	return &Worker[K, P]{
 		don: c.Don,
 		ens: c.Ens,
 		que: make(chan P, 1000),
-		sem: make(chan struct{}, 10),
+		req: cache.NewTime[K](),
+		sem: make(chan struct{}, runtime.NumCPU()),
 	}
 }
 
-func (w *Worker[P]) Create(pac P) {
-	w.que <- pac
+func (o *Worker[K, P]) Create(pac P) {
+	o.que <- pac
 }
 
-func (w *Worker[P]) Daemon() {
+func (o *Worker[K, P]) Daemon() {
+	// Setup the re-queue cache to check all expiration callbacks every so often.
+	{
+		go o.req.Expire(time.Second)
+	}
+
 	for {
 		select {
-		case <-w.don:
+		case <-o.don:
 			// The injected global done channel may signal a program shutdown. In that
 			// case we are not accepting any new packets anymore. Once the global done
 			// channel got closed, we simply return. Note that there is an option to
 			// explicitly wait for the last packets to be processed, if the worker
 			// daemon were to be synchronously integrated as a blocking element.
 			//
-			//     for len(w.sem) > 0 {
+			//     for len(o.sem) > 0 {
 			//       time.Sleep(500 * time.Millisecond)
 			//     }
 			//
 			//     {
-			//       close(w.sem)
+			//       close(o.sem)
 			//     }
 			//
 			return
-		case x := <-w.que:
+		case x := <-o.que:
 			// The semaphore controls the amount of workers that are allowed to
 			// process packets at the same time. Every time we receive a packet, we
 			// push a ticket into the semaphore before doing the work.
-			w.sem <- struct{}{}
+			{
+				o.sem <- struct{}{}
+			}
 
 			// A new goroutine is created for every piece of work. That way we can
 			// work on packets in parallel. Note that the received packet must be
 			// injected into the goroutine as an argument, in order to work on the
 			// exact packet that we received in this asynchronous environment.
 			go func(pac P) {
-				// Ensure we remove our ticket from the semaphore once all work was
-				// completed.
-				defer func() {
-					<-w.sem
-				}()
-
 				// Forward the current packet to the configured router and wait for the
-				// work to be done. The boolean returned will indicate whether the
-				// processed packet ought to be processed once more.
-				var req bool
+				// work to be done. The timeout returned will indicate whether the
+				// processed packet ought to be processed once more. If no timeout is
+				// returned, then the given packet is considered processed successfully.
+				var key K
+				var ttl time.Duration
 				{
-					pac, req = w.ens.Ensure(pac)
+					pac, key, ttl = o.ens.Ensure(pac)
 				}
 
 				// Once a packet was processed, we may receive the instruction to
 				// requeue that task. In that case, we add the given packet back to the
-				// end of the queue, for it to be processed again, until it concludes
-				// successfully eventually.
-				if req {
-					w.que <- pac
+				// end of the queue once the given timeout passed, for the given packet
+				// to be processed again.
+				if ttl != 0 {
+					o.req.Ensure(key, ttl, func() {
+						o.que <- pac
+					})
+				}
+
+				// Ensure we remove our ticket from the semaphore once all work was
+				// completed.
+				{
+					<-o.sem
 				}
 			}(x)
 		}

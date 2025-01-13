@@ -3,6 +3,7 @@ package cache
 import (
 	"reflect"
 	"sync"
+	"time"
 )
 
 type testKeys[T comparable] struct {
@@ -300,10 +301,41 @@ func ranger[K comparable, V int](t Testing, c Interface[K, V], k testKeys[K]) {
 		}
 	}
 
-	act := make(map[K]V)
+	var wai sync.WaitGroup
+	{
+		wai.Add(3)
+	}
+
+	var foo V
+	var bar V
+	var baz V
 	c.Ranger(func(key K, val V) {
-		act[key] = val
+		if key == k.Foo {
+			foo = val
+		}
+		if key == k.Bar {
+			bar = val
+		}
+		if key == k.Baz {
+			baz = val
+		}
+		{
+			time.Sleep(time.Microsecond)
+		}
+		{
+			wai.Done()
+		}
 	})
+
+	{
+		wai.Wait()
+	}
+
+	act := map[K]V{
+		k.Foo: foo,
+		k.Bar: bar,
+		k.Baz: baz,
+	}
 
 	if !reflect.DeepEqual(act, exp) {
 		t.Fatal("expected", exp, "got", act)
@@ -449,4 +481,58 @@ func readMoreThanWrite[K comparable, V int](t Testing, c Interface[K, V], k test
 	}()
 
 	w.Wait()
+}
+
+func exists[K comparable, V int](t Testing, c Interface[K, V], k testKeys[K]) {
+	{
+		exi := c.Exists(k.Foo)
+		if exi {
+			t.Fatal("expected", false, "got", true)
+		}
+	}
+
+	{
+		exi := c.Exists(k.Bar)
+		if exi {
+			t.Fatal("expected", false, "got", true)
+		}
+	}
+
+	{
+		c.Update(k.Foo, 33)
+		c.Update(k.Bar, 47)
+	}
+
+	{
+		exi := c.Exists(k.Foo)
+		if !exi {
+			t.Fatal("expected", true, "got", false)
+		}
+	}
+
+	{
+		exi := c.Exists(k.Bar)
+		if !exi {
+			t.Fatal("expected", true, "got", false)
+		}
+	}
+
+	{
+		c.Delete(k.Foo)
+		c.Delete(k.Bar)
+	}
+
+	{
+		exi := c.Exists(k.Foo)
+		if exi {
+			t.Fatal("expected", false, "got", true)
+		}
+	}
+
+	{
+		exi := c.Exists(k.Bar)
+		if exi {
+			t.Fatal("expected", false, "got", true)
+		}
+	}
 }

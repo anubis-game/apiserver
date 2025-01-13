@@ -28,7 +28,7 @@ func (c *Registry) Search(hsh common.Hash) (*types.Transaction, error) {
 	// included in a block. So as long as the provided transaction is still
 	// pending, we reject it.
 	if pen {
-		return nil, tracer.Maskf(transactionNotSuccessfulError, "%s", hsh)
+		return nil, tracer.Maskf(transactionStillPendingError, "%s", hsh)
 	}
 
 	var rec *types.Receipt

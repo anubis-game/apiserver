@@ -10,6 +10,9 @@ import (
 	"github.com/anubis-game/apiserver/pkg/contract/registry"
 	"github.com/anubis-game/apiserver/pkg/envvar"
 	"github.com/anubis-game/apiserver/pkg/schema"
+	"github.com/anubis-game/apiserver/pkg/worker"
+	"github.com/anubis-game/apiserver/pkg/worker/release"
+	"github.com/anubis-game/apiserver/pkg/worker/resolve"
 	"github.com/coder/websocket"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/google/uuid"
@@ -27,6 +30,10 @@ type Config struct {
 	Log logger.Interface
 	// Reg is the onchain interface for the Registry smart contract.
 	Reg *registry.Registry
+	//
+	Rel worker.Create[release.Packet]
+	//
+	Res worker.Create[resolve.Packet]
 }
 
 type Stream struct {
@@ -37,6 +44,12 @@ type Stream struct {
 	log logger.Interface
 	opt *websocket.AcceptOptions
 	reg *registry.Registry
+	rel worker.Create[release.Packet]
+	res worker.Create[resolve.Packet]
+	// ttl is the connection timeout that the stream engine should enforce upon
+	// connected clients. All associated onchain and offchain resources must be
+	// released after having served clients successfully for this amount of time.
+	ttl time.Duration
 	txp *cache.Time[uuid.UUID]
 	tok cache.Interface[uuid.UUID, common.Address]
 	wxp *cache.Time[common.Address]
@@ -51,6 +64,12 @@ func New(c Config) *Stream {
 	}
 	if c.Reg == nil {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Reg must not be empty", c)))
+	}
+	if c.Rel == nil {
+		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Rel must not be empty", c)))
+	}
+	if c.Res == nil {
+		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Res must not be empty", c)))
 	}
 
 	var ctx context.Context
@@ -69,25 +88,20 @@ func New(c Config) *Stream {
 		}
 	}
 
-	// Out is the connection timeout that the stream engine should enforce upon
-	// connected clients. All associated onchain and offchain resources must be
-	// released after having served clients successfully for this amount of time.
-	var out time.Duration
-	{
-		out = musDur(c.Env.ConnectionTimeout, "s")
-	}
-
 	return &Stream{
-		cli: cache.NewSxnc[common.Address, Client](),
+		cli: cache.NewPool[common.Address, Client](),
 		ctx: ctx,
 		don: c.Don,
 		ind: cache.NewSxnc[common.Address, uuid.UUID](),
 		log: c.Log,
 		opt: opt,
 		reg: c.Reg,
-		txp: cache.NewTime[uuid.UUID](out),
+		rel: c.Rel,
+		res: c.Res,
+		ttl: musDur(c.Env.ConnectionTimeout, "s"),
+		txp: cache.NewTime[uuid.UUID](),
 		tok: cache.NewSxnc[uuid.UUID, common.Address](),
-		wxp: cache.NewTime[common.Address](out),
+		wxp: cache.NewTime[common.Address](),
 	}
 }
 

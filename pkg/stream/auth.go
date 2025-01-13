@@ -58,7 +58,7 @@ func (s *Stream) auth(con *websocket.Conn, wal common.Address) error {
 	}
 
 	{
-		s.txp.Ensure(tok, func() {
+		s.txp.Ensure(tok, s.ttl, func() {
 			s.tok.Delete(tok)
 			s.ind.Delete(wal)
 		})
