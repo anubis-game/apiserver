@@ -30,40 +30,40 @@ func New[K comparable, P any](c Config[K, P]) *Worker[K, P] {
 	}
 }
 
-func (o *Worker[K, P]) Create(pac P) {
-	o.que <- pac
+func (w *Worker[K, P]) Create(pac P) {
+	w.que <- pac
 }
 
-func (o *Worker[K, P]) Daemon() {
+func (w *Worker[K, P]) Daemon() {
 	// Setup the re-queue cache to check all expiration callbacks every so often.
 	{
-		go o.req.Expire(time.Second)
+		go w.req.Expire(time.Second)
 	}
 
 	for {
 		select {
-		case <-o.don:
+		case <-w.don:
 			// The injected global done channel may signal a program shutdown. In that
 			// case we are not accepting any new packets anymore. Once the global done
 			// channel got closed, we simply return. Note that there is an option to
 			// explicitly wait for the last packets to be processed, if the worker
 			// daemon were to be synchronously integrated as a blocking element.
 			//
-			//     for len(o.sem) > 0 {
+			//     for len(w.sem) > 0 {
 			//       time.Sleep(500 * time.Millisecond)
 			//     }
 			//
 			//     {
-			//       close(o.sem)
+			//       close(w.sem)
 			//     }
 			//
 			return
-		case x := <-o.que:
+		case x := <-w.que:
 			// The semaphore controls the amount of workers that are allowed to
 			// process packets at the same time. Every time we receive a packet, we
 			// push a ticket into the semaphore before doing the work.
 			{
-				o.sem <- struct{}{}
+				w.sem <- struct{}{}
 			}
 
 			// A new goroutine is created for every piece of work. That way we can
@@ -78,7 +78,7 @@ func (o *Worker[K, P]) Daemon() {
 				var key K
 				var ttl time.Duration
 				{
-					pac, key, ttl = o.ens.Ensure(pac)
+					pac, key, ttl = w.ens.Ensure(pac)
 				}
 
 				// Once a packet was processed, we may receive the instruction to
@@ -86,15 +86,15 @@ func (o *Worker[K, P]) Daemon() {
 				// end of the queue once the given timeout passed, for the given packet
 				// to be processed again.
 				if ttl != 0 {
-					o.req.Ensure(key, ttl, func() {
-						o.que <- pac
+					w.req.Ensure(key, ttl, func() {
+						w.que <- pac
 					})
 				}
 
 				// Ensure we remove our ticket from the semaphore once all work was
 				// completed.
 				{
-					<-o.sem
+					<-w.sem
 				}
 			}(x)
 		}
