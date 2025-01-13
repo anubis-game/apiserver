@@ -6,9 +6,7 @@ import (
 	"time"
 
 	"github.com/anubis-game/apiserver/pkg/contract/registry"
-	"github.com/anubis-game/apiserver/pkg/transaction"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/xh3b4sd/logger"
 	"github.com/xh3b4sd/tracer"
 )
@@ -62,40 +60,41 @@ func (r *Resolve) Ensure(pac Packet) (Packet, common.Address, time.Duration) {
 
 // TODO abstract the reconciliation away for transactions
 func (r *Resolve) ensure(pac Packet) (Packet, time.Duration, error) {
-	var err error
+	// var err error
 
-	if transaction.Empty(pac.Transaction) {
-		var txn *types.Transaction
-		{
-			txn, err = r.reg.Resolve(pac.Kill, pac.Winner, pac.Loser)
-			if err != nil {
-				return pac, TTL, tracer.Mask(err)
-			}
-		}
+	// if transaction.Empty(pac.Transaction) {
+	// 	var txn *types.Transaction
+	// 	{
+	// 		txn, err = r.reg.Resolve(pac.Kill, pac.Winner, pac.Loser)
+	// 		if err != nil {
+	// 			return pac, TTL, tracer.Mask(err)
+	// 		}
+	// 	}
 
-		{
-			pac.Transaction = txn.Hash()
-		}
+	// 	{
+	// 		pac.Transaction = txn.Hash()
+	// 	}
 
-		return pac, TTL, nil
-	}
+	// 	return pac, TTL, nil
+	// }
 
-	{
-		_, err = r.reg.Search(pac.Transaction)
-		if registry.IsTransactionNotFoundError(err) {
-			return pac, TTL, nil
-		} else if registry.IsTransactionStillPending(err) {
-			return pac, TTL, nil
-		} else if registry.IsTransactionNotSuccessfulError(err) {
-			{
-				pac.Transaction = common.Hash{}
-			}
+	// {
+	// 	_, err = r.reg.Search(pac.Transaction)
+	// 	if registry.IsTransactionNotFoundError(err) {
+	// 		return pac, TTL, nil
+	// 	} else if registry.IsTransactionStillPending(err) {
+	// 		return pac, TTL, nil
+	// 	} else if registry.IsTransactionNotSuccessfulError(err) {
+	// 		{
+	// 			pac.Transaction = common.Hash{}
+	// 		}
 
-			return pac, TTL, tracer.Mask(err)
-		} else if err != nil {
-			return pac, 0, tracer.Mask(err)
-		}
-	}
+	// 		return pac, TTL, tracer.Mask(err)
+	// 	} else if err != nil {
+	// 		return pac, 0, tracer.Mask(err)
+	// 	}
+	// }
 
+	fmt.Printf("RESOLVE %#v\n", pac)
 	return pac, 0, nil
 }

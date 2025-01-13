@@ -1,14 +1,14 @@
 package stream
 
 import (
+	"github.com/anubis-game/apiserver/pkg/client"
 	"github.com/anubis-game/apiserver/pkg/schema"
-	"github.com/coder/websocket"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/google/uuid"
 	"github.com/xh3b4sd/tracer"
 )
 
-func (s *Stream) auth(con *websocket.Conn, wal common.Address) error {
+func (s *Stream) auth(wal common.Address, cli *client.Client, _ []byte) error {
 	var err error
 
 	// Create a new session token using V4 UUIDs for the requesting Wallet
@@ -67,16 +67,13 @@ func (s *Stream) auth(con *websocket.Conn, wal common.Address) error {
 	// Encode the auth response and send the new session token back to the client
 	// connection that requested this new credential.
 
-	var byt []byte
+	var out []byte
 	{
-		byt = schema.Encode(schema.Auth, []byte(tok.String()))
+		out = schema.Encode(schema.Auth, []byte(tok.String()))
 	}
 
 	{
-		err = con.Write(s.ctx, websocket.MessageBinary, byt)
-		if err != nil {
-			return tracer.Mask(err)
-		}
+		cli.Stream(out)
 	}
 
 	return nil

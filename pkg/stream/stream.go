@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/anubis-game/apiserver/pkg/cache"
+	"github.com/anubis-game/apiserver/pkg/client"
 	"github.com/anubis-game/apiserver/pkg/contract/registry"
 	"github.com/anubis-game/apiserver/pkg/envvar"
 	"github.com/anubis-game/apiserver/pkg/schema"
@@ -37,7 +38,7 @@ type Config struct {
 }
 
 type Stream struct {
-	cli cache.Interface[common.Address, Client]
+	cli cache.Interface[common.Address, *client.Client]
 	ctx context.Context
 	don <-chan struct{}
 	ind cache.Interface[common.Address, uuid.UUID]
@@ -89,7 +90,7 @@ func New(c Config) *Stream {
 	}
 
 	return &Stream{
-		cli: cache.NewPool[common.Address, Client](),
+		cli: cache.NewPool[common.Address, *client.Client](),
 		ctx: ctx,
 		don: c.Don,
 		ind: cache.NewSxnc[common.Address, uuid.UUID](),
