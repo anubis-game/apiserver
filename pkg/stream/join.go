@@ -7,12 +7,15 @@ import (
 )
 
 func (s *Stream) join(wal common.Address, cli *client.Client, _ []byte) error {
-	// At first we want to check whether the given Wallet address is already part
-	// of the braodcasting worker pool, because we do not want to do unnecessary
-	// work.
+	// Upon joining, we add the user to the broadcasting worker pool in order to
+	// provide them with realtime data primitives over the given client
+	// connection. We are using cache.Interface.Create here, because we want to
+	// check whether the given Wallet address is already part of the broadcasting
+	// worker pool. If it is, then we do not want to do unnecessary work, and
+	// instead return early.
 
 	{
-		exi := s.cli.Exists(wal)
+		exi := s.cli.Create(wal, cli)
 		if exi {
 			s.log.Log(
 				s.ctx,
@@ -23,14 +26,6 @@ func (s *Stream) join(wal common.Address, cli *client.Client, _ []byte) error {
 
 			return nil
 		}
-	}
-
-	// Upon joining, we add the user to the broadcasting system in order to
-	// provide them with realtime data primitives over the given client
-	// connection.
-
-	{
-		s.cli.Update(wal, cli)
 	}
 
 	var out []byte
