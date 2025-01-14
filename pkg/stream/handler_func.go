@@ -43,6 +43,13 @@ func (s *Stream) HandlerFunc(w http.ResponseWriter, r *http.Request) error {
 		return tracer.Maskf(protocolMethodInvalidError, "%s", hea[0])
 	}
 
+	{
+		exi := s.cli.Exists(wal)
+		if exi {
+			return tracer.Mask(walletAddressRegisteredError)
+		}
+	}
+
 	var con *websocket.Conn
 	{
 		con, err = websocket.Accept(w, r, s.opt)

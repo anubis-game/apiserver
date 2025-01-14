@@ -1,58 +1,28 @@
 package stream
 
 import (
+	"github.com/anubis-game/apiserver/pkg/client"
 	"github.com/anubis-game/apiserver/pkg/schema"
 	"github.com/coder/websocket"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/xh3b4sd/tracer"
 )
 
-type Client struct {
-	Close func()
-	Write func([]byte)
-}
-
 func (s *Stream) client(wal common.Address, con *websocket.Conn) error {
-	var clo chan struct{}
-	var exp chan struct{}
-	var rea chan struct{}
-	var wri chan struct{}
+	var cli *client.Client
 	{
-		clo = make(chan struct{})
-		exp = make(chan struct{})
-		rea = make(chan struct{})
-		wri = make(chan struct{})
+		cli = client.New(client.Config{
+			Con: con,
+			Ctx: s.ctx,
+		})
 	}
 
-	var cli Client
-	{
-		cli = Client{
-			Close: func() {
-				close(clo)
-			},
-			Write: func(byt []byte) {
-				err := con.Write(s.ctx, websocket.MessageBinary, byt)
-				if err != nil {
-					close(wri)
-				}
-			},
-		}
-	}
-
-	// The first functional step in our connection management is to associate the
-	// user's client connection with their verified Wallet address. Creating this
-	// association adds the user to the system and provides them with realtime
-	// data primitives over the given client connection. With setting up the
-	// client connection, we also setup an expiration callback in order to limit
-	// the connection lifetime of every client.
-
-	{
-		s.cli.Update(wal, cli)
-	}
+	// With setting up the client connection, we also setup an expiration callback
+	// in order to limit the connection lifetime of every client.
 
 	{
 		s.wxp.Ensure(wal, s.ttl, func() {
-			defer close(exp)
+			defer close(cli.Expiry())
 		})
 	}
 
@@ -61,7 +31,7 @@ func (s *Stream) client(wal common.Address, con *websocket.Conn) error {
 
 	go func() {
 		{
-			defer close(rea)
+			defer close(cli.Reader())
 		}
 
 		for {
@@ -77,18 +47,27 @@ func (s *Stream) client(wal common.Address, con *websocket.Conn) error {
 
 			switch schema.Action(byt[0]) {
 			case schema.Ping:
-				err = s.ping(con)
+				err = s.ping(wal, cli, byt)
 			case schema.Auth:
-				err = s.auth(con, wal)
+				err = s.auth(wal, cli, byt)
+			case schema.Join:
+				err = s.join(wal, cli, byt)
 			case schema.Cast:
-				err = s.cast(byt)
+				err = s.cast(wal, cli, byt) // TODO we should not allow anyone to just cast anything to everyone
 			case schema.Move:
 				// TODO
 			case schema.Kill:
-				// TODO
+				err = s.kill(wal, cli, byt)
 			}
 
 			if err != nil {
+				s.log.Log(
+					s.ctx,
+					"level", "error",
+					"message", err.Error(),
+					"stack", tracer.Stack(err),
+				)
+
 				return
 			}
 		}
@@ -100,10 +79,9 @@ func (s *Stream) client(wal common.Address, con *websocket.Conn) error {
 	// internal references.
 
 	select {
-	case <-clo:
-	case <-exp:
-	case <-rea:
-	case <-wri:
+	case <-cli.Expiry():
+	case <-cli.Reader():
+	case <-cli.Writer():
 	case <-s.don:
 	}
 

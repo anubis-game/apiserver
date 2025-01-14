@@ -142,13 +142,6 @@ func (s *Stream) verify(hea []string) (common.Address, error) {
 				return common.Address{}, tracer.Maskf(signerAddressMatchError, "%s != %s", si1.Hex(), si2.Hex())
 			}
 
-			{
-				exi := s.cli.Exists(wal)
-				if exi {
-					return common.Address{}, tracer.Mask(walletAddressRegisteredError)
-				}
-			}
-
 			// The dual-handshake is valid. We have proven that the returned address
 			// represents the user's Wallet address.
 			return wal, nil

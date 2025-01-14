@@ -1,19 +1,18 @@
 package stream
 
 import (
+	"github.com/anubis-game/apiserver/pkg/client"
 	"github.com/anubis-game/apiserver/pkg/schema"
-	"github.com/coder/websocket"
-	"github.com/xh3b4sd/tracer"
+	"github.com/ethereum/go-ethereum/common"
 )
 
-func (s *Stream) ping(con *websocket.Conn) error {
-	var err error
+var (
+	pong = []byte{byte(schema.Pong)}
+)
 
+func (s *Stream) ping(_ common.Address, cli *client.Client, _ []byte) error {
 	{
-		err = con.Write(s.ctx, websocket.MessageBinary, []byte{byte(schema.Pong)})
-		if err != nil {
-			return tracer.Mask(err)
-		}
+		cli.Stream(pong)
 	}
 
 	return nil
