@@ -58,16 +58,6 @@ func (d *Cmap[K, V]) Exists(key K) bool {
 	return exi
 }
 
-// Length returns the amount of key-value pairs currently maintained in the
-// underlying cache.
-func (d *Cmap[K, V]) Length() int {
-	d.chn <- struct{}{}
-	siz := len(d.dic)
-	<-d.chn
-
-	return siz
-}
-
 // Ranger executes the given callback for every key-value pair in the underlying
 // cache. Ranger uses a read-lock.
 func (d *Cmap[K, V]) Ranger(fnc func(K, V)) {
@@ -96,4 +86,14 @@ func (d *Cmap[K, V]) Update(key K, val V) {
 	d.chn <- struct{}{}
 	d.dic[key] = val
 	<-d.chn
+}
+
+// length returns the amount of key-value pairs currently maintained in the
+// underlying cache.
+func (d *Cmap[K, V]) length() int { // nolint:unused
+	d.chn <- struct{}{}
+	siz := len(d.dic)
+	<-d.chn
+
+	return siz
 }

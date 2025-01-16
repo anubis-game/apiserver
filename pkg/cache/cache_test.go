@@ -16,7 +16,7 @@ type testKeys[T comparable] struct {
 
 func createAndEscape[K comparable, V int](t Testing, c Interface[K, V], k testKeys[K]) {
 	{
-		siz := c.Length()
+		siz := c.length()
 		if siz != 0 {
 			t.Fatal("expected", 0, "got", siz)
 		}
@@ -37,7 +37,7 @@ func createAndEscape[K comparable, V int](t Testing, c Interface[K, V], k testKe
 	}
 
 	{
-		siz := c.Length()
+		siz := c.length()
 		if siz != 1 {
 			t.Fatal("expected", 1, "got", siz)
 		}
@@ -68,7 +68,7 @@ func createAndEscape[K comparable, V int](t Testing, c Interface[K, V], k testKe
 	}
 
 	{
-		siz := c.Length()
+		siz := c.length()
 		if siz != 0 {
 			t.Fatal("expected", 0, "got", siz)
 		}
@@ -82,7 +82,7 @@ func createAndEscape[K comparable, V int](t Testing, c Interface[K, V], k testKe
 	}
 
 	{
-		siz := c.Length()
+		siz := c.length()
 		if siz != 0 {
 			t.Fatal("expected", 0, "got", siz)
 		}
@@ -91,7 +91,7 @@ func createAndEscape[K comparable, V int](t Testing, c Interface[K, V], k testKe
 
 func lifecycle[K comparable, V int](t Testing, c Interface[K, V], k testKeys[K]) {
 	{
-		siz := c.Length()
+		siz := c.length()
 		if siz != 0 {
 			t.Fatal("expected", 0, "got", siz)
 		}
@@ -103,7 +103,7 @@ func lifecycle[K comparable, V int](t Testing, c Interface[K, V], k testKeys[K])
 	}
 
 	{
-		siz := c.Length()
+		siz := c.length()
 		if siz != 2 {
 			t.Fatal("expected", 2, "got", siz)
 		}
@@ -156,7 +156,7 @@ func lifecycle[K comparable, V int](t Testing, c Interface[K, V], k testKeys[K])
 	}
 
 	{
-		siz := c.Length()
+		siz := c.length()
 		if siz != 2 {
 			t.Fatal("expected", 2, "got", siz)
 		}
@@ -209,7 +209,7 @@ func lifecycle[K comparable, V int](t Testing, c Interface[K, V], k testKeys[K])
 	}
 
 	{
-		siz := c.Length()
+		siz := c.length()
 		if siz != 1 {
 			t.Fatal("expected", 1, "got", siz)
 		}
@@ -258,7 +258,7 @@ func lifecycle[K comparable, V int](t Testing, c Interface[K, V], k testKeys[K])
 	}
 
 	{
-		siz := c.Length()
+		siz := c.length()
 		if siz != 1 {
 			t.Fatal("expected", 1, "got", siz)
 		}
@@ -269,7 +269,7 @@ func lifecycle[K comparable, V int](t Testing, c Interface[K, V], k testKeys[K])
 	}
 
 	{
-		siz := c.Length()
+		siz := c.length()
 		if siz != 0 {
 			t.Fatal("expected", 0, "got", siz)
 		}
@@ -278,7 +278,7 @@ func lifecycle[K comparable, V int](t Testing, c Interface[K, V], k testKeys[K])
 
 func ranger[K comparable, V int](t Testing, c Interface[K, V], k testKeys[K]) {
 	{
-		siz := c.Length()
+		siz := c.length()
 		if siz != 0 {
 			t.Fatal("expected", 0, "got", siz)
 		}
@@ -295,7 +295,7 @@ func ranger[K comparable, V int](t Testing, c Interface[K, V], k testKeys[K]) {
 	}
 
 	{
-		siz := c.Length()
+		siz := c.length()
 		if siz != 3 {
 			t.Fatal("expected", 3, "got", siz)
 		}
@@ -346,7 +346,7 @@ func ranger[K comparable, V int](t Testing, c Interface[K, V], k testKeys[K]) {
 	}
 
 	{
-		siz := c.Length()
+		siz := c.length()
 		if siz != 0 {
 			t.Fatal("expected", 0, "got", siz)
 		}

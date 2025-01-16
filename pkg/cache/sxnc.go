@@ -44,12 +44,6 @@ func (d *Sxnc[K, V]) Exists(key K) bool {
 	return exi
 }
 
-// Length returns the amount of key-value pairs currently maintained in the
-// underlying cache. Length uses xsync.MapOf's Size.
-func (d *Sxnc[K, V]) Length() int {
-	return d.dic.Size()
-}
-
 // Ranger executes the given callback for every key-value pair in the underlying
 // cache. Ranger uses xsync.MapOf's Range.
 func (d *Sxnc[K, V]) Ranger(fnc func(K, V)) {
@@ -69,4 +63,10 @@ func (d *Sxnc[K, V]) Search(key K) (V, bool) {
 // existed before. Update uses xsync.MapOf's Store.
 func (d *Sxnc[K, V]) Update(key K, val V) {
 	d.dic.Store(key, val)
+}
+
+// length returns the amount of key-value pairs currently maintained in the
+// underlying cache. length uses xsync.MapOf's Size.
+func (d *Sxnc[K, V]) length() int { // nolint:unused
+	return d.dic.Size()
 }

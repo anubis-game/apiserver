@@ -21,6 +21,12 @@ import (
 	"github.com/xh3b4sd/tracer"
 )
 
+const (
+	// max is the maximum amount of concurrent client connections accepted by the
+	// stream engine.
+	max = 500
+)
+
 type Config struct {
 	// Don is the global channel to signal program termination. If this channel is
 	// closed, then all streaming connections should be terminated gracefully.
@@ -47,6 +53,7 @@ type Stream struct {
 	reg *registry.Registry
 	rel worker.Create[release.Packet]
 	res worker.Create[resolve.Packet]
+	sem chan struct{}
 	// ttl is the connection timeout that the stream engine should enforce upon
 	// connected clients. All associated onchain and offchain resources must be
 	// released after having served clients successfully for this amount of time.
@@ -99,6 +106,7 @@ func New(c Config) *Stream {
 		reg: c.Reg,
 		rel: c.Rel,
 		res: c.Res,
+		sem: make(chan struct{}, max),
 		ttl: musDur(c.Env.ConnectionTimeout, "s"),
 		txp: cache.NewTime[uuid.UUID](),
 		tok: cache.NewSxnc[uuid.UUID, common.Address](),

@@ -61,16 +61,6 @@ func (d *Data[K, V]) Exists(key K) bool {
 	return exi
 }
 
-// Length returns the amount of key-value pairs currently maintained in the
-// underlying cache.
-func (d *Data[K, V]) Length() int {
-	d.mut.RLock()
-	siz := len(d.dic)
-	d.mut.RUnlock()
-
-	return siz
-}
-
 // Ranger executes the given callback for every key-value pair in the underlying
 // cache. Ranger uses a read-lock.
 func (d *Data[K, V]) Ranger(fnc func(K, V)) {
@@ -99,4 +89,14 @@ func (d *Data[K, V]) Update(key K, val V) {
 	d.mut.Lock()
 	d.dic[key] = val
 	d.mut.Unlock()
+}
+
+// length returns the amount of key-value pairs currently maintained in the
+// underlying cache.
+func (d *Data[K, V]) length() int { // nolint:unused
+	d.mut.RLock()
+	siz := len(d.dic)
+	d.mut.RUnlock()
+
+	return siz
 }

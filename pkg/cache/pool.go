@@ -49,12 +49,6 @@ func (p *Pool[K, V]) Exists(key K) bool {
 	return exi
 }
 
-// Length returns the amount of key-value pairs currently maintained in the
-// underlying cache. Length uses xsync.MapOf's Size.
-func (p *Pool[K, V]) Length() int {
-	return p.dic.Size()
-}
-
 // Ranger executes the given callback for every key-value pair in the underlying
 // cache. Ranger uses xsync.MapOf's Range. The given callback is executed
 // concurrently using a semaphore pattern.
@@ -101,4 +95,10 @@ func (p *Pool[K, V]) Search(key K) (V, bool) {
 // existed before. Update uses xsync.MapOf's Store.
 func (p *Pool[K, V]) Update(key K, val V) {
 	p.dic.Store(key, val)
+}
+
+// length returns the amount of key-value pairs currently maintained in the
+// underlying cache. length uses xsync.MapOf's Size.
+func (p *Pool[K, V]) length() int { // nolint:unused
+	return p.dic.Size()
 }
