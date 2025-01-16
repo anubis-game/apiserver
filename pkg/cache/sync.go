@@ -45,19 +45,6 @@ func (d *Sync[K, V]) Exists(key K) bool {
 	return exi
 }
 
-// Length returns the amount of key-value pairs currently maintained in the
-// underlying cache. Length uses sync.Map's Range.
-func (d *Sync[K, V]) Length() int {
-	siz := 0
-
-	d.dic.Range(func(_ any, _ any) bool {
-		siz++
-		return true
-	})
-
-	return siz
-}
-
 // Ranger executes the given callback for every key-value pair in the underlying
 // cache. Ranger uses sync.Map's Range.
 func (d *Sync[K, V]) Ranger(fnc func(K, V)) {
@@ -83,4 +70,17 @@ func (d *Sync[K, V]) Search(key K) (V, bool) {
 // existed before. Update uses sync.Map's Store.
 func (d *Sync[K, V]) Update(key K, val V) {
 	d.dic.Store(key, val)
+}
+
+// length returns the amount of key-value pairs currently maintained in the
+// underlying cache. length uses sync.Map's Range.
+func (d *Sync[K, V]) length() int { // nolint:unused
+	siz := 0
+
+	d.dic.Range(func(_ any, _ any) bool {
+		siz++
+		return true
+	})
+
+	return siz
 }

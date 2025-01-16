@@ -1,6 +1,7 @@
 package stream
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -11,6 +12,36 @@ import (
 )
 
 func (s *Stream) HandlerFunc(w http.ResponseWriter, r *http.Request) error {
+	var err error
+
+	// We use a semaphore pattern in order to ensure a concurrent connection
+	// limit. If there is an available slot for this request handler, then this
+	// free slot may be occupied by the calling client, and we process the
+	// request. If no slot is available, then we return an error response.
+	select {
+	case s.sem <- struct{}{}:
+		{
+			err = s.handlerFunc(w, r)
+			if err != nil {
+				return tracer.Mask(err)
+			}
+		}
+
+		{
+			<-s.sem
+		}
+	default:
+		http.Error(
+			w,
+			fmt.Sprintf("%s: %d", http.StatusText(http.StatusTooManyRequests), cap(s.sem)),
+			http.StatusTooManyRequests,
+		)
+	}
+
+	return nil
+}
+
+func (s *Stream) handlerFunc(w http.ResponseWriter, r *http.Request) error {
 	var err error
 
 	// The reuqest headers contain the desired protocol method as well as various

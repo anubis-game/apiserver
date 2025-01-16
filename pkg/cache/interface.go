@@ -14,9 +14,6 @@ type Interface[K comparable, V any] interface {
 	Exists(K) bool
 
 	//
-	Length() int
-
-	//
 	Ranger(fnc func(K, V))
 
 	//
@@ -24,6 +21,9 @@ type Interface[K comparable, V any] interface {
 
 	//
 	Update(K, V)
+
+	//
+	length() int
 }
 
 type Testing interface {
