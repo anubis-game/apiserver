@@ -56,37 +56,35 @@ func init() {
 
 func Next(cur [6]byte, spc [2]byte, tim [2]byte) ([6]byte, byte) {
 	// cur is the current possition of a player expressed in a layered coordinate
-	// system. The first two bytes x0 and y0 define the outer buckets that the
-	// entire game map consists of. The second two bytes x1 and y1 define the
-	// inner bucket within the associated outer bucket. The third two bytes x2 and
-	// y2 define the position pixels within the referenced inner bucket.
+	// system. The first byte pair x0 and y0 defines the outer buckets that the
+	// entire game map consists of. The second byte pair x1 and y1 defines the
+	// inner bucket within the associated outer bucket. The third byte pair x2 and
+	// y2 defines the position pixels within the referenced inner bucket.
 	//
-	//     [x0, y0, x1, y1, x2, y2]
+	//     [
+	//       x0, y0,
+	//       x1, y1,
+	//       x2, y2,
+	//     ]
 	//
 
-	var x0 float64
-	var y0 float64
-	var x1 float64
-	var y1 float64
-	var x2 float64
-	var y2 float64
+	var x0, y0 float64
+	var x1, y1 float64
+	var x2, y2 float64
 	{
-		x0 = float64(cur[0])
-		y0 = float64(cur[1])
-		x1 = float64(cur[2])
-		y1 = float64(cur[3])
-		x2 = float64(cur[4])
-		y2 = float64(cur[5])
+		x0, y0 = float64(cur[0]), float64(cur[1])
+		x1, y1 = float64(cur[2]), float64(cur[3])
+		x2, y2 = float64(cur[4]), float64(cur[5])
 	}
 
 	// tim contains the time bytes including a millisecond duration and a velocity
-	// factor. The time tim[0] contains the byte encoded milliseconds that passed
-	// between the previous and the current update cycle of movement. This delta
-	// can be imagined as the time elapsed between the previous timestamp A and
-	// the current timestamp B, during which a player was moving through the game.
-	// The velocity factor tim[1] describes at which speed a player is moving
-	// across the field. The standard velocity is 0x01, or 100%. E.g. an
-	// accelerated velocity of 400% would be encoded as 0x04.
+	// factor. The elapsed duration tim[0] contains the byte encoded milliseconds
+	// that passed between the previous and the current update cycle of movement.
+	// This delta can be imagined as the elapsed time between the previous
+	// timestamp A and the current timestamp B, during which a player was moving
+	// through the game. The velocity factor tim[1] describes at which speed a
+	// player is moving across the field. The standard velocity is 0x01, or 100%.
+	// E.g. an accelerated velocity of 400% would be encoded as 0x04.
 	//
 	//     time under velocity
 	//
