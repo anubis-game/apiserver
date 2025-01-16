@@ -1032,7 +1032,7 @@ func Benchmark_Coordinate_Next(b *testing.B) {
 		tim [2]byte
 		mil float64
 	}{
-		// Case 000, ~4.50 ns/op
+		// Case 000, ~3.60 ns/op
 		{
 			cur: [6]byte{
 				byte(15), // x0
@@ -1051,7 +1051,7 @@ func Benchmark_Coordinate_Next(b *testing.B) {
 				byte(1),  // 100% speed
 			},
 		},
-		// Case 001, ~3.90 ns/op
+		// Case 001, ~3.30 ns/op
 		{
 			cur: [6]byte{
 				byte(15), // x0
@@ -1070,7 +1070,7 @@ func Benchmark_Coordinate_Next(b *testing.B) {
 				byte(4),  // 400% speed
 			},
 		},
-		// Case 002, ~3.90 ns/op
+		// Case 002, ~3.60 ns/op
 		{
 			cur: [6]byte{
 				byte(15), // x0
@@ -1089,7 +1089,7 @@ func Benchmark_Coordinate_Next(b *testing.B) {
 				byte(1),  // 100% speed
 			},
 		},
-		// Case 003, ~3.90 ns/op
+		// Case 003, ~3.60 ns/op
 		{
 			cur: [6]byte{
 				byte(15), // x0
@@ -1108,7 +1108,7 @@ func Benchmark_Coordinate_Next(b *testing.B) {
 				byte(4),  // 400% speed
 			},
 		},
-		// Case 004, ~3.90 ns/op
+		// Case 004, ~3.60 ns/op
 		{
 			cur: [6]byte{
 				byte(15), // x0
@@ -1127,7 +1127,7 @@ func Benchmark_Coordinate_Next(b *testing.B) {
 				byte(1),  // 100% speed
 			},
 		},
-		// Case 005, ~4.50 ns/op
+		// Case 005, ~3.90 ns/op
 		{
 			cur: [6]byte{
 				byte(15), // x0
@@ -1146,7 +1146,7 @@ func Benchmark_Coordinate_Next(b *testing.B) {
 				byte(4),  // 400% speed
 			},
 		},
-		// Case 006, ~4.50 ns/op
+		// Case 006, ~3.90 ns/op
 		{
 			cur: [6]byte{
 				byte(15), // x0
@@ -1165,7 +1165,7 @@ func Benchmark_Coordinate_Next(b *testing.B) {
 				byte(1),  // 100% speed
 			},
 		},
-		// Case 007, ~4.50 ns/op
+		// Case 007, ~3.90 ns/op
 		{
 			cur: [6]byte{
 				byte(15), // x0
@@ -1184,7 +1184,7 @@ func Benchmark_Coordinate_Next(b *testing.B) {
 				byte(4),  // 400% speed
 			},
 		},
-		// Case 008, ~58.00 ns/op
+		// Case 008, ~45.00 ns/op
 		{
 			cur: [6]byte{
 				byte(23), // x0
@@ -1203,7 +1203,7 @@ func Benchmark_Coordinate_Next(b *testing.B) {
 				byte(50),  // 5000% speed
 			},
 		},
-		// Case 009, ~58.00 ns/op
+		// Case 009, ~46.00 ns/op
 		{
 			cur: [6]byte{
 				byte(23), // x0
@@ -1222,7 +1222,7 @@ func Benchmark_Coordinate_Next(b *testing.B) {
 				byte(50),  // 5000% speed
 			},
 		},
-		// Case 010, ~57.00 ns/op
+		// Case 010, ~48.00 ns/op
 		{
 			cur: [6]byte{
 				byte(30), // x0
@@ -1241,7 +1241,7 @@ func Benchmark_Coordinate_Next(b *testing.B) {
 				byte(50),  // 5000% speed
 			},
 		},
-		// Case 011, ~57.00 ns/op
+		// Case 011, ~48.00 ns/op
 		{
 			cur: [6]byte{
 				byte(30), // x0
@@ -1260,7 +1260,7 @@ func Benchmark_Coordinate_Next(b *testing.B) {
 				byte(50),  // 5000% speed
 			},
 		},
-		// Case 012, ~56.00 ns/op
+		// Case 012, ~45.00 ns/op
 		{
 			cur: [6]byte{
 				byte(23), // x0
@@ -1279,7 +1279,7 @@ func Benchmark_Coordinate_Next(b *testing.B) {
 				byte(50),  // 5000% speed
 			},
 		},
-		// Case 013, ~57.00 ns/op
+		// Case 013, ~45.00 ns/op
 		{
 			cur: [6]byte{
 				byte(23), // x0
@@ -1298,7 +1298,7 @@ func Benchmark_Coordinate_Next(b *testing.B) {
 				byte(50),  // 5000% speed
 			},
 		},
-		// Case 014, ~42.50 ns/op
+		// Case 014, ~33.00 ns/op
 		{
 			cur: [6]byte{
 				byte(1),  // x0
@@ -1317,7 +1317,7 @@ func Benchmark_Coordinate_Next(b *testing.B) {
 				byte(50),  // 5000% speed
 			},
 		},
-		// Case 015, ~43.00 ns/op
+		// Case 015, ~33.00 ns/op
 		{
 			cur: [6]byte{
 				byte(1),  // x0

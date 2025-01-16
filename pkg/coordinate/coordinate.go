@@ -4,20 +4,22 @@ import (
 	"math"
 )
 
+const Foo = 234
+
 const (
 	// bmx is the maximum bucket index of the layered coordinate system.
-	bmx float64 = 31
+	bmx int = 31
 	// bsz is the bucket size of the layered coordinate system. This is the total
 	// amount of outer buckets within the entire coordinate system. This is also
 	// the number of inner buckets within any given outer bucket. And this is the
 	// quadratic length in pixels per inner bucket. Player positions may overflow
 	// and underflow into other buckets, if players move beyond the boundaries of
 	// their current position.
-	bsz float64 = bmx + 1
-	// dis is the standard distance travelled in pixels per millisecond. For
-	// instance, 0.192 px/ms implies 192 px/s, which equates to 6 buckets at 32
-	// pixels per bucket.
-	dis float64 = 0.192
+	bsz int = bmx + 1
+	// dms is the distance travelled in pixels per millisecond. For instance,
+	// 0.192 px/ms implies 192 px/s, which equates to 6 buckets at 32 pixels per
+	// bucket.
+	dms float64 = 0.192
 	// qrd is the quadrant specific radian factor for half Pi. This is the atomic
 	// amount of radians applied to a single byte of the quadrant specific angle
 	// spc[1]. Multiplying qrd by the angle byte spc[1] provides the radians to
@@ -32,12 +34,15 @@ const (
 )
 
 var (
-	// sin is the sine lookup table to cache all possible sine values based on any
-	// given angle byte.
-	sin [256]float64
 	// cos is the cosine lookup table to cache all possible cosine values based on
 	// any given angle byte.
 	cos [256]float64
+	// sin is the sine lookup table to cache all possible sine values based on any
+	// given angle byte.
+	sin [256]float64
+	// dis is the distance lookup table to cache all possible time values based on
+	// any given time byte.
+	dis [256][256]float64
 )
 
 func init() {
@@ -48,8 +53,12 @@ func init() {
 		}
 
 		{
-			sin[i] = math.Sin(rad)
 			cos[i] = math.Cos(rad)
+			sin[i] = math.Sin(rad)
+		}
+
+		for j := 0; j < 256; j++ {
+			dis[i][j] = dms * float64(i) * float64(j)
 		}
 	}
 }
@@ -68,13 +77,13 @@ func Next(cur [6]byte, spc [2]byte, tim [2]byte) ([6]byte, byte) {
 	//     ]
 	//
 
-	var x0, y0 float64
-	var x1, y1 float64
-	var x2, y2 float64
+	var x0, y0 int
+	var x1, y1 int
+	var x2, y2 int
 	{
-		x0, y0 = float64(cur[0]), float64(cur[1])
-		x1, y1 = float64(cur[2]), float64(cur[3])
-		x2, y2 = float64(cur[4]), float64(cur[5])
+		x0, y0 = int(cur[0]), int(cur[1])
+		x1, y1 = int(cur[2]), int(cur[3])
+		x2, y2 = int(cur[4]), int(cur[5])
 	}
 
 	// tim contains the time bytes including a millisecond duration and a velocity
@@ -93,7 +102,7 @@ func Next(cur [6]byte, spc [2]byte, tim [2]byte) ([6]byte, byte) {
 
 	var tot float64
 	{
-		tot = dis * float64(tim[0]) * float64(tim[1])
+		tot = dis[tim[0]][tim[1]]
 	}
 
 	// spc contains the space bytes including a quadrant indicator and the angle
@@ -120,19 +129,32 @@ func Next(cur [6]byte, spc [2]byte, tim [2]byte) ([6]byte, byte) {
 	//                      180°
 	//
 
+	var dc int
+	var ds int
+	{
+		dc = int(tot*cos[spc[1]] + 0.5)
+		ds = int(tot*sin[spc[1]] + 0.5)
+	}
+
+	// The distance travelled from one point to another is given as absolute
+	// uint8, calculated precisely as float64, and then rounded efficiently via
+	// integer truncation by adding 0.5 to the computed delta. All we have to do
+	// now in order to get to the next point is to add or remove the integer
+	// distance to and from the x2 and y2 coordinates.
+
 	switch spc[0] {
 	case 0x01:
-		x2 += math.Round(tot * sin[spc[1]])
-		y2 += math.Round(tot * cos[spc[1]])
+		x2 += ds
+		y2 += dc
 	case 0x02:
-		x2 += math.Round(tot * cos[spc[1]])
-		y2 -= math.Round(tot * sin[spc[1]])
+		x2 += dc
+		y2 -= ds
 	case 0x03:
-		x2 -= math.Round(tot * sin[spc[1]])
-		y2 -= math.Round(tot * cos[spc[1]])
+		x2 -= ds
+		y2 -= dc
 	case 0x04:
-		x2 -= math.Round(tot * cos[spc[1]])
-		y2 += math.Round(tot * sin[spc[1]])
+		x2 -= dc
+		y2 += ds
 	}
 
 	// The calculated pixel movement may result in valid or invalid underflows and
