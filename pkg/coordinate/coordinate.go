@@ -4,8 +4,6 @@ import (
 	"math"
 )
 
-const Foo = 234
-
 const (
 	// bmx is the maximum bucket index of the layered coordinate system.
 	bmx int = 31
@@ -36,27 +34,33 @@ const (
 var (
 	// cos is the cosine lookup table to cache all possible cosine values based on
 	// any given angle byte.
+	//
+	//     cos[spc[1]]
+	//
 	cos [256]float64
 	// sin is the sine lookup table to cache all possible sine values based on any
 	// given angle byte.
+	//
+	//     sin[spc[1]]
+	//
 	sin [256]float64
 	// dis is the distance lookup table to cache all possible time values based on
 	// any given time byte.
+	//
+	//     dis[tim[0]][tim[1]]
+	//
 	dis [256][256]float64
 )
 
 func init() {
+	// spc[0] and tim[0]
 	for i := 0; i < 256; i++ {
-		var rad float64
 		{
-			rad = float64(i) * qrd
+			cos[i] = math.Cos(float64(i) * qrd)
+			sin[i] = math.Sin(float64(i) * qrd)
 		}
 
-		{
-			cos[i] = math.Cos(rad)
-			sin[i] = math.Sin(rad)
-		}
-
+		// tim[1]
 		for j := 0; j < 256; j++ {
 			dis[i][j] = dms * float64(i) * float64(j)
 		}
