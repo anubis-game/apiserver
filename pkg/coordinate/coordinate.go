@@ -145,6 +145,11 @@ func Next(cur [6]byte, spc [2]byte, tim [2]byte) ([6]byte, byte) {
 	// towards the top, right, bottom and left respectively.
 
 	for x2 >= bsz {
+		if x0 >= bmx && x1 >= bmx {
+			// Overflow to the right, beyond the allowed positive x-axis boundary.
+			return [6]byte{}, byte('r')
+		}
+
 		{
 			x2 -= bsz
 			x1++
@@ -153,11 +158,6 @@ func Next(cur [6]byte, spc [2]byte, tim [2]byte) ([6]byte, byte) {
 		if x1 >= bsz {
 			x1 -= bsz
 			x0++
-		}
-
-		if x0 >= bmx && x1 >= bmx {
-			// Overflow to the right, beyond the allowed positive x-axis boundary.
-			return [6]byte{}, byte('r')
 		}
 	}
 
@@ -179,6 +179,11 @@ func Next(cur [6]byte, spc [2]byte, tim [2]byte) ([6]byte, byte) {
 	}
 
 	for y2 >= bsz {
+		if y0 >= bmx && y1 >= bmx {
+			// Overflow to the top, beyond the allowed positive y-axis boundary.
+			return [6]byte{}, byte('t')
+		}
+
 		{
 			y2 -= bsz
 			y1++
@@ -187,11 +192,6 @@ func Next(cur [6]byte, spc [2]byte, tim [2]byte) ([6]byte, byte) {
 		if y1 >= bsz {
 			y1 -= bsz
 			y0++
-		}
-
-		if y0 >= bmx && y1 >= bmx {
-			// Overflow to the top, beyond the allowed positive y-axis boundary.
-			return [6]byte{}, byte('t')
 		}
 	}
 

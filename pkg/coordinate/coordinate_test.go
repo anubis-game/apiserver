@@ -93,6 +93,33 @@ func Test_Coordinate_Next_Quadrant_1(t *testing.T) {
 				byte(21), // y2
 			},
 		},
+		// Case 003, move +22 along x and +1805 along y
+		{
+			cur: [6]byte{
+				byte(23), // x0
+				byte(30), // y0
+				byte(1),  // x1
+				byte(7),  // y1
+				byte(29), // x2
+				byte(11), // y2
+			},
+			spc: [2]byte{
+				byte(1), // quadrant 1
+				byte(2), // 0.71° from 0°
+			},
+			tim: [2]byte{
+				byte(200), // 8 standard frames
+				byte(47),  // 4700% speed
+			},
+			nxt: [6]byte{
+				byte(23), // x0
+				byte(31), // y0
+				byte(2),  // x1
+				byte(31), // y1
+				byte(19), // x2
+				byte(24), // y2
+			},
+		},
 	}
 
 	for i, tc := range testCases {
@@ -437,6 +464,33 @@ func Test_Coordinate_Next_Quadrant_4(t *testing.T) {
 				byte(16), // y2
 			},
 		},
+		// Case 002, move -22 along x and +1805 along y
+		{
+			cur: [6]byte{
+				byte(23), // x0
+				byte(30), // y0
+				byte(1),  // x1
+				byte(7),  // y1
+				byte(29), // x2
+				byte(11), // y2
+			},
+			spc: [2]byte{
+				byte(4),   // quadrant 4
+				byte(253), // 89.29° from 270°
+			},
+			tim: [2]byte{
+				byte(200), // 8 standard frames
+				byte(47),  // 4700% speed
+			},
+			nxt: [6]byte{
+				byte(23), // x0
+				byte(31), // y0
+				byte(1),  // x1
+				byte(31), // y1
+				byte(7),  // x2
+				byte(24), // y2
+			},
+		},
 	}
 
 	for i, tc := range testCases {
@@ -506,7 +560,7 @@ func Test_Coordinate_Next_Overflow_top(t *testing.T) {
 				byte(0), // y2
 			},
 		},
-		// Case 001, move +22 along x and +1805 along y. This test covers an edge
+		// Case 001, move +23 along x and +1843 along y. This test covers an edge
 		// case where y2 may not lead to the necessary boundary violation check,
 		// even if y0 and y1 are at 31 already.
 		{
@@ -524,7 +578,7 @@ func Test_Coordinate_Next_Overflow_top(t *testing.T) {
 			},
 			tim: [2]byte{
 				byte(200), // 8 standard frames
-				byte(47),  // 4700% speed
+				byte(48),  // 4800% speed
 			},
 			nxt: [6]byte{
 				byte(0), // x0
@@ -631,7 +685,7 @@ func Test_Coordinate_Next_Overflow_right(t *testing.T) {
 				byte(0), // y2
 			},
 		},
-		// Case 001, move +1805 along x and +22 along y. This test covers an edge
+		// Case 001, move +1843 along x and +23 along y. This test covers an edge
 		// case where x2 may not lead to the necessary boundary violation check,
 		// even if x0 and x1 are at 31 already.
 		{
@@ -649,7 +703,7 @@ func Test_Coordinate_Next_Overflow_right(t *testing.T) {
 			},
 			tim: [2]byte{
 				byte(200), // 8 standard frames
-				byte(47),  // 4700% speed
+				byte(48),  // 4800% speed
 			},
 			nxt: [6]byte{
 				byte(0), // x0
@@ -1054,7 +1108,7 @@ func Benchmark_Coordinate_Next(b *testing.B) {
 				byte(4),  // 400% speed
 			},
 		},
-		// Case 004, ~3.95 ns/op
+		// Case 004, ~3.90 ns/op
 		{
 			cur: [6]byte{
 				byte(15), // x0
@@ -1111,7 +1165,7 @@ func Benchmark_Coordinate_Next(b *testing.B) {
 				byte(1),  // 100% speed
 			},
 		},
-		// Case 007, ~4.60 ns/op
+		// Case 007, ~4.50 ns/op
 		{
 			cur: [6]byte{
 				byte(15), // x0
@@ -1130,7 +1184,7 @@ func Benchmark_Coordinate_Next(b *testing.B) {
 				byte(4),  // 400% speed
 			},
 		},
-		// Case 008, ~57.00 ns/op
+		// Case 008, ~58.00 ns/op
 		{
 			cur: [6]byte{
 				byte(23), // x0
@@ -1149,7 +1203,7 @@ func Benchmark_Coordinate_Next(b *testing.B) {
 				byte(50),  // 5000% speed
 			},
 		},
-		// Case 009, ~57.80 ns/op
+		// Case 009, ~58.00 ns/op
 		{
 			cur: [6]byte{
 				byte(23), // x0
@@ -1168,7 +1222,7 @@ func Benchmark_Coordinate_Next(b *testing.B) {
 				byte(50),  // 5000% speed
 			},
 		},
-		// Case 010, ~56.80 ns/op
+		// Case 010, ~57.00 ns/op
 		{
 			cur: [6]byte{
 				byte(30), // x0
@@ -1187,7 +1241,7 @@ func Benchmark_Coordinate_Next(b *testing.B) {
 				byte(50),  // 5000% speed
 			},
 		},
-		// Case 011, ~57.10 ns/op
+		// Case 011, ~57.00 ns/op
 		{
 			cur: [6]byte{
 				byte(30), // x0
@@ -1206,7 +1260,7 @@ func Benchmark_Coordinate_Next(b *testing.B) {
 				byte(50),  // 5000% speed
 			},
 		},
-		// Case 012, ~57.20 ns/op
+		// Case 012, ~56.00 ns/op
 		{
 			cur: [6]byte{
 				byte(23), // x0
@@ -1225,7 +1279,7 @@ func Benchmark_Coordinate_Next(b *testing.B) {
 				byte(50),  // 5000% speed
 			},
 		},
-		// Case 013, ~57.40 ns/op
+		// Case 013, ~57.00 ns/op
 		{
 			cur: [6]byte{
 				byte(23), // x0
@@ -1244,7 +1298,7 @@ func Benchmark_Coordinate_Next(b *testing.B) {
 				byte(50),  // 5000% speed
 			},
 		},
-		// Case 014, ~42.80 ns/op
+		// Case 014, ~42.50 ns/op
 		{
 			cur: [6]byte{
 				byte(1),  // x0
@@ -1263,7 +1317,7 @@ func Benchmark_Coordinate_Next(b *testing.B) {
 				byte(50),  // 5000% speed
 			},
 		},
-		// Case 015, ~42.40 ns/op
+		// Case 015, ~43.00 ns/op
 		{
 			cur: [6]byte{
 				byte(1),  // x0
