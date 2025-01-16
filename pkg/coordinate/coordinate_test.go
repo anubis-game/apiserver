@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func Test_Coordinate_Next_Quadrant_1(t *testing.T) {
+func Test_Coordinate_Target_Quadrant_1(t *testing.T) {
 	testCases := []struct {
 		cur [6]byte
 		spc [2]byte
@@ -124,7 +124,7 @@ func Test_Coordinate_Next_Quadrant_1(t *testing.T) {
 
 	for i, tc := range testCases {
 		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
-			nxt, ovr := Next(tc.cur, tc.spc, tc.tim)
+			nxt, ovr := Target(tc.cur, tc.spc, tc.tim)
 
 			if nxt[0] != tc.nxt[0] {
 				t.Fatal("expected", tc.nxt[0], "got", nxt[0]) // x0
@@ -154,7 +154,7 @@ func Test_Coordinate_Next_Quadrant_1(t *testing.T) {
 	}
 }
 
-func Test_Coordinate_Next_Quadrant_2(t *testing.T) {
+func Test_Coordinate_Target_Quadrant_2(t *testing.T) {
 	testCases := []struct {
 		cur [6]byte
 		spc [2]byte
@@ -247,7 +247,7 @@ func Test_Coordinate_Next_Quadrant_2(t *testing.T) {
 
 	for i, tc := range testCases {
 		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
-			nxt, ovr := Next(tc.cur, tc.spc, tc.tim)
+			nxt, ovr := Target(tc.cur, tc.spc, tc.tim)
 
 			if nxt[0] != tc.nxt[0] {
 				t.Fatal("expected", tc.nxt[0], "got", nxt[0]) // x0
@@ -277,7 +277,7 @@ func Test_Coordinate_Next_Quadrant_2(t *testing.T) {
 	}
 }
 
-func Test_Coordinate_Next_Quadrant_3(t *testing.T) {
+func Test_Coordinate_Target_Quadrant_3(t *testing.T) {
 	testCases := []struct {
 		cur [6]byte
 		spc [2]byte
@@ -372,7 +372,7 @@ func Test_Coordinate_Next_Quadrant_3(t *testing.T) {
 
 	for i, tc := range testCases {
 		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
-			nxt, ovr := Next(tc.cur, tc.spc, tc.tim)
+			nxt, ovr := Target(tc.cur, tc.spc, tc.tim)
 
 			if nxt[0] != tc.nxt[0] {
 				t.Fatal("expected", tc.nxt[0], "got", nxt[0]) // x0
@@ -402,7 +402,7 @@ func Test_Coordinate_Next_Quadrant_3(t *testing.T) {
 	}
 }
 
-func Test_Coordinate_Next_Quadrant_4(t *testing.T) {
+func Test_Coordinate_Target_Quadrant_4(t *testing.T) {
 	testCases := []struct {
 		cur [6]byte
 		spc [2]byte
@@ -495,7 +495,7 @@ func Test_Coordinate_Next_Quadrant_4(t *testing.T) {
 
 	for i, tc := range testCases {
 		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
-			nxt, ovr := Next(tc.cur, tc.spc, tc.tim)
+			nxt, ovr := Target(tc.cur, tc.spc, tc.tim)
 
 			if nxt[0] != tc.nxt[0] {
 				t.Fatal("expected", tc.nxt[0], "got", nxt[0]) // x0
@@ -525,7 +525,7 @@ func Test_Coordinate_Next_Quadrant_4(t *testing.T) {
 	}
 }
 
-func Test_Coordinate_Next_Overflow_top(t *testing.T) {
+func Test_Coordinate_Target_Overflow_top(t *testing.T) {
 	testCases := []struct {
 		cur [6]byte
 		spc [2]byte
@@ -620,7 +620,7 @@ func Test_Coordinate_Next_Overflow_top(t *testing.T) {
 
 	for i, tc := range testCases {
 		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
-			nxt, ovr := Next(tc.cur, tc.spc, tc.tim)
+			nxt, ovr := Target(tc.cur, tc.spc, tc.tim)
 
 			if nxt[0] != tc.nxt[0] {
 				t.Fatal("expected", tc.nxt[0], "got", nxt[0]) // x0
@@ -650,7 +650,7 @@ func Test_Coordinate_Next_Overflow_top(t *testing.T) {
 	}
 }
 
-func Test_Coordinate_Next_Overflow_right(t *testing.T) {
+func Test_Coordinate_Target_Overflow_right(t *testing.T) {
 	testCases := []struct {
 		cur [6]byte
 		spc [2]byte
@@ -745,7 +745,7 @@ func Test_Coordinate_Next_Overflow_right(t *testing.T) {
 
 	for i, tc := range testCases {
 		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
-			nxt, ovr := Next(tc.cur, tc.spc, tc.tim)
+			nxt, ovr := Target(tc.cur, tc.spc, tc.tim)
 
 			if nxt[0] != tc.nxt[0] {
 				t.Fatal("expected", tc.nxt[0], "got", nxt[0]) // x0
@@ -775,7 +775,7 @@ func Test_Coordinate_Next_Overflow_right(t *testing.T) {
 	}
 }
 
-func Test_Coordinate_Next_Overflow_bottom(t *testing.T) {
+func Test_Coordinate_Target_Overflow_bottom(t *testing.T) {
 	testCases := []struct {
 		cur [6]byte
 		spc [2]byte
@@ -870,7 +870,7 @@ func Test_Coordinate_Next_Overflow_bottom(t *testing.T) {
 
 	for i, tc := range testCases {
 		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
-			nxt, ovr := Next(tc.cur, tc.spc, tc.tim)
+			nxt, ovr := Target(tc.cur, tc.spc, tc.tim)
 
 			if nxt[0] != tc.nxt[0] {
 				t.Fatal("expected", tc.nxt[0], "got", nxt[0]) // x0
@@ -900,7 +900,7 @@ func Test_Coordinate_Next_Overflow_bottom(t *testing.T) {
 	}
 }
 
-func Test_Coordinate_Next_Overflow_left(t *testing.T) {
+func Test_Coordinate_Target_Overflow_left(t *testing.T) {
 	testCases := []struct {
 		cur [6]byte
 		spc [2]byte
@@ -995,7 +995,7 @@ func Test_Coordinate_Next_Overflow_left(t *testing.T) {
 
 	for i, tc := range testCases {
 		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
-			nxt, ovr := Next(tc.cur, tc.spc, tc.tim)
+			nxt, ovr := Target(tc.cur, tc.spc, tc.tim)
 
 			if nxt[0] != tc.nxt[0] {
 				t.Fatal("expected", tc.nxt[0], "got", nxt[0]) // x0
@@ -1025,7 +1025,7 @@ func Test_Coordinate_Next_Overflow_left(t *testing.T) {
 	}
 }
 
-func Benchmark_Coordinate_Next(b *testing.B) {
+func Benchmark_Coordinate_Target(b *testing.B) {
 	testCases := []struct {
 		cur [6]byte
 		spc [2]byte
@@ -1342,7 +1342,7 @@ func Benchmark_Coordinate_Next(b *testing.B) {
 		b.Run(fmt.Sprintf("%03d", i), func(b *testing.B) {
 			b.ResetTimer()
 			for i := 0; i < b.N; i++ {
-				Next(tc.cur, tc.spc, tc.tim)
+				Target(tc.cur, tc.spc, tc.tim)
 			}
 		})
 	}
