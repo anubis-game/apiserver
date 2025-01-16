@@ -1,4 +1,4 @@
-package coordinate
+package matrix
 
 import (
 	"math"
@@ -70,8 +70,8 @@ func init() {
 // Target uses the given origin to calculate the next point in a two dimensional
 // coordinate system. Target effectively defines a line between the provided
 // origin point O and the computed target point T.
-func Target(org [6]byte, spc [2]byte, tim [2]byte) ([6]byte, byte) {
-	// org is the origin, the current possition of a player expressed in a layered
+func Target(ogn [6]byte, spc [2]byte, tim [2]byte) ([6]byte, byte) {
+	// ogn is the origin, the current possition of a player expressed in a layered
 	// coordinate system. The first byte pair x0 and y0 defines the outer buckets
 	// that the entire game map consists of. The second byte pair x1 and y1
 	// defines the inner bucket within the associated outer bucket. The third byte
@@ -79,9 +79,9 @@ func Target(org [6]byte, spc [2]byte, tim [2]byte) ([6]byte, byte) {
 	// bucket.
 	//
 	//     [
-	//       x0, y0,
-	//       x1, y1,
-	//       x2, y2,
+	//       x0, y0,    outer bucket
+	//       x1, y1,    inner bucket
+	//       x2, y2,    origin point
 	//     ]
 	//
 
@@ -89,9 +89,9 @@ func Target(org [6]byte, spc [2]byte, tim [2]byte) ([6]byte, byte) {
 	var x1, y1 int
 	var x2, y2 int
 	{
-		x0, y0 = int(org[0]), int(org[1])
-		x1, y1 = int(org[2]), int(org[3])
-		x2, y2 = int(org[4]), int(org[5])
+		x0, y0 = int(ogn[0]), int(ogn[1])
+		x1, y1 = int(ogn[2]), int(ogn[3])
+		x2, y2 = int(ogn[4]), int(ogn[5])
 	}
 
 	// tim contains the time bytes including a millisecond duration and a velocity

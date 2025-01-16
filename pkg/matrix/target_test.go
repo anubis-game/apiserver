@@ -1,11 +1,11 @@
-package coordinate
+package matrix
 
 import (
 	"fmt"
 	"testing"
 )
 
-func Test_Coordinate_Target_Quadrant_1(t *testing.T) {
+func Test_Matrix_Target_Quadrant_1(t *testing.T) {
 	testCases := []struct {
 		cur [6]byte
 		spc [2]byte
@@ -154,7 +154,7 @@ func Test_Coordinate_Target_Quadrant_1(t *testing.T) {
 	}
 }
 
-func Test_Coordinate_Target_Quadrant_2(t *testing.T) {
+func Test_Matrix_Target_Quadrant_2(t *testing.T) {
 	testCases := []struct {
 		cur [6]byte
 		spc [2]byte
@@ -277,7 +277,7 @@ func Test_Coordinate_Target_Quadrant_2(t *testing.T) {
 	}
 }
 
-func Test_Coordinate_Target_Quadrant_3(t *testing.T) {
+func Test_Matrix_Target_Quadrant_3(t *testing.T) {
 	testCases := []struct {
 		cur [6]byte
 		spc [2]byte
@@ -402,7 +402,7 @@ func Test_Coordinate_Target_Quadrant_3(t *testing.T) {
 	}
 }
 
-func Test_Coordinate_Target_Quadrant_4(t *testing.T) {
+func Test_Matrix_Target_Quadrant_4(t *testing.T) {
 	testCases := []struct {
 		cur [6]byte
 		spc [2]byte
@@ -525,7 +525,7 @@ func Test_Coordinate_Target_Quadrant_4(t *testing.T) {
 	}
 }
 
-func Test_Coordinate_Target_Overflow_top(t *testing.T) {
+func Test_Matrix_Target_Overflow_top(t *testing.T) {
 	testCases := []struct {
 		cur [6]byte
 		spc [2]byte
@@ -650,7 +650,7 @@ func Test_Coordinate_Target_Overflow_top(t *testing.T) {
 	}
 }
 
-func Test_Coordinate_Target_Overflow_right(t *testing.T) {
+func Test_Matrix_Target_Overflow_right(t *testing.T) {
 	testCases := []struct {
 		cur [6]byte
 		spc [2]byte
@@ -775,7 +775,7 @@ func Test_Coordinate_Target_Overflow_right(t *testing.T) {
 	}
 }
 
-func Test_Coordinate_Target_Overflow_bottom(t *testing.T) {
+func Test_Matrix_Target_Overflow_bottom(t *testing.T) {
 	testCases := []struct {
 		cur [6]byte
 		spc [2]byte
@@ -900,7 +900,7 @@ func Test_Coordinate_Target_Overflow_bottom(t *testing.T) {
 	}
 }
 
-func Test_Coordinate_Target_Overflow_left(t *testing.T) {
+func Test_Matrix_Target_Overflow_left(t *testing.T) {
 	testCases := []struct {
 		cur [6]byte
 		spc [2]byte
@@ -1025,7 +1025,7 @@ func Test_Coordinate_Target_Overflow_left(t *testing.T) {
 	}
 }
 
-func Benchmark_Coordinate_Target(b *testing.B) {
+func Benchmark_Matrix_Target(b *testing.B) {
 	testCases := []struct {
 		cur [6]byte
 		spc [2]byte
