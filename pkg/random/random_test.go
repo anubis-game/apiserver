@@ -3,7 +3,6 @@ package random
 import (
 	"fmt"
 	"testing"
-	"time"
 
 	"github.com/anubis-game/apiserver/pkg/matrix"
 	"github.com/xh3b4sd/logger"
@@ -22,7 +21,6 @@ func Test_Random_Random(t *testing.T) {
 
 	{
 		go ran.Daemon()
-		time.Sleep(100 * time.Millisecond)
 	}
 
 	dic := map[byte]int{}
@@ -70,7 +68,6 @@ func Test_Random_backup(t *testing.T) {
 
 	{
 		go ran.Daemon()
-		time.Sleep(100 * time.Millisecond)
 	}
 
 	dic := map[byte]int{}

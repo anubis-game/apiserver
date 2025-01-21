@@ -56,7 +56,7 @@ func New(c Config) *Daemon {
 	var ran *random.Random
 	{
 		ran = random.New(random.Config{
-			Don: make(<-chan struct{}),
+			Don: c.Don,
 			Log: log,
 			Max: matrix.Max,
 			Min: matrix.Min,

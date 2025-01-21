@@ -23,7 +23,7 @@ type Random struct {
 	max byte
 	min byte
 	que chan byte
-	siz byte
+	siz *big.Int
 }
 
 func New(c Config) *Random {
@@ -47,7 +47,7 @@ func New(c Config) *Random {
 		max: c.Max,
 		min: c.Min,
 		que: make(chan byte, 500),
-		siz: c.Max - c.Min + 1,
+		siz: big.NewInt(int64(c.Max - c.Min + 1)),
 	}
 }
 
@@ -68,7 +68,7 @@ func (r *Random) Random() byte {
 
 func (r *Random) random() byte {
 	// Generate a cryptographically secure random number in the range [0, siz).
-	b, err := rand.Int(rand.Reader, big.NewInt(int64(r.siz)))
+	b, err := rand.Int(rand.Reader, r.siz)
 	if err != nil {
 		r.log.Log(
 			context.Background(),
