@@ -3,17 +3,17 @@ package matrix
 const (
 	// Max is the upper byte boundary of any bucket and pixel. Buckets and pixels
 	// above this level overflow.
-	Max int = 163
+	Max byte = 163
 	// Min is the lower byte boundary of any bucket and pixel. Buckets and pixels
 	// below this level underflow.
-	Min int = 100
+	Min byte = 100
 	// Siz is the bucket size of the layered coordinate system. This is the total
 	// amount of outer buckets within the entire coordinate system. This is also
 	// the number of inner buckets within any given outer bucket. And this is the
 	// quadratic length in pixels per inner bucket. Player positions may overflow
 	// and underflow into other buckets, if players move beyond the boundaries of
 	// their current position.
-	Siz int = Max - Min + 1
+	Siz byte = Max - Min + 1
 	// Dia is the truncated diagonal pixel length of every inner bucket, minus 1.
 	// This is the maximum amount of movement allowed to happen within a single
 	// frame. Any player movement beyond this pixel length is invalid, causing an

@@ -82,16 +82,19 @@ func Target(obc Bucket, opx Pixel, spc [2]byte, tim [2]byte) (Bucket, Pixel, byt
 	//     ]
 	//
 
-	var tbc Bucket
+	var tx0 byte
+	var ty0 byte
+	var tx1 byte
+	var ty1 byte
+	var tx2 byte
+	var ty2 byte
 	{
-		tbc = obc
-	}
-
-	var tx2 int
-	var ty2 int
-	{
-		tx2 = int(opx[X2])
-		ty2 = int(opx[Y2])
+		tx0 = obc[X0]
+		ty0 = obc[Y0]
+		tx1 = obc[X1]
+		ty1 = obc[Y1]
+		tx2 = opx[X2]
+		ty2 = opx[Y2]
 	}
 
 	// tim contains the time bytes including a millisecond duration and a velocity
@@ -149,11 +152,11 @@ func Target(obc Bucket, opx Pixel, spc [2]byte, tim [2]byte) (Bucket, Pixel, byt
 	//                      180°
 	//
 
-	var dc int
-	var ds int
+	var dc byte
+	var ds byte
 	{
-		dc = int(tot*cos[spc[1]] + 0.5)
-		ds = int(tot*sin[spc[1]] + 0.5)
+		dc = byte(tot*cos[spc[1]] + 0.5)
+		ds = byte(tot*sin[spc[1]] + 0.5)
 	}
 
 	// The calculated pixel movement may result in valid or invalid underflows and
@@ -175,10 +178,10 @@ func Target(obc Bucket, opx Pixel, spc [2]byte, tim [2]byte) (Bucket, Pixel, byt
 
 		if tx2 > Max {
 			{
-				tbc[X0], tbc[X1] = incByt(tbc[X0], tbc[X1])
+				tx0, tx1 = incByt(tx0, tx1)
 			}
 
-			if tbc[X0] > byte(Max) {
+			if tx0 > Max {
 				// Overflow to the right, beyond the allowed positive x-axis boundary.
 				return Bucket{}, Pixel{}, byte('r')
 			}
@@ -190,10 +193,10 @@ func Target(obc Bucket, opx Pixel, spc [2]byte, tim [2]byte) (Bucket, Pixel, byt
 
 		if ty2 > Max {
 			{
-				tbc[Y0], tbc[Y1] = incByt(tbc[Y0], tbc[Y1])
+				ty0, ty1 = incByt(ty0, ty1)
 			}
 
-			if tbc[Y0] > byte(Max) {
+			if ty0 > Max {
 				// Overflow to the top, beyond the allowed positive y-axis boundary.
 				return Bucket{}, Pixel{}, byte('t')
 			}
@@ -210,10 +213,10 @@ func Target(obc Bucket, opx Pixel, spc [2]byte, tim [2]byte) (Bucket, Pixel, byt
 
 		if tx2 > Max {
 			{
-				tbc[X0], tbc[X1] = incByt(tbc[X0], tbc[X1])
+				tx0, tx1 = incByt(tx0, tx1)
 			}
 
-			if tbc[X0] > byte(Max) {
+			if tx0 > Max {
 				// Overflow to the right, beyond the allowed positive x-axis boundary.
 				return Bucket{}, Pixel{}, byte('r')
 			}
@@ -225,10 +228,10 @@ func Target(obc Bucket, opx Pixel, spc [2]byte, tim [2]byte) (Bucket, Pixel, byt
 
 		if ty2 < Min {
 			{
-				tbc[Y0], tbc[Y1] = decByt(tbc[Y0], tbc[Y1])
+				ty0, ty1 = decByt(ty0, ty1)
 			}
 
-			if tbc[Y0] < byte(Min) {
+			if ty0 < Min {
 				// Overflow to the bottom, beyond the allowed negative y-axis boundary.
 				return Bucket{}, Pixel{}, byte('b')
 			}
@@ -245,10 +248,10 @@ func Target(obc Bucket, opx Pixel, spc [2]byte, tim [2]byte) (Bucket, Pixel, byt
 
 		if tx2 < Min {
 			{
-				tbc[X0], tbc[X1] = decByt(tbc[X0], tbc[X1])
+				tx0, tx1 = decByt(tx0, tx1)
 			}
 
-			if tbc[X0] < byte(Min) {
+			if tx0 < Min {
 				// Underflow to the left, beyond the allowed negative x-axis boundary.
 				return Bucket{}, Pixel{}, byte('l')
 			}
@@ -260,10 +263,10 @@ func Target(obc Bucket, opx Pixel, spc [2]byte, tim [2]byte) (Bucket, Pixel, byt
 
 		if ty2 < Min {
 			{
-				tbc[Y0], tbc[Y1] = decByt(tbc[Y0], tbc[Y1])
+				ty0, ty1 = decByt(ty0, ty1)
 			}
 
-			if tbc[Y0] < byte(Min) {
+			if ty0 < Min {
 				// Overflow to the bottom, beyond the allowed negative y-axis boundary.
 				return Bucket{}, Pixel{}, byte('b')
 			}
@@ -280,10 +283,10 @@ func Target(obc Bucket, opx Pixel, spc [2]byte, tim [2]byte) (Bucket, Pixel, byt
 
 		if tx2 < Min {
 			{
-				tbc[X0], tbc[X1] = decByt(tbc[X0], tbc[X1])
+				tx0, tx1 = decByt(tx0, tx1)
 			}
 
-			if tbc[X0] < byte(Min) {
+			if tx0 < Min {
 				// Underflow to the left, beyond the allowed negative x-axis boundary.
 				return Bucket{}, Pixel{}, byte('l')
 			}
@@ -295,10 +298,10 @@ func Target(obc Bucket, opx Pixel, spc [2]byte, tim [2]byte) (Bucket, Pixel, byt
 
 		if ty2 > Max {
 			{
-				tbc[Y0], tbc[Y1] = incByt(tbc[Y0], tbc[Y1])
+				ty0, ty1 = incByt(ty0, ty1)
 			}
 
-			if tbc[Y0] > byte(Max) {
+			if ty0 > Max {
 				// Overflow to the top, beyond the allowed positive y-axis boundary.
 				return Bucket{}, Pixel{}, byte('t')
 			}
@@ -317,5 +320,5 @@ func Target(obc Bucket, opx Pixel, spc [2]byte, tim [2]byte) (Bucket, Pixel, byt
 	// point does not represent a boundary violation of our layered coordinate
 	// system. Therefore we return the empty byte as third argument.
 
-	return tbc, Pixel{byte(tx2), byte(ty2)}, 0x00
+	return Bucket{tx0, ty0, tx1, ty1}, Pixel{tx2, ty2}, 0x00
 }
