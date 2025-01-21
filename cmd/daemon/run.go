@@ -37,6 +37,7 @@ func (r *run) runE(cmd *cobra.Command, arg []string) error {
 	}
 
 	{
+		go dae.Random().Daemon()
 		go dae.Release().Daemon()
 		go dae.Resolve().Daemon()
 		go dae.Server().Daemon()
