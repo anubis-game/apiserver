@@ -27,8 +27,21 @@ type Random struct {
 }
 
 func New(c Config) *Random {
+	var bck []byte
+	{
+		bck = make([]byte, c.Max-c.Min+1)
+	}
+
+	for i := range bck {
+		bck[i] = c.Min + byte(i)
+	}
+
+	{
+		musShf(bck)
+	}
+
 	return &Random{
-		bck: make([]byte, c.Max-c.Min+1),
+		bck: bck,
 		don: c.Don,
 		log: c.Log,
 		max: c.Max,
@@ -38,16 +51,7 @@ func New(c Config) *Random {
 	}
 }
 
-// TODO add daemon to server
 func (r *Random) Daemon() {
-	for i := range r.bck {
-		r.bck[i] = r.min + byte(i)
-	}
-
-	{
-		musShf(r.bck)
-	}
-
 	for {
 		select {
 		case <-r.don:
@@ -63,8 +67,7 @@ func (r *Random) Random() byte {
 }
 
 func (r *Random) random() byte {
-	// Generate a cryptographically secure random number in the range [0,
-	// rangeSize).
+	// Generate a cryptographically secure random number in the range [0, siz).
 	b, err := rand.Int(rand.Reader, big.NewInt(int64(r.siz)))
 	if err != nil {
 		r.log.Log(
