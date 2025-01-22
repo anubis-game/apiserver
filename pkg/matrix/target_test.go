@@ -9,7 +9,7 @@ func Test_Matrix_Target_Quadrant_1(t *testing.T) {
 	testCases := []struct {
 		obc Bucket
 		opx Pixel
-		spc [2]byte
+		spc Space
 		tim [2]byte
 		tbc Bucket
 		tpx Pixel
@@ -26,7 +26,7 @@ func Test_Matrix_Target_Quadrant_1(t *testing.T) {
 				111, // x2
 				129, // y2
 			},
-			spc: [2]byte{
+			spc: Space{
 				byte(1),   // quadrant 1
 				byte(108), // 38.12° from 0°
 			},
@@ -57,7 +57,7 @@ func Test_Matrix_Target_Quadrant_1(t *testing.T) {
 				151, // x2
 				129, // y2
 			},
-			spc: [2]byte{
+			spc: Space{
 				byte(1),   // quadrant 1
 				byte(253), // 89.29° from 0°
 			},
@@ -114,7 +114,7 @@ func Test_Matrix_Target_Quadrant_2(t *testing.T) {
 	testCases := []struct {
 		obc Bucket
 		opx Pixel
-		spc [2]byte
+		spc Space
 		tim [2]byte
 		mil float64
 		tbc Bucket
@@ -132,7 +132,7 @@ func Test_Matrix_Target_Quadrant_2(t *testing.T) {
 				111, // x2
 				129, // y2
 			},
-			spc: [2]byte{
+			spc: Space{
 				byte(2),   // quadrant 2
 				byte(108), // 38.12° from 90°
 			},
@@ -163,7 +163,7 @@ func Test_Matrix_Target_Quadrant_2(t *testing.T) {
 				111, // x2
 				129, // y2
 			},
-			spc: [2]byte{
+			spc: Space{
 				byte(2),   // quadrant 2
 				byte(253), // 89.29° from 90°
 			},
@@ -220,7 +220,7 @@ func Test_Matrix_Target_Quadrant_3(t *testing.T) {
 	testCases := []struct {
 		obc Bucket
 		opx Pixel
-		spc [2]byte
+		spc Space
 		tim [2]byte
 		mil float64
 		tbc Bucket
@@ -238,7 +238,7 @@ func Test_Matrix_Target_Quadrant_3(t *testing.T) {
 				111, // x2
 				129, // y2
 			},
-			spc: [2]byte{
+			spc: Space{
 				byte(3),   // quadrant 3
 				byte(108), // 38.12° from 180°
 			},
@@ -269,7 +269,7 @@ func Test_Matrix_Target_Quadrant_3(t *testing.T) {
 				111, // x2
 				129, // y2
 			},
-			spc: [2]byte{
+			spc: Space{
 				byte(3),   // quadrant 3
 				byte(253), // 89.29° from 180°
 			},
@@ -326,7 +326,7 @@ func Test_Matrix_Target_Quadrant_4(t *testing.T) {
 	testCases := []struct {
 		obc Bucket
 		opx Pixel
-		spc [2]byte
+		spc Space
 		tim [2]byte
 		mil float64
 		tbc Bucket
@@ -344,7 +344,7 @@ func Test_Matrix_Target_Quadrant_4(t *testing.T) {
 				111, // x2
 				129, // y2
 			},
-			spc: [2]byte{
+			spc: Space{
 				byte(4),   // quadrant 4
 				byte(108), // 38.12° from 180°
 			},
@@ -375,7 +375,7 @@ func Test_Matrix_Target_Quadrant_4(t *testing.T) {
 				111, // x2
 				129, // y2
 			},
-			spc: [2]byte{
+			spc: Space{
 				byte(4),   // quadrant 4
 				byte(253), // 89.29° from 180°
 			},
@@ -432,7 +432,7 @@ func Test_Matrix_Target_Overflow_top(t *testing.T) {
 	testCases := []struct {
 		obc Bucket
 		opx Pixel
-		spc [2]byte
+		spc Space
 		tim [2]byte
 		mil float64
 		ovr byte
@@ -449,7 +449,7 @@ func Test_Matrix_Target_Overflow_top(t *testing.T) {
 				111, // x2
 				129, // y2
 			},
-			spc: [2]byte{
+			spc: Space{
 				byte(4),   // quadrant 4
 				byte(253), // 89.29° from 270°
 			},
@@ -471,7 +471,7 @@ func Test_Matrix_Target_Overflow_top(t *testing.T) {
 				111, // x2
 				129, // y2
 			},
-			spc: [2]byte{
+			spc: Space{
 				byte(1), // quadrant 1
 				byte(2), // 0.71° from 0°
 			},
@@ -493,7 +493,7 @@ func Test_Matrix_Target_Overflow_top(t *testing.T) {
 				111, // x2
 				129, // y2
 			},
-			spc: [2]byte{
+			spc: Space{
 				byte(1), // quadrant 1
 				byte(2), // 0.71° from 0°
 			},
@@ -541,7 +541,7 @@ func Test_Matrix_Target_Overflow_right(t *testing.T) {
 	testCases := []struct {
 		obc Bucket
 		opx Pixel
-		spc [2]byte
+		spc Space
 		tim [2]byte
 		mil float64
 		ovr byte
@@ -558,7 +558,7 @@ func Test_Matrix_Target_Overflow_right(t *testing.T) {
 				111, // x2
 				129, // y2
 			},
-			spc: [2]byte{
+			spc: Space{
 				byte(1),   // quadrant 1
 				byte(253), // 89.29° from 0°
 			},
@@ -580,7 +580,7 @@ func Test_Matrix_Target_Overflow_right(t *testing.T) {
 				111, // x2
 				129, // y2
 			},
-			spc: [2]byte{
+			spc: Space{
 				byte(1),   // quadrant 1
 				byte(253), // 89.29° from 0°
 			},
@@ -602,7 +602,7 @@ func Test_Matrix_Target_Overflow_right(t *testing.T) {
 				111, // x2
 				129, // y2
 			},
-			spc: [2]byte{
+			spc: Space{
 				byte(2), // quadrant 2
 				byte(2), // 0.71° from 90°
 			},
@@ -650,7 +650,7 @@ func Test_Matrix_Target_Overflow_bottom(t *testing.T) {
 	testCases := []struct {
 		obc Bucket
 		opx Pixel
-		spc [2]byte
+		spc Space
 		tim [2]byte
 		mil float64
 		ovr byte
@@ -667,7 +667,7 @@ func Test_Matrix_Target_Overflow_bottom(t *testing.T) {
 				111, // x2
 				129, // y2
 			},
-			spc: [2]byte{
+			spc: Space{
 				byte(3), // quadrant 3
 				byte(2), // 0.71° from 180°
 			},
@@ -689,7 +689,7 @@ func Test_Matrix_Target_Overflow_bottom(t *testing.T) {
 				111, // x2
 				129, // y2
 			},
-			spc: [2]byte{
+			spc: Space{
 				byte(3), // quadrant 3
 				byte(2), // 0.71° from 180°
 			},
@@ -711,7 +711,7 @@ func Test_Matrix_Target_Overflow_bottom(t *testing.T) {
 				111, // x2
 				129, // y2
 			},
-			spc: [2]byte{
+			spc: Space{
 				byte(2),   // quadrant 2
 				byte(253), // 89.29° from 90°
 			},
@@ -759,7 +759,7 @@ func Test_Matrix_Target_Overflow_left(t *testing.T) {
 	testCases := []struct {
 		obc Bucket
 		opx Pixel
-		spc [2]byte
+		spc Space
 		tim [2]byte
 		mil float64
 		ovr byte
@@ -776,7 +776,7 @@ func Test_Matrix_Target_Overflow_left(t *testing.T) {
 				111, // x2
 				129, // y2
 			},
-			spc: [2]byte{
+			spc: Space{
 				byte(3),   // quadrant 3
 				byte(253), // 89.29° from 180°
 			},
@@ -798,7 +798,7 @@ func Test_Matrix_Target_Overflow_left(t *testing.T) {
 				111, // x2
 				129, // y2
 			},
-			spc: [2]byte{
+			spc: Space{
 				byte(3),   // quadrant 3
 				byte(253), // 89.29° from 180°
 			},
@@ -820,7 +820,7 @@ func Test_Matrix_Target_Overflow_left(t *testing.T) {
 				111, // x2
 				129, // y2
 			},
-			spc: [2]byte{
+			spc: Space{
 				byte(4), // quadrant 4
 				byte(2), // 0.71° from 270°
 			},
@@ -868,10 +868,10 @@ func Benchmark_Matrix_Target(b *testing.B) {
 	testCases := []struct {
 		obc Bucket
 		opx Pixel
-		spc [2]byte
+		spc Space
 		tim [2]byte
 	}{
-		// Case 000, ~3.20 ns/op
+		// Case 000, ~3.00 ns/op
 		{
 			obc: Bucket{
 				150, // x0
@@ -883,7 +883,7 @@ func Benchmark_Matrix_Target(b *testing.B) {
 				111, // x2
 				129, // y2
 			},
-			spc: [2]byte{
+			spc: Space{
 				byte(1),   // quadrant 1
 				byte(108), // 38.12° from 0°
 			},
@@ -892,7 +892,7 @@ func Benchmark_Matrix_Target(b *testing.B) {
 				byte(1),  // 100% speed
 			},
 		},
-		// Case 001, ~3.20 ns/op
+		// Case 001, ~3.00 ns/op
 		{
 			obc: Bucket{
 				150, // x0
@@ -904,7 +904,7 @@ func Benchmark_Matrix_Target(b *testing.B) {
 				111, // x2
 				129, // y2
 			},
-			spc: [2]byte{
+			spc: Space{
 				byte(2),   // quadrant 2
 				byte(253), // 89.29° from 90°
 			},
@@ -913,7 +913,7 @@ func Benchmark_Matrix_Target(b *testing.B) {
 				byte(4),  // 400% speed
 			},
 		},
-		// Case 002, ~3.40 ns/op
+		// Case 002, ~3.20 ns/op
 		{
 			obc: Bucket{
 				150, // x0
@@ -925,7 +925,7 @@ func Benchmark_Matrix_Target(b *testing.B) {
 				111, // x2
 				129, // y2
 			},
-			spc: [2]byte{
+			spc: Space{
 				byte(3),   // quadrant 3
 				byte(253), // 89.29° from 180°
 			},
@@ -934,7 +934,7 @@ func Benchmark_Matrix_Target(b *testing.B) {
 				byte(4),  // 400% speed
 			},
 		},
-		// Case 003, ~3.20 ns/op
+		// Case 003, ~3.00 ns/op
 		{
 			obc: Bucket{
 				150, // x0
@@ -946,7 +946,7 @@ func Benchmark_Matrix_Target(b *testing.B) {
 				111, // x2
 				129, // y2
 			},
-			spc: [2]byte{
+			spc: Space{
 				byte(4),   // quadrant 4
 				byte(108), // 38.12° from 180°
 			},
@@ -955,7 +955,7 @@ func Benchmark_Matrix_Target(b *testing.B) {
 				byte(1),  // 100% speed
 			},
 		},
-		// Case 004, ~1.90 ns/op
+		// Case 004, ~1.80 ns/op
 		{
 			obc: Bucket{
 				150, // x0
@@ -967,7 +967,7 @@ func Benchmark_Matrix_Target(b *testing.B) {
 				111, // x2
 				129, // y2
 			},
-			spc: [2]byte{
+			spc: Space{
 				byte(4),   // quadrant 4
 				byte(253), // 89.29° from 270°
 			},
@@ -988,7 +988,7 @@ func Benchmark_Matrix_Target(b *testing.B) {
 				111, // x2
 				129, // y2
 			},
-			spc: [2]byte{
+			spc: Space{
 				byte(1), // quadrant 1
 				byte(2), // 0.71° from 0°
 			},
@@ -997,7 +997,7 @@ func Benchmark_Matrix_Target(b *testing.B) {
 				byte(4),   // 400% speed
 			},
 		},
-		// Case 006, ~2.80 ns/op
+		// Case 006, ~2.70 ns/op
 		{
 			obc: Bucket{
 				163, // x0
@@ -1009,7 +1009,7 @@ func Benchmark_Matrix_Target(b *testing.B) {
 				111, // x2
 				129, // y2
 			},
-			spc: [2]byte{
+			spc: Space{
 				byte(1),   // quadrant 1
 				byte(253), // 89.29° from 0°
 			},
@@ -1018,7 +1018,7 @@ func Benchmark_Matrix_Target(b *testing.B) {
 				byte(4),   // 400% speed
 			},
 		},
-		// Case 007, ~1.90 ns/op
+		// Case 007, ~1.80 ns/op
 		{
 			obc: Bucket{
 				150, // x0
@@ -1030,7 +1030,7 @@ func Benchmark_Matrix_Target(b *testing.B) {
 				111, // x2
 				129, // y2
 			},
-			spc: [2]byte{
+			spc: Space{
 				byte(3), // quadrant 3
 				byte(2), // 0.71° from 180°
 			},
@@ -1039,7 +1039,7 @@ func Benchmark_Matrix_Target(b *testing.B) {
 				byte(50),  // 5000% speed
 			},
 		},
-		// Case 008, ~2.90 ns/op
+		// Case 008, ~2.80 ns/op
 		{
 			obc: Bucket{
 				150, // x0
@@ -1051,7 +1051,7 @@ func Benchmark_Matrix_Target(b *testing.B) {
 				111, // x2
 				129, // y2
 			},
-			spc: [2]byte{
+			spc: Space{
 				byte(3), // quadrant 3
 				byte(2), // 0.71° from 180°
 			},
@@ -1060,7 +1060,7 @@ func Benchmark_Matrix_Target(b *testing.B) {
 				byte(4),   // 400% speed
 			},
 		},
-		// Case 009, ~2.90 ns/op
+		// Case 009, ~2.80 ns/op
 		{
 			obc: Bucket{
 				100, // x0
@@ -1072,7 +1072,7 @@ func Benchmark_Matrix_Target(b *testing.B) {
 				111, // x2
 				129, // y2
 			},
-			spc: [2]byte{
+			spc: Space{
 				byte(3),   // quadrant 3
 				byte(253), // 89.29° from 180°
 			},
@@ -1081,7 +1081,7 @@ func Benchmark_Matrix_Target(b *testing.B) {
 				byte(4),   // 400% speed
 			},
 		},
-		// Case 010, ~2.90 ns/op
+		// Case 010, ~2.80 ns/op
 		{
 			obc: Bucket{
 				27,  // x0, out of bounds
@@ -1093,7 +1093,7 @@ func Benchmark_Matrix_Target(b *testing.B) {
 				111, // x2
 				129, // y2
 			},
-			spc: [2]byte{
+			spc: Space{
 				byte(4), // quadrant 4
 				byte(2), // 0.71° from 270°
 			},

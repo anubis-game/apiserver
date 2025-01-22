@@ -64,7 +64,7 @@ func init() {
 // as Bucket key and Pixel location. Target does not support player movements of
 // multiple buckets and may return a non zero overflow byte as third return
 // value.
-func Target(obc Bucket, opx Pixel, spc [2]byte, tim [2]byte) (Bucket, Pixel, byte) {
+func Target(obc Bucket, opx Pixel, spc Space, tim [2]byte) (Bucket, Pixel, byte) {
 	// obc is the origin bucket and opx is the origin pixel. The origin describes
 	// the current possition of a player within a layered coordinate system. The
 	// first byte pair x0 and y0 refers to the outer buckets that the entire game
@@ -82,20 +82,7 @@ func Target(obc Bucket, opx Pixel, spc [2]byte, tim [2]byte) (Bucket, Pixel, byt
 	//     ]
 	//
 
-	var tx0 byte
-	var ty0 byte
-	var tx1 byte
-	var ty1 byte
-	var tx2 byte
-	var ty2 byte
-	{
-		tx0 = obc[X0]
-		ty0 = obc[Y0]
-		tx1 = obc[X1]
-		ty1 = obc[Y1]
-		tx2 = opx[X2]
-		ty2 = opx[Y2]
-	}
+	tx0, ty0, tx1, ty1, tx2, ty2 := obc[X0], obc[Y0], obc[X1], obc[Y1], opx[X2], opx[Y2]
 
 	// tim contains the time bytes including a millisecond duration and a velocity
 	// factor. The elapsed duration tim[0] contains the byte encoded milliseconds
@@ -115,10 +102,7 @@ func Target(obc Bucket, opx Pixel, spc [2]byte, tim [2]byte) (Bucket, Pixel, byt
 	//     ----A--------B---->
 	//
 
-	var tot float64
-	{
-		tot = dis[tim[0]][tim[1]]
-	}
+	tot := dis[tim[0]][tim[1]]
 
 	if tot > Dia {
 		return Bucket{}, Pixel{}, byte('o')
@@ -152,12 +136,7 @@ func Target(obc Bucket, opx Pixel, spc [2]byte, tim [2]byte) (Bucket, Pixel, byt
 	//                      180°
 	//
 
-	var dc byte
-	var ds byte
-	{
-		dc = byte(tot*cos[spc[1]] + 0.5)
-		ds = byte(tot*sin[spc[1]] + 0.5)
-	}
+	tco, tsi := byte(tot*cos[spc[1]]+0.5), byte(tot*sin[spc[1]]+0.5)
 
 	// The calculated pixel movement may result in valid or invalid underflows and
 	// overflows. The valid version of those boundary jumps allows players to move
@@ -172,13 +151,15 @@ func Target(obc Bucket, opx Pixel, spc [2]byte, tim [2]byte) (Bucket, Pixel, byt
 	switch spc[0] {
 	case 0x01:
 		{
-			tx2 += ds
-			ty2 += dc
+			tx2 += tsi
+			ty2 += tco
 		}
 
 		if tx2 > Max {
-			{
-				tx0, tx1 = incByt(tx0, tx1)
+			if tx1 == Max {
+				tx0, tx1 = tx0+1, Min
+			} else {
+				tx1++
 			}
 
 			if tx0 > Max {
@@ -192,8 +173,10 @@ func Target(obc Bucket, opx Pixel, spc [2]byte, tim [2]byte) (Bucket, Pixel, byt
 		}
 
 		if ty2 > Max {
-			{
-				ty0, ty1 = incByt(ty0, ty1)
+			if ty1 == Max {
+				ty0, ty1 = ty0+1, Min
+			} else {
+				ty1++
 			}
 
 			if ty0 > Max {
@@ -207,13 +190,15 @@ func Target(obc Bucket, opx Pixel, spc [2]byte, tim [2]byte) (Bucket, Pixel, byt
 		}
 	case 0x02:
 		{
-			tx2 += dc
-			ty2 -= ds
+			tx2 += tco
+			ty2 -= tsi
 		}
 
 		if tx2 > Max {
-			{
-				tx0, tx1 = incByt(tx0, tx1)
+			if tx1 == Max {
+				tx0, tx1 = tx0+1, Min
+			} else {
+				tx1++
 			}
 
 			if tx0 > Max {
@@ -227,8 +212,10 @@ func Target(obc Bucket, opx Pixel, spc [2]byte, tim [2]byte) (Bucket, Pixel, byt
 		}
 
 		if ty2 < Min {
-			{
-				ty0, ty1 = decByt(ty0, ty1)
+			if ty1 == Min {
+				ty0, ty1 = ty0-1, Max
+			} else {
+				ty1--
 			}
 
 			if ty0 < Min {
@@ -242,13 +229,15 @@ func Target(obc Bucket, opx Pixel, spc [2]byte, tim [2]byte) (Bucket, Pixel, byt
 		}
 	case 0x03:
 		{
-			tx2 -= ds
-			ty2 -= dc
+			tx2 -= tsi
+			ty2 -= tco
 		}
 
 		if tx2 < Min {
-			{
-				tx0, tx1 = decByt(tx0, tx1)
+			if tx1 == Min {
+				tx0, tx1 = tx0-1, Max
+			} else {
+				tx1--
 			}
 
 			if tx0 < Min {
@@ -262,8 +251,10 @@ func Target(obc Bucket, opx Pixel, spc [2]byte, tim [2]byte) (Bucket, Pixel, byt
 		}
 
 		if ty2 < Min {
-			{
-				ty0, ty1 = decByt(ty0, ty1)
+			if ty1 == Min {
+				ty0, ty1 = ty0-1, Max
+			} else {
+				ty1--
 			}
 
 			if ty0 < Min {
@@ -277,13 +268,15 @@ func Target(obc Bucket, opx Pixel, spc [2]byte, tim [2]byte) (Bucket, Pixel, byt
 		}
 	case 0x04:
 		{
-			tx2 -= dc
-			ty2 += ds
+			tx2 -= tco
+			ty2 += tsi
 		}
 
 		if tx2 < Min {
-			{
-				tx0, tx1 = decByt(tx0, tx1)
+			if tx1 == Min {
+				tx0, tx1 = tx0-1, Max
+			} else {
+				tx1--
 			}
 
 			if tx0 < Min {
@@ -297,8 +290,10 @@ func Target(obc Bucket, opx Pixel, spc [2]byte, tim [2]byte) (Bucket, Pixel, byt
 		}
 
 		if ty2 > Max {
-			{
-				ty0, ty1 = incByt(ty0, ty1)
+			if ty1 == Max {
+				ty0, ty1 = ty0+1, Min
+			} else {
+				ty1++
 			}
 
 			if ty0 > Max {

@@ -10,6 +10,7 @@ import (
 )
 
 type Config struct {
+	Buf int
 	Don <-chan struct{}
 	Log logger.Interface
 	Max byte
@@ -46,7 +47,7 @@ func New(c Config) *Random {
 		log: c.Log,
 		max: c.Max,
 		min: c.Min,
-		que: make(chan byte, 500),
+		que: make(chan byte, c.Buf),
 		siz: big.NewInt(int64(c.Max - c.Min + 1)),
 	}
 }

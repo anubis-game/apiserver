@@ -379,62 +379,62 @@ func Benchmark_Matrix_Buffer(b *testing.B) {
 		ogn Bucket
 		qdr byte
 	}{
-		// Case 000, ~4.90 ns/op
+		// Case 000, ~4.50 ns/op
 		{
 			ogn: Bucket{100, 100, 100, 100},
 			qdr: 0x01,
 		},
-		// Case 001, ~4.90 ns/op
+		// Case 001, ~4.50 ns/op
 		{
 			ogn: Bucket{100, 100, 101, 100},
 			qdr: 0x02,
 		},
-		// Case 002, ~4.90 ns/op
+		// Case 002, ~4.50 ns/op
 		{
 			ogn: Bucket{115, 123, 107, 101},
 			qdr: 0x03,
 		},
-		// Case 003, ~4.90 ns/op
+		// Case 003, ~4.50 ns/op
 		{
 			ogn: Bucket{115, 122, 107, 163},
 			qdr: 0x04,
 		},
-		// Case 004, ~4.90 ns/op
+		// Case 004, ~4.50 ns/op
 		{
 			ogn: Bucket{115, 123, 107, 100},
 			qdr: 0x01,
 		},
-		// Case 005, ~4.90 ns/op
+		// Case 005, ~4.50 ns/op
 		{
 			ogn: Bucket{115, 123, 163, 163},
 			qdr: 0x02,
 		},
-		// Case 006, ~4.90 ns/op
+		// Case 006, ~4.50 ns/op
 		{
 			ogn: Bucket{115, 123, 100, 100},
 			qdr: 0x03,
 		},
-		// Case 007, ~4.90 ns/op
+		// Case 007, ~4.50 ns/op
 		{
 			ogn: Bucket{115, 123, 100, 100},
 			qdr: 0x04,
 		},
-		// Case 008, ~4.90 ns/op
+		// Case 008, ~4.50 ns/op
 		{
 			ogn: Bucket{114, 122, 163, 163},
 			qdr: 0x01,
 		},
-		// Case 009, ~4.90 ns/op
+		// Case 009, ~4.50 ns/op
 		{
 			ogn: Bucket{114, 122, 163, 163},
 			qdr: 0x02,
 		},
-		// Case 010, ~4.90 ns/op
+		// Case 010, ~4.50 ns/op
 		{
 			ogn: Bucket{162, 162, 163, 163},
 			qdr: 0x03,
 		},
-		// Case 011, ~4.90 ns/op
+		// Case 011, ~4.50 ns/op
 		{
 			ogn: Bucket{163, 163, 163, 163},
 			qdr: 0x04,

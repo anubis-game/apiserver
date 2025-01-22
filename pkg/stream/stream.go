@@ -9,7 +9,11 @@ import (
 	"github.com/anubis-game/apiserver/pkg/cache"
 	"github.com/anubis-game/apiserver/pkg/client"
 	"github.com/anubis-game/apiserver/pkg/contract/registry"
+	"github.com/anubis-game/apiserver/pkg/energy"
 	"github.com/anubis-game/apiserver/pkg/envvar"
+	"github.com/anubis-game/apiserver/pkg/matrix"
+	"github.com/anubis-game/apiserver/pkg/player"
+	"github.com/anubis-game/apiserver/pkg/random"
 	"github.com/anubis-game/apiserver/pkg/schema"
 	"github.com/anubis-game/apiserver/pkg/worker"
 	"github.com/anubis-game/apiserver/pkg/worker/release"
@@ -17,6 +21,7 @@ import (
 	"github.com/coder/websocket"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/google/uuid"
+	"github.com/puzpuzpuz/xsync/v3"
 	"github.com/xh3b4sd/logger"
 	"github.com/xh3b4sd/tracer"
 )
@@ -44,15 +49,20 @@ type Config struct {
 }
 
 type Stream struct {
-	cli cache.Interface[common.Address, *client.Client]
+	ang *random.Random
+	cli map[common.Address]*client.Client
+	crd *random.Random
 	ctx context.Context
-	don <-chan struct{}
 	ind cache.Interface[common.Address, uuid.UUID]
 	log logger.Interface
+	nrg *xsync.MapOf[common.Address, []energy.Energy]
 	opt *websocket.AcceptOptions
+	ply *xsync.MapOf[common.Address, []player.Player]
+	qdr *random.Random
 	reg *registry.Registry
 	rel worker.Create[release.Packet]
 	res worker.Create[resolve.Packet]
+	rtr *Router
 	sem chan struct{}
 	// ttl is the connection timeout that the stream engine should enforce upon
 	// connected clients. All associated onchain and offchain resources must be
@@ -60,6 +70,7 @@ type Stream struct {
 	ttl time.Duration
 	txp *cache.Time[uuid.UUID]
 	tok cache.Interface[uuid.UUID, common.Address]
+	wrk *Worker
 	wxp *cache.Time[common.Address]
 }
 
@@ -80,9 +91,24 @@ func New(c Config) *Stream {
 		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Res must not be empty", c)))
 	}
 
-	var ctx context.Context
+	var ang *random.Random
 	{
-		ctx = context.Background()
+		ang = random.New(random.Config{
+			Don: c.Don,
+			Log: c.Log,
+			Max: 255,
+			Min: 0,
+		})
+	}
+
+	var crd *random.Random
+	{
+		crd = random.New(random.Config{
+			Don: c.Don,
+			Log: c.Log,
+			Max: matrix.Max,
+			Min: matrix.Min,
+		})
 	}
 
 	var opt *websocket.AcceptOptions
@@ -96,20 +122,36 @@ func New(c Config) *Stream {
 		}
 	}
 
+	var qdr *random.Random
+	{
+		qdr = random.New(random.Config{
+			Don: c.Don,
+			Log: c.Log,
+			Max: 4,
+			Min: 1,
+		})
+	}
+
 	return &Stream{
-		cli: cache.NewPool[common.Address, *client.Client](),
-		ctx: ctx,
-		don: c.Don,
+		ang: ang,
+		cli: map[common.Address]*client.Client{},
+		crd: crd,
+		ctx: context.Background(),
 		ind: cache.NewSxnc[common.Address, uuid.UUID](),
 		log: c.Log,
+		nrg: xsync.NewMapOf[common.Address, []energy.Energy](),
 		opt: opt,
+		ply: xsync.NewMapOf[common.Address, []player.Player](),
+		qdr: qdr,
 		reg: c.Reg,
 		rel: c.Rel,
 		res: c.Res,
+		rtr: NewRouter(c.Don),
 		sem: make(chan struct{}, max),
 		ttl: musDur(c.Env.ConnectionTimeout, "s"),
 		txp: cache.NewTime[uuid.UUID](),
 		tok: cache.NewSxnc[uuid.UUID, common.Address](),
+		wrk: NewWorker(),
 		wxp: cache.NewTime[common.Address](),
 	}
 }

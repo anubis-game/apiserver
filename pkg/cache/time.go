@@ -12,14 +12,14 @@ type V struct {
 
 type Time[K comparable] struct {
 	dic map[K]V
-	mut sync.Mutex
+	mut sync.RWMutex
 	now func() time.Time
 }
 
 func NewTime[K comparable]() *Time[K] {
 	return &Time[K]{
 		dic: map[K]V{},
-		mut: sync.Mutex{},
+		mut: sync.RWMutex{},
 		now: func() time.Time { return time.Now() },
 	}
 }
@@ -34,6 +34,14 @@ func (t *Time[K]) Ensure(key K, ttl time.Duration, fnc func()) {
 	t.mut.Lock()
 	t.dic[key] = V{Exp: t.now().Add(ttl).Unix(), Fnc: fnc}
 	t.mut.Unlock()
+}
+
+func (t *Time[K]) Exists(key K) bool {
+	t.mut.RLock()
+	_, exi := t.dic[key]
+	t.mut.RUnlock()
+
+	return exi
 }
 
 func (t *Time[K]) Expire(cyc time.Duration) {
@@ -61,14 +69,4 @@ func (t *Time[K]) Expire(cyc time.Duration) {
 		}
 		t.mut.Unlock()
 	}
-}
-
-// Length returns the amount of key-value pairs currently maintained in the
-// underlying cache.
-func (t *Time[K]) Length() int {
-	t.mut.Lock()
-	siz := len(t.dic)
-	t.mut.Unlock()
-
-	return siz
 }

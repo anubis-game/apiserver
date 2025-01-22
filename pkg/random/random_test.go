@@ -12,6 +12,7 @@ func Test_Random_Random(t *testing.T) {
 	var ran *Random
 	{
 		ran = New(Config{
+			Buf: 1000,
 			Don: make(<-chan struct{}),
 			Log: logger.Fake(),
 			Max: matrix.Max,
@@ -59,6 +60,7 @@ func Test_Random_backup(t *testing.T) {
 	var ran *Random
 	{
 		ran = New(Config{
+			Buf: 1000,
 			Don: make(<-chan struct{}),
 			Log: logger.Fake(),
 			Max: matrix.Max,
