@@ -3,12 +3,16 @@ package client
 import (
 	"context"
 
+	"github.com/anubis-game/apiserver/pkg/window"
 	"github.com/coder/websocket"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 type Config struct {
 	Con *websocket.Conn
 	Ctx context.Context
+	Wal common.Address
+	Win *window.Window
 }
 
 type Client struct {
@@ -18,6 +22,8 @@ type Client struct {
 
 	con *websocket.Conn
 	ctx context.Context
+	wal common.Address
+	win *window.Window
 }
 
 func New(c Config) *Client {
@@ -28,6 +34,8 @@ func New(c Config) *Client {
 
 		con: c.Con,
 		ctx: c.Ctx,
+		wal: c.Wal,
+		win: c.Win,
 	}
 }
 
@@ -48,4 +56,12 @@ func (c *Client) Stream(byt []byte) {
 	if err != nil {
 		close(c.Writer())
 	}
+}
+
+func (c *Client) Wallet() common.Address {
+	return c.wal
+}
+
+func (c *Client) Window() *window.Window {
+	return c.win
 }

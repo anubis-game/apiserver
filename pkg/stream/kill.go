@@ -3,13 +3,12 @@ package stream
 import (
 	"github.com/anubis-game/apiserver/pkg/address"
 	"github.com/anubis-game/apiserver/pkg/client"
-	"github.com/anubis-game/apiserver/pkg/schema"
 	"github.com/anubis-game/apiserver/pkg/worker/release"
 	"github.com/anubis-game/apiserver/pkg/worker/resolve"
 	"github.com/ethereum/go-ethereum/common"
 )
 
-func (s *Stream) kill(_ common.Address, _ *client.Client, inp []byte) error {
+func (s *Stream) Kill(_ common.Address, _ *client.Client, inp []byte) error {
 	//
 	//     inp[0]        action
 	//     inp[1:21]     winner
@@ -43,14 +42,14 @@ func (s *Stream) kill(_ common.Address, _ *client.Client, inp []byte) error {
 
 	// Fan out the kill response to all participating users.
 
-	var out []byte
-	{
-		out = schema.Encode(schema.Kill, win.Bytes(), los.Bytes())
-	}
+	// var out []byte
+	// {
+	// 	out = schema.Encode(schema.Kill, win.Bytes(), los.Bytes())
+	// }
 
-	s.cli.Ranger(func(_ common.Address, val *client.Client) {
-		val.Stream(out)
-	})
+	// TODO s.cli.Ranger(func(_ common.Address, val *client.Client) {
+	// 	val.Stream(out)
+	// })
 
 	// Since the loser got killed, they must be removed from the current game.
 	// Regardless, we can only remove the loser from the broadcasting worker pool,
@@ -60,7 +59,7 @@ func (s *Stream) kill(_ common.Address, _ *client.Client, inp []byte) error {
 	// broadcasting worker pool.
 
 	{
-		s.cli.Delete(los)
+		// TODO s.cli.Delete(los)
 	}
 
 	return nil

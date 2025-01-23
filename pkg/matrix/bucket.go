@@ -26,22 +26,22 @@ const (
 
 type Bucket [4]byte
 
-// decByt decrements the bytes of any given axis of the layered coordinate
-// system and manages eventual underflows accordingly.
-func decByt(out byte, inn byte) (byte, byte) {
-	if inn == byte(Min) {
-		return out - 1, byte(Max)
+func (b Bucket) Scale(siz byte) Bucket {
+	del := Max - siz
+
+	sx0, sy0, sx1, sy1 := b[X0], b[Y0], b[X1], b[Y1]
+
+	if del < sx1 {
+		sx0, sx1 = sx0+1, Min+(sx1-del)-1
+	} else {
+		sx1 += siz
 	}
 
-	return out, inn - 1
-}
-
-// incByt increments the bytes of any given axis of the layered coordinate
-// system and manages eventual overflows accordingly.
-func incByt(out byte, inn byte) (byte, byte) {
-	if inn == byte(Max) {
-		return out + 1, byte(Min)
+	if del < sy1 {
+		sy0, sy1 = sy0+1, Min+(sy1-del)-1
+	} else {
+		sy1 += siz
 	}
 
-	return out, inn + 1
+	return Bucket{sx0, sy0, sx1, sy1}
 }

@@ -5,8 +5,6 @@ import (
 
 	"github.com/anubis-game/apiserver/pkg/contract/registry"
 	"github.com/anubis-game/apiserver/pkg/envvar"
-	"github.com/anubis-game/apiserver/pkg/matrix"
-	"github.com/anubis-game/apiserver/pkg/random"
 	"github.com/anubis-game/apiserver/pkg/server"
 	"github.com/anubis-game/apiserver/pkg/stream"
 	"github.com/anubis-game/apiserver/pkg/worker"
@@ -26,7 +24,6 @@ type Config struct {
 type Daemon struct {
 	lis net.Listener
 	log logger.Interface
-	ran *random.Random
 	reg *registry.Registry
 	rel *worker.Worker[common.Address, release.Packet]
 	res *worker.Worker[common.Address, resolve.Packet]
@@ -51,16 +48,6 @@ func New(c Config) *Daemon {
 		if err != nil {
 			tracer.Panic(tracer.Mask(err))
 		}
-	}
-
-	var ran *random.Random
-	{
-		ran = random.New(random.Config{
-			Don: c.Don,
-			Log: log,
-			Max: matrix.Max,
-			Min: matrix.Min,
-		})
 	}
 
 	var reg *registry.Registry
@@ -114,7 +101,6 @@ func New(c Config) *Daemon {
 	return &Daemon{
 		lis: lis,
 		log: log,
-		ran: ran,
 		reg: reg,
 		rel: rel,
 		res: res,

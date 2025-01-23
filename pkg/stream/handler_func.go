@@ -75,7 +75,7 @@ func (s *Stream) handlerFunc(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	{
-		exi := s.cli.Exists(wal)
+		exi := s.wxp.Exists(wal)
 		if exi {
 			return tracer.Mask(walletAddressRegisteredError)
 		}

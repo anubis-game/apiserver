@@ -3,6 +3,7 @@ package random
 import (
 	"context"
 	"crypto/rand"
+	"fmt"
 	"math/big"
 
 	"github.com/xh3b4sd/logger"
@@ -10,6 +11,7 @@ import (
 )
 
 type Config struct {
+	Buf int
 	Don <-chan struct{}
 	Log logger.Interface
 	Max byte
@@ -27,9 +29,32 @@ type Random struct {
 }
 
 func New(c Config) *Random {
+	if c.Buf == 0 {
+		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Buf must not be empty", c)))
+	}
+	if c.Don == nil {
+		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Don must not be empty", c)))
+	}
+	if c.Log == nil {
+		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Log must not be empty", c)))
+	}
+	if c.Max == 0 {
+		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Max must not be empty", c)))
+	}
+
+	// We need to cast min and max into integers before calculating the size,
+	// because min=0 max=255 results in a size of 0 due to the MaxUint8 overflow
+	// when doing +1 below. A size of 0 does then cause runtime panics for any
+	// random distribution for the full uint8 spectrum. We have unit tests for
+	// that case. See Test_Random_Random_uint8 and Test_Random_backup_uint8.
+	var siz int
+	{
+		siz = int(c.Max) - int(c.Min) + 1
+	}
+
 	var bck []byte
 	{
-		bck = make([]byte, c.Max-c.Min+1)
+		bck = make([]byte, siz)
 	}
 
 	for i := range bck {
@@ -46,8 +71,8 @@ func New(c Config) *Random {
 		log: c.Log,
 		max: c.Max,
 		min: c.Min,
-		que: make(chan byte, 500),
-		siz: big.NewInt(int64(c.Max - c.Min + 1)),
+		que: make(chan byte, c.Buf),
+		siz: big.NewInt(int64(siz)),
 	}
 }
 

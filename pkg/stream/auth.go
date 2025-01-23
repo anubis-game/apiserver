@@ -8,7 +8,7 @@ import (
 	"github.com/xh3b4sd/tracer"
 )
 
-func (s *Stream) auth(wal common.Address, cli *client.Client, _ []byte) error {
+func (s *Stream) auth(cli *client.Client) error {
 	var err error
 
 	// Create a new session token using V4 UUIDs for the requesting Wallet
@@ -44,6 +44,11 @@ func (s *Stream) auth(wal common.Address, cli *client.Client, _ []byte) error {
 	// want to remove those. That includes the token references themselves, and
 	// the expiration callbacks.
 
+	var wal common.Address
+	{
+		wal = cli.Wallet()
+	}
+
 	{
 		old, exi := s.ind.Search(wal)
 		if exi {
@@ -67,13 +72,8 @@ func (s *Stream) auth(wal common.Address, cli *client.Client, _ []byte) error {
 	// Encode the auth response and send the new session token back to the client
 	// connection that requested this new credential.
 
-	var out []byte
 	{
-		out = schema.Encode(schema.Auth, []byte(tok.String()))
-	}
-
-	{
-		cli.Stream(out)
+		cli.Stream(schema.Encode(schema.Auth, []byte(tok.String())))
 	}
 
 	return nil

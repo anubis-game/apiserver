@@ -2,18 +2,46 @@ package stream
 
 import (
 	"github.com/anubis-game/apiserver/pkg/client"
+	"github.com/anubis-game/apiserver/pkg/matrix"
 	"github.com/anubis-game/apiserver/pkg/schema"
+	"github.com/anubis-game/apiserver/pkg/window"
 	"github.com/coder/websocket"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/xh3b4sd/tracer"
 )
 
+var (
+	pong = []byte{byte(schema.Pong)}
+)
+
 func (s *Stream) client(wal common.Address, con *websocket.Conn) error {
+	var win *window.Window
+	{
+		win = window.New(window.Config{
+			Bck: matrix.Bucket{
+				s.crd.Random(), // x0
+				s.crd.Random(), // y0
+				s.crd.Random(), // x1
+				s.crd.Random(), // y1
+			},
+			Pxl: matrix.Pixel{
+				s.crd.Random(), // x2
+				s.crd.Random(), // y2
+			},
+			Spc: matrix.Space{
+				s.qdr.Random(), // quadrant
+				s.ang.Random(), // angle
+			},
+		})
+	}
+
 	var cli *client.Client
 	{
 		cli = client.New(client.Config{
 			Con: con,
 			Ctx: s.ctx,
+			Wal: wal,
+			Win: win,
 		})
 	}
 
@@ -45,19 +73,20 @@ func (s *Stream) client(wal common.Address, con *websocket.Conn) error {
 				}
 			}
 
+			// TODO prevent DDOS attacks and rate limit stream input somehow so that
+			// the 25 millisecond schedule cannot be overloaded artificially.
+
 			switch schema.Action(byt[0]) {
 			case schema.Ping:
-				err = s.ping(wal, cli, byt)
+				cli.Stream(pong)
 			case schema.Auth:
-				err = s.auth(wal, cli, byt)
+				err = s.auth(cli)
 			case schema.Join:
-				err = s.join(wal, cli, byt)
-			case schema.Cast:
-				err = s.cast(wal, cli, byt) // TODO we should not allow anyone to just cast anything to everyone
+				s.rtr.Create <- Packet{byt, cli}
 			case schema.Move:
+				// TODO move must also adapt the client window coordinates
+			case schema.Race:
 				// TODO
-			case schema.Kill:
-				err = s.kill(wal, cli, byt)
 			}
 
 			if err != nil {
@@ -82,11 +111,11 @@ func (s *Stream) client(wal common.Address, con *websocket.Conn) error {
 	case <-cli.Expiry():
 	case <-cli.Reader():
 	case <-cli.Writer():
-	case <-s.don:
+	case <-s.rtr.Closer:
 	}
 
 	{
-		s.cli.Delete(wal)
+		s.rtr.Delete <- Packet{nil, cli}
 		s.wxp.Delete(wal)
 	}
 
