@@ -9,7 +9,7 @@ import (
 const (
 	// Siz describes half of the initial window size along x and y axis. The goal
 	// is to put the player into the middle of this window, which means that we
-	// have to define the edges and the centre of the window. E.g. a size of 5
+	// have to define the edges and the center of the window. E.g. a size of 5
 	// implies the total window length along x and y axis of 11 inner buckets,
 	// which puts the player into the middle of the window at the relative
 	// coordinates x=5 y=5. The player has then 5 inner buckets all around the

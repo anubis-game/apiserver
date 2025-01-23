@@ -21,10 +21,15 @@ func Test_Stream_Worker(t *testing.T) {
 		}
 
 		go wrk.Worker(func() {
-			mut.Lock()
-			dic[i]++
-			mut.Unlock()
-			wai.Done()
+			{
+				mut.Lock()
+				dic[i]++
+				mut.Unlock()
+			}
+
+			{
+				wai.Done()
+			}
 		})
 	}
 

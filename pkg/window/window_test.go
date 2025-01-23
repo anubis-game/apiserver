@@ -40,7 +40,7 @@ func Test_Window_Bytes(t *testing.T) {
 	}
 }
 
-func Test_Window_Centre(t *testing.T) {
+func Test_Window_Center(t *testing.T) {
 	testCases := []struct {
 		w *Window
 		c matrix.Bucket

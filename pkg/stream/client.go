@@ -73,6 +73,9 @@ func (s *Stream) client(wal common.Address, con *websocket.Conn) error {
 				}
 			}
 
+			// TODO prevent DDOS attacks and rate limit stream input somehow so that
+			// the 25 millisecond schedule cannot be overloaded artificially.
+
 			switch schema.Action(byt[0]) {
 			case schema.Ping:
 				cli.Stream(pong)
