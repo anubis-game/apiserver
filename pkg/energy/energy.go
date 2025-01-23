@@ -1,6 +1,10 @@
 package energy
 
-import "github.com/anubis-game/apiserver/pkg/matrix"
+import (
+	"fmt"
+
+	"github.com/anubis-game/apiserver/pkg/matrix"
+)
 
 type Energy struct {
 	Bck matrix.Bucket
@@ -9,15 +13,27 @@ type Energy struct {
 }
 
 func (e Energy) Bytes() []byte {
-	return []byte{
-		e.Bck[0], // x0
-		e.Bck[0], // y0
-		e.Bck[0], // x1
-		e.Bck[0], // y1
+	var buf [7]byte
 
-		e.Pxl[0], // x2
-		e.Pxl[1], // y2
+	copy(buf[0:4], e.Bck[:])
+	copy(buf[4:6], e.Pxl[:])
 
-		e.Siz,
+	buf[6] = e.Siz
+
+	return buf[:]
+}
+
+func FromBytes(byt []byte) Energy {
+	if len(byt) != 7 {
+		panic(fmt.Sprintf("expected 7 energy bytes, got %d", len(byt)))
 	}
+
+	var e Energy
+
+	copy(e.Bck[:], byt[0:4])
+	copy(e.Pxl[:], byt[4:6])
+
+	e.Siz = byt[6]
+
+	return e
 }

@@ -1,23 +1,43 @@
 package player
 
-import "github.com/anubis-game/apiserver/pkg/matrix"
+import (
+	"fmt"
+
+	"github.com/anubis-game/apiserver/pkg/matrix"
+	"github.com/ethereum/go-ethereum/common"
+)
 
 type Player struct {
 	Bck matrix.Bucket
 	Pxl matrix.Pixel
 	Siz byte
+	Wal common.Address
 }
 
 func (p Player) Bytes() []byte {
-	return []byte{
-		p.Bck[0], // x0
-		p.Bck[0], // y0
-		p.Bck[0], // x1
-		p.Bck[0], // y1
+	var buf [27]byte
 
-		p.Pxl[0], // x2
-		p.Pxl[1], // y2
+	copy(buf[0:20], p.Wal[:])
+	copy(buf[20:24], p.Bck[:])
+	copy(buf[24:26], p.Pxl[:])
 
-		p.Siz,
+	buf[26] = p.Siz
+
+	return buf[:]
+}
+
+func FromBytes(byt []byte) Player {
+	if len(byt) != 27 {
+		panic(fmt.Sprintf("expected 27 player bytes, got %d", len(byt)))
 	}
+
+	var p Player
+
+	copy(p.Wal[:], byt[0:20])
+	copy(p.Bck[:], byt[20:24])
+	copy(p.Pxl[:], byt[24:26])
+
+	p.Siz = byt[26]
+
+	return p
 }

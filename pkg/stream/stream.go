@@ -9,10 +9,8 @@ import (
 	"github.com/anubis-game/apiserver/pkg/cache"
 	"github.com/anubis-game/apiserver/pkg/client"
 	"github.com/anubis-game/apiserver/pkg/contract/registry"
-	"github.com/anubis-game/apiserver/pkg/energy"
 	"github.com/anubis-game/apiserver/pkg/envvar"
 	"github.com/anubis-game/apiserver/pkg/matrix"
-	"github.com/anubis-game/apiserver/pkg/player"
 	"github.com/anubis-game/apiserver/pkg/random"
 	"github.com/anubis-game/apiserver/pkg/schema"
 	"github.com/anubis-game/apiserver/pkg/worker"
@@ -55,9 +53,9 @@ type Stream struct {
 	ctx context.Context
 	ind cache.Interface[common.Address, uuid.UUID]
 	log logger.Interface
-	nrg *xsync.MapOf[common.Address, []energy.Energy]
+	nrg *xsync.MapOf[common.Address, [][]byte]
 	opt *websocket.AcceptOptions
-	ply *xsync.MapOf[common.Address, []player.Player]
+	ply *xsync.MapOf[common.Address, [][]byte]
 	qdr *random.Random
 	reg *registry.Registry
 	rel worker.Create[release.Packet]
@@ -139,9 +137,9 @@ func New(c Config) *Stream {
 		ctx: context.Background(),
 		ind: cache.NewSxnc[common.Address, uuid.UUID](),
 		log: c.Log,
-		nrg: xsync.NewMapOf[common.Address, []energy.Energy](),
+		nrg: xsync.NewMapOf[common.Address, [][]byte](),
 		opt: opt,
-		ply: xsync.NewMapOf[common.Address, []player.Player](),
+		ply: xsync.NewMapOf[common.Address, [][]byte](),
 		qdr: qdr,
 		reg: c.Reg,
 		rel: c.Rel,
