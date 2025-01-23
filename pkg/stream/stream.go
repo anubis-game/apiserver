@@ -92,6 +92,7 @@ func New(c Config) *Stream {
 	var ang *random.Random
 	{
 		ang = random.New(random.Config{
+			Buf: 500,
 			Don: c.Don,
 			Log: c.Log,
 			Max: 255,
@@ -102,6 +103,7 @@ func New(c Config) *Stream {
 	var crd *random.Random
 	{
 		crd = random.New(random.Config{
+			Buf: 3000,
 			Don: c.Don,
 			Log: c.Log,
 			Max: matrix.Max,
@@ -123,6 +125,7 @@ func New(c Config) *Stream {
 	var qdr *random.Random
 	{
 		qdr = random.New(random.Config{
+			Buf: 500,
 			Don: c.Don,
 			Log: c.Log,
 			Max: 4,
