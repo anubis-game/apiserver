@@ -50,6 +50,12 @@ type Config struct {
 type Handler struct {
 	ang *random.Random
 	crd *random.Random
+	// ctx is the global context instance that we inject into every client struct.
+	// We are not leveraging any of the underlying context specific control flow
+	// primitives, but the websocket implementation that we are using requires a
+	// context parameter to be provided.  And so in order to not garbage collect
+	// useless context instances all the time, we define a single global context
+	// and reuse that for the required websocket parameters everywhere.
 	ctx context.Context
 	don <-chan struct{}
 	ind cache.Interface[common.Address, uuid.UUID]

@@ -60,7 +60,7 @@ func (c *Client) Delete(cli *client.Client) {
 func newLim() ratelimit.Limiter {
 	return ratelimit.New(
 		3,                                  // 1 move, 1 race, 1 buffer
-		ratelimit.Per(25*time.Millisecond), // single standard frame
-		ratelimit.WithSlack(0),             // don't accumulate capacity
+		ratelimit.Per(25*time.Millisecond), // per standard frame
+		ratelimit.WithSlack(0),             // without re-using unused capacity
 	)
 }

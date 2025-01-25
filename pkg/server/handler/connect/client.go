@@ -1,6 +1,9 @@
 package connect
 
 import (
+	"errors"
+	"net"
+
 	"github.com/anubis-game/apiserver/pkg/client"
 	"github.com/anubis-game/apiserver/pkg/matrix"
 	"github.com/anubis-game/apiserver/pkg/schema"
@@ -50,47 +53,27 @@ func (h *Handler) client(wal common.Address, con *websocket.Conn) error {
 		})
 	}
 
-	// Below we manage the connection specific read loop. Any error occuring here
-	// causes the connection to close.
+	// Below we manage the connection specific reader loop. Any error occuring
+	// here causes the connection to close, regardless where the underlying error
+	// originated from. In some cases, reading from the websocket connection may
+	// fail. In other cases some internal logic may cause the reader loop to
+	// produce an error, either due to invalid reconciliation results, or
+	// websocket writes.
 
 	go func() {
-		var err error
-
-		{
-			defer close(cli.Reader())
+		err := h.reader(con, cli)
+		if errors.Is(err, net.ErrClosed) {
+			// fall through
+		} else if err != nil {
+			h.log.Log(
+				"level", "error",
+				"message", err.Error(),
+				"stack", tracer.Stack(err),
+			)
 		}
 
-		for {
-			var byt []byte
-			{
-				_, byt, err = con.Read(h.ctx)
-				if err != nil {
-					return
-				}
-			}
-
-			switch schema.Action(byt[0]) {
-			case schema.Ping:
-				err = h.ping(cli, byt)
-			case schema.Auth:
-				err = h.auth(cli, byt)
-			case schema.Join:
-				err = h.join(cli, byt)
-			case schema.Move:
-				err = h.move(cli, byt)
-			case schema.Race:
-				err = h.race(cli, byt)
-			}
-
-			if err != nil {
-				h.log.Log(
-					"level", "error",
-					"message", err.Error(),
-					"stack", tracer.Stack(err),
-				)
-
-				return
-			}
+		{
+			close(cli.Reader())
 		}
 	}()
 
@@ -119,4 +102,30 @@ func (h *Handler) client(wal common.Address, con *websocket.Conn) error {
 	}
 
 	return nil
+}
+
+func (h *Handler) reader(con *websocket.Conn, cli *client.Client) error {
+	for {
+		_, byt, err := con.Read(h.ctx)
+		if err != nil {
+			return tracer.Mask(err)
+		}
+
+		switch schema.Action(byt[0]) {
+		case schema.Ping:
+			err = h.ping(cli, byt)
+		case schema.Auth:
+			err = h.auth(cli, byt)
+		case schema.Join:
+			err = h.join(cli, byt)
+		case schema.Move:
+			err = h.move(cli, byt)
+		case schema.Race:
+			err = h.race(cli, byt)
+		}
+
+		if err != nil {
+			return tracer.Mask(err)
+		}
+	}
 }
