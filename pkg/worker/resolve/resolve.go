@@ -1,7 +1,6 @@
 package resolve
 
 import (
-	"context"
 	"fmt"
 	"time"
 
@@ -27,10 +26,10 @@ type Resolve struct {
 
 func New(c Config) *Resolve {
 	if c.Log == nil {
-		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Log must not be empty", c)))
+		tracer.Panic(fmt.Errorf("%T.Log must not be empty", c))
 	}
 	if c.Reg == nil {
-		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Reg must not be empty", c)))
+		tracer.Panic(fmt.Errorf("%T.Reg must not be empty", c))
 	}
 
 	return &Resolve{
@@ -47,7 +46,6 @@ func (r *Resolve) Ensure(pac Packet) (Packet, common.Address, time.Duration) {
 		pac, ttl, err = r.ensure(pac)
 		if err != nil {
 			r.log.Log(
-				context.Background(),
 				"level", "error",
 				"message", err.Error(),
 				"stack", tracer.Stack(err),

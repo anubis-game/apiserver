@@ -4,14 +4,15 @@ import (
 	"net"
 
 	"github.com/anubis-game/apiserver/pkg/contract/registry"
+	"github.com/anubis-game/apiserver/pkg/engine"
 	"github.com/anubis-game/apiserver/pkg/envvar"
+	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/server"
-	"github.com/anubis-game/apiserver/pkg/stream"
+	"github.com/anubis-game/apiserver/pkg/server/handler/connect"
 	"github.com/anubis-game/apiserver/pkg/worker"
 	"github.com/anubis-game/apiserver/pkg/worker/release"
 	"github.com/anubis-game/apiserver/pkg/worker/resolve"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/gorilla/mux"
 	"github.com/xh3b4sd/logger"
 	"github.com/xh3b4sd/tracer"
 )
@@ -22,14 +23,14 @@ type Config struct {
 }
 
 type Daemon struct {
+	con *connect.Handler
+	eng *engine.Engine
 	lis net.Listener
 	log logger.Interface
 	reg *registry.Registry
 	rel *worker.Worker[common.Address, release.Packet]
 	res *worker.Worker[common.Address, resolve.Packet]
-	rtr *mux.Router
 	ser *server.Server
-	str *stream.Stream
 }
 
 func New(c Config) *Daemon {
@@ -70,43 +71,52 @@ func New(c Config) *Daemon {
 		res = newRes(c.Don, log, reg)
 	}
 
-	var rtr *mux.Router
+	var rtr *router.Router
 	{
-		rtr = mux.NewRouter()
+		rtr = router.New()
 	}
 
-	var str *stream.Stream
+	var con *connect.Handler
 	{
-		str = stream.New(stream.Config{
+		con = connect.New(connect.Config{
 			Don: c.Don,
 			Env: c.Env,
 			Log: log,
 			Reg: reg,
 			Rel: rel,
 			Res: res,
+			Rtr: rtr.Client(),
+		})
+	}
+
+	var eng *engine.Engine
+	{
+		eng = engine.New(engine.Config{
+			Don: c.Don,
+			Log: log,
+			Rtr: rtr.Engine(),
 		})
 	}
 
 	var ser *server.Server
 	{
 		ser = server.New(server.Config{
+			Con: con,
 			Env: c.Env,
 			Lis: lis,
 			Log: log,
-			Rtr: rtr,
-			Str: str,
 		})
 	}
 
 	return &Daemon{
+		con: con,
+		eng: eng,
 		lis: lis,
 		log: log,
 		reg: reg,
 		rel: rel,
 		res: res,
-		rtr: rtr,
 		ser: ser,
-		str: str,
 	}
 }
 

@@ -1,6 +1,8 @@
-package stream
+package connect
 
 import (
+	"time"
+
 	"github.com/anubis-game/apiserver/pkg/client"
 	"github.com/anubis-game/apiserver/pkg/matrix"
 	"github.com/anubis-game/apiserver/pkg/schema"
@@ -8,29 +10,35 @@ import (
 	"github.com/coder/websocket"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/xh3b4sd/tracer"
+	"go.uber.org/ratelimit"
 )
 
-var (
-	pong = []byte{byte(schema.Pong)}
-)
+func (h *Handler) client(wal common.Address, con *websocket.Conn) error {
+	var lim ratelimit.Limiter
+	{
+		lim = ratelimit.New(
+			2,
+			ratelimit.Per(25*time.Millisecond),
+			ratelimit.WithSlack(0),
+		)
+	}
 
-func (s *Stream) client(wal common.Address, con *websocket.Conn) error {
 	var win *window.Window
 	{
 		win = window.New(window.Config{
 			Bck: matrix.Bucket{
-				s.crd.Random(), // x0
-				s.crd.Random(), // y0
-				s.crd.Random(), // x1
-				s.crd.Random(), // y1
+				h.crd.Random(), // x0
+				h.crd.Random(), // y0
+				h.crd.Random(), // x1
+				h.crd.Random(), // y1
 			},
 			Pxl: matrix.Pixel{
-				s.crd.Random(), // x2
-				s.crd.Random(), // y2
+				h.crd.Random(), // x2
+				h.crd.Random(), // y2
 			},
 			Spc: matrix.Space{
-				s.qdr.Random(), // quadrant
-				s.ang.Random(), // angle
+				h.qdr.Random(), // quadrant
+				h.ang.Random(), // angle
 			},
 		})
 	}
@@ -39,7 +47,8 @@ func (s *Stream) client(wal common.Address, con *websocket.Conn) error {
 	{
 		cli = client.New(client.Config{
 			Con: con,
-			Ctx: s.ctx,
+			Ctx: h.ctx,
+			Lim: lim,
 			Wal: wal,
 			Win: win,
 		})
@@ -49,7 +58,7 @@ func (s *Stream) client(wal common.Address, con *websocket.Conn) error {
 	// in order to limit the connection lifetime of every client.
 
 	{
-		s.wxp.Ensure(wal, s.ttl, func() {
+		h.wxp.Ensure(wal, h.ttl, func() {
 			defer close(cli.Expiry())
 		})
 	}
@@ -58,40 +67,36 @@ func (s *Stream) client(wal common.Address, con *websocket.Conn) error {
 	// causes the connection to close.
 
 	go func() {
+		var err error
+
 		{
 			defer close(cli.Reader())
 		}
 
 		for {
-			var err error
-
 			var byt []byte
 			{
-				_, byt, err = con.Read(s.ctx)
+				_, byt, err = con.Read(h.ctx)
 				if err != nil {
 					return
 				}
 			}
 
-			// TODO prevent DDOS attacks and rate limit stream input somehow so that
-			// the 25 millisecond schedule cannot be overloaded artificially.
-
 			switch schema.Action(byt[0]) {
 			case schema.Ping:
-				cli.Stream(pong)
+				err = h.ping(cli, byt)
 			case schema.Auth:
-				err = s.auth(cli)
+				err = h.auth(cli, byt)
 			case schema.Join:
-				s.rtr.Create <- Packet{byt, cli}
+				err = h.join(cli, byt)
 			case schema.Move:
-				// TODO move must also adapt the client window coordinates
+				err = h.move(cli, byt)
 			case schema.Race:
-				// TODO
+				err = h.race(cli, byt)
 			}
 
 			if err != nil {
-				s.log.Log(
-					s.ctx,
+				h.log.Log(
 					"level", "error",
 					"message", err.Error(),
 					"stack", tracer.Stack(err),
@@ -111,12 +116,12 @@ func (s *Stream) client(wal common.Address, con *websocket.Conn) error {
 	case <-cli.Expiry():
 	case <-cli.Reader():
 	case <-cli.Writer():
-	case <-s.rtr.Closer:
+	case <-h.don:
 	}
 
 	{
-		s.rtr.Delete <- Packet{nil, cli}
-		s.wxp.Delete(wal)
+		h.rtr.Delete(cli)
+		h.wxp.Delete(wal)
 	}
 
 	{

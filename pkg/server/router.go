@@ -1,7 +1,6 @@
 package server
 
 import (
-	"context"
 	"net/http"
 
 	"github.com/anubis-game/apiserver/pkg/runtime"
@@ -32,10 +31,9 @@ func (s *Server) router() {
 	// manage websocket connections.
 	{
 		s.rtr.NewRoute().Methods("GET").Path("/connect").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			err := s.str.HandlerFunc(w, r)
+			err := s.con.HandlerFunc(w, r)
 			if err != nil {
 				s.log.Log(
-					context.Background(),
 					"level", "error",
 					"message", err.Error(),
 					"stack", tracer.Stack(err),

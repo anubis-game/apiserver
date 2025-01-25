@@ -1,4 +1,4 @@
-package stream
+package connect
 
 import (
 	"github.com/anubis-game/apiserver/pkg/address"
@@ -8,7 +8,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 )
 
-func (s *Stream) Kill(_ common.Address, _ *client.Client, inp []byte) error {
+func (h *Handler) Kill(_ common.Address, _ *client.Client, inp []byte) error {
 	//
 	//     inp[0]        action
 	//     inp[1:21]     winner
@@ -30,11 +30,11 @@ func (s *Stream) Kill(_ common.Address, _ *client.Client, inp []byte) error {
 	// so the given kill state must be resolved to benefit the winner.
 
 	if address.Empty(win) {
-		s.rel.Create(release.Packet{
+		h.rel.Create(release.Packet{
 			Loser: los,
 		})
 	} else {
-		s.res.Create(resolve.Packet{
+		h.res.Create(resolve.Packet{
 			Winner: win,
 			Loser:  los,
 		})
@@ -47,7 +47,7 @@ func (s *Stream) Kill(_ common.Address, _ *client.Client, inp []byte) error {
 	// 	out = schema.Encode(schema.Kill, win.Bytes(), los.Bytes())
 	// }
 
-	// TODO s.cli.Ranger(func(_ common.Address, val *client.Client) {
+	// TODO h.cli.Ranger(func(_ common.Address, val *client.Client) {
 	// 	val.Stream(out)
 	// })
 
@@ -59,7 +59,7 @@ func (s *Stream) Kill(_ common.Address, _ *client.Client, inp []byte) error {
 	// broadcasting worker pool.
 
 	{
-		// TODO s.cli.Delete(los)
+		// TODO h.cli.Delete(los)
 	}
 
 	return nil

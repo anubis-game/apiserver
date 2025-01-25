@@ -1,12 +1,13 @@
-package stream
+package engine
 
 import (
+	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/schema"
 	"github.com/anubis-game/apiserver/pkg/window"
 	"github.com/ethereum/go-ethereum/common"
 )
 
-func (s *Stream) create(pac Packet) {
+func (e *Engine) create(pac router.Packet) {
 	// Upon joining, we add the user to the broadcasting worker pool in order to
 	// provide them with realtime data primitives over the given client
 	// connection. We check whether the given Wallet address is already part of
@@ -19,10 +20,9 @@ func (s *Stream) create(pac Packet) {
 	}
 
 	{
-		_, exi := s.cli[wal]
+		_, exi := e.cli[wal]
 		if exi {
-			s.log.Log(
-				s.ctx,
+			e.log.Log(
 				"level", "warning",
 				"message", "already joined",
 				"wallet", wal.String(),
@@ -33,7 +33,7 @@ func (s *Stream) create(pac Packet) {
 	}
 
 	{
-		s.cli[wal] = pac.Cli
+		e.cli[wal] = pac.Cli
 	}
 
 	var win *window.Window

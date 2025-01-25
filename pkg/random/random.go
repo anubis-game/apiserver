@@ -1,7 +1,6 @@
 package random
 
 import (
-	"context"
 	"crypto/rand"
 	"fmt"
 	"math/big"
@@ -30,16 +29,16 @@ type Random struct {
 
 func New(c Config) *Random {
 	if c.Buf == 0 {
-		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Buf must not be empty", c)))
+		tracer.Panic(fmt.Errorf("%T.Buf must not be empty", c))
 	}
 	if c.Don == nil {
-		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Don must not be empty", c)))
+		tracer.Panic(fmt.Errorf("%T.Don must not be empty", c))
 	}
 	if c.Log == nil {
-		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Log must not be empty", c)))
+		tracer.Panic(fmt.Errorf("%T.Log must not be empty", c))
 	}
 	if c.Max == 0 {
-		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Max must not be empty", c)))
+		tracer.Panic(fmt.Errorf("%T.Max must not be empty", c))
 	}
 
 	// We need to cast min and max into integers before calculating the size,
@@ -96,7 +95,6 @@ func (r *Random) random() byte {
 	b, err := rand.Int(rand.Reader, r.siz)
 	if err != nil {
 		r.log.Log(
-			context.Background(),
 			"level", "error",
 			"message", err.Error(),
 			"stack", tracer.Stack(err),

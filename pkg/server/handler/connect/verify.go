@@ -1,4 +1,4 @@
-package stream
+package connect
 
 import (
 	"bytes"
@@ -18,7 +18,7 @@ import (
 // verify is to process the dual-handshake protocol method, which requires all
 // clients to allocate certain onchain and offchain resources, as well as
 // generating several cryptographic signatures.
-func (s *Stream) verify(hea []string) (common.Address, error) {
+func (h *Handler) verify(hea []string) (common.Address, error) {
 	var err error
 
 	{
@@ -34,7 +34,7 @@ func (s *Stream) verify(hea []string) (common.Address, error) {
 	// further below.
 	var txn *types.Transaction
 	{
-		txn, err = s.reg.Search(common.HexToHash(hea[1]))
+		txn, err = h.reg.Search(common.HexToHash(hea[1]))
 		if err != nil {
 			return common.Address{}, tracer.Mask(err)
 		}
@@ -79,7 +79,7 @@ func (s *Stream) verify(hea []string) (common.Address, error) {
 			// This target address must be the address of the Registry smart contract
 			// that this Guardian is serving. So if the target address and the
 			// Registry address don't match, we try the next transaction, if any.
-			if !address.Equal(y.Target, s.reg.Address()) {
+			if !address.Equal(y.Target, h.reg.Address()) {
 				continue
 			}
 

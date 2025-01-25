@@ -13,14 +13,16 @@ require (
 	github.com/puzpuzpuz/xsync/v3 v3.4.0
 	github.com/spf13/cobra v1.8.1
 	github.com/tyler-smith/go-bip39 v1.1.0
-	github.com/xh3b4sd/logger v0.8.1
+	github.com/xh3b4sd/logger v0.9.0
 	github.com/xh3b4sd/objectid v0.2.0
 	github.com/xh3b4sd/tracer v0.11.1
+	go.uber.org/ratelimit v0.3.1
 )
 
 require (
 	github.com/Microsoft/go-winio v0.6.2 // indirect
 	github.com/StackExchange/wmi v1.2.1 // indirect
+	github.com/benbjohnson/clock v1.3.0 // indirect
 	github.com/bits-and-blooms/bitset v1.13.0 // indirect
 	github.com/btcsuite/btcd v0.22.1 // indirect
 	github.com/btcsuite/btcd/chaincfg/chainhash v1.0.1 // indirect
