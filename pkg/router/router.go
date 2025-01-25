@@ -2,6 +2,10 @@ package router
 
 import (
 	"time"
+
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/puzpuzpuz/xsync/v3"
+	"go.uber.org/ratelimit"
 )
 
 type Router struct {
@@ -25,8 +29,13 @@ func New() *Router {
 		fan = time.NewTicker(25 * time.Millisecond).C
 	}
 
+	var lim *xsync.MapOf[common.Address, ratelimit.Limiter]
+	{
+		lim = xsync.NewMapOf[common.Address, ratelimit.Limiter]()
+	}
+
 	return &Router{
-		cli: &Client{cre: cre, del: del},
+		cli: &Client{cre: cre, del: del, lim: lim},
 		eng: &Engine{cre: cre, del: del, fan: fan},
 	}
 }

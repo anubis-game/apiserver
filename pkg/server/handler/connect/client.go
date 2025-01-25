@@ -1,8 +1,6 @@
 package connect
 
 import (
-	"time"
-
 	"github.com/anubis-game/apiserver/pkg/client"
 	"github.com/anubis-game/apiserver/pkg/matrix"
 	"github.com/anubis-game/apiserver/pkg/schema"
@@ -10,19 +8,9 @@ import (
 	"github.com/coder/websocket"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/xh3b4sd/tracer"
-	"go.uber.org/ratelimit"
 )
 
 func (h *Handler) client(wal common.Address, con *websocket.Conn) error {
-	var lim ratelimit.Limiter
-	{
-		lim = ratelimit.New(
-			2,
-			ratelimit.Per(25*time.Millisecond),
-			ratelimit.WithSlack(0),
-		)
-	}
-
 	var win *window.Window
 	{
 		win = window.New(window.Config{
@@ -48,7 +36,6 @@ func (h *Handler) client(wal common.Address, con *websocket.Conn) error {
 		cli = client.New(client.Config{
 			Con: con,
 			Ctx: h.ctx,
-			Lim: lim,
 			Wal: wal,
 			Win: win,
 		})
