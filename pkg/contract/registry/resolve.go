@@ -1,8 +1,6 @@
 package registry
 
 import (
-	"context"
-
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/xh3b4sd/objectid"
@@ -21,7 +19,6 @@ func (r *Registry) Resolve(kil objectid.ID, win common.Address, los common.Addre
 	}
 
 	r.log.Log(
-		context.Background(),
 		"level", "debug",
 		"message", "submitted Registry.Resolve transaction onchain",
 		"signer", r.opt.From.Hex(),

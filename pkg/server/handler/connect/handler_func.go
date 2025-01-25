@@ -1,4 +1,4 @@
-package stream
+package connect
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ import (
 	"github.com/xh3b4sd/tracer"
 )
 
-func (s *Stream) HandlerFunc(w http.ResponseWriter, r *http.Request) error {
+func (h *Handler) HandlerFunc(w http.ResponseWriter, r *http.Request) error {
 	var err error
 
 	// We use a semaphore pattern in order to ensure a concurrent connection
@@ -19,21 +19,21 @@ func (s *Stream) HandlerFunc(w http.ResponseWriter, r *http.Request) error {
 	// free slot may be occupied by the calling client, and we process the
 	// request. If no slot is available, then we return an error response.
 	select {
-	case s.sem <- struct{}{}:
+	case h.sem <- struct{}{}:
 		{
-			err = s.handlerFunc(w, r)
+			err = h.handlerFunc(w, r)
 			if err != nil {
 				return tracer.Mask(err)
 			}
 		}
 
 		{
-			<-s.sem
+			<-h.sem
 		}
 	default:
 		http.Error(
 			w,
-			fmt.Sprintf("%s: %d", http.StatusText(http.StatusTooManyRequests), cap(s.sem)),
+			fmt.Sprintf("%s: %d", http.StatusText(http.StatusTooManyRequests), cap(h.sem)),
 			http.StatusTooManyRequests,
 		)
 	}
@@ -41,7 +41,7 @@ func (s *Stream) HandlerFunc(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
-func (s *Stream) handlerFunc(w http.ResponseWriter, r *http.Request) error {
+func (h *Handler) handlerFunc(w http.ResponseWriter, r *http.Request) error {
 	var err error
 
 	// The reuqest headers contain the desired protocol method as well as various
@@ -60,13 +60,13 @@ func (s *Stream) handlerFunc(w http.ResponseWriter, r *http.Request) error {
 	switch schema.Header(hea[0]) {
 	case schema.DualHandshake:
 		{
-			wal, err = s.verify(hea)
+			wal, err = h.verify(hea)
 			if err != nil {
 				return tracer.Mask(err)
 			}
 		}
 	case schema.UserChallenge:
-		wal, err = s.search(hea)
+		wal, err = h.search(hea)
 		if err != nil {
 			return tracer.Mask(err)
 		}
@@ -75,7 +75,7 @@ func (s *Stream) handlerFunc(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	{
-		exi := s.wxp.Exists(wal)
+		exi := h.wxp.Exists(wal)
 		if exi {
 			return tracer.Mask(walletAddressRegisteredError)
 		}
@@ -83,14 +83,14 @@ func (s *Stream) handlerFunc(w http.ResponseWriter, r *http.Request) error {
 
 	var con *websocket.Conn
 	{
-		con, err = websocket.Accept(w, r, s.opt)
+		con, err = websocket.Accept(w, r, h.opt)
 		if err != nil {
 			return tracer.Mask(err)
 		}
 	}
 
 	{
-		err = s.client(wal, con)
+		err = h.client(wal, con)
 		if err != nil {
 			return tracer.Mask(err)
 		}

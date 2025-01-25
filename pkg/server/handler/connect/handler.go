@@ -1,4 +1,4 @@
-package stream
+package connect
 
 import (
 	"context"
@@ -7,11 +7,11 @@ import (
 	"time"
 
 	"github.com/anubis-game/apiserver/pkg/cache"
-	"github.com/anubis-game/apiserver/pkg/client"
 	"github.com/anubis-game/apiserver/pkg/contract/registry"
 	"github.com/anubis-game/apiserver/pkg/envvar"
 	"github.com/anubis-game/apiserver/pkg/matrix"
 	"github.com/anubis-game/apiserver/pkg/random"
+	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/schema"
 	"github.com/anubis-game/apiserver/pkg/worker"
 	"github.com/anubis-game/apiserver/pkg/worker/release"
@@ -19,7 +19,6 @@ import (
 	"github.com/coder/websocket"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/google/uuid"
-	"github.com/puzpuzpuz/xsync/v3"
 	"github.com/xh3b4sd/logger"
 	"github.com/xh3b4sd/tracer"
 )
@@ -44,23 +43,30 @@ type Config struct {
 	Rel worker.Create[release.Packet]
 	//
 	Res worker.Create[resolve.Packet]
+	//
+	Rtr *router.Client
 }
 
-type Stream struct {
+type Handler struct {
 	ang *random.Random
-	cli map[common.Address]*client.Client
 	crd *random.Random
+	// ctx is the global context instance that we inject into every client struct.
+	// We are not leveraging any of the underlying context specific control flow
+	// primitives, but the websocket implementation that we are using requires a
+	// context parameter to be provided.  And so in order to not garbage collect
+	// useless context instances all the time, we define a single global context
+	// and reuse that for the required websocket parameters everywhere.
 	ctx context.Context
+	don <-chan struct{}
 	ind cache.Interface[common.Address, uuid.UUID]
 	log logger.Interface
-	nrg *xsync.MapOf[common.Address, [][]byte]
 	opt *websocket.AcceptOptions
-	ply *xsync.MapOf[common.Address, [][]byte]
 	qdr *random.Random
 	reg *registry.Registry
 	rel worker.Create[release.Packet]
 	res worker.Create[resolve.Packet]
-	rtr *Router
+	// rtr is the bridge synchronizing the server handler and the game engine
+	rtr *router.Client
 	sem chan struct{}
 	// ttl is the connection timeout that the stream engine should enforce upon
 	// connected clients. All associated onchain and offchain resources must be
@@ -68,25 +74,27 @@ type Stream struct {
 	ttl time.Duration
 	txp *cache.Time[uuid.UUID]
 	tok cache.Interface[uuid.UUID, common.Address]
-	wrk *Worker
 	wxp *cache.Time[common.Address]
 }
 
-func New(c Config) *Stream {
+func New(c Config) *Handler {
 	if c.Don == nil {
-		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Don must not be empty", c)))
+		tracer.Panic(fmt.Errorf("%T.Don must not be empty", c))
 	}
 	if c.Log == nil {
-		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Log must not be empty", c)))
+		tracer.Panic(fmt.Errorf("%T.Log must not be empty", c))
 	}
 	if c.Reg == nil {
-		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Reg must not be empty", c)))
+		tracer.Panic(fmt.Errorf("%T.Reg must not be empty", c))
 	}
 	if c.Rel == nil {
-		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Rel must not be empty", c)))
+		tracer.Panic(fmt.Errorf("%T.Rel must not be empty", c))
 	}
 	if c.Res == nil {
-		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Res must not be empty", c)))
+		tracer.Panic(fmt.Errorf("%T.Res must not be empty", c))
+	}
+	if c.Rtr == nil {
+		tracer.Panic(fmt.Errorf("%T.Rtr must not be empty", c))
 	}
 
 	var ang *random.Random
@@ -133,26 +141,23 @@ func New(c Config) *Stream {
 		})
 	}
 
-	return &Stream{
+	return &Handler{
 		ang: ang,
-		cli: map[common.Address]*client.Client{},
 		crd: crd,
 		ctx: context.Background(),
+		don: c.Don,
 		ind: cache.NewSxnc[common.Address, uuid.UUID](),
 		log: c.Log,
-		nrg: xsync.NewMapOf[common.Address, [][]byte](),
 		opt: opt,
-		ply: xsync.NewMapOf[common.Address, [][]byte](),
 		qdr: qdr,
 		reg: c.Reg,
 		rel: c.Rel,
 		res: c.Res,
-		rtr: NewRouter(c.Don),
+		rtr: c.Rtr,
 		sem: make(chan struct{}, max),
 		ttl: musDur(c.Env.ConnectionTimeout, "s"),
 		txp: cache.NewTime[uuid.UUID](),
 		tok: cache.NewSxnc[uuid.UUID, common.Address](),
-		wrk: NewWorker(),
 		wxp: cache.NewTime[common.Address](),
 	}
 }

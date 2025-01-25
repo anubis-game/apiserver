@@ -39,16 +39,16 @@ type Registry struct {
 
 func New(c Config) *Registry {
 	if c.Add == "" {
-		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Add must not be empty", c)))
+		tracer.Panic(fmt.Errorf("%T.Add must not be empty", c))
 	}
 	if c.Key == "" {
-		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Key must not be empty", c)))
+		tracer.Panic(fmt.Errorf("%T.Key must not be empty", c))
 	}
 	if c.Log == nil {
-		tracer.Panic(tracer.Mask(fmt.Errorf("%T.Log must not be empty", c)))
+		tracer.Panic(fmt.Errorf("%T.Log must not be empty", c))
 	}
 	if c.RPC == "" {
-		tracer.Panic(tracer.Mask(fmt.Errorf("%T.RPC must not be empty", c)))
+		tracer.Panic(fmt.Errorf("%T.RPC must not be empty", c))
 	}
 
 	var err error

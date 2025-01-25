@@ -47,10 +47,6 @@ func (c *Client) Reader() chan struct{} {
 	return c.rea
 }
 
-func (c *Client) Writer() chan struct{} {
-	return c.wri
-}
-
 func (c *Client) Stream(byt []byte) {
 	err := c.con.Write(c.ctx, websocket.MessageBinary, byt)
 	if err != nil {
@@ -64,4 +60,8 @@ func (c *Client) Wallet() common.Address {
 
 func (c *Client) Window() *window.Window {
 	return c.win
+}
+
+func (c *Client) Writer() chan struct{} {
+	return c.wri
 }

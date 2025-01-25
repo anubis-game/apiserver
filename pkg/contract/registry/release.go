@@ -1,8 +1,6 @@
 package registry
 
 import (
-	"context"
-
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/xh3b4sd/tracer"
@@ -29,7 +27,6 @@ func (r *Registry) Release(los common.Address) (*types.Transaction, error) {
 	}
 
 	r.log.Log(
-		context.Background(),
 		"level", "debug",
 		"message", "submitted Registry.Release transaction onchain",
 		"signer", r.opt.From.Hex(),

@@ -1,4 +1,4 @@
-package stream
+package connect
 
 import (
 	"github.com/anubis-game/apiserver/pkg/client"
@@ -8,7 +8,7 @@ import (
 	"github.com/xh3b4sd/tracer"
 )
 
-func (s *Stream) auth(cli *client.Client) error {
+func (h *Handler) auth(cli *client.Client, _ []byte) error {
 	var err error
 
 	// Create a new session token using V4 UUIDs for the requesting Wallet
@@ -27,7 +27,7 @@ func (s *Stream) auth(cli *client.Client) error {
 	}
 
 	{
-		exi := s.tok.Exists(tok)
+		exi := h.tok.Exists(tok)
 		if exi {
 			return tracer.Mask(tokenAlreadyExistsError)
 		}
@@ -50,22 +50,22 @@ func (s *Stream) auth(cli *client.Client) error {
 	}
 
 	{
-		old, exi := s.ind.Search(wal)
+		old, exi := h.ind.Search(wal)
 		if exi {
-			s.txp.Delete(old)
-			s.tok.Delete(old)
+			h.txp.Delete(old)
+			h.tok.Delete(old)
 		}
 	}
 
 	{
-		s.tok.Update(tok, wal)
-		s.ind.Update(wal, tok)
+		h.tok.Update(tok, wal)
+		h.ind.Update(wal, tok)
 	}
 
 	{
-		s.txp.Ensure(tok, s.ttl, func() {
-			s.tok.Delete(tok)
-			s.ind.Delete(wal)
+		h.txp.Ensure(tok, h.ttl, func() {
+			h.tok.Delete(tok)
+			h.ind.Delete(wal)
 		})
 	}
 

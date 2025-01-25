@@ -1,4 +1,4 @@
-package stream
+package connect
 
 import "github.com/xh3b4sd/tracer"
 
