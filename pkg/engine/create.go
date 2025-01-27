@@ -1,50 +1,71 @@
 package engine
 
 import (
+	"github.com/anubis-game/apiserver/pkg/matrix"
+	"github.com/anubis-game/apiserver/pkg/player"
 	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/schema"
-	"github.com/anubis-game/apiserver/pkg/window"
-	"github.com/ethereum/go-ethereum/common"
+	"github.com/google/uuid"
 )
 
 func (e *Engine) create(pac router.Packet) {
-	// Upon joining, we add the user to the broadcasting worker pool in order to
-	// provide them with realtime data primitives over the given client
-	// connection. We check whether the given Wallet address is already part of
-	// the broadcasting worker pool. If it is, then we do not want to do
-	// unnecessary work, and instead return early.
-
-	var wal common.Address
+	var uid uuid.UUID
 	{
-		wal = pac.Cli.Wallet()
+		uid = pac.Cli.UuidV4()
+	}
+
+	var ply *player.Player
+	{
+		ply = player.New(player.Config{
+			Bck: matrix.Bucket{
+				e.fil.crd.Random(), // x0
+				e.fil.crd.Random(), // y0
+				e.fil.crd.Random(), // x1
+				e.fil.crd.Random(), // y1
+			},
+			Pxl: matrix.Pixel{
+				e.fil.crd.Random(), // x2
+				e.fil.crd.Random(), // y2
+			},
+			Spc: matrix.Space{
+				e.fil.qdr.Random(), // quadrant
+				e.fil.ang.Random(), // angle
+			},
+			Uid: uid,
+		})
 	}
 
 	{
-		_, exi := e.cli[wal]
-		if exi {
-			e.log.Log(
-				"level", "warning",
-				"message", "already joined",
-				"wallet", wal.String(),
-			)
+		e.mem.cli[uid] = pac.Cli
+		e.mem.ply[uid] = ply
+	}
 
-			return
+	// Put the player randomly onto the game map for every relevant player to see.
+	// Adding the new player information to every buffer of every player causes
+	// the next fanout cycle to push the new player into all relevant views. For
+	// the confirmation of joining the game, we send the player wallet together
+	// with its object information, so that wallet and uuid can be associated in
+	// the client.
+
+	var byt []byte
+	{
+		byt = schema.Encode(schema.Join, pac.Cli.Wallet().Bytes(), ply.Bytes())
+	}
+
+	for k, v := range e.mem.ply {
+		// Only add an additional buffer to the existing player v if the new player
+		// ply is in the view of v.
+		if ply.Obj.Inside(v.Win) {
+			e.buf.ply.Compute(k, func(old [][]byte, _ bool) ([][]byte, bool) {
+				return append(old, byt), false
+			})
 		}
 	}
 
-	{
-		e.cli[wal] = pac.Cli
-	}
+	// TODO we need to stream all relevant map details for the initial view to
+	// ply. That means to find all relevant energy and player details on the
+	// current map.
 
-	var win *window.Window
-	{
-		win = pac.Cli.Window()
-	}
+	// TODO add new player to the lookup map based on its current coordinates
 
-	// Put the player randomly onto the game map.
-	{
-		pac.Cli.Stream(schema.Encode(schema.Join, win.Bytes()))
-	}
-
-	// TODO we need to stream all relevant map details for the initial view
 }

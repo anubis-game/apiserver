@@ -66,9 +66,11 @@ func (h *Handler) handlerFunc(w http.ResponseWriter, r *http.Request) error {
 			}
 		}
 	case schema.UserChallenge:
-		wal, err = h.search(hea)
-		if err != nil {
-			return tracer.Mask(err)
+		{
+			wal, err = h.search(hea)
+			if err != nil {
+				return tracer.Mask(err)
+			}
 		}
 	default:
 		return tracer.Maskf(protocolMethodInvalidError, "%s", hea[0])

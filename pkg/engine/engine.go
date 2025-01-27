@@ -6,8 +6,12 @@ import (
 	"time"
 
 	"github.com/anubis-game/apiserver/pkg/client"
+	"github.com/anubis-game/apiserver/pkg/energy"
+	"github.com/anubis-game/apiserver/pkg/matrix"
+	"github.com/anubis-game/apiserver/pkg/player"
+	"github.com/anubis-game/apiserver/pkg/random"
 	"github.com/anubis-game/apiserver/pkg/router"
-	"github.com/ethereum/go-ethereum/common"
+	"github.com/google/uuid"
 	"github.com/puzpuzpuz/xsync/v3"
 	"github.com/xh3b4sd/logger"
 	"github.com/xh3b4sd/tracer"
@@ -20,21 +24,19 @@ type Config struct {
 }
 
 type Engine struct {
-	// cli contains all connected clients. This is a native Go map, and we
-	// synchronize it via channel access in line with the time based fanout
-	// procedure.
-	cli map[common.Address]*client.Client
+	// buffer
+	buf *buffer
 	// don is the global channel to signal program termination. If this channel is
 	// closed, then all streaming connections should be terminated gracefully.
 	don <-chan struct{}
+	// filler
+	fil *filler
+	// loo
+	loo *lookup
 	// log is a simple logger interface to print system relevant information.
 	log logger.Interface
-	// nrg contains the energy messages prepared to be sent out to all connected
-	// clients during the time based fanout procedure.
-	nrg *xsync.MapOf[common.Address, [][]byte]
-	// ply contains the player messages prepared to be sent out to all connected
-	// clients during the time based fanout procedure.
-	ply *xsync.MapOf[common.Address, [][]byte]
+	// mem
+	mem *memory
 	// rtr is the bridge synchronizing the server handler and the game engine
 	rtr *router.Engine
 	// sem is the global worker ticket. The capacity of this semaphore channel
@@ -52,12 +54,60 @@ func New(c Config) *Engine {
 		tracer.Panic(fmt.Errorf("%T.Log must not be empty", c))
 	}
 
+	var ang *random.Random
+	{
+		ang = random.New(random.Config{
+			Buf: 500,
+			Don: c.Don,
+			Log: c.Log,
+			Max: 255,
+			Min: 0,
+		})
+	}
+
+	var crd *random.Random
+	{
+		crd = random.New(random.Config{
+			Buf: 3000,
+			Don: c.Don,
+			Log: c.Log,
+			Max: matrix.Max,
+			Min: matrix.Min,
+		})
+	}
+
+	var qdr *random.Random
+	{
+		qdr = random.New(random.Config{
+			Buf: 500,
+			Don: c.Don,
+			Log: c.Log,
+			Max: 4,
+			Min: 1,
+		})
+	}
+
 	return &Engine{
-		cli: map[common.Address]*client.Client{},
+		buf: &buffer{
+			nrg: xsync.NewMapOf[uuid.UUID, [][]byte](),
+			ply: xsync.NewMapOf[uuid.UUID, [][]byte](),
+		},
 		don: c.Don,
+		fil: &filler{
+			ang: ang,
+			crd: crd,
+			qdr: qdr,
+		},
 		log: c.Log,
-		nrg: xsync.NewMapOf[common.Address, [][]byte](),
-		ply: xsync.NewMapOf[common.Address, [][]byte](),
+		loo: &lookup{
+			nrg: xsync.NewMapOf[matrix.Bucket, uuid.UUID](),
+			ply: xsync.NewMapOf[matrix.Bucket, uuid.UUID](),
+		},
+		mem: &memory{
+			cli: map[uuid.UUID]*client.Client{},
+			nrg: map[uuid.UUID]*energy.Energy{},
+			ply: map[uuid.UUID]*player.Player{},
+		},
 		rtr: c.Rtr,
 		sem: make(chan struct{}, runtime.NumCPU()),
 	}

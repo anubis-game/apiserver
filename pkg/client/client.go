@@ -3,16 +3,16 @@ package client
 import (
 	"context"
 
-	"github.com/anubis-game/apiserver/pkg/window"
 	"github.com/coder/websocket"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/google/uuid"
 )
 
 type Config struct {
 	Con *websocket.Conn
 	Ctx context.Context
 	Wal common.Address
-	Win *window.Window
+	Uid uuid.UUID
 }
 
 type Client struct {
@@ -23,7 +23,7 @@ type Client struct {
 	con *websocket.Conn
 	ctx context.Context
 	wal common.Address
-	win *window.Window
+	uid uuid.UUID
 }
 
 func New(c Config) *Client {
@@ -35,7 +35,7 @@ func New(c Config) *Client {
 		con: c.Con,
 		ctx: c.Ctx,
 		wal: c.Wal,
-		win: c.Win,
+		uid: c.Uid,
 	}
 }
 
@@ -58,10 +58,10 @@ func (c *Client) Wallet() common.Address {
 	return c.wal
 }
 
-func (c *Client) Window() *window.Window {
-	return c.win
-}
-
 func (c *Client) Writer() chan struct{} {
 	return c.wri
+}
+
+func (c *Client) UuidV4() uuid.UUID {
+	return c.uid
 }
