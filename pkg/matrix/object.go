@@ -8,8 +8,3 @@ type Object struct {
 	Pro Profile
 	Uid uuid.UUID
 }
-
-func (o Object) Inside(win Window) bool {
-	// TODO
-	return false
-}

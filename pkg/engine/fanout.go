@@ -3,7 +3,7 @@ package engine
 import (
 	"time"
 
-	"github.com/anubis-game/apiserver/pkg/client"
+	"github.com/anubis-game/apiserver/pkg/player"
 	"github.com/anubis-game/apiserver/pkg/schema"
 	"github.com/google/uuid"
 )
@@ -17,7 +17,7 @@ func (e *Engine) fanout(tic time.Time) {
 		e.tic = tic
 	}
 
-	for k, v := range e.mem.cli {
+	for k, v := range e.mem.ply {
 		var n [][]byte
 		var p [][]byte
 		{
@@ -31,7 +31,7 @@ func (e *Engine) fanout(tic time.Time) {
 	}
 }
 
-func (e *Engine) worker(_ uuid.UUID, cli *client.Client, nrg [][]byte, ply [][]byte) {
+func (e *Engine) worker(_ uuid.UUID, ply *player.Player, nbf [][]byte, pbf [][]byte) {
 	// The semaphore controls the amount of workers that are allowed to process
 	// packets at the same time. Every time we receive a packet, we push a ticket
 	// into the semaphore before doing the work.
@@ -43,8 +43,8 @@ func (e *Engine) worker(_ uuid.UUID, cli *client.Client, nrg [][]byte, ply [][]b
 	// react based on the full picture of the current frame.
 
 	// TODO add prepared player bytes to wallet address, if any
-	for _, x := range ply {
-		cli.Stream(schema.Encode(schema.Move, x))
+	for _, x := range pbf {
+		ply.Cli.Stream(schema.Encode(schema.Move, x))
 	}
 
 	// TODO check for wallet specific movement and calculate Target(). We
@@ -56,8 +56,8 @@ func (e *Engine) worker(_ uuid.UUID, cli *client.Client, nrg [][]byte, ply [][]b
 	// Send energy changes last, since player updates are more relevant.
 
 	// TODO add prepared energy bytes to wallet address, if any
-	for _, x := range nrg {
-		cli.Stream(schema.Encode(schema.Food, x))
+	for _, x := range nbf {
+		ply.Cli.Stream(schema.Encode(schema.Food, x)) // TODO this action encoding should not happen here
 	}
 
 	// Ensure we remove our ticket from the semaphore once all work was completed.

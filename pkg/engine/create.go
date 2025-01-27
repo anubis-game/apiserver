@@ -5,15 +5,9 @@ import (
 	"github.com/anubis-game/apiserver/pkg/player"
 	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/schema"
-	"github.com/google/uuid"
 )
 
 func (e *Engine) create(pac router.Packet) {
-	var uid uuid.UUID
-	{
-		uid = pac.Cli.UuidV4()
-	}
-
 	var ply *player.Player
 	{
 		ply = player.New(player.Config{
@@ -23,6 +17,7 @@ func (e *Engine) create(pac router.Packet) {
 				e.fil.crd.Random(), // x1
 				e.fil.crd.Random(), // y1
 			},
+			Cli: pac.Cli,
 			Pxl: matrix.Pixel{
 				e.fil.crd.Random(), // x2
 				e.fil.crd.Random(), // y2
@@ -31,13 +26,12 @@ func (e *Engine) create(pac router.Packet) {
 				e.fil.qdr.Random(), // quadrant
 				e.fil.ang.Random(), // angle
 			},
-			Uid: uid,
+			Uid: pac.Uid,
 		})
 	}
 
 	{
-		e.mem.cli[uid] = pac.Cli
-		e.mem.ply[uid] = ply
+		e.mem.ply[pac.Uid] = ply
 	}
 
 	// Put the player randomly onto the game map for every relevant player to see.
@@ -55,7 +49,7 @@ func (e *Engine) create(pac router.Packet) {
 	for k, v := range e.mem.ply {
 		// Only add an additional buffer to the existing player v if the new player
 		// ply is in the view of v.
-		if ply.Obj.Inside(v.Win) {
+		if v.Win.Has(ply.Obj.Bck) {
 			e.buf.ply.Compute(k, func(old [][]byte, _ bool) ([][]byte, bool) {
 				return append(old, byt), false
 			})

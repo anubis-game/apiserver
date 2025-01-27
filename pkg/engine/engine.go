@@ -5,7 +5,6 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/anubis-game/apiserver/pkg/client"
 	"github.com/anubis-game/apiserver/pkg/energy"
 	"github.com/anubis-game/apiserver/pkg/matrix"
 	"github.com/anubis-game/apiserver/pkg/player"
@@ -31,8 +30,8 @@ type Engine struct {
 	don <-chan struct{}
 	// filler
 	fil *filler
-	// loo
-	loo *lookup
+	// lkp
+	lkp *lookup
 	// log is a simple logger interface to print system relevant information.
 	log logger.Interface
 	// mem
@@ -98,13 +97,12 @@ func New(c Config) *Engine {
 			crd: crd,
 			qdr: qdr,
 		},
-		log: c.Log,
-		loo: &lookup{
+		lkp: &lookup{
 			nrg: xsync.NewMapOf[matrix.Bucket, uuid.UUID](),
 			ply: xsync.NewMapOf[matrix.Bucket, uuid.UUID](),
 		},
+		log: c.Log,
 		mem: &memory{
-			cli: map[uuid.UUID]*client.Client{},
 			nrg: map[uuid.UUID]*energy.Energy{},
 			ply: map[uuid.UUID]*player.Player{},
 		},
