@@ -1,5 +1,14 @@
 package matrix
 
+const (
+	Q1 int = 1
+	Q2 int = 3
+	Q3 int = 2
+	Q4 int = 0
+)
+
+// TODO we can use the player's profile size to check what other inner buckets
+// have to be added to the generated buffer region.
 func Buffer(ogn Bucket, qdr byte) [4]Bucket {
 	switch qdr {
 	case 0x01:

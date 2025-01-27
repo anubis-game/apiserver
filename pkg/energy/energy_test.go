@@ -16,11 +16,13 @@ func Test_Energy_Bytes(t *testing.T) {
 		// Case 000
 		{
 			e: Energy{
-				Bck: matrix.Bucket{115, 123, 107, 119},
-				Pxl: matrix.Pixel{124, 125},
-				Siz: byte(15),
+				Obj: matrix.Object{
+					Bck: matrix.Bucket{115, 123, 107, 119},
+					Pxl: matrix.Pixel{124, 125},
+					Pro: matrix.Profile{15, 0},
+				},
 			},
-			b: []byte{0x73, 0x7b, 0x6b, 0x77, 0x7c, 0x7d, 0xf},
+			b: []byte{0x73, 0x7b, 0x6b, 0x77, 0x7c, 0x7d, 0xf, 0x0},
 		},
 	}
 
@@ -47,9 +49,11 @@ func Benchmark_Energy_Bytes(b *testing.B) {
 		// Case 000 ~0.30 ns/op
 		{
 			e: Energy{
-				Bck: matrix.Bucket{115, 123, 107, 119},
-				Pxl: matrix.Pixel{124, 125},
-				Siz: byte(15),
+				Obj: matrix.Object{
+					Bck: matrix.Bucket{115, 123, 107, 119},
+					Pxl: matrix.Pixel{124, 125},
+					Pro: matrix.Profile{15, 0},
+				},
 			},
 		},
 	}

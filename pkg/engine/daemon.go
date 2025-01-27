@@ -1,6 +1,12 @@
 package engine
 
 func (e *Engine) Daemon() {
+	{
+		go e.fil.ang.Daemon()
+		go e.fil.crd.Daemon()
+		go e.fil.qdr.Daemon()
+	}
+
 	// Initialize the first fanout tick so that we can keep track of the actually
 	// executed interval moving forward.
 	{

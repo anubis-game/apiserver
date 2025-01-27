@@ -1,11 +1,13 @@
 package router
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/anubis-game/apiserver/pkg/client"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/puzpuzpuz/xsync/v3"
+	"github.com/xh3b4sd/tracer"
 	"go.uber.org/ratelimit"
 )
 
@@ -15,13 +17,18 @@ type Client struct {
 	lim *xsync.MapOf[common.Address, ratelimit.Limiter]
 }
 
-func (c *Client) Create(cli *client.Client) {
+func (c *Client) Create(cli *client.Client) error {
 	// Prevent DOS attacks and rate limit client specific stream input, so that
 	// our internal fanout schedule cannot be overloaded maliciously.
 
 	var lim ratelimit.Limiter
+	var exi bool
 	{
-		lim, _ = c.lim.LoadOrCompute(cli.Wallet(), newLim)
+		lim, exi = c.lim.LoadOrCompute(cli.Wallet(), newLim)
+	}
+
+	if exi {
+		return tracer.Mask(fmt.Errorf("client %q already joined", cli.Wallet()))
 	}
 
 	{
@@ -34,6 +41,8 @@ func (c *Client) Create(cli *client.Client) {
 	{
 		c.cre <- Packet{Byt: nil, Cli: cli}
 	}
+
+	return nil
 }
 
 func (c *Client) Delete(cli *client.Client) {

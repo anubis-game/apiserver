@@ -9,8 +9,6 @@ import (
 	"github.com/anubis-game/apiserver/pkg/cache"
 	"github.com/anubis-game/apiserver/pkg/contract/registry"
 	"github.com/anubis-game/apiserver/pkg/envvar"
-	"github.com/anubis-game/apiserver/pkg/matrix"
-	"github.com/anubis-game/apiserver/pkg/random"
 	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/schema"
 	"github.com/anubis-game/apiserver/pkg/worker"
@@ -48,8 +46,6 @@ type Config struct {
 }
 
 type Handler struct {
-	ang *random.Random
-	crd *random.Random
 	// ctx is the global context instance that we inject into every client struct.
 	// We are not leveraging any of the underlying context specific control flow
 	// primitives, but the websocket implementation that we are using requires a
@@ -61,7 +57,6 @@ type Handler struct {
 	ind cache.Interface[common.Address, uuid.UUID]
 	log logger.Interface
 	opt *websocket.AcceptOptions
-	qdr *random.Random
 	reg *registry.Registry
 	rel worker.Create[release.Packet]
 	res worker.Create[resolve.Packet]
@@ -97,28 +92,6 @@ func New(c Config) *Handler {
 		tracer.Panic(fmt.Errorf("%T.Rtr must not be empty", c))
 	}
 
-	var ang *random.Random
-	{
-		ang = random.New(random.Config{
-			Buf: 500,
-			Don: c.Don,
-			Log: c.Log,
-			Max: 255,
-			Min: 0,
-		})
-	}
-
-	var crd *random.Random
-	{
-		crd = random.New(random.Config{
-			Buf: 3000,
-			Don: c.Don,
-			Log: c.Log,
-			Max: matrix.Max,
-			Min: matrix.Min,
-		})
-	}
-
 	var opt *websocket.AcceptOptions
 	{
 		opt = &websocket.AcceptOptions{
@@ -130,26 +103,12 @@ func New(c Config) *Handler {
 		}
 	}
 
-	var qdr *random.Random
-	{
-		qdr = random.New(random.Config{
-			Buf: 500,
-			Don: c.Don,
-			Log: c.Log,
-			Max: 4,
-			Min: 1,
-		})
-	}
-
 	return &Handler{
-		ang: ang,
-		crd: crd,
 		ctx: context.Background(),
 		don: c.Don,
 		ind: cache.NewSxnc[common.Address, uuid.UUID](),
 		log: c.Log,
 		opt: opt,
-		qdr: qdr,
 		reg: c.Reg,
 		rel: c.Rel,
 		res: c.Res,

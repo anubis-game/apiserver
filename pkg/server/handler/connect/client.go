@@ -5,33 +5,22 @@ import (
 	"net"
 
 	"github.com/anubis-game/apiserver/pkg/client"
-	"github.com/anubis-game/apiserver/pkg/matrix"
 	"github.com/anubis-game/apiserver/pkg/schema"
-	"github.com/anubis-game/apiserver/pkg/window"
 	"github.com/coder/websocket"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/google/uuid"
 	"github.com/xh3b4sd/tracer"
 )
 
 func (h *Handler) client(wal common.Address, con *websocket.Conn) error {
-	var win *window.Window
+	var err error
+
+	var uid uuid.UUID
 	{
-		win = window.New(window.Config{
-			Bck: matrix.Bucket{
-				h.crd.Random(), // x0
-				h.crd.Random(), // y0
-				h.crd.Random(), // x1
-				h.crd.Random(), // y1
-			},
-			Pxl: matrix.Pixel{
-				h.crd.Random(), // x2
-				h.crd.Random(), // y2
-			},
-			Spc: matrix.Space{
-				h.qdr.Random(), // quadrant
-				h.ang.Random(), // angle
-			},
-		})
+		uid, err = uuid.NewRandom()
+		if err != nil {
+			return tracer.Mask(err)
+		}
 	}
 
 	var cli *client.Client
@@ -40,7 +29,7 @@ func (h *Handler) client(wal common.Address, con *websocket.Conn) error {
 			Con: con,
 			Ctx: h.ctx,
 			Wal: wal,
-			Win: win,
+			Uid: uid,
 		})
 	}
 

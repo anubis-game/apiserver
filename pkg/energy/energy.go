@@ -7,33 +7,29 @@ import (
 )
 
 type Energy struct {
-	Bck matrix.Bucket
-	Pxl matrix.Pixel
-	Siz byte
+	Obj matrix.Object
 }
 
 func (e Energy) Bytes() []byte {
-	var buf [7]byte
+	var buf [8]byte
 
-	copy(buf[0:4], e.Bck[:])
-	copy(buf[4:6], e.Pxl[:])
-
-	buf[6] = e.Siz
+	copy(buf[0:4], e.Obj.Bck[:])
+	copy(buf[4:6], e.Obj.Pxl[:])
+	copy(buf[6:8], e.Obj.Pro[:])
 
 	return buf[:]
 }
 
 func FromBytes(byt []byte) Energy {
-	if len(byt) != 7 {
-		panic(fmt.Sprintf("expected 7 energy bytes, got %d", len(byt)))
+	if len(byt) != 8 {
+		panic(fmt.Sprintf("expected 8 energy bytes, got %d", len(byt)))
 	}
 
 	var e Energy
 
-	copy(e.Bck[:], byt[0:4])
-	copy(e.Pxl[:], byt[4:6])
-
-	e.Siz = byt[6]
+	copy(e.Obj.Bck[:], byt[0:4])
+	copy(e.Obj.Pxl[:], byt[4:6])
+	copy(e.Obj.Pro[:], byt[6:8])
 
 	return e
 }

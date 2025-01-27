@@ -24,9 +24,36 @@ const (
 	Dia float64 = 88
 )
 
+const (
+	X0 int = 0
+	Y0 int = 1
+	X1 int = 2
+	Y1 int = 3
+)
+
 type Bucket [4]byte
 
-func (b Bucket) Scale(siz byte) Bucket {
+func (b Bucket) Dec(siz byte) Bucket {
+	del := Min + siz
+
+	sx0, sy0, sx1, sy1 := b[X0], b[Y0], b[X1], b[Y1]
+
+	if del > sx1 {
+		sx0, sx1 = sx0-1, Max-(del-sx1)+1
+	} else {
+		sx1 -= siz
+	}
+
+	if del > sy1 {
+		sy0, sy1 = sy0-1, Max-(del-sy1)+1
+	} else {
+		sy1 -= siz
+	}
+
+	return Bucket{sx0, sy0, sx1, sy1}
+}
+
+func (b Bucket) Inc(siz byte) Bucket {
 	del := Max - siz
 
 	sx0, sy0, sx1, sy1 := b[X0], b[Y0], b[X1], b[Y1]
