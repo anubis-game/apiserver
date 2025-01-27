@@ -29,7 +29,6 @@ func (h *Handler) client(wal common.Address, con *websocket.Conn) error {
 			Con: con,
 			Ctx: h.ctx,
 			Wal: wal,
-			Uid: uid,
 		})
 	}
 
@@ -50,7 +49,7 @@ func (h *Handler) client(wal common.Address, con *websocket.Conn) error {
 	// websocket writes.
 
 	go func() {
-		err := h.reader(con, cli)
+		err := h.reader(con, uid, cli)
 		if errors.Is(err, net.ErrClosed) {
 			// fall through
 		} else if err != nil {
@@ -79,7 +78,7 @@ func (h *Handler) client(wal common.Address, con *websocket.Conn) error {
 	}
 
 	{
-		h.rtr.Delete(cli)
+		h.rtr.Delete(uid, cli)
 		h.wxp.Delete(wal)
 	}
 
@@ -93,7 +92,7 @@ func (h *Handler) client(wal common.Address, con *websocket.Conn) error {
 	return nil
 }
 
-func (h *Handler) reader(con *websocket.Conn, cli *client.Client) error {
+func (h *Handler) reader(con *websocket.Conn, uid uuid.UUID, cli *client.Client) error {
 	for {
 		_, byt, err := con.Read(h.ctx)
 		if err != nil {
@@ -102,15 +101,15 @@ func (h *Handler) reader(con *websocket.Conn, cli *client.Client) error {
 
 		switch schema.Action(byt[0]) {
 		case schema.Ping:
-			err = h.ping(cli, byt)
+			err = h.ping(uid, cli, byt)
 		case schema.Auth:
-			err = h.auth(cli, byt)
+			err = h.auth(uid, cli, byt)
 		case schema.Join:
-			err = h.join(cli, byt)
+			err = h.join(uid, cli, byt)
 		case schema.Move:
-			err = h.move(cli, byt)
+			err = h.move(uid, cli, byt)
 		case schema.Race:
-			err = h.race(cli, byt)
+			err = h.race(uid, cli, byt)
 		}
 
 		if err != nil {

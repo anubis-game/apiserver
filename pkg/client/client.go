@@ -5,14 +5,12 @@ import (
 
 	"github.com/coder/websocket"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/google/uuid"
 )
 
 type Config struct {
 	Con *websocket.Conn
 	Ctx context.Context
 	Wal common.Address
-	Uid uuid.UUID
 }
 
 type Client struct {
@@ -23,7 +21,6 @@ type Client struct {
 	con *websocket.Conn
 	ctx context.Context
 	wal common.Address
-	uid uuid.UUID
 }
 
 func New(c Config) *Client {
@@ -35,7 +32,6 @@ func New(c Config) *Client {
 		con: c.Con,
 		ctx: c.Ctx,
 		wal: c.Wal,
-		uid: c.Uid,
 	}
 }
 
@@ -60,8 +56,4 @@ func (c *Client) Wallet() common.Address {
 
 func (c *Client) Writer() chan struct{} {
 	return c.wri
-}
-
-func (c *Client) UuidV4() uuid.UUID {
-	return c.uid
 }

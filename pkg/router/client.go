@@ -6,6 +6,7 @@ import (
 
 	"github.com/anubis-game/apiserver/pkg/client"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/google/uuid"
 	"github.com/puzpuzpuz/xsync/v3"
 	"github.com/xh3b4sd/tracer"
 	"go.uber.org/ratelimit"
@@ -17,7 +18,7 @@ type Client struct {
 	lim *xsync.MapOf[common.Address, ratelimit.Limiter]
 }
 
-func (c *Client) Create(cli *client.Client) error {
+func (c *Client) Create(uid uuid.UUID, cli *client.Client) error {
 	// Prevent DOS attacks and rate limit client specific stream input, so that
 	// our internal fanout schedule cannot be overloaded maliciously.
 
@@ -39,13 +40,13 @@ func (c *Client) Create(cli *client.Client) error {
 	// synchronization loop.
 
 	{
-		c.cre <- Packet{Byt: nil, Cli: cli}
+		c.cre <- Packet{Byt: nil, Cli: cli, Uid: uid}
 	}
 
 	return nil
 }
 
-func (c *Client) Delete(cli *client.Client) {
+func (c *Client) Delete(uid uuid.UUID, cli *client.Client) {
 	// Prevent DOS attacks and rate limit client specific stream input, so that
 	// our internal fanout schedule cannot be overloaded maliciously.
 
@@ -62,7 +63,7 @@ func (c *Client) Delete(cli *client.Client) {
 	// synchronization loop.
 
 	{
-		c.del <- Packet{Byt: nil, Cli: cli}
+		c.del <- Packet{Byt: nil, Cli: cli, Uid: uid}
 	}
 }
 

@@ -3,6 +3,7 @@ package player
 import (
 	"fmt"
 
+	"github.com/anubis-game/apiserver/pkg/client"
 	"github.com/anubis-game/apiserver/pkg/matrix"
 	"github.com/google/uuid"
 )
@@ -20,12 +21,14 @@ const (
 
 type Config struct {
 	Bck matrix.Bucket
+	Cli *client.Client
 	Pxl matrix.Pixel
 	Spc matrix.Space
 	Uid uuid.UUID
 }
 
 type Player struct {
+	Cli *client.Client
 	Obj matrix.Object
 	Spc matrix.Space
 	Win matrix.Window
@@ -33,6 +36,7 @@ type Player struct {
 
 func New(c Config) *Player {
 	return &Player{
+		Cli: c.Cli,
 		Obj: matrix.Object{
 			Bck: c.Bck,
 			Pxl: c.Pxl,
