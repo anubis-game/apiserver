@@ -112,9 +112,9 @@
       },
       {
         "indexed": false,
-        "internalType": "uint256",
+        "internalType": "bytes16",
         "name": "kil",
-        "type": "uint256"
+        "type": "bytes16"
       },
       {
         "indexed": false,
@@ -161,9 +161,9 @@
       },
       {
         "indexed": false,
-        "internalType": "uint256",
+        "internalType": "bytes16",
         "name": "kil",
-        "type": "uint256"
+        "type": "bytes16"
       },
       {
         "indexed": false,
@@ -316,9 +316,9 @@
     "name": "KILL_STATE_ESCAPE",
     "outputs": [
       {
-        "internalType": "uint256",
+        "internalType": "bytes16",
         "name": "",
-        "type": "uint256"
+        "type": "bytes16"
       }
     ],
     "stateMutability": "view",
@@ -329,9 +329,9 @@
     "name": "KILL_STATE_RELEASE",
     "outputs": [
       {
-        "internalType": "uint256",
+        "internalType": "bytes16",
         "name": "",
-        "type": "uint256"
+        "type": "bytes16"
       }
     ],
     "stateMutability": "view",
@@ -340,9 +340,9 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
+        "internalType": "bytes16",
         "name": "kil",
-        "type": "uint256"
+        "type": "bytes16"
       },
       {
         "internalType": "address",
@@ -457,9 +457,9 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
+        "internalType": "bytes16",
         "name": "kil",
-        "type": "uint256"
+        "type": "bytes16"
       },
       {
         "internalType": "address",

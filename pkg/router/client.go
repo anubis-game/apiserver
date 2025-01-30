@@ -13,12 +13,14 @@ import (
 )
 
 type Client struct {
-	cre chan<- Packet
-	del chan<- Packet
+	joi chan<- Packet
+	mov chan<- Packet
+	rac chan<- Packet
+
 	lim *xsync.MapOf[common.Address, ratelimit.Limiter]
 }
 
-func (c *Client) Create(uid uuid.UUID, cli *client.Client) error {
+func (c *Client) Join(uid uuid.UUID, cli *client.Client, _ []byte) error {
 	// Prevent DOS attacks and rate limit client specific stream input, so that
 	// our internal fanout schedule cannot be overloaded maliciously.
 
@@ -40,19 +42,24 @@ func (c *Client) Create(uid uuid.UUID, cli *client.Client) error {
 	// synchronization loop.
 
 	{
-		c.cre <- Packet{Byt: nil, Cli: cli, Uid: uid}
+		c.joi <- Packet{Byt: nil, Cli: cli, Uid: uid}
 	}
 
 	return nil
 }
 
-func (c *Client) Delete(uid uuid.UUID, cli *client.Client) {
+func (c *Client) Move(uid uuid.UUID, cli *client.Client, byt []byte) error {
 	// Prevent DOS attacks and rate limit client specific stream input, so that
 	// our internal fanout schedule cannot be overloaded maliciously.
 
 	var lim ratelimit.Limiter
+	var exi bool
 	{
-		lim, _ = c.lim.LoadOrCompute(cli.Wallet(), newLim)
+		lim, exi = c.lim.LoadOrCompute(cli.Wallet(), newLim)
+	}
+
+	if !exi {
+		return tracer.Mask(fmt.Errorf("client %q not joined", cli.Wallet()))
 	}
 
 	{
@@ -63,8 +70,38 @@ func (c *Client) Delete(uid uuid.UUID, cli *client.Client) {
 	// synchronization loop.
 
 	{
-		c.del <- Packet{Byt: nil, Cli: cli, Uid: uid}
+		c.mov <- Packet{Byt: byt, Cli: nil, Uid: uid}
 	}
+
+	return nil
+}
+
+func (c *Client) Race(uid uuid.UUID, cli *client.Client, _ []byte) error {
+	// Prevent DOS attacks and rate limit client specific stream input, so that
+	// our internal fanout schedule cannot be overloaded maliciously.
+
+	var lim ratelimit.Limiter
+	var exi bool
+	{
+		lim, exi = c.lim.LoadOrCompute(cli.Wallet(), newLim)
+	}
+
+	if !exi {
+		return tracer.Mask(fmt.Errorf("client %q not joined", cli.Wallet()))
+	}
+
+	{
+		lim.Take()
+	}
+
+	// Once a ticket was available for the client, we can proceed to enter the
+	// synchronization loop.
+
+	{
+		c.rac <- Packet{Byt: nil, Cli: nil, Uid: uid}
+	}
+
+	return nil
 }
 
 func newLim() ratelimit.Limiter {

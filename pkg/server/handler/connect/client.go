@@ -66,9 +66,12 @@ func (h *Handler) client(wal common.Address, con *websocket.Conn) error {
 	}()
 
 	// We block this client specific goroutine until either the client or the
-	// server shuts down, each of which may happen for various reasons. Once
-	// a signal got emitted to close this client connection, we cleanup any
-	// internal references.
+	// server shuts down, each of which may happen for various reasons. Once a
+	// signal got emitted to close this client connection, we remove the client
+	// from all internal references, but keep the player in the game. The reason
+	// for not removing players from games during disconnects is that connections
+	// might be dropped intermittently. That means the client may very well come
+	// back quickly using its auth token and continue playing their game.
 
 	select {
 	case <-cli.Expiry():
@@ -78,7 +81,6 @@ func (h *Handler) client(wal common.Address, con *websocket.Conn) error {
 	}
 
 	{
-		h.rtr.Delete(uid, cli)
 		h.wxp.Delete(wal)
 	}
 

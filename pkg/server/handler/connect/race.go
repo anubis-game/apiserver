@@ -5,7 +5,6 @@ import (
 	"github.com/google/uuid"
 )
 
-// TODO
-func (h *Handler) race(_ uuid.UUID, _ *client.Client, _ []byte) error {
-	return nil
+func (h *Handler) race(uid uuid.UUID, cli *client.Client, _ []byte) error {
+	return h.rtr.Race(uid, cli, nil)
 }

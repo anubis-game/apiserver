@@ -1,19 +1,50 @@
-package connect
+package engine
 
 import (
 	"github.com/anubis-game/apiserver/pkg/address"
 	"github.com/anubis-game/apiserver/pkg/client"
+	"github.com/anubis-game/apiserver/pkg/worker/action"
 	"github.com/anubis-game/apiserver/pkg/worker/release"
 	"github.com/anubis-game/apiserver/pkg/worker/resolve"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/google/uuid"
+	"github.com/xh3b4sd/tracer"
 )
 
-func (h *Handler) Kill(_ common.Address, _ *client.Client, inp []byte) error {
+func (e *Engine) Kill(uid uuid.UUID, _ *client.Client, inp []byte) error {
+	var err error
+
+	{
+		delete(e.mem.ply, uid)
+	}
+
+	// TODO find the bucket index and remove the deleted player from that lookup
+	// table
+	// {
+	// 	e.lkp.ply.Delete(matrix.Bucket)
+	// }
+
 	//
 	//     inp[0]        action
 	//     inp[1:21]     winner
 	//     inp[21:41]    loser
 	//
+
+	var act uuid.UUID
+	{
+		act, err = uuid.NewRandom()
+		if err != nil {
+			return tracer.Mask(err)
+		}
+	}
+
+	var kil uuid.UUID
+	{
+		kil, err = uuid.NewRandom()
+		if err != nil {
+			return tracer.Mask(err)
+		}
+	}
 
 	var win common.Address
 	var los common.Address
@@ -30,14 +61,18 @@ func (h *Handler) Kill(_ common.Address, _ *client.Client, inp []byte) error {
 	// so the given kill state must be resolved to benefit the winner.
 
 	if address.Empty(win) {
-		h.rel.Create(release.Packet{
-			Loser: los,
-		})
+		e.wrk.Ensure(action.New(release.Action{
+			Act: act,
+			Kil: kil,
+			Los: los,
+		}))
 	} else {
-		h.res.Create(resolve.Packet{
-			Winner: win,
-			Loser:  los,
-		})
+		e.wrk.Ensure(action.New(resolve.Action{
+			Act: act,
+			Kil: kil,
+			Win: win,
+			Los: los,
+		}))
 	}
 
 	// Fan out the kill response to all participating users.

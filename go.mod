@@ -14,7 +14,6 @@ require (
 	github.com/spf13/cobra v1.8.1
 	github.com/tyler-smith/go-bip39 v1.1.0
 	github.com/xh3b4sd/logger v0.9.0
-	github.com/xh3b4sd/objectid v0.2.0
 	github.com/xh3b4sd/tracer v0.11.1
 	go.uber.org/ratelimit v0.3.1
 )

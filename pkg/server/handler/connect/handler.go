@@ -11,9 +11,6 @@ import (
 	"github.com/anubis-game/apiserver/pkg/envvar"
 	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/schema"
-	"github.com/anubis-game/apiserver/pkg/worker"
-	"github.com/anubis-game/apiserver/pkg/worker/release"
-	"github.com/anubis-game/apiserver/pkg/worker/resolve"
 	"github.com/coder/websocket"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/google/uuid"
@@ -31,17 +28,13 @@ type Config struct {
 	// Don is the global channel to signal program termination. If this channel is
 	// closed, then all streaming connections should be terminated gracefully.
 	Don <-chan struct{}
-	//
+	// Env
 	Env envvar.Env
 	// Log is the logger interface for printing structured log messages.
 	Log logger.Interface
 	// Reg is the onchain interface for the Registry smart contract.
 	Reg *registry.Registry
-	//
-	Rel worker.Create[release.Packet]
-	//
-	Res worker.Create[resolve.Packet]
-	//
+	// Rtr
 	Rtr *router.Client
 }
 
@@ -58,8 +51,6 @@ type Handler struct {
 	log logger.Interface
 	opt *websocket.AcceptOptions
 	reg *registry.Registry
-	rel worker.Create[release.Packet]
-	res worker.Create[resolve.Packet]
 	// rtr is the bridge synchronizing the server handler and the game engine
 	rtr *router.Client
 	sem chan struct{}
@@ -81,12 +72,6 @@ func New(c Config) *Handler {
 	}
 	if c.Reg == nil {
 		tracer.Panic(fmt.Errorf("%T.Reg must not be empty", c))
-	}
-	if c.Rel == nil {
-		tracer.Panic(fmt.Errorf("%T.Rel must not be empty", c))
-	}
-	if c.Res == nil {
-		tracer.Panic(fmt.Errorf("%T.Res must not be empty", c))
 	}
 	if c.Rtr == nil {
 		tracer.Panic(fmt.Errorf("%T.Rtr must not be empty", c))
@@ -110,8 +95,6 @@ func New(c Config) *Handler {
 		log: c.Log,
 		opt: opt,
 		reg: c.Reg,
-		rel: c.Rel,
-		res: c.Res,
 		rtr: c.Rtr,
 		sem: make(chan struct{}, max),
 		ttl: musDur(c.Env.ConnectionTimeout, "s"),

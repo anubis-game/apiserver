@@ -13,20 +13,27 @@ type Router struct {
 	eng *Engine
 }
 
+// Router is the bridge between server endpoint and game engine, allowing us to
+// separate client connections and game state.
 func New() *Router {
-	var cre chan Packet
+	var joi chan Packet
 	{
-		cre = make(chan Packet, 500)
+		joi = make(chan Packet, 500)
 	}
 
-	var del chan Packet
+	var mov chan Packet
 	{
-		del = make(chan Packet, 500)
+		mov = make(chan Packet, 2000)
 	}
 
-	var fan <-chan time.Time
+	var rac chan Packet
 	{
-		fan = time.NewTicker(25 * time.Millisecond).C
+		rac = make(chan Packet, 2000)
+	}
+
+	var psh <-chan time.Time
+	{
+		psh = time.NewTicker(25 * time.Millisecond).C
 	}
 
 	var lim *xsync.MapOf[common.Address, ratelimit.Limiter]
@@ -35,8 +42,8 @@ func New() *Router {
 	}
 
 	return &Router{
-		cli: &Client{cre: cre, del: del, lim: lim},
-		eng: &Engine{cre: cre, del: del, fan: fan},
+		cli: &Client{joi: joi, mov: mov, rac: rac, lim: lim},
+		eng: &Engine{joi: joi, mov: mov, rac: rac, psh: psh},
 	}
 }
 
