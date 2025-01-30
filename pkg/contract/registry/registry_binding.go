@@ -31,7 +31,7 @@ var (
 
 // RegistryBindingMetaData contains all meta data concerning the RegistryBinding contract.
 var RegistryBindingMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"ben\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"tok\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"buy\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"why\",\"type\":\"string\"}],\"name\":\"Address\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"why\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"bal\",\"type\":\"uint256\"}],\"name\":\"Balance\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ECDSAInvalidSignature\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"length\",\"type\":\"uint256\"}],\"name\":\"ECDSAInvalidSignatureLength\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"s\",\"type\":\"bytes32\"}],\"name\":\"ECDSAInvalidSignatureS\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"why\",\"type\":\"string\"}],\"name\":\"Process\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"length\",\"type\":\"uint256\"}],\"name\":\"StringsInsufficientHexLength\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"grd\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"kil\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"win\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"los\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"dep\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"buy\",\"type\":\"uint256\"}],\"name\":\"GuardianResolve\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"pla\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"grd\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"kil\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"win\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"los\",\"type\":\"address\"}],\"name\":\"WitnessPublish\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"BASIS_FEE\",\"outputs\":[{\"internalType\":\"uint16\",\"name\":\"\",\"type\":\"uint16\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"BASIS_GUARDIAN\",\"outputs\":[{\"internalType\":\"uint16\",\"name\":\"\",\"type\":\"uint16\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"BASIS_PROTOCOL\",\"outputs\":[{\"internalType\":\"uint16\",\"name\":\"\",\"type\":\"uint16\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"BASIS_SPLIT\",\"outputs\":[{\"internalType\":\"uint16\",\"name\":\"\",\"type\":\"uint16\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"BASIS_TOTAL\",\"outputs\":[{\"internalType\":\"uint16\",\"name\":\"\",\"type\":\"uint16\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"bal\",\"type\":\"uint256\"},{\"internalType\":\"uint64\",\"name\":\"tim\",\"type\":\"uint64\"},{\"internalType\":\"address\",\"name\":\"sig\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"sgn\",\"type\":\"bytes\"}],\"name\":\"Deposit\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"tim\",\"type\":\"uint64\"},{\"internalType\":\"address\",\"name\":\"wal\",\"type\":\"address\"}],\"name\":\"DepositMessage\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"grd\",\"type\":\"address\"}],\"name\":\"Escape\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"KILL_STATE_ESCAPE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"KILL_STATE_RELEASE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"kil\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"win\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"los\",\"type\":\"address\"}],\"name\":\"Publish\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"mes\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"sgn\",\"type\":\"bytes\"}],\"name\":\"RecoverSigner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"los\",\"type\":\"address\"}],\"name\":\"Release\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"grd\",\"type\":\"address\"},{\"internalType\":\"uint64\",\"name\":\"tim\",\"type\":\"uint64\"},{\"internalType\":\"address\",\"name\":\"wal\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"sgn\",\"type\":\"bytes\"}],\"name\":\"Request\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"grd\",\"type\":\"address\"},{\"internalType\":\"uint64\",\"name\":\"tim\",\"type\":\"uint64\"},{\"internalType\":\"address\",\"name\":\"pla\",\"type\":\"address\"}],\"name\":\"RequestMessage\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"kil\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"win\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"los\",\"type\":\"address\"}],\"name\":\"Resolve\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"wal\",\"type\":\"address\"}],\"name\":\"SearchBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"wal\",\"type\":\"address\"}],\"name\":\"SearchSigner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"ben\",\"type\":\"address\"}],\"name\":\"UpdateBeneficiary\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VERSION\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"bal\",\"type\":\"uint256\"}],\"name\":\"Withdraw\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"beneficiary\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"buyin\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"token\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]",
+	ABI: "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"ben\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"tok\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"buy\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"why\",\"type\":\"string\"}],\"name\":\"Address\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"why\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"bal\",\"type\":\"uint256\"}],\"name\":\"Balance\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ECDSAInvalidSignature\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"length\",\"type\":\"uint256\"}],\"name\":\"ECDSAInvalidSignatureLength\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"s\",\"type\":\"bytes32\"}],\"name\":\"ECDSAInvalidSignatureS\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"why\",\"type\":\"string\"}],\"name\":\"Process\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"length\",\"type\":\"uint256\"}],\"name\":\"StringsInsufficientHexLength\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"grd\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bytes16\",\"name\":\"kil\",\"type\":\"bytes16\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"win\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"los\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"dep\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"buy\",\"type\":\"uint256\"}],\"name\":\"GuardianResolve\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"pla\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"grd\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bytes16\",\"name\":\"kil\",\"type\":\"bytes16\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"win\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"los\",\"type\":\"address\"}],\"name\":\"WitnessPublish\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"BASIS_FEE\",\"outputs\":[{\"internalType\":\"uint16\",\"name\":\"\",\"type\":\"uint16\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"BASIS_GUARDIAN\",\"outputs\":[{\"internalType\":\"uint16\",\"name\":\"\",\"type\":\"uint16\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"BASIS_PROTOCOL\",\"outputs\":[{\"internalType\":\"uint16\",\"name\":\"\",\"type\":\"uint16\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"BASIS_SPLIT\",\"outputs\":[{\"internalType\":\"uint16\",\"name\":\"\",\"type\":\"uint16\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"BASIS_TOTAL\",\"outputs\":[{\"internalType\":\"uint16\",\"name\":\"\",\"type\":\"uint16\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"bal\",\"type\":\"uint256\"},{\"internalType\":\"uint64\",\"name\":\"tim\",\"type\":\"uint64\"},{\"internalType\":\"address\",\"name\":\"sig\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"sgn\",\"type\":\"bytes\"}],\"name\":\"Deposit\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"tim\",\"type\":\"uint64\"},{\"internalType\":\"address\",\"name\":\"wal\",\"type\":\"address\"}],\"name\":\"DepositMessage\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"grd\",\"type\":\"address\"}],\"name\":\"Escape\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"KILL_STATE_ESCAPE\",\"outputs\":[{\"internalType\":\"bytes16\",\"name\":\"\",\"type\":\"bytes16\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"KILL_STATE_RELEASE\",\"outputs\":[{\"internalType\":\"bytes16\",\"name\":\"\",\"type\":\"bytes16\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes16\",\"name\":\"kil\",\"type\":\"bytes16\"},{\"internalType\":\"address\",\"name\":\"win\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"los\",\"type\":\"address\"}],\"name\":\"Publish\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"mes\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"sgn\",\"type\":\"bytes\"}],\"name\":\"RecoverSigner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"los\",\"type\":\"address\"}],\"name\":\"Release\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"grd\",\"type\":\"address\"},{\"internalType\":\"uint64\",\"name\":\"tim\",\"type\":\"uint64\"},{\"internalType\":\"address\",\"name\":\"wal\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"sgn\",\"type\":\"bytes\"}],\"name\":\"Request\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"grd\",\"type\":\"address\"},{\"internalType\":\"uint64\",\"name\":\"tim\",\"type\":\"uint64\"},{\"internalType\":\"address\",\"name\":\"pla\",\"type\":\"address\"}],\"name\":\"RequestMessage\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes16\",\"name\":\"kil\",\"type\":\"bytes16\"},{\"internalType\":\"address\",\"name\":\"win\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"los\",\"type\":\"address\"}],\"name\":\"Resolve\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"wal\",\"type\":\"address\"}],\"name\":\"SearchBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"wal\",\"type\":\"address\"}],\"name\":\"SearchSigner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"ben\",\"type\":\"address\"}],\"name\":\"UpdateBeneficiary\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"VERSION\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"bal\",\"type\":\"uint256\"}],\"name\":\"Withdraw\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"beneficiary\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"buyin\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"token\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]",
 }
 
 // RegistryBindingABI is the input ABI used to generate the binding from.
@@ -368,16 +368,16 @@ func (_RegistryBinding *RegistryBindingCallerSession) DepositMessage(tim uint64,
 
 // KILLSTATEESCAPE is a free data retrieval call binding the contract method 0xe58c988c.
 //
-// Solidity: function KILL_STATE_ESCAPE() view returns(uint256)
-func (_RegistryBinding *RegistryBindingCaller) KILLSTATEESCAPE(opts *bind.CallOpts) (*big.Int, error) {
+// Solidity: function KILL_STATE_ESCAPE() view returns(bytes16)
+func (_RegistryBinding *RegistryBindingCaller) KILLSTATEESCAPE(opts *bind.CallOpts) ([16]byte, error) {
 	var out []interface{}
 	err := _RegistryBinding.contract.Call(opts, &out, "KILL_STATE_ESCAPE")
 
 	if err != nil {
-		return *new(*big.Int), err
+		return *new([16]byte), err
 	}
 
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+	out0 := *abi.ConvertType(out[0], new([16]byte)).(*[16]byte)
 
 	return out0, err
 
@@ -385,30 +385,30 @@ func (_RegistryBinding *RegistryBindingCaller) KILLSTATEESCAPE(opts *bind.CallOp
 
 // KILLSTATEESCAPE is a free data retrieval call binding the contract method 0xe58c988c.
 //
-// Solidity: function KILL_STATE_ESCAPE() view returns(uint256)
-func (_RegistryBinding *RegistryBindingSession) KILLSTATEESCAPE() (*big.Int, error) {
+// Solidity: function KILL_STATE_ESCAPE() view returns(bytes16)
+func (_RegistryBinding *RegistryBindingSession) KILLSTATEESCAPE() ([16]byte, error) {
 	return _RegistryBinding.Contract.KILLSTATEESCAPE(&_RegistryBinding.CallOpts)
 }
 
 // KILLSTATEESCAPE is a free data retrieval call binding the contract method 0xe58c988c.
 //
-// Solidity: function KILL_STATE_ESCAPE() view returns(uint256)
-func (_RegistryBinding *RegistryBindingCallerSession) KILLSTATEESCAPE() (*big.Int, error) {
+// Solidity: function KILL_STATE_ESCAPE() view returns(bytes16)
+func (_RegistryBinding *RegistryBindingCallerSession) KILLSTATEESCAPE() ([16]byte, error) {
 	return _RegistryBinding.Contract.KILLSTATEESCAPE(&_RegistryBinding.CallOpts)
 }
 
 // KILLSTATERELEASE is a free data retrieval call binding the contract method 0xf1e2ab6c.
 //
-// Solidity: function KILL_STATE_RELEASE() view returns(uint256)
-func (_RegistryBinding *RegistryBindingCaller) KILLSTATERELEASE(opts *bind.CallOpts) (*big.Int, error) {
+// Solidity: function KILL_STATE_RELEASE() view returns(bytes16)
+func (_RegistryBinding *RegistryBindingCaller) KILLSTATERELEASE(opts *bind.CallOpts) ([16]byte, error) {
 	var out []interface{}
 	err := _RegistryBinding.contract.Call(opts, &out, "KILL_STATE_RELEASE")
 
 	if err != nil {
-		return *new(*big.Int), err
+		return *new([16]byte), err
 	}
 
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+	out0 := *abi.ConvertType(out[0], new([16]byte)).(*[16]byte)
 
 	return out0, err
 
@@ -416,15 +416,15 @@ func (_RegistryBinding *RegistryBindingCaller) KILLSTATERELEASE(opts *bind.CallO
 
 // KILLSTATERELEASE is a free data retrieval call binding the contract method 0xf1e2ab6c.
 //
-// Solidity: function KILL_STATE_RELEASE() view returns(uint256)
-func (_RegistryBinding *RegistryBindingSession) KILLSTATERELEASE() (*big.Int, error) {
+// Solidity: function KILL_STATE_RELEASE() view returns(bytes16)
+func (_RegistryBinding *RegistryBindingSession) KILLSTATERELEASE() ([16]byte, error) {
 	return _RegistryBinding.Contract.KILLSTATERELEASE(&_RegistryBinding.CallOpts)
 }
 
 // KILLSTATERELEASE is a free data retrieval call binding the contract method 0xf1e2ab6c.
 //
-// Solidity: function KILL_STATE_RELEASE() view returns(uint256)
-func (_RegistryBinding *RegistryBindingCallerSession) KILLSTATERELEASE() (*big.Int, error) {
+// Solidity: function KILL_STATE_RELEASE() view returns(bytes16)
+func (_RegistryBinding *RegistryBindingCallerSession) KILLSTATERELEASE() ([16]byte, error) {
 	return _RegistryBinding.Contract.KILLSTATERELEASE(&_RegistryBinding.CallOpts)
 }
 
@@ -721,24 +721,24 @@ func (_RegistryBinding *RegistryBindingTransactorSession) Escape(grd common.Addr
 	return _RegistryBinding.Contract.Escape(&_RegistryBinding.TransactOpts, grd)
 }
 
-// Publish is a paid mutator transaction binding the contract method 0x5b19a0ee.
+// Publish is a paid mutator transaction binding the contract method 0x0582ffb9.
 //
-// Solidity: function Publish(uint256 kil, address win, address los) returns()
-func (_RegistryBinding *RegistryBindingTransactor) Publish(opts *bind.TransactOpts, kil *big.Int, win common.Address, los common.Address) (*types.Transaction, error) {
+// Solidity: function Publish(bytes16 kil, address win, address los) returns()
+func (_RegistryBinding *RegistryBindingTransactor) Publish(opts *bind.TransactOpts, kil [16]byte, win common.Address, los common.Address) (*types.Transaction, error) {
 	return _RegistryBinding.contract.Transact(opts, "Publish", kil, win, los)
 }
 
-// Publish is a paid mutator transaction binding the contract method 0x5b19a0ee.
+// Publish is a paid mutator transaction binding the contract method 0x0582ffb9.
 //
-// Solidity: function Publish(uint256 kil, address win, address los) returns()
-func (_RegistryBinding *RegistryBindingSession) Publish(kil *big.Int, win common.Address, los common.Address) (*types.Transaction, error) {
+// Solidity: function Publish(bytes16 kil, address win, address los) returns()
+func (_RegistryBinding *RegistryBindingSession) Publish(kil [16]byte, win common.Address, los common.Address) (*types.Transaction, error) {
 	return _RegistryBinding.Contract.Publish(&_RegistryBinding.TransactOpts, kil, win, los)
 }
 
-// Publish is a paid mutator transaction binding the contract method 0x5b19a0ee.
+// Publish is a paid mutator transaction binding the contract method 0x0582ffb9.
 //
-// Solidity: function Publish(uint256 kil, address win, address los) returns()
-func (_RegistryBinding *RegistryBindingTransactorSession) Publish(kil *big.Int, win common.Address, los common.Address) (*types.Transaction, error) {
+// Solidity: function Publish(bytes16 kil, address win, address los) returns()
+func (_RegistryBinding *RegistryBindingTransactorSession) Publish(kil [16]byte, win common.Address, los common.Address) (*types.Transaction, error) {
 	return _RegistryBinding.Contract.Publish(&_RegistryBinding.TransactOpts, kil, win, los)
 }
 
@@ -784,24 +784,24 @@ func (_RegistryBinding *RegistryBindingTransactorSession) Request(grd common.Add
 	return _RegistryBinding.Contract.Request(&_RegistryBinding.TransactOpts, grd, tim, wal, sgn)
 }
 
-// Resolve is a paid mutator transaction binding the contract method 0xed8bdd82.
+// Resolve is a paid mutator transaction binding the contract method 0x38162d19.
 //
-// Solidity: function Resolve(uint256 kil, address win, address los) returns()
-func (_RegistryBinding *RegistryBindingTransactor) Resolve(opts *bind.TransactOpts, kil *big.Int, win common.Address, los common.Address) (*types.Transaction, error) {
+// Solidity: function Resolve(bytes16 kil, address win, address los) returns()
+func (_RegistryBinding *RegistryBindingTransactor) Resolve(opts *bind.TransactOpts, kil [16]byte, win common.Address, los common.Address) (*types.Transaction, error) {
 	return _RegistryBinding.contract.Transact(opts, "Resolve", kil, win, los)
 }
 
-// Resolve is a paid mutator transaction binding the contract method 0xed8bdd82.
+// Resolve is a paid mutator transaction binding the contract method 0x38162d19.
 //
-// Solidity: function Resolve(uint256 kil, address win, address los) returns()
-func (_RegistryBinding *RegistryBindingSession) Resolve(kil *big.Int, win common.Address, los common.Address) (*types.Transaction, error) {
+// Solidity: function Resolve(bytes16 kil, address win, address los) returns()
+func (_RegistryBinding *RegistryBindingSession) Resolve(kil [16]byte, win common.Address, los common.Address) (*types.Transaction, error) {
 	return _RegistryBinding.Contract.Resolve(&_RegistryBinding.TransactOpts, kil, win, los)
 }
 
-// Resolve is a paid mutator transaction binding the contract method 0xed8bdd82.
+// Resolve is a paid mutator transaction binding the contract method 0x38162d19.
 //
-// Solidity: function Resolve(uint256 kil, address win, address los) returns()
-func (_RegistryBinding *RegistryBindingTransactorSession) Resolve(kil *big.Int, win common.Address, los common.Address) (*types.Transaction, error) {
+// Solidity: function Resolve(bytes16 kil, address win, address los) returns()
+func (_RegistryBinding *RegistryBindingTransactorSession) Resolve(kil [16]byte, win common.Address, los common.Address) (*types.Transaction, error) {
 	return _RegistryBinding.Contract.Resolve(&_RegistryBinding.TransactOpts, kil, win, los)
 }
 
@@ -917,7 +917,7 @@ func (it *RegistryBindingGuardianResolveIterator) Close() error {
 // RegistryBindingGuardianResolve represents a GuardianResolve event raised by the RegistryBinding contract.
 type RegistryBindingGuardianResolve struct {
 	Grd common.Address
-	Kil *big.Int
+	Kil [16]byte
 	Win common.Address
 	Los common.Address
 	Dep *big.Int
@@ -925,9 +925,9 @@ type RegistryBindingGuardianResolve struct {
 	Raw types.Log // Blockchain specific contextual infos
 }
 
-// FilterGuardianResolve is a free log retrieval operation binding the contract event 0x8178738fffcc585c33627171c76ba109ea8922ec6cc6e427bccfc4b2d0a4259d.
+// FilterGuardianResolve is a free log retrieval operation binding the contract event 0xa9b260a64c941e0970a4c190f5dd5772398eea222162b693f21b759b434c57a1.
 //
-// Solidity: event GuardianResolve(address indexed grd, uint256 kil, address win, address los, uint256 dep, uint256 buy)
+// Solidity: event GuardianResolve(address indexed grd, bytes16 kil, address win, address los, uint256 dep, uint256 buy)
 func (_RegistryBinding *RegistryBindingFilterer) FilterGuardianResolve(opts *bind.FilterOpts, grd []common.Address) (*RegistryBindingGuardianResolveIterator, error) {
 
 	var grdRule []interface{}
@@ -942,9 +942,9 @@ func (_RegistryBinding *RegistryBindingFilterer) FilterGuardianResolve(opts *bin
 	return &RegistryBindingGuardianResolveIterator{contract: _RegistryBinding.contract, event: "GuardianResolve", logs: logs, sub: sub}, nil
 }
 
-// WatchGuardianResolve is a free log subscription operation binding the contract event 0x8178738fffcc585c33627171c76ba109ea8922ec6cc6e427bccfc4b2d0a4259d.
+// WatchGuardianResolve is a free log subscription operation binding the contract event 0xa9b260a64c941e0970a4c190f5dd5772398eea222162b693f21b759b434c57a1.
 //
-// Solidity: event GuardianResolve(address indexed grd, uint256 kil, address win, address los, uint256 dep, uint256 buy)
+// Solidity: event GuardianResolve(address indexed grd, bytes16 kil, address win, address los, uint256 dep, uint256 buy)
 func (_RegistryBinding *RegistryBindingFilterer) WatchGuardianResolve(opts *bind.WatchOpts, sink chan<- *RegistryBindingGuardianResolve, grd []common.Address) (event.Subscription, error) {
 
 	var grdRule []interface{}
@@ -984,9 +984,9 @@ func (_RegistryBinding *RegistryBindingFilterer) WatchGuardianResolve(opts *bind
 	}), nil
 }
 
-// ParseGuardianResolve is a log parse operation binding the contract event 0x8178738fffcc585c33627171c76ba109ea8922ec6cc6e427bccfc4b2d0a4259d.
+// ParseGuardianResolve is a log parse operation binding the contract event 0xa9b260a64c941e0970a4c190f5dd5772398eea222162b693f21b759b434c57a1.
 //
-// Solidity: event GuardianResolve(address indexed grd, uint256 kil, address win, address los, uint256 dep, uint256 buy)
+// Solidity: event GuardianResolve(address indexed grd, bytes16 kil, address win, address los, uint256 dep, uint256 buy)
 func (_RegistryBinding *RegistryBindingFilterer) ParseGuardianResolve(log types.Log) (*RegistryBindingGuardianResolve, error) {
 	event := new(RegistryBindingGuardianResolve)
 	if err := _RegistryBinding.contract.UnpackLog(event, "GuardianResolve", log); err != nil {
@@ -1067,15 +1067,15 @@ func (it *RegistryBindingWitnessPublishIterator) Close() error {
 type RegistryBindingWitnessPublish struct {
 	Pla common.Address
 	Grd common.Address
-	Kil *big.Int
+	Kil [16]byte
 	Win common.Address
 	Los common.Address
 	Raw types.Log // Blockchain specific contextual infos
 }
 
-// FilterWitnessPublish is a free log retrieval operation binding the contract event 0x1815e1e4c91b21cf1042ad6f929ca67fe4529f8030c3d9ab143dcd890bfe81ad.
+// FilterWitnessPublish is a free log retrieval operation binding the contract event 0x5ef8e288165cc58ddbb342d50149b26e7a8f6edb49612012249638754d8a235d.
 //
-// Solidity: event WitnessPublish(address indexed pla, address indexed grd, uint256 kil, address win, address los)
+// Solidity: event WitnessPublish(address indexed pla, address indexed grd, bytes16 kil, address win, address los)
 func (_RegistryBinding *RegistryBindingFilterer) FilterWitnessPublish(opts *bind.FilterOpts, pla []common.Address, grd []common.Address) (*RegistryBindingWitnessPublishIterator, error) {
 
 	var plaRule []interface{}
@@ -1094,9 +1094,9 @@ func (_RegistryBinding *RegistryBindingFilterer) FilterWitnessPublish(opts *bind
 	return &RegistryBindingWitnessPublishIterator{contract: _RegistryBinding.contract, event: "WitnessPublish", logs: logs, sub: sub}, nil
 }
 
-// WatchWitnessPublish is a free log subscription operation binding the contract event 0x1815e1e4c91b21cf1042ad6f929ca67fe4529f8030c3d9ab143dcd890bfe81ad.
+// WatchWitnessPublish is a free log subscription operation binding the contract event 0x5ef8e288165cc58ddbb342d50149b26e7a8f6edb49612012249638754d8a235d.
 //
-// Solidity: event WitnessPublish(address indexed pla, address indexed grd, uint256 kil, address win, address los)
+// Solidity: event WitnessPublish(address indexed pla, address indexed grd, bytes16 kil, address win, address los)
 func (_RegistryBinding *RegistryBindingFilterer) WatchWitnessPublish(opts *bind.WatchOpts, sink chan<- *RegistryBindingWitnessPublish, pla []common.Address, grd []common.Address) (event.Subscription, error) {
 
 	var plaRule []interface{}
@@ -1140,9 +1140,9 @@ func (_RegistryBinding *RegistryBindingFilterer) WatchWitnessPublish(opts *bind.
 	}), nil
 }
 
-// ParseWitnessPublish is a log parse operation binding the contract event 0x1815e1e4c91b21cf1042ad6f929ca67fe4529f8030c3d9ab143dcd890bfe81ad.
+// ParseWitnessPublish is a log parse operation binding the contract event 0x5ef8e288165cc58ddbb342d50149b26e7a8f6edb49612012249638754d8a235d.
 //
-// Solidity: event WitnessPublish(address indexed pla, address indexed grd, uint256 kil, address win, address los)
+// Solidity: event WitnessPublish(address indexed pla, address indexed grd, bytes16 kil, address win, address los)
 func (_RegistryBinding *RegistryBindingFilterer) ParseWitnessPublish(log types.Log) (*RegistryBindingWitnessPublish, error) {
 	event := new(RegistryBindingWitnessPublish)
 	if err := _RegistryBinding.contract.UnpackLog(event, "WitnessPublish", log); err != nil {

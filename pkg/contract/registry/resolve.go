@@ -3,16 +3,16 @@ package registry
 import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/xh3b4sd/objectid"
+	"github.com/google/uuid"
 	"github.com/xh3b4sd/tracer"
 )
 
-func (r *Registry) Resolve(kil objectid.ID, win common.Address, los common.Address) (*types.Transaction, error) {
+func (r *Registry) Resolve(kil uuid.UUID, win common.Address, los common.Address) (*types.Transaction, error) {
 	var err error
 
 	var txn *types.Transaction
 	{
-		txn, err = r.bin.Resolve(r.writerOption(), kil.Big(), win, los)
+		txn, err = r.bin.Resolve(r.writerOption(), kil, win, los)
 		if err != nil {
 			return nil, tracer.Mask(err)
 		}

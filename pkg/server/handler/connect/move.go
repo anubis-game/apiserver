@@ -5,7 +5,6 @@ import (
 	"github.com/google/uuid"
 )
 
-// TODO move must also adapt the client window coordinates
-func (h *Handler) move(_ uuid.UUID, _ *client.Client, _ []byte) error {
-	return nil
+func (h *Handler) move(uid uuid.UUID, cli *client.Client, byt []byte) error {
+	return h.rtr.Move(uid, cli, byt)
 }

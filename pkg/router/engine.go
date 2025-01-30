@@ -5,19 +5,25 @@ import (
 )
 
 type Engine struct {
-	cre <-chan Packet
-	del <-chan Packet
-	fan <-chan time.Time
+	joi <-chan Packet
+	mov <-chan Packet
+	rac <-chan Packet
+
+	psh <-chan time.Time
 }
 
-func (e *Engine) Create() <-chan Packet {
-	return e.cre
+func (e *Engine) Join() <-chan Packet {
+	return e.joi
 }
 
-func (e *Engine) Delete() <-chan Packet {
-	return e.del
+func (e *Engine) Move() <-chan Packet {
+	return e.mov
 }
 
-func (e *Engine) Fanout() <-chan time.Time {
-	return e.fan
+func (e *Engine) Race() <-chan Packet {
+	return e.rac
+}
+
+func (e *Engine) Push() <-chan time.Time {
+	return e.psh
 }

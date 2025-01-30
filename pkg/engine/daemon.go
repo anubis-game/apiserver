@@ -1,28 +1,24 @@
 package engine
 
 func (e *Engine) Daemon() {
-	{
-		go e.fil.ang.Daemon()
-		go e.fil.crd.Daemon()
-		go e.fil.qdr.Daemon()
-	}
-
 	// Initialize the first fanout tick so that we can keep track of the actually
 	// executed interval moving forward.
 	{
-		e.tic = <-e.rtr.Fanout()
+		e.tic = <-e.rtr.Push()
 	}
 
 	for {
 		select {
 		case <-e.don:
 			return
-		case x := <-e.rtr.Create():
-			e.create(x)
-		case x := <-e.rtr.Delete():
-			e.delete(x)
-		case x := <-e.rtr.Fanout():
-			e.fanout(x)
+		case x := <-e.rtr.Join():
+			e.join(x)
+		case x := <-e.rtr.Move():
+			e.move(x)
+		case x := <-e.rtr.Race():
+			e.race(x)
+		case x := <-e.rtr.Push():
+			e.push(x)
 		}
 	}
 }

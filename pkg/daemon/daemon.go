@@ -6,13 +6,13 @@ import (
 	"github.com/anubis-game/apiserver/pkg/contract/registry"
 	"github.com/anubis-game/apiserver/pkg/engine"
 	"github.com/anubis-game/apiserver/pkg/envvar"
+	"github.com/anubis-game/apiserver/pkg/filler"
 	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/server"
 	"github.com/anubis-game/apiserver/pkg/server/handler/connect"
 	"github.com/anubis-game/apiserver/pkg/worker"
 	"github.com/anubis-game/apiserver/pkg/worker/release"
 	"github.com/anubis-game/apiserver/pkg/worker/resolve"
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/xh3b4sd/logger"
 	"github.com/xh3b4sd/tracer"
 )
@@ -25,12 +25,12 @@ type Config struct {
 type Daemon struct {
 	con *connect.Handler
 	eng *engine.Engine
+	fil *filler.Filler
 	lis net.Listener
 	log logger.Interface
 	reg *registry.Registry
-	rel *worker.Worker[common.Address, release.Packet]
-	res *worker.Worker[common.Address, resolve.Packet]
 	ser *server.Server
+	wrk *worker.Worker
 }
 
 func New(c Config) *Daemon {
@@ -61,14 +61,17 @@ func New(c Config) *Daemon {
 		})
 	}
 
-	var rel *worker.Worker[common.Address, release.Packet]
+	var wrk *worker.Worker
 	{
-		rel = newRel(c.Don, log, reg)
-	}
-
-	var res *worker.Worker[common.Address, resolve.Packet]
-	{
-		res = newRes(c.Don, log, reg)
+		wrk = worker.New(worker.Config{
+			Don: c.Don,
+			Log: log,
+			Reg: reg,
+			Sig: []worker.Signer{
+				release.New(release.Config{Reg: reg}),
+				resolve.New(resolve.Config{Reg: reg}),
+			},
+		})
 	}
 
 	var rtr *router.Router
@@ -83,9 +86,15 @@ func New(c Config) *Daemon {
 			Env: c.Env,
 			Log: log,
 			Reg: reg,
-			Rel: rel,
-			Res: res,
 			Rtr: rtr.Client(),
+		})
+	}
+
+	var fil *filler.Filler
+	{
+		fil = filler.New(filler.Config{
+			Don: c.Don,
+			Log: log,
 		})
 	}
 
@@ -93,8 +102,10 @@ func New(c Config) *Daemon {
 	{
 		eng = engine.New(engine.Config{
 			Don: c.Don,
+			Fil: fil,
 			Log: log,
 			Rtr: rtr.Engine(),
+			Wrk: wrk,
 		})
 	}
 
@@ -111,51 +122,11 @@ func New(c Config) *Daemon {
 	return &Daemon{
 		con: con,
 		eng: eng,
+		fil: fil,
 		lis: lis,
 		log: log,
 		reg: reg,
-		rel: rel,
-		res: res,
 		ser: ser,
+		wrk: wrk,
 	}
-}
-
-func newRel(don <-chan struct{}, log logger.Interface, reg *registry.Registry) *worker.Worker[common.Address, release.Packet] {
-	var rel *release.Release
-	{
-		rel = release.New(release.Config{
-			Log: log,
-			Reg: reg,
-		})
-	}
-
-	var wrk *worker.Worker[common.Address, release.Packet]
-	{
-		wrk = worker.New(worker.Config[common.Address, release.Packet]{
-			Don: don,
-			Ens: rel,
-		})
-	}
-
-	return wrk
-}
-
-func newRes(don <-chan struct{}, log logger.Interface, reg *registry.Registry) *worker.Worker[common.Address, resolve.Packet] {
-	var res *resolve.Resolve
-	{
-		res = resolve.New(resolve.Config{
-			Log: log,
-			Reg: reg,
-		})
-	}
-
-	var wrk *worker.Worker[common.Address, resolve.Packet]
-	{
-		wrk = worker.New(worker.Config[common.Address, resolve.Packet]{
-			Don: don,
-			Ens: res,
-		})
-	}
-
-	return wrk
 }

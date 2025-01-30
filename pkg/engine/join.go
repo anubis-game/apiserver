@@ -1,31 +1,20 @@
 package engine
 
 import (
-	"github.com/anubis-game/apiserver/pkg/matrix"
 	"github.com/anubis-game/apiserver/pkg/player"
 	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/schema"
 )
 
-func (e *Engine) create(pac router.Packet) {
+func (e *Engine) join(pac router.Packet) {
 	var ply *player.Player
 	{
 		ply = player.New(player.Config{
-			Bck: matrix.Bucket{
-				e.fil.crd.Random(), // x0
-				e.fil.crd.Random(), // y0
-				e.fil.crd.Random(), // x1
-				e.fil.crd.Random(), // y1
-			},
+			Bck: e.fil.Bucket(),
+			Pxl: e.fil.Pixel(),
+			Spc: e.fil.Space(),
+
 			Cli: pac.Cli,
-			Pxl: matrix.Pixel{
-				e.fil.crd.Random(), // x2
-				e.fil.crd.Random(), // y2
-			},
-			Spc: matrix.Space{
-				e.fil.qdr.Random(), // quadrant
-				e.fil.ang.Random(), // angle
-			},
 			Uid: pac.Uid,
 		})
 	}

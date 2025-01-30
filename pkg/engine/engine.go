@@ -6,10 +6,11 @@ import (
 	"time"
 
 	"github.com/anubis-game/apiserver/pkg/energy"
+	"github.com/anubis-game/apiserver/pkg/filler"
 	"github.com/anubis-game/apiserver/pkg/matrix"
 	"github.com/anubis-game/apiserver/pkg/player"
-	"github.com/anubis-game/apiserver/pkg/random"
 	"github.com/anubis-game/apiserver/pkg/router"
+	"github.com/anubis-game/apiserver/pkg/worker"
 	"github.com/google/uuid"
 	"github.com/puzpuzpuz/xsync/v3"
 	"github.com/xh3b4sd/logger"
@@ -18,8 +19,10 @@ import (
 
 type Config struct {
 	Don <-chan struct{}
+	Fil *filler.Filler
 	Log logger.Interface
 	Rtr *router.Engine
+	Wrk worker.Ensure
 }
 
 type Engine struct {
@@ -29,7 +32,7 @@ type Engine struct {
 	// closed, then all streaming connections should be terminated gracefully.
 	don <-chan struct{}
 	// filler
-	fil *filler
+	fil *filler.Filler
 	// lkp
 	lkp *lookup
 	// log is a simple logger interface to print system relevant information.
@@ -43,47 +46,25 @@ type Engine struct {
 	sem chan struct{}
 	// tic is the global fanout ticker. The first tick is initialized in Daemon().
 	tic time.Time
+	// wrk
+	wrk worker.Ensure
 }
 
 func New(c Config) *Engine {
 	if c.Don == nil {
 		tracer.Panic(fmt.Errorf("%T.Don must not be empty", c))
 	}
+	if c.Fil == nil {
+		tracer.Panic(fmt.Errorf("%T.Fil must not be empty", c))
+	}
 	if c.Log == nil {
 		tracer.Panic(fmt.Errorf("%T.Log must not be empty", c))
 	}
-
-	var ang *random.Random
-	{
-		ang = random.New(random.Config{
-			Buf: 500,
-			Don: c.Don,
-			Log: c.Log,
-			Max: 255,
-			Min: 0,
-		})
+	if c.Rtr == nil {
+		tracer.Panic(fmt.Errorf("%T.Rtr must not be empty", c))
 	}
-
-	var crd *random.Random
-	{
-		crd = random.New(random.Config{
-			Buf: 3000,
-			Don: c.Don,
-			Log: c.Log,
-			Max: matrix.Max,
-			Min: matrix.Min,
-		})
-	}
-
-	var qdr *random.Random
-	{
-		qdr = random.New(random.Config{
-			Buf: 500,
-			Don: c.Don,
-			Log: c.Log,
-			Max: 4,
-			Min: 1,
-		})
+	if c.Wrk == nil {
+		tracer.Panic(fmt.Errorf("%T.Wrk must not be empty", c))
 	}
 
 	return &Engine{
@@ -92,11 +73,7 @@ func New(c Config) *Engine {
 			ply: xsync.NewMapOf[uuid.UUID, [][]byte](),
 		},
 		don: c.Don,
-		fil: &filler{
-			ang: ang,
-			crd: crd,
-			qdr: qdr,
-		},
+		fil: c.Fil,
 		lkp: &lookup{
 			nrg: xsync.NewMapOf[matrix.Bucket, uuid.UUID](),
 			ply: xsync.NewMapOf[matrix.Bucket, uuid.UUID](),
@@ -108,5 +85,6 @@ func New(c Config) *Engine {
 		},
 		rtr: c.Rtr,
 		sem: make(chan struct{}, runtime.NumCPU()),
+		wrk: c.Wrk,
 	}
 }
