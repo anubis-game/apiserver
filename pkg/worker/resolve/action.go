@@ -11,8 +11,8 @@ import (
 type Action struct {
 	Act uuid.UUID
 	Kil uuid.UUID
-	Win common.Address
 	Los common.Address
+	Win common.Address
 }
 
 func (a Action) Arg() []byte {

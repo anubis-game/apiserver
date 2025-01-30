@@ -70,8 +70,8 @@ func (e *Engine) Kill(uid uuid.UUID, _ *client.Client, inp []byte) error {
 		e.wrk.Ensure(action.New(resolve.Action{
 			Act: act,
 			Kil: kil,
-			Win: win,
 			Los: los,
+			Win: win,
 		}))
 	}
 

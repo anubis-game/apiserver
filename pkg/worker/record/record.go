@@ -12,7 +12,7 @@ type Record struct {
 	sta object.Interface[Status]
 	tim object.Interface[time.Time]
 	try object.Interface[int]
-	txn *object.Object[common.Hash]
+	txn object.Interface[common.Hash]
 	wai object.Interface[time.Duration]
 }
 
