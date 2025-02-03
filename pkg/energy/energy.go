@@ -4,18 +4,22 @@ import (
 	"fmt"
 
 	"github.com/anubis-game/apiserver/pkg/matrix"
+	"github.com/google/uuid"
 )
 
 type Energy struct {
-	Obj matrix.Object
+	Bck matrix.Bucket
+	Pxl matrix.Pixel
+	Pro matrix.Profile
+	Uid uuid.UUID
 }
 
 func (e Energy) Bytes() []byte {
 	var buf [8]byte
 
-	copy(buf[0:4], e.Obj.Bck[:])
-	copy(buf[4:6], e.Obj.Pxl[:])
-	copy(buf[6:8], e.Obj.Pro[:])
+	copy(buf[0:4], e.Bck[:])
+	copy(buf[4:6], e.Pxl[:])
+	copy(buf[6:8], e.Pro[:])
 
 	return buf[:]
 }
@@ -27,9 +31,9 @@ func FromBytes(byt []byte) Energy {
 
 	var e Energy
 
-	copy(e.Obj.Bck[:], byt[0:4])
-	copy(e.Obj.Pxl[:], byt[4:6])
-	copy(e.Obj.Pro[:], byt[6:8])
+	copy(e.Bck[:], byt[0:4])
+	copy(e.Pxl[:], byt[4:6])
+	copy(e.Pro[:], byt[6:8])
 
 	return e
 }

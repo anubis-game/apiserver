@@ -10,12 +10,9 @@ func (e *Engine) join(pac router.Packet) {
 	var ply *player.Player
 	{
 		ply = player.New(player.Config{
-			Bck: e.fil.Bucket(),
-			Pxl: e.fil.Pixel(),
-			Spc: e.fil.Space(),
-
 			Cli: pac.Cli,
 			Uid: pac.Uid,
+			Vec: e.fil.Vector(),
 		})
 	}
 
@@ -36,9 +33,10 @@ func (e *Engine) join(pac router.Packet) {
 	}
 
 	for k, v := range e.mem.ply {
-		// Only add an additional buffer to the existing player v if the new player
-		// ply is in the view of v.
-		if v.Win.Has(ply.Obj.Bck) {
+		// Only add an additional fanout buffer to the current view of the existing
+		// player v, if the head of the new player ply is placed inside the window
+		// of the existing player.
+		if v.Win.Has(ply.Bod[0].Bck) {
 			e.buf.ply.Compute(k, func(old [][]byte, _ bool) ([][]byte, bool) {
 				return append(old, byt), false
 			})

@@ -1,16 +1,15 @@
 package schema
 
 import (
-	"strconv"
-
-	"github.com/xh3b4sd/tracer"
+	"encoding/binary"
 )
 
-func Int64(byt []byte) (int64, error) {
-	num, err := strconv.ParseInt(string(byt), 10, 64)
-	if err != nil {
-		return 0, tracer.Mask(err)
-	}
+func BytesToInt64(b []byte) int64 {
+	return int64(binary.BigEndian.Uint64(b))
+}
 
-	return num, nil
+func Int64ToBytes(n int64) []byte {
+	b := make([]byte, 8)
+	binary.BigEndian.PutUint64(b, uint64(n))
+	return b
 }

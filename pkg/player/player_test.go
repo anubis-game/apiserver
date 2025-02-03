@@ -17,13 +17,11 @@ func Test_Player_Bytes(t *testing.T) {
 		// Case 000
 		{
 			p: Player{
-				Obj: matrix.Object{
-					Bck: matrix.Bucket{115, 123, 107, 119},
-					Pxl: matrix.Pixel{124, 125},
-					Pro: matrix.Profile{15, 0},
-					Uid: uuid.MustParse("f47ac10b-58cc-4372-a567-0e02b2c3d479"),
-				},
+				Bck: matrix.Bucket{115, 123, 107, 119},
+				Pxl: matrix.Pixel{124, 125},
+				Pro: matrix.Profile{15, 0},
 				Spc: matrix.Space{1, 253},
+				Uid: uuid.MustParse("f47ac10b-58cc-4372-a567-0e02b2c3d479"),
 			},
 			b: []byte{
 				// bucket
@@ -63,13 +61,11 @@ func Benchmark_Player_Bytes(b *testing.B) {
 		// Case 000 ~2.00 ns/op
 		{
 			p: Player{
-				Obj: matrix.Object{
-					Bck: matrix.Bucket{115, 123, 107, 119},
-					Pxl: matrix.Pixel{124, 125},
-					Pro: matrix.Profile{15, 0},
-					Uid: uuid.MustParse("f47ac10b-58cc-4372-a567-0e02b2c3d479"),
-				},
+				Bck: matrix.Bucket{115, 123, 107, 119},
+				Pxl: matrix.Pixel{124, 125},
+				Pro: matrix.Profile{15, 0},
 				Spc: matrix.Space{1, 253},
+				Uid: uuid.MustParse("f47ac10b-58cc-4372-a567-0e02b2c3d479"),
 			},
 		},
 	}

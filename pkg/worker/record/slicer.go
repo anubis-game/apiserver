@@ -3,7 +3,7 @@ package record
 import (
 	"time"
 
-	"github.com/anubis-game/apiserver/pkg/worker/object"
+	"github.com/anubis-game/apiserver/pkg/object"
 	"github.com/ethereum/go-ethereum/common"
 )
 

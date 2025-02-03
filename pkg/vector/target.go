@@ -1,0 +1,68 @@
+package vector
+
+import "math"
+
+const (
+	// HD is the index for the head pixel of the vector chain.
+	HD int = 0
+)
+
+const (
+	// Frm is the standard frame duration in milliseconds travelled at a time.
+	Frm = 25
+	// Dpx is the standard distance travelled in pixels per millisecond.
+	Dpx float64 = 0.2
+	// Dis is the standard distance travelled in pixels per standard frame.
+	Dis float64 = Frm * Dpx
+)
+
+const (
+	// qrf is the quadrant specific radian factor for half Pi. This is the atomic
+	// amount of radians applied to a single byte of the quadrant specific angle
+	// spc[1]. Multiplying qrf by the angle byte spc[1] provides the radians to
+	// calculate a player's coordinate displacement most efficiently.
+	//
+	//     (spc[1] / 255) * (Pi / 2)
+	//     (spc[1] / 255) * 1.570796
+	//     spc[1] * (1 / 255 * 1.570796)
+	//     spc[1] * 0.006159984314
+	//
+	qrf float64 = 0.006159984314
+)
+
+var (
+	// cos is the cosine lookup table to cache all possible cosine values based on
+	// any given angle byte.
+	cos [256]float64
+	// sin is the sine lookup table to cache all possible sine values based on any
+	// given angle byte.
+	sin [256]float64
+)
+
+func init() {
+	for i := 0; i < 256; i++ {
+		cos[i] = math.Cos(float64(i) * qrf)
+		sin[i] = math.Sin(float64(i) * qrf)
+	}
+}
+
+func (v *Vector) Target(mot Motion) Object {
+	tpx := v.obj[HD]
+
+	switch mot.QDR {
+	case 0x1:
+		tpx.X += int(Dis*sin[mot.AGL] + 0.5)
+		tpx.Y += int(Dis*cos[mot.AGL] + 0.5)
+	case 0x2:
+		tpx.X += int(Dis*cos[mot.AGL] + 0.5)
+		tpx.Y -= int(Dis*sin[mot.AGL] + 0.5)
+	case 0x3:
+		tpx.X -= int(Dis*sin[mot.AGL] + 0.5)
+		tpx.Y -= int(Dis*cos[mot.AGL] + 0.5)
+	case 0x4:
+		tpx.X -= int(Dis*cos[mot.AGL] + 0.5)
+		tpx.Y += int(Dis*sin[mot.AGL] + 0.5)
+	}
+
+	return tpx
+}
