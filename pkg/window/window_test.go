@@ -1,13 +1,15 @@
-package vector
+package window
 
 import (
 	"fmt"
 	"testing"
+
+	"github.com/anubis-game/apiserver/pkg/object"
 )
 
-func Test_Vector_Window_Has_True(t *testing.T) {
+func Test_Window_has_True(t *testing.T) {
 	testCases := []struct {
-		obj Object
+		obj object.Object
 	}{
 		// Case 000
 		//
@@ -20,7 +22,7 @@ func Test_Vector_Window_Has_True(t *testing.T) {
 		//         100
 		//
 		{
-			obj: Object{100, 200},
+			obj: object.Object{X: 100, Y: 200},
 		},
 		// Case 001
 		//
@@ -33,7 +35,7 @@ func Test_Vector_Window_Has_True(t *testing.T) {
 		//         100
 		//
 		{
-			obj: Object{150, 200},
+			obj: object.Object{X: 150, Y: 200},
 		},
 		// Case 002
 		//
@@ -46,7 +48,7 @@ func Test_Vector_Window_Has_True(t *testing.T) {
 		//         100
 		//
 		{
-			obj: Object{200, 200},
+			obj: object.Object{X: 200, Y: 200},
 		},
 		// Case 003
 		//
@@ -59,7 +61,7 @@ func Test_Vector_Window_Has_True(t *testing.T) {
 		//         100
 		//
 		{
-			obj: Object{200, 150},
+			obj: object.Object{X: 200, Y: 150},
 		},
 		// Case 004
 		//
@@ -72,7 +74,7 @@ func Test_Vector_Window_Has_True(t *testing.T) {
 		//         100
 		//
 		{
-			obj: Object{200, 100},
+			obj: object.Object{X: 200, Y: 100},
 		},
 		// Case 005
 		//
@@ -85,7 +87,7 @@ func Test_Vector_Window_Has_True(t *testing.T) {
 		//         100
 		//
 		{
-			obj: Object{150, 100},
+			obj: object.Object{X: 150, Y: 100},
 		},
 		// Case 006
 		//
@@ -98,7 +100,7 @@ func Test_Vector_Window_Has_True(t *testing.T) {
 		//         100
 		//
 		{
-			obj: Object{100, 100},
+			obj: object.Object{X: 100, Y: 100},
 		},
 		// Case 007
 		//
@@ -111,7 +113,7 @@ func Test_Vector_Window_Has_True(t *testing.T) {
 		//         100
 		//
 		{
-			obj: Object{100, 150},
+			obj: object.Object{X: 100, Y: 150},
 		},
 		// Case 008
 		//
@@ -124,18 +126,18 @@ func Test_Vector_Window_Has_True(t *testing.T) {
 		//         100
 		//
 		{
-			obj: Object{137, 143},
+			obj: object.Object{X: 137, Y: 143},
 		},
 	}
 
 	for i, tc := range testCases {
 		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
-			win := Window{
-				OBL: Object{100, 100},
-				OTR: Object{200, 200},
+			win := &Window{
+				cbl: object.Object{X: 100, Y: 100},
+				ctr: object.Object{X: 200, Y: 200},
 			}
 
-			has := win.Has(tc.obj)
+			has := win.has(tc.obj)
 
 			if has != true {
 				t.Fatalf("expected %#v got %#v", true, has)
@@ -144,9 +146,9 @@ func Test_Vector_Window_Has_True(t *testing.T) {
 	}
 }
 
-func Test_Vector_Window_Has_False(t *testing.T) {
+func Test_Window_has_False(t *testing.T) {
 	testCases := []struct {
-		obj []Object
+		obj []object.Object
 	}{
 		// Case 000
 		//
@@ -159,11 +161,11 @@ func Test_Vector_Window_Has_False(t *testing.T) {
 		//         100
 		//
 		{
-			obj: []Object{
-				{86, 206},
-				{99, 201},
-				{99, 200},
-				{100, 201},
+			obj: []object.Object{
+				{X: 86, Y: 206},
+				{X: 99, Y: 201},
+				{X: 99, Y: 200},
+				{X: 100, Y: 201},
 			},
 		},
 		// Case 001
@@ -177,10 +179,10 @@ func Test_Vector_Window_Has_False(t *testing.T) {
 		//         100
 		//
 		{
-			obj: []Object{
-				{150, 201},
-				{149, 201},
-				{151, 236},
+			obj: []object.Object{
+				{X: 150, Y: 201},
+				{X: 149, Y: 201},
+				{X: 151, Y: 236},
 			},
 		},
 		// Case 002
@@ -194,11 +196,11 @@ func Test_Vector_Window_Has_False(t *testing.T) {
 		//         100
 		//
 		{
-			obj: []Object{
-				{208, 299},
-				{201, 201},
-				{201, 200},
-				{200, 201},
+			obj: []object.Object{
+				{X: 208, Y: 299},
+				{X: 201, Y: 201},
+				{X: 201, Y: 200},
+				{X: 200, Y: 201},
 			},
 		},
 		// Case 003
@@ -212,10 +214,10 @@ func Test_Vector_Window_Has_False(t *testing.T) {
 		//         100
 		//
 		{
-			obj: []Object{
-				{201, 151},
-				{201, 150},
-				{264, 149},
+			obj: []object.Object{
+				{X: 201, Y: 151},
+				{X: 201, Y: 150},
+				{X: 264, Y: 149},
 			},
 		},
 		// Case 004
@@ -229,11 +231,11 @@ func Test_Vector_Window_Has_False(t *testing.T) {
 		//         100          x
 		//
 		{
-			obj: []Object{
-				{256, 87},
-				{201, 99},
-				{200, 99},
-				{201, 100},
+			obj: []object.Object{
+				{X: 256, Y: 87},
+				{X: 201, Y: 99},
+				{X: 200, Y: 99},
+				{X: 201, Y: 100},
 			},
 		},
 		// Case 005
@@ -247,10 +249,10 @@ func Test_Vector_Window_Has_False(t *testing.T) {
 		//         100  x
 		//
 		{
-			obj: []Object{
-				{149, 99},
-				{150, 99},
-				{151, 85},
+			obj: []object.Object{
+				{X: 149, Y: 99},
+				{X: 150, Y: 99},
+				{X: 151, Y: 85},
 			},
 		},
 		// Case 006
@@ -264,11 +266,11 @@ func Test_Vector_Window_Has_False(t *testing.T) {
 		//       x 100
 		//
 		{
-			obj: []Object{
-				{96, 92},
-				{99, 99},
-				{99, 100},
-				{100, 99},
+			obj: []object.Object{
+				{X: 96, Y: 92},
+				{X: 99, Y: 99},
+				{X: 99, Y: 100},
+				{X: 100, Y: 99},
 			},
 		},
 		// Case 007
@@ -282,23 +284,23 @@ func Test_Vector_Window_Has_False(t *testing.T) {
 		//         100
 		//
 		{
-			obj: []Object{
-				{99, 149},
-				{99, 150},
-				{92, 151},
+			obj: []object.Object{
+				{X: 99, Y: 149},
+				{X: 99, Y: 150},
+				{X: 92, Y: 151},
 			},
 		},
 	}
 
 	for i, tc := range testCases {
 		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
-			win := Window{
-				OBL: Object{100, 100},
-				OTR: Object{200, 200},
+			win := &Window{
+				cbl: object.Object{X: 100, Y: 100},
+				ctr: object.Object{X: 200, Y: 200},
 			}
 
 			for _, x := range tc.obj {
-				has := win.Has(x)
+				has := win.has(x)
 
 				if has != false {
 					t.Fatalf("expected %#v got %#v", false, has)
@@ -308,90 +310,90 @@ func Test_Vector_Window_Has_False(t *testing.T) {
 	}
 }
 
-func Benchmark_Vector_Window_Has(b *testing.B) {
+func Benchmark_Window_has(b *testing.B) {
 	testCases := []struct {
-		obj Object
+		obj object.Object
 	}{
 		// Case 000, 0.30 ns/op
 		{
-			obj: Object{100, 200},
+			obj: object.Object{X: 100, Y: 200},
 		},
 		// Case 001, 0.30 ns/op
 		{
-			obj: Object{150, 200},
+			obj: object.Object{X: 150, Y: 200},
 		},
 		// Case 002, 0.30 ns/op
 		{
-			obj: Object{200, 200},
+			obj: object.Object{X: 200, Y: 200},
 		},
 		// Case 003, 0.30 ns/op
 		{
-			obj: Object{200, 150},
+			obj: object.Object{X: 200, Y: 150},
 		},
 		// Case 004, 0.30 ns/op
 		{
-			obj: Object{200, 100},
+			obj: object.Object{X: 200, Y: 100},
 		},
 		// Case 005, 0.30 ns/op
 		{
-			obj: Object{150, 100},
+			obj: object.Object{X: 150, Y: 100},
 		},
 		// Case 006, 0.30 ns/op
 		{
-			obj: Object{100, 100},
+			obj: object.Object{X: 100, Y: 100},
 		},
 		// Case 007, 0.30 ns/op
 		{
-			obj: Object{100, 150},
+			obj: object.Object{X: 100, Y: 150},
 		},
 		// Case 008, 0.30 ns/op
 		{
-			obj: Object{137, 143},
+			obj: object.Object{X: 137, Y: 143},
 		},
 		// Case 009, 0.30 ns/op
 		{
-			obj: Object{86, 206},
+			obj: object.Object{X: 86, Y: 206},
 		},
 		// Case 010, 0.30 ns/op
 		{
-			obj: Object{149, 201},
+			obj: object.Object{X: 149, Y: 201},
 		},
 		// Case 011, 0.30 ns/op
 		{
-			obj: Object{201, 200},
+			obj: object.Object{X: 201, Y: 200},
 		},
 		// Case 012, 0.30 ns/op
 		{
-			obj: Object{264, 149},
+			obj: object.Object{X: 264, Y: 149},
 		},
 		// Case 013, 0.30 ns/op
 		{
-			obj: Object{201, 99},
+			obj: object.Object{X: 201, Y: 99},
 		},
 		// Case 014, 0.30 ns/op
 		{
-			obj: Object{149, 99},
+			obj: object.Object{X: 149, Y: 99},
 		},
 		// Case 015, 0.30 ns/op
 		{
-			obj: Object{100, 99},
+			obj: object.Object{X: 100, Y: 99},
 		},
 		// Case 016, 0.30 ns/op
 		{
-			obj: Object{99, 150},
+			obj: object.Object{X: 99, Y: 150},
 		},
 	}
 
 	for i, tc := range testCases {
 		b.Run(fmt.Sprintf("%03d", i), func(b *testing.B) {
-			win := Window{
-				OBL: Object{100, 100},
-				OTR: Object{200, 200},
+			win := &Window{
+				cbl: object.Object{X: 100, Y: 100},
+				ctr: object.Object{X: 200, Y: 200},
 			}
 
 			b.ResetTimer()
 			for range b.N {
-				win.Has(tc.obj)
+				win.has(tc.obj)
 			}
 		})
 	}

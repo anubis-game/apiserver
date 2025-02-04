@@ -1,8 +1,12 @@
 package vector
 
-import "math"
+import (
+	"math"
 
-func Impact(oxy Object, osz byte, txy Object, tsz byte) bool {
+	"github.com/anubis-game/apiserver/pkg/object"
+)
+
+func Impact(oxy object.Object, osz byte, txy object.Object, tsz byte) bool {
 	// Normalize the two points to calculate the hypothenuse of a right triangle.
 
 	var a float64

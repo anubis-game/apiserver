@@ -1,11 +1,12 @@
 package player
 
 import (
-	"bytes"
 	"fmt"
+	"reflect"
 	"testing"
 
-	"github.com/anubis-game/apiserver/pkg/matrix"
+	"github.com/anubis-game/apiserver/pkg/object"
+	"github.com/anubis-game/apiserver/pkg/vector"
 	"github.com/google/uuid"
 )
 
@@ -17,23 +18,36 @@ func Test_Player_Bytes(t *testing.T) {
 		// Case 000
 		{
 			p: Player{
-				Bck: matrix.Bucket{115, 123, 107, 119},
-				Pxl: matrix.Pixel{124, 125},
-				Pro: matrix.Profile{15, 0},
-				Spc: matrix.Space{1, 253},
+				Crx: Charax{
+					Rad: 0xf,
+					Siz: 0xb,
+					Typ: 0x3,
+				},
 				Uid: uuid.MustParse("f47ac10b-58cc-4372-a567-0e02b2c3d479"),
+				Vec: vector.New(vector.Config{
+					Mot: vector.Motion{
+						QDR: 0x1,
+						AGL: 0x7f,
+						VLC: 0x1,
+					},
+					Obj: []object.Object{
+						{X: 100, Y: 100},
+						{X: 103, Y: 103},
+						{X: 106, Y: 106},
+						{X: 109, Y: 109},
+						{X: 112, Y: 112},
+					},
+				}),
 			},
 			b: []byte{
-				// bucket
-				0x73, 0x7b, 0x6b, 0x77,
-				// pixel
-				0x7c, 0x7d,
-				// profile
-				0xf, 0x0,
-				// uuid
+				// uid
 				0xf4, 0x7a, 0xc1, 0xb, 0x58, 0xcc, 0x43, 0x72, 0xa5, 0x67, 0xe, 0x2, 0xb2, 0xc3, 0xd4, 0x79,
-				// space
-				0x1, 0xfd,
+				// crx
+				0xf, 0xb, 0x3,
+				// mot
+				0x7f, 0x1, 0x1,
+				// vec
+				0x0, 0x0, 0x1, 0x1, 0x24, 0x24, 0x0, 0x0, 0x1, 0x1, 0x27, 0x27, 0x0, 0x0, 0x1, 0x1, 0x2a, 0x2a, 0x0, 0x0, 0x1, 0x1, 0x2d, 0x2d, 0x0, 0x0, 0x1, 0x1, 0x30, 0x30,
 			},
 		},
 	}
@@ -43,38 +57,17 @@ func Test_Player_Bytes(t *testing.T) {
 			b := tc.p.Bytes()
 			p := FromBytes(b)
 
-			if tc.p != p {
-				t.Fatal("expected", tc.p, "got", p)
+			if !reflect.DeepEqual(p.Crx, tc.p.Crx) {
+				t.Fatalf("expected %#v got %#v", tc.p.Crx, p.Crx)
 			}
-
-			if !bytes.Equal(b, tc.b) {
-				t.Fatal("expected", tc.b, "got", b)
+			if !reflect.DeepEqual(p.Uid, tc.p.Uid) {
+				t.Fatalf("expected %#v got %#v", tc.p.Uid, p.Uid)
 			}
-		})
-	}
-}
-
-func Benchmark_Player_Bytes(b *testing.B) {
-	testCases := []struct {
-		p Player
-	}{
-		// Case 000 ~2.00 ns/op
-		{
-			p: Player{
-				Bck: matrix.Bucket{115, 123, 107, 119},
-				Pxl: matrix.Pixel{124, 125},
-				Pro: matrix.Profile{15, 0},
-				Spc: matrix.Space{1, 253},
-				Uid: uuid.MustParse("f47ac10b-58cc-4372-a567-0e02b2c3d479"),
-			},
-		},
-	}
-
-	for i, tc := range testCases {
-		b.Run(fmt.Sprintf("%03d", i), func(b *testing.B) {
-			b.ResetTimer()
-			for i := 0; i < b.N; i++ {
-				tc.p.Bytes()
+			if !reflect.DeepEqual(p.Vec.Bytes(), tc.p.Vec.Bytes()) {
+				t.Fatalf("expected %#v got %#v", tc.p.Vec.Bytes(), p.Vec.Bytes())
+			}
+			if !reflect.DeepEqual(b, tc.b) {
+				t.Fatalf("expected %#v got %#v", tc.b, b)
 			}
 		})
 	}

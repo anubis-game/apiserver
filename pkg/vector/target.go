@@ -1,6 +1,10 @@
 package vector
 
-import "math"
+import (
+	"math"
+
+	"github.com/anubis-game/apiserver/pkg/object"
+)
 
 const (
 	// HD is the index for the head pixel of the vector chain.
@@ -46,7 +50,7 @@ func init() {
 	}
 }
 
-func (v *Vector) Target(mot Motion) Object {
+func (v *Vector) Target(mot Motion) object.Object {
 	tpx := v.obj[HD]
 
 	switch mot.QDR {

@@ -3,13 +3,15 @@ package vector
 import (
 	"fmt"
 	"testing"
+
+	"github.com/anubis-game/apiserver/pkg/object"
 )
 
 func Test_Vector_Impact_True(t *testing.T) {
 	testCases := []struct {
-		oxy Object
+		oxy object.Object
 		osz byte
-		txy Object
+		txy object.Object
 		tsz byte
 	}{
 		// Case 000
@@ -19,8 +21,8 @@ func Test_Vector_Impact_True(t *testing.T) {
 		//        | e
 		//
 		{
-			oxy: Object{477_999, 510_401}, osz: 80,
-			txy: Object{478_109, 510_326}, tsz: 60,
+			oxy: object.Object{X: 477_999, Y: 510_401}, osz: 80,
+			txy: object.Object{X: 478_109, Y: 510_326}, tsz: 60,
 		},
 		// Case 001
 		//
@@ -29,8 +31,8 @@ func Test_Vector_Impact_True(t *testing.T) {
 		//      e |
 		//
 		{
-			oxy: Object{478_087, 510_381}, osz: 50,
-			txy: Object{478_047, 510_324}, tsz: 20,
+			oxy: object.Object{X: 478_087, Y: 510_381}, osz: 50,
+			txy: object.Object{X: 478_047, Y: 510_324}, tsz: 20,
 		},
 		// Case 002
 		//
@@ -39,8 +41,8 @@ func Test_Vector_Impact_True(t *testing.T) {
 		//        |
 		//
 		{
-			oxy: Object{478_222, 510_389}, osz: 50,
-			txy: Object{478_131, 510_389}, tsz: 50,
+			oxy: object.Object{X: 478_222, Y: 510_389}, osz: 50,
+			txy: object.Object{X: 478_131, Y: 510_389}, tsz: 50,
 		},
 		// Case 003
 		//
@@ -49,8 +51,8 @@ func Test_Vector_Impact_True(t *testing.T) {
 		//      e |
 		//
 		{
-			oxy: Object{478_305, 510_389}, osz: 30,
-			txy: Object{478_305, 510_334}, tsz: 40,
+			oxy: object.Object{X: 478_305, Y: 510_389}, osz: 30,
+			txy: object.Object{X: 478_305, Y: 510_334}, tsz: 40,
 		},
 		// Case 004
 		//
@@ -59,8 +61,8 @@ func Test_Vector_Impact_True(t *testing.T) {
 		//        |
 		//
 		{
-			oxy: Object{478_305, 510_312}, osz: 10,
-			txy: Object{478_305, 510_312}, tsz: 25,
+			oxy: object.Object{X: 478_305, Y: 510_312}, osz: 10,
+			txy: object.Object{X: 478_305, Y: 510_312}, tsz: 25,
 		},
 	}
 
@@ -77,9 +79,9 @@ func Test_Vector_Impact_True(t *testing.T) {
 
 func Test_Vector_Impact_False(t *testing.T) {
 	testCases := []struct {
-		oxy Object
+		oxy object.Object
 		osz byte
-		txy Object
+		txy object.Object
 		tsz byte
 	}{
 		// Case 000
@@ -89,8 +91,8 @@ func Test_Vector_Impact_False(t *testing.T) {
 		//        | e
 		//
 		{
-			oxy: Object{477_999, 510_401}, osz: 80,
-			txy: Object{478_109, 510_326}, tsz: 20,
+			oxy: object.Object{X: 477_999, Y: 510_401}, osz: 80,
+			txy: object.Object{X: 478_109, Y: 510_326}, tsz: 20,
 		},
 		// Case 001
 		//
@@ -99,8 +101,8 @@ func Test_Vector_Impact_False(t *testing.T) {
 		//      e |
 		//
 		{
-			oxy: Object{478_087, 510_381}, osz: 40,
-			txy: Object{478_047, 510_324}, tsz: 20,
+			oxy: object.Object{X: 478_087, Y: 510_381}, osz: 40,
+			txy: object.Object{X: 478_047, Y: 510_324}, tsz: 20,
 		},
 		// Case 002
 		//
@@ -109,8 +111,8 @@ func Test_Vector_Impact_False(t *testing.T) {
 		//        |
 		//
 		{
-			oxy: Object{478_222, 510_389}, osz: 40,
-			txy: Object{478_131, 510_389}, tsz: 20,
+			oxy: object.Object{X: 478_222, Y: 510_389}, osz: 40,
+			txy: object.Object{X: 478_131, Y: 510_389}, tsz: 20,
 		},
 		// Case 003
 		//
@@ -119,8 +121,8 @@ func Test_Vector_Impact_False(t *testing.T) {
 		//      e |
 		//
 		{
-			oxy: Object{478_305, 510_389}, osz: 10,
-			txy: Object{478_305, 510_334}, tsz: 40,
+			oxy: object.Object{X: 478_305, Y: 510_389}, osz: 10,
+			txy: object.Object{X: 478_305, Y: 510_334}, tsz: 40,
 		},
 	}
 
@@ -137,35 +139,35 @@ func Test_Vector_Impact_False(t *testing.T) {
 
 func Benchmark_Vector_Impact(b *testing.B) {
 	testCases := []struct {
-		oxy Object
+		oxy object.Object
 		osz byte
-		txy Object
+		txy object.Object
 		tsz byte
 	}{
 		// Case 000, ~0.30 ns/op
 		{
-			oxy: Object{477_999, 510_401}, osz: 80,
-			txy: Object{478_109, 510_326}, tsz: 60,
+			oxy: object.Object{X: 477_999, Y: 510_401}, osz: 80,
+			txy: object.Object{X: 478_109, Y: 510_326}, tsz: 60,
 		},
 		// Case 001, ~0.30 ns/op
 		{
-			oxy: Object{478_087, 510_381}, osz: 50,
-			txy: Object{478_047, 510_324}, tsz: 20,
+			oxy: object.Object{X: 478_087, Y: 510_381}, osz: 50,
+			txy: object.Object{X: 478_047, Y: 510_324}, tsz: 20,
 		},
 		// Case 002, ~0.30 ns/op
 		{
-			oxy: Object{478_222, 510_389}, osz: 50,
-			txy: Object{478_131, 510_389}, tsz: 50,
+			oxy: object.Object{X: 478_222, Y: 510_389}, osz: 50,
+			txy: object.Object{X: 478_131, Y: 510_389}, tsz: 50,
 		},
 		// Case 003, ~0.30 ns/op
 		{
-			oxy: Object{478_305, 510_389}, osz: 30,
-			txy: Object{478_305, 510_334}, tsz: 40,
+			oxy: object.Object{X: 478_305, Y: 510_389}, osz: 30,
+			txy: object.Object{X: 478_305, Y: 510_334}, tsz: 40,
 		},
 		// Case 004, ~0.30 ns/op
 		{
-			oxy: Object{478_305, 510_312}, osz: 10,
-			txy: Object{478_305, 510_312}, tsz: 25,
+			oxy: object.Object{X: 478_305, Y: 510_312}, osz: 10,
+			txy: object.Object{X: 478_305, Y: 510_312}, tsz: 25,
 		},
 	}
 

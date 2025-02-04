@@ -3,7 +3,7 @@ package record
 import (
 	"time"
 
-	"github.com/anubis-game/apiserver/pkg/object"
+	"github.com/anubis-game/apiserver/pkg/setter"
 	"github.com/ethereum/go-ethereum/common"
 )
 
@@ -13,10 +13,10 @@ type Interface interface {
 	Len() int
 	Prv() *Record
 
-	Err() object.Interface[error]
-	Sta() object.Interface[Status]
-	Tim() object.Interface[time.Time]
-	Try() object.Interface[int]
-	Txn() object.Interface[common.Hash]
-	Wai() object.Interface[time.Duration]
+	Err() setter.Interface[error]
+	Sta() setter.Interface[Status]
+	Tim() setter.Interface[time.Time]
+	Try() setter.Interface[int]
+	Txn() setter.Interface[common.Hash]
+	Wai() setter.Interface[time.Duration]
 }

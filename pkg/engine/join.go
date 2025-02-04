@@ -16,10 +16,6 @@ func (e *Engine) join(pac router.Packet) {
 		})
 	}
 
-	{
-		e.mem.ply[pac.Uid] = ply
-	}
-
 	// Put the player randomly onto the game map for every relevant player to see.
 	// Adding the new player information to every buffer of every player causes
 	// the next fanout cycle to push the new player into all relevant views. For
@@ -33,10 +29,10 @@ func (e *Engine) join(pac router.Packet) {
 	}
 
 	for k, v := range e.mem.ply {
-		// Only add an additional fanout buffer to the current view of the existing
-		// player v, if the head of the new player ply is placed inside the window
-		// of the existing player.
-		if v.Win.Has(ply.Bod[0].Bck) {
+		// Only add the fanout buffer to the current view of the existing player, if
+		// the body of the new player is placed inside the view of the existing
+		// player.
+		if v.Win.Has(ply.Vec.Window()) {
 			e.buf.ply.Compute(k, func(old [][]byte, _ bool) ([][]byte, bool) {
 				return append(old, byt), false
 			})
@@ -49,4 +45,7 @@ func (e *Engine) join(pac router.Packet) {
 
 	// TODO add new player to the lookup map based on its current coordinates
 
+	{
+		e.mem.ply[pac.Uid] = ply
+	}
 }

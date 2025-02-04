@@ -1,7 +1,5 @@
 package matrix
 
-//     (123*4096)+(101*64)+117
-
 const (
 	// Max is the upper boundary of the game map in pixels, 64^3.
 	Max = 262_144

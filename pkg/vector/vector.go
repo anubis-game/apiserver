@@ -1,26 +1,30 @@
 package vector
 
-import "github.com/anubis-game/apiserver/pkg/object"
+import (
+	"github.com/anubis-game/apiserver/pkg/object"
+	"github.com/anubis-game/apiserver/pkg/setter"
+	"github.com/anubis-game/apiserver/pkg/window"
+)
 
 type Config struct {
 	Mot Motion
-	Obj []Object
+	Obj []object.Object
 }
-
-// TODO we also need to track the window expansion somehow
 
 type Vector struct {
 	len int
-	mot object.Interface[Motion]
-	obj []Object
+	mot setter.Interface[Motion]
+	obj []object.Object
+	win *window.Window
 }
 
 func New(c Config) *Vector {
 	v := &Vector{
 		len: 0,
-		mot: object.New[Motion](),
-		// 100 points * 100 points per segment * 1000 segments = 10,000,000 points per player
-		obj: make([]Object, 1000),
+		mot: setter.New[Motion](),
+		// 100 points per segment * 10,000 segments = 1,000,000 points per player
+		obj: make([]object.Object, 10_000),
+		win: &window.Window{},
 	}
 
 	{
@@ -28,6 +32,7 @@ func New(c Config) *Vector {
 	}
 
 	for _, x := range c.Obj {
+		v.win.Inc(x)
 		v.obj[v.len] = x
 		v.len++
 	}

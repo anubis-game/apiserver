@@ -1,11 +1,11 @@
 package energy
 
 import (
-	"bytes"
 	"fmt"
+	"reflect"
 	"testing"
 
-	"github.com/anubis-game/apiserver/pkg/matrix"
+	"github.com/anubis-game/apiserver/pkg/object"
 )
 
 func Test_Energy_Bytes(t *testing.T) {
@@ -16,11 +16,11 @@ func Test_Energy_Bytes(t *testing.T) {
 		// Case 000
 		{
 			e: Energy{
-				Bck: matrix.Bucket{115, 123, 107, 119},
-				Pxl: matrix.Pixel{124, 125},
-				Pro: matrix.Profile{15, 0},
+				Obj: object.Object{X: 12_547, Y: 512},
+				Siz: 0x7c,
+				Typ: 0x3,
 			},
-			b: []byte{0x73, 0x7b, 0x6b, 0x77, 0x7c, 0x7d, 0xf, 0x0},
+			b: []byte{0x3, 0x0, 0x4, 0x8, 0x3, 0x0, 0x7c, 0x3},
 		},
 	}
 
@@ -29,12 +29,11 @@ func Test_Energy_Bytes(t *testing.T) {
 			b := tc.e.Bytes()
 			e := FromBytes(b)
 
-			if tc.e != e {
-				t.Fatal("expected", tc.e, "got", e)
+			if !reflect.DeepEqual(e, tc.e) {
+				t.Fatalf("expected %#v got %#v", tc.e, e)
 			}
-
-			if !bytes.Equal(b, tc.b) {
-				t.Fatal("expected", tc.b, "got", b)
+			if !reflect.DeepEqual(b, tc.b) {
+				t.Fatalf("expected %#v got %#v", tc.b, b)
 			}
 		})
 	}
@@ -44,12 +43,12 @@ func Benchmark_Energy_Bytes(b *testing.B) {
 	testCases := []struct {
 		e Energy
 	}{
-		// Case 000 ~0.30 ns/op
+		// Case 000 ~1.80 ns/op
 		{
 			e: Energy{
-				Bck: matrix.Bucket{115, 123, 107, 119},
-				Pxl: matrix.Pixel{124, 125},
-				Pro: matrix.Profile{15, 0},
+				Obj: object.Object{X: 12_547, Y: 512},
+				Siz: 0x7c,
+				Typ: 0x3,
 			},
 		},
 	}

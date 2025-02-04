@@ -4,19 +4,21 @@ import (
 	"fmt"
 	"reflect"
 	"testing"
+
+	"github.com/anubis-game/apiserver/pkg/object"
 )
 
 func Test_Vector_Target(t *testing.T) {
 	testCases := []struct {
 		vec *Vector
 		mot Motion
-		trg Object
+		trg object.Object
 	}{
 		// Case 000
 		{
 			vec: &Vector{
-				obj: []Object{
-					{621_359, 539_073},
+				obj: []object.Object{
+					{X: 621_359, Y: 539_073},
 				},
 			},
 			mot: Motion{
@@ -24,13 +26,13 @@ func Test_Vector_Target(t *testing.T) {
 				AGL: byte(108), // 38.12° from 0°
 				VLC: byte(1),   // 100% speed
 			},
-			trg: Object{621_362, 539_077}, // x+3 y+4
+			trg: object.Object{X: 621_362, Y: 539_077}, // x+3 y+4
 		},
 		// Case 001
 		{
 			vec: &Vector{
-				obj: []Object{
-					{621_359, 539_073},
+				obj: []object.Object{
+					{X: 621_359, Y: 539_073},
 				},
 			},
 			mot: Motion{
@@ -38,13 +40,13 @@ func Test_Vector_Target(t *testing.T) {
 				AGL: byte(253), // 89.29° from 90°
 				VLC: byte(4),   // 400% speed
 			},
-			trg: Object{621_359, 539_053}, // y-18
+			trg: object.Object{X: 621_359, Y: 539_053}, // y-18
 		},
 		// Case 002
 		{
 			vec: &Vector{
-				obj: []Object{
-					{621_359, 539_073},
+				obj: []object.Object{
+					{X: 621_359, Y: 539_073},
 				},
 			},
 			mot: Motion{
@@ -52,13 +54,13 @@ func Test_Vector_Target(t *testing.T) {
 				AGL: byte(253), // 89.29° from 180°
 				VLC: byte(4),   // 400% speed
 			},
-			trg: Object{621_339, 539_073}, // x-18
+			trg: object.Object{X: 621_339, Y: 539_073}, // x-18
 		},
 		// Case 003
 		{
 			vec: &Vector{
-				obj: []Object{
-					{621_359, 539_073},
+				obj: []object.Object{
+					{X: 621_359, Y: 539_073},
 				},
 			},
 			mot: Motion{
@@ -66,7 +68,7 @@ func Test_Vector_Target(t *testing.T) {
 				AGL: byte(108), // 38.12° from 180°
 				VLC: byte(1),   // 100% speed
 			},
-			trg: Object{621_355, 539_076}, // x-4 y+3
+			trg: object.Object{X: 621_355, Y: 539_076}, // x-4 y+3
 		},
 	}
 
@@ -91,8 +93,8 @@ func Benchmark_Vector_Target(b *testing.B) {
 		// Case 000, ~2.00 ns/op
 		{
 			vec: &Vector{
-				obj: []Object{
-					{621_359, 539_073},
+				obj: []object.Object{
+					{X: 621_359, Y: 539_073},
 				},
 			},
 			mot: Motion{
@@ -104,8 +106,8 @@ func Benchmark_Vector_Target(b *testing.B) {
 		// Case 001, ~2.00 ns/op
 		{
 			vec: &Vector{
-				obj: []Object{
-					{621_359, 539_073},
+				obj: []object.Object{
+					{X: 621_359, Y: 539_073},
 				},
 			},
 			mot: Motion{
@@ -117,8 +119,8 @@ func Benchmark_Vector_Target(b *testing.B) {
 		// Case 002, ~2.00 ns/op
 		{
 			vec: &Vector{
-				obj: []Object{
-					{621359, 539073},
+				obj: []object.Object{
+					{X: 621359, Y: 539073},
 				},
 			},
 			mot: Motion{
@@ -130,8 +132,8 @@ func Benchmark_Vector_Target(b *testing.B) {
 		// Case 003, ~2.00 ns/op
 		{
 			vec: &Vector{
-				obj: []Object{
-					{621_359, 539_073},
+				obj: []object.Object{
+					{X: 621_359, Y: 539_073},
 				},
 			},
 			mot: Motion{

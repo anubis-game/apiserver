@@ -1,6 +1,7 @@
 package filler
 
 import (
+	"github.com/anubis-game/apiserver/pkg/object"
 	"github.com/anubis-game/apiserver/pkg/vector"
 )
 
@@ -22,7 +23,7 @@ func (f *Filler) vector() *vector.Vector {
 				AGL: byte(f.ang.Random()),
 				VLC: 0x1,
 			},
-			Obj: []vector.Object{
+			Obj: []object.Object{
 				{
 					X: f.crd.Random(),
 					Y: f.crd.Random(),

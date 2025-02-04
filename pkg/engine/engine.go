@@ -7,7 +7,7 @@ import (
 
 	"github.com/anubis-game/apiserver/pkg/energy"
 	"github.com/anubis-game/apiserver/pkg/filler"
-	"github.com/anubis-game/apiserver/pkg/matrix"
+	"github.com/anubis-game/apiserver/pkg/object"
 	"github.com/anubis-game/apiserver/pkg/player"
 	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/worker"
@@ -75,8 +75,8 @@ func New(c Config) *Engine {
 		don: c.Don,
 		fil: c.Fil,
 		lkp: &lookup{
-			nrg: xsync.NewMapOf[matrix.Bucket, uuid.UUID](),
-			ply: xsync.NewMapOf[matrix.Bucket, uuid.UUID](),
+			nrg: xsync.NewMapOf[object.Bucket, uuid.UUID](),
+			ply: xsync.NewMapOf[object.Bucket, uuid.UUID](),
 		},
 		log: c.Log,
 		mem: &memory{

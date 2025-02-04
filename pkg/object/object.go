@@ -1,22 +1,19 @@
 package object
 
-type Object[T comparable] struct {
-	val T
+// Object contains the coordinates X and Y, describing a precise pixel location
+// within the coordinate system.
+type Object struct {
+	X int
+	Y int
 }
 
-func New[T comparable]() *Object[T] {
-	return &Object[T]{}
-}
-
-func (o *Object[T]) Emp() bool {
-	var zer T
-	return o.val == zer
-}
-
-func (o *Object[T]) Get() T {
-	return o.val
-}
-
-func (o *Object[T]) Set(val T) {
-	o.val = val
+func (o Object) Bucket() Bucket {
+	return Bucket{
+		byte(o.X / 4096),
+		byte(o.Y / 4096),
+		byte((o.X % 4096) / 64),
+		byte((o.Y % 4096) / 64),
+		byte(o.X % 64),
+		byte(o.Y % 64),
+	}
 }

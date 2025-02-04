@@ -1,6 +1,6 @@
 package vector
 
-import "github.com/anubis-game/apiserver/pkg/object"
+import "github.com/anubis-game/apiserver/pkg/setter"
 
 // Motion contains all information necessary to calculate a player's change in
 // direction.
@@ -35,6 +35,6 @@ type Motion struct {
 	VLC byte
 }
 
-func (v *Vector) Motion() object.Interface[Motion] {
+func (v *Vector) Motion() setter.Interface[Motion] {
 	return v.mot
 }

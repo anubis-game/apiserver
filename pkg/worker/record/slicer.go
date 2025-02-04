@@ -3,7 +3,7 @@ package record
 import (
 	"time"
 
-	"github.com/anubis-game/apiserver/pkg/object"
+	"github.com/anubis-game/apiserver/pkg/setter"
 	"github.com/ethereum/go-ethereum/common"
 )
 
@@ -99,27 +99,27 @@ func (s *Slicer) Prv() *Record {
 	return s.lis[len(s.lis)-2]
 }
 
-func (s *Slicer) Err() object.Interface[error] {
+func (s *Slicer) Err() setter.Interface[error] {
 	return s.lis[len(s.lis)-1].Err()
 }
 
-func (s *Slicer) Sta() object.Interface[Status] {
+func (s *Slicer) Sta() setter.Interface[Status] {
 	return s.lis[len(s.lis)-1].Sta()
 }
 
-func (s *Slicer) Tim() object.Interface[time.Time] {
+func (s *Slicer) Tim() setter.Interface[time.Time] {
 	return s.lis[len(s.lis)-1].Tim()
 }
 
-func (s *Slicer) Try() object.Interface[int] {
+func (s *Slicer) Try() setter.Interface[int] {
 	return s.lis[len(s.lis)-1].Try()
 }
 
-func (s *Slicer) Txn() object.Interface[common.Hash] {
+func (s *Slicer) Txn() setter.Interface[common.Hash] {
 	return s.lis[len(s.lis)-1].Txn()
 }
 
-func (s *Slicer) Wai() object.Interface[time.Duration] {
+func (s *Slicer) Wai() setter.Interface[time.Duration] {
 	return s.lis[len(s.lis)-1].Wai()
 }
 
