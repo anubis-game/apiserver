@@ -1,4 +1,4 @@
-package object
+package setter
 
 import (
 	"testing"
@@ -7,7 +7,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 )
 
-func Test_Worker_Object(t *testing.T) {
+func Test_Setter(t *testing.T) {
 	var foo testStruct
 	{
 		foo = testStruct{
@@ -15,7 +15,7 @@ func Test_Worker_Object(t *testing.T) {
 		}
 	}
 
-	if !foo.Object().Emp() {
+	if !foo.Setter().Emp() {
 		t.Fatal("expected", true, "got", false)
 	}
 
@@ -25,16 +25,16 @@ func Test_Worker_Object(t *testing.T) {
 	}
 
 	{
-		foo.Object().Set(exp)
+		foo.Setter().Set(exp)
 	}
 
-	if foo.Object().Emp() {
+	if foo.Setter().Emp() {
 		t.Fatal("expected", false, "got", true)
 	}
 
 	var act common.Hash
 	{
-		act = foo.Object().Get()
+		act = foo.Setter().Get()
 	}
 
 	if !transaction.Equal(act, exp) {
@@ -43,9 +43,9 @@ func Test_Worker_Object(t *testing.T) {
 }
 
 type testStruct struct {
-	hsh *Object[common.Hash]
+	hsh *Setter[common.Hash]
 }
 
-func (t testStruct) Object() *Object[common.Hash] {
+func (t testStruct) Setter() *Setter[common.Hash] {
 	return t.hsh
 }

@@ -1,4 +1,4 @@
-package object
+package setter
 
 type Interface[T comparable] interface {
 	Emp() bool

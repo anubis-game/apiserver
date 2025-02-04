@@ -2,61 +2,92 @@ package schema
 
 import (
 	"fmt"
-	"reflect"
 	"testing"
+
+	"golang.org/x/exp/slices"
 )
 
-func Test_Schema_Int64(t *testing.T) {
+func Test_Schema_BytesToInt64(t *testing.T) {
 	testCases := []struct {
 		b []byte
-		d int64
+		i int64
 	}{
 		// Case 000
 		{
-			b: []byte("1"),
-			d: 1,
+			b: []byte{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0},
+			i: 0,
 		},
 		// Case 001
 		{
-			b: []byte("1234"),
-			d: 1234,
+			b: []byte{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x4, 0xd2},
+			i: 1234,
 		},
 		// Case 002
 		{
-			b: []byte("98732347652171"),
-			d: 98732347652171,
+			b: []byte{0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff},
+			i: 9223372036854775807,
 		},
 	}
 
 	for i, tc := range testCases {
 		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
-			d, err := Int64(tc.b)
-			if err != nil {
-				t.Fatal(err)
-			}
+			i := BytesToInt64(tc.b)
 
-			if !reflect.DeepEqual(d, tc.d) {
-				t.Fatal("expected", tc.d, "got", d)
+			if i != tc.i {
+				t.Fatalf("expected %#v got %#v", tc.i, i)
 			}
 		})
 	}
 }
 
-func Benchmark_Schema_Int64(b *testing.B) {
+func Test_Schema_Int64ToBytes(t *testing.T) {
+	testCases := []struct {
+		i int64
+		b []byte
+	}{
+		// Case 000
+		{
+			i: 0,
+			b: []byte{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0},
+		},
+		// Case 001
+		{
+			i: 1234,
+			b: []byte{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x4, 0xd2},
+		},
+		// Case 002
+		{
+			i: 9223372036854775807,
+			b: []byte{0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff},
+		},
+	}
+
+	for i, tc := range testCases {
+		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
+			b := Int64ToBytes(tc.i)
+
+			if !slices.Equal(b, tc.b) {
+				t.Fatalf("expected %#v got %#v", tc.b, b)
+			}
+		})
+	}
+}
+
+func Benchmark_Schema_BytesToInt64(b *testing.B) {
 	testCases := []struct {
 		b []byte
 	}{
-		// Case 000 ~57 ns/op
+		// Case 000 ~0.30 ns/op
 		{
-			b: []byte("1"),
+			b: []byte{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0},
 		},
-		// Case 001 ~100 ns/op
+		// Case 001 ~0.30 ns/op
 		{
-			b: []byte("1234"),
+			b: []byte{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x4, 0xd2},
 		},
-		// Case 002 ~100 ns/op
+		// Case 002 ~0.30 ns/op
 		{
-			b: []byte("98732347652171"),
+			b: []byte{0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff},
 		},
 	}
 
@@ -64,10 +95,35 @@ func Benchmark_Schema_Int64(b *testing.B) {
 		b.Run(fmt.Sprintf("%03d", i), func(b *testing.B) {
 			b.ResetTimer()
 			for i := 0; i < b.N; i++ {
-				_, err := Int64(tc.b)
-				if err != nil {
-					b.Fatal(err)
-				}
+				BytesToInt64(tc.b)
+			}
+		})
+	}
+}
+
+func Benchmark_Schema_Int64ToBytes(b *testing.B) {
+	testCases := []struct {
+		i int64
+	}{
+		// Case 000 ~0.30 ns/op
+		{
+			i: 0,
+		},
+		// Case 001 ~0.30 ns/op
+		{
+			i: 1234,
+		},
+		// Case 002 ~0.30 ns/op
+		{
+			i: 9223372036854775807,
+		},
+	}
+
+	for i, tc := range testCases {
+		b.Run(fmt.Sprintf("%03d", i), func(b *testing.B) {
+			b.ResetTimer()
+			for i := 0; i < b.N; i++ {
+				Int64ToBytes(tc.i)
 			}
 		})
 	}

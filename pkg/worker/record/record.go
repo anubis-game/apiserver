@@ -3,50 +3,50 @@ package record
 import (
 	"time"
 
-	"github.com/anubis-game/apiserver/pkg/worker/object"
+	"github.com/anubis-game/apiserver/pkg/setter"
 	"github.com/ethereum/go-ethereum/common"
 )
 
 type Record struct {
-	err object.Interface[error]
-	sta object.Interface[Status]
-	tim object.Interface[time.Time]
-	try object.Interface[int]
-	txn object.Interface[common.Hash]
-	wai object.Interface[time.Duration]
+	err setter.Interface[error]
+	sta setter.Interface[Status]
+	tim setter.Interface[time.Time]
+	try setter.Interface[int]
+	txn setter.Interface[common.Hash]
+	wai setter.Interface[time.Duration]
 }
 
 func New() *Record {
 	return &Record{
-		err: object.New[error](),
-		sta: object.New[Status](),
-		tim: object.New[time.Time](),
-		try: object.New[int](),
-		txn: object.New[common.Hash](),
-		wai: object.New[time.Duration](),
+		err: setter.New[error](),
+		sta: setter.New[Status](),
+		tim: setter.New[time.Time](),
+		try: setter.New[int](),
+		txn: setter.New[common.Hash](),
+		wai: setter.New[time.Duration](),
 	}
 }
 
-func (r *Record) Err() object.Interface[error] {
+func (r *Record) Err() setter.Interface[error] {
 	return r.err
 }
 
-func (r *Record) Sta() object.Interface[Status] {
+func (r *Record) Sta() setter.Interface[Status] {
 	return r.sta
 }
 
-func (r *Record) Tim() object.Interface[time.Time] {
+func (r *Record) Tim() setter.Interface[time.Time] {
 	return r.tim
 }
 
-func (r *Record) Try() object.Interface[int] {
+func (r *Record) Try() setter.Interface[int] {
 	return r.try
 }
 
-func (r *Record) Txn() object.Interface[common.Hash] {
+func (r *Record) Txn() setter.Interface[common.Hash] {
 	return r.txn
 }
 
-func (r *Record) Wai() object.Interface[time.Duration] {
+func (r *Record) Wai() setter.Interface[time.Duration] {
 	return r.wai
 }

@@ -10,20 +10,25 @@ import (
 )
 
 type Config struct {
+	// Buf is the amount of random integers prepared in advance.
 	Buf int
+	// Don is the global done channel.
 	Don <-chan struct{}
+	// Log is used to print runtime information.
 	Log logger.Interface
-	Max byte
-	Min byte
+	// Max is the inclusive maximum integer randomly generated.
+	Max int
+	// Min is the inclusive minimum integer randomly generated.
+	Min int
 }
 
 type Random struct {
-	bck []byte
+	bck []int
 	don <-chan struct{}
 	log logger.Interface
-	max byte
-	min byte
-	que chan byte
+	max int
+	min int
+	que chan int
 	siz *big.Int
 }
 
@@ -41,23 +46,18 @@ func New(c Config) *Random {
 		tracer.Panic(fmt.Errorf("%T.Max must not be empty", c))
 	}
 
-	// We need to cast min and max into integers before calculating the size,
-	// because min=0 max=255 results in a size of 0 due to the MaxUint8 overflow
-	// when doing +1 below. A size of 0 does then cause runtime panics for any
-	// random distribution for the full uint8 spectrum. We have unit tests for
-	// that case. See Test_Random_Random_uint8 and Test_Random_backup_uint8.
 	var siz int
 	{
-		siz = int(c.Max) - int(c.Min) + 1
+		siz = c.Max - c.Min + 1
 	}
 
-	var bck []byte
+	var bck []int
 	{
-		bck = make([]byte, siz)
+		bck = make([]int, siz)
 	}
 
 	for i := range bck {
-		bck[i] = c.Min + byte(i)
+		bck[i] = c.Min + i
 	}
 
 	{
@@ -70,7 +70,7 @@ func New(c Config) *Random {
 		log: c.Log,
 		max: c.Max,
 		min: c.Min,
-		que: make(chan byte, c.Buf),
+		que: make(chan int, c.Buf),
 		siz: big.NewInt(int64(siz)),
 	}
 }
@@ -86,11 +86,11 @@ func (r *Random) Daemon() {
 	}
 }
 
-func (r *Random) Random() byte {
+func (r *Random) Random() int {
 	return <-r.que
 }
 
-func (r *Random) random() byte {
+func (r *Random) random() int {
 	// Generate a cryptographically secure random number in the range [0, siz).
 	b, err := rand.Int(rand.Reader, r.siz)
 	if err != nil {
@@ -104,16 +104,16 @@ func (r *Random) random() byte {
 	}
 
 	// Add min to shift the range to [min, max].
-	return byte(b.Int64()) + r.min
+	return int(b.Int64()) + r.min
 }
 
-func (r *Random) backup() byte {
+func (r *Random) backup() int {
 	bck := r.bck[0]
 	r.bck = append(r.bck[1:], bck)
 	return bck
 }
 
-func musShf(lis []byte) {
+func musShf(lis []int) {
 	for i := len(lis) - 1; i > 0; i-- {
 		b, err := rand.Int(rand.Reader, big.NewInt(int64(i+1)))
 		if err != nil {

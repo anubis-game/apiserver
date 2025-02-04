@@ -5,6 +5,7 @@ import (
 
 	"github.com/anubis-game/apiserver/pkg/matrix"
 	"github.com/anubis-game/apiserver/pkg/random"
+	"github.com/anubis-game/apiserver/pkg/vector"
 	"github.com/xh3b4sd/logger"
 	"github.com/xh3b4sd/tracer"
 )
@@ -17,7 +18,9 @@ type Config struct {
 type Filler struct {
 	ang *random.Random
 	crd *random.Random
+	don <-chan struct{}
 	qdr *random.Random
+	vec chan *vector.Vector
 }
 
 func New(c Config) *Filler {
@@ -42,11 +45,11 @@ func New(c Config) *Filler {
 	var crd *random.Random
 	{
 		crd = random.New(random.Config{
-			Buf: 3000,
+			Buf: 1000,
 			Don: c.Don,
 			Log: c.Log,
-			Max: matrix.Max,
-			Min: matrix.Min,
+			Max: matrix.Max - matrix.Thr,
+			Min: matrix.Min + matrix.Thr,
 		})
 	}
 
@@ -65,28 +68,6 @@ func New(c Config) *Filler {
 		ang: ang,
 		crd: crd,
 		qdr: qdr,
-	}
-}
-
-func (f *Filler) Bucket() matrix.Bucket {
-	return matrix.Bucket{
-		f.crd.Random(), // x0
-		f.crd.Random(), // y0
-		f.crd.Random(), // x1
-		f.crd.Random(), // y1
-	}
-}
-
-func (f *Filler) Pixel() matrix.Pixel {
-	return matrix.Pixel{
-		f.crd.Random(), // x2
-		f.crd.Random(), // y2
-	}
-}
-
-func (f *Filler) Space() matrix.Space {
-	return matrix.Space{
-		f.qdr.Random(), // quadrant
-		f.ang.Random(), // angle
+		vec: make(chan *vector.Vector, 500),
 	}
 }

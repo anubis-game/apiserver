@@ -10,17 +10,10 @@ func (e *Engine) join(pac router.Packet) {
 	var ply *player.Player
 	{
 		ply = player.New(player.Config{
-			Bck: e.fil.Bucket(),
-			Pxl: e.fil.Pixel(),
-			Spc: e.fil.Space(),
-
 			Cli: pac.Cli,
 			Uid: pac.Uid,
+			Vec: e.fil.Vector(),
 		})
-	}
-
-	{
-		e.mem.ply[pac.Uid] = ply
 	}
 
 	// Put the player randomly onto the game map for every relevant player to see.
@@ -36,9 +29,10 @@ func (e *Engine) join(pac router.Packet) {
 	}
 
 	for k, v := range e.mem.ply {
-		// Only add an additional buffer to the existing player v if the new player
-		// ply is in the view of v.
-		if v.Win.Has(ply.Obj.Bck) {
+		// Only add the fanout buffer to the current view of the existing player, if
+		// the body of the new player is placed inside the view of the existing
+		// player.
+		if v.Win.Has(ply.Vec.Window()) {
 			e.buf.ply.Compute(k, func(old [][]byte, _ bool) ([][]byte, bool) {
 				return append(old, byt), false
 			})
@@ -51,4 +45,7 @@ func (e *Engine) join(pac router.Packet) {
 
 	// TODO add new player to the lookup map based on its current coordinates
 
+	{
+		e.mem.ply[pac.Uid] = ply
+	}
 }

@@ -4,80 +4,100 @@ import (
 	"fmt"
 
 	"github.com/anubis-game/apiserver/pkg/client"
-	"github.com/anubis-game/apiserver/pkg/matrix"
+	"github.com/anubis-game/apiserver/pkg/vector"
+	"github.com/anubis-game/apiserver/pkg/window"
 	"github.com/google/uuid"
 )
 
 const (
-	// Siz describes half of the initial window size along x and y axis. The goal
-	// is to put the player into the middle of this window, which means that we
-	// have to define the edges and the center of the window. E.g. a size of 5
-	// implies the total window length along x and y axis of 11 inner buckets,
-	// which puts the player into the middle of the window at the relative
-	// coordinates x=5 y=5. The player has then 5 inner buckets all around the
-	// inner bucket that the player is put into.
-	Siz byte = 5
+	// Rad is the initial radius of a player's head and body parts.
+	Rad byte = 10
+	// Siz is the initial amount of points that a player is worth.
+	Siz byte = 50
 )
 
 type Config struct {
-	Bck matrix.Bucket
 	Cli *client.Client
-	Pxl matrix.Pixel
-	Spc matrix.Space
 	Uid uuid.UUID
+	Vec *vector.Vector
 }
 
 type Player struct {
 	Cli *client.Client
-	Obj matrix.Object
-	Spc matrix.Space
-	Win matrix.Window
+	Crx Charax
+	Uid uuid.UUID
+	Vec *vector.Vector
+	Win *window.Window
 }
 
 func New(c Config) *Player {
+	var crx Charax
+	{
+		crx = Charax{
+			Rad: Rad,
+			Siz: Siz,
+			Typ: 0, // TODO randomize or configure the player suit based on the user's preference
+		}
+	}
+
+	var win *window.Window
+	{
+		win = window.New()
+	}
+
+	{
+		win.Exp(c.Vec.Header(), window.Win)
+	}
+
 	return &Player{
 		Cli: c.Cli,
-		Obj: matrix.Object{
-			Bck: c.Bck,
-			Pxl: c.Pxl,
-			Pro: matrix.Profile{
-				Siz, // size
-				0,   // type
-			},
-			Uid: c.Uid,
-		},
-		Spc: c.Spc,
-		Win: matrix.Window{
-			c.Bck.Dec(Siz), // bottom left
-			c.Bck.Inc(Siz), // top right
-		},
+		Crx: crx,
+		Uid: c.Uid,
+		Vec: c.Vec,
+		Win: win,
 	}
 }
 
 func (p Player) Bytes() []byte {
-	var buf [26]byte
+	vec := p.Vec.Bytes()
+	byt := make([]byte, 22+len(vec))
+	mot := p.Vec.Motion().Get()
 
-	copy(buf[0:4], p.Obj.Bck[:])
-	copy(buf[4:6], p.Obj.Pxl[:])
-	copy(buf[6:8], p.Obj.Pro[:])
-	copy(buf[8:24], p.Obj.Uid[:])
-	copy(buf[24:26], p.Spc[:])
+	copy(byt[0:16], p.Uid[:])
 
-	return buf[:]
+	byt[16] = p.Crx.Rad
+	byt[17] = p.Crx.Siz
+	byt[18] = p.Crx.Typ
+
+	byt[19] = mot.AGL
+	byt[20] = mot.QDR
+	byt[21] = mot.VLC
+
+	copy(byt[22:], vec[:])
+
+	return byt[:]
 }
 
 func FromBytes(byt []byte) Player {
-	if len(byt) != 26 {
-		panic(fmt.Sprintf("expected 26 player bytes, got %d", len(byt)))
+	if len(byt) < 22 {
+		panic(fmt.Sprintf("expected at least 22 player bytes, got %d", len(byt)))
 	}
 
 	var p Player
 
-	copy(p.Obj.Bck[:], byt[0:4])
-	copy(p.Obj.Pxl[:], byt[4:6])
-	copy(p.Obj.Pro[:], byt[6:8])
-	copy(p.Obj.Uid[:], byt[8:24])
-	copy(p.Spc[:], byt[24:26])
+	copy(p.Uid[:], byt[0:16])
+
+	p.Crx.Rad = byt[16]
+	p.Crx.Siz = byt[17]
+	p.Crx.Typ = byt[18]
+
+	p.Vec = vector.FromBytes(byt[22:])
+
+	p.Vec.Motion().Set(vector.Motion{
+		AGL: byt[19],
+		QDR: byt[20],
+		VLC: byt[21],
+	})
 
 	return p
 }

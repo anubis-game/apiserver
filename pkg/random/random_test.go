@@ -5,7 +5,6 @@ import (
 	"math"
 	"testing"
 
-	"github.com/anubis-game/apiserver/pkg/matrix"
 	"github.com/xh3b4sd/logger"
 )
 
@@ -16,8 +15,8 @@ func Test_Random_Random_coordinates(t *testing.T) {
 			Buf: 1000,
 			Don: make(<-chan struct{}),
 			Log: logger.Fake(),
-			Max: matrix.Max,
-			Min: matrix.Min,
+			Max: 1100,
+			Min: 1000,
 		})
 	}
 
@@ -25,20 +24,20 @@ func Test_Random_Random_coordinates(t *testing.T) {
 		go ran.Daemon()
 	}
 
-	dic := map[byte]int{}
+	dic := map[int]int{}
 
-	for i := 0; i < 1000; i++ {
-		var b byte
+	for i := 0; i < 10000; i++ {
+		var b int
 		{
 			b = ran.Random()
 		}
 
-		if b < matrix.Min {
-			t.Fatal("expected", fmt.Sprintf(">= %d", matrix.Min), "got", int(b))
+		if b < 1000 {
+			t.Fatal("expected", fmt.Sprintf(">= %d", 1000), "got", int(b))
 		}
 
-		if b > matrix.Max {
-			t.Fatal("expected", fmt.Sprintf("<= %d", matrix.Max), "got", int(b))
+		if b > 1100 {
+			t.Fatal("expected", fmt.Sprintf("<= %d", 1100), "got", int(b))
 		}
 
 		{
@@ -46,8 +45,8 @@ func Test_Random_Random_coordinates(t *testing.T) {
 		}
 	}
 
-	if len(dic) != int(matrix.Siz) {
-		t.Fatal("expected", matrix.Siz, "got", len(dic))
+	if len(dic) != 101 {
+		t.Fatal("expected", 101, "got", len(dic))
 	}
 
 	for k, v := range dic {
@@ -72,7 +71,7 @@ func Test_Random_Random_uint8(t *testing.T) {
 		go ran.Daemon()
 	}
 
-	dic := map[byte]int{}
+	dic := map[int]int{}
 
 	for i := 0; i < 10000; i++ {
 		dic[ran.Random()]++
@@ -96,8 +95,8 @@ func Test_Random_backup_coordinates(t *testing.T) {
 			Buf: 1000,
 			Don: make(<-chan struct{}),
 			Log: logger.Fake(),
-			Max: matrix.Max,
-			Min: matrix.Min,
+			Max: 1100,
+			Min: 1000,
 		})
 	}
 
@@ -105,20 +104,20 @@ func Test_Random_backup_coordinates(t *testing.T) {
 		go ran.Daemon()
 	}
 
-	dic := map[byte]int{}
+	dic := map[int]int{}
 
-	for i := 0; i < 1000; i++ {
-		var b byte
+	for i := 0; i < 10000; i++ {
+		var b int
 		{
 			b = ran.backup()
 		}
 
-		if b < matrix.Min {
-			t.Fatal("expected", fmt.Sprintf(">= %d", matrix.Min), "got", int(b))
+		if b < 1000 {
+			t.Fatal("expected", fmt.Sprintf(">= %d", 1000), "got", int(b))
 		}
 
-		if b > matrix.Max {
-			t.Fatal("expected", fmt.Sprintf("<= %d", matrix.Max), "got", int(b))
+		if b > 1100 {
+			t.Fatal("expected", fmt.Sprintf("<= %d", 1100), "got", int(b))
 		}
 
 		{
@@ -126,8 +125,8 @@ func Test_Random_backup_coordinates(t *testing.T) {
 		}
 	}
 
-	if len(dic) != int(matrix.Siz) {
-		t.Fatal("expected", matrix.Siz, "got", len(dic))
+	if len(dic) != 101 {
+		t.Fatal("expected", 101, "got", len(dic))
 	}
 
 	for k, v := range dic {
@@ -152,9 +151,9 @@ func Test_Random_backup_uint8(t *testing.T) {
 		go ran.Daemon()
 	}
 
-	dic := map[byte]int{}
+	dic := map[int]int{}
 
-	for i := 0; i < 1000; i++ {
+	for i := 0; i < 10000; i++ {
 		dic[ran.backup()]++
 	}
 
