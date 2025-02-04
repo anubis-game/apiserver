@@ -6,7 +6,7 @@ import "github.com/anubis-game/apiserver/pkg/object"
 // without expanding the underlying amount of segments. After calling Rotate,
 // the underlying vector has the same amount of objects as it had before.
 func (v *Vector) Rotate(trg object.Object) {
-	ind := v.len - 1
+	ind := v.ind - 1
 	tai := v.obj[ind]
 
 	{

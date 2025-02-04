@@ -10,25 +10,19 @@ const (
 	Win = 320
 )
 
-type Config struct {
-	Obj object.Object
-}
-
 type Window struct {
 	cbl object.Object
 	ctr object.Object
+	xfr map[int]int
+	yfr map[int]int
 }
 
-func New(c Config) *Window {
+func New() *Window {
 	return &Window{
-		cbl: object.Object{
-			X: c.Obj.X - Win,
-			Y: c.Obj.Y - Win,
-		},
-		ctr: object.Object{
-			X: c.Obj.X + Win,
-			Y: c.Obj.Y + Win,
-		},
+		cbl: object.Object{},
+		ctr: object.Object{},
+		xfr: map[int]int{},
+		yfr: map[int]int{},
 	}
 }
 
@@ -48,6 +42,19 @@ func (w *Window) CTR() object.Object {
 	return object.Object{X: w.ctr.X, Y: w.ctr.Y}
 }
 
+// Exp allows this window to be expanded with a single coordinate object.  This
+// is most relevant for player windows. See also player.New().
+func (w *Window) Exp(obj object.Object, win int) {
+	w.cbl = object.Object{
+		X: obj.X - win,
+		Y: obj.Y - win,
+	}
+	w.ctr = object.Object{
+		X: obj.X + win,
+		Y: obj.Y + win,
+	}
+}
+
 // Has returns whether either of another window's 4 corners is inside of this
 // window.
 func (w *Window) Has(win *Window) bool {
@@ -63,34 +70,63 @@ func (w *Window) has(obj object.Object) bool {
 // Dec allows this window to shrink up to tai, if rem was part of this window's
 // boundary.
 func (w *Window) Dec(tai object.Object, rem object.Object) {
-	if rem.X == w.cbl.X {
-		w.cbl.X = tai.X
-	} else if rem.X == w.ctr.X {
-		w.ctr.X = tai.X
+	{
+		w.xfr[rem.X]--
+		w.yfr[rem.Y]--
 	}
 
-	if rem.Y == w.cbl.Y {
+	if rem.X == w.cbl.X && w.xfr[rem.X] == 0 {
+		w.cbl.X = tai.X
+	}
+	if rem.X == w.ctr.X && w.xfr[rem.X] == 0 {
+		w.ctr.X = tai.X
+	}
+	if rem.Y == w.cbl.Y && w.yfr[rem.Y] == 0 {
 		w.cbl.Y = tai.Y
-	} else if rem.Y == w.ctr.Y {
+	}
+	if rem.Y == w.ctr.Y && w.yfr[rem.Y] == 0 {
 		w.ctr.Y = tai.Y
+	}
+
+	if w.xfr[rem.X] == 0 {
+		delete(w.xfr, rem.X)
+	}
+	if w.yfr[rem.Y] == 0 {
+		delete(w.yfr, rem.Y)
 	}
 }
 
 // Inc allows this window to grow, if trg exceeds any boundary of this window.
 func (w *Window) Inc(trg object.Object) {
+	{
+		w.xfr[trg.X]++
+		w.yfr[trg.Y]++
+	}
+
 	if trg.X < w.cbl.X {
 		w.cbl.X = trg.X
 	}
-
 	if trg.X > w.ctr.X {
 		w.ctr.X = trg.X
 	}
-
 	if trg.Y < w.cbl.Y {
 		w.cbl.Y = trg.Y
 	}
-
 	if trg.Y > w.ctr.Y {
 		w.ctr.Y = trg.Y
+	}
+}
+
+// Ini allows this window to be initialized with a single coordinate object.
+// This is most relevant for vector windows. See also vector.New().
+func (w *Window) Ini(obj object.Object) {
+	{
+		w.cbl = obj
+		w.ctr = obj
+	}
+
+	{
+		w.xfr = map[int]int{obj.X: 1}
+		w.yfr = map[int]int{obj.Y: 1}
 	}
 }

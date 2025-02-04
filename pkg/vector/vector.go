@@ -12,30 +12,57 @@ type Config struct {
 }
 
 type Vector struct {
-	len int
+	ind int
 	mot setter.Interface[Motion]
 	obj []object.Object
 	win *window.Window
 }
 
 func New(c Config) *Vector {
-	v := &Vector{
-		len: 0,
-		mot: setter.New[Motion](),
-		// 100 points per segment * 10,000 segments = 1,000,000 points per player
-		obj: make([]object.Object, 10_000),
-		win: &window.Window{},
+	var mot setter.Interface[Motion]
+	{
+		mot = setter.New[Motion]()
 	}
 
 	{
-		v.mot.Set(c.Mot)
+		mot.Set(c.Mot)
 	}
 
+	// If there is at least one coordinate object for this vector, then we have to
+	// initialize the vector's window with any available object, so that the
+	// window itself is further able to keep track of this vector's occupied
+	// boundaries.
+
+	var win *window.Window
+	{
+		win = window.New()
+	}
+
+	if len(c.Obj) != 0 {
+		win.Ini(c.Obj[0])
+	}
+
+	// Add all injected objects properly to this vector by registering the
+	// injected coordinates and expanding this vector's window accordingly.
+	// Allocating 100 points per segment times 10,000 segments in total allows for
+	// 1,000,000 points per player.
+
+	var obj []object.Object
+	{
+		obj = make([]object.Object, 10_000)
+	}
+
+	var ind int
 	for _, x := range c.Obj {
-		v.win.Inc(x)
-		v.obj[v.len] = x
-		v.len++
+		win.Inc(x)
+		obj[ind] = x
+		ind++
 	}
 
-	return v
+	return &Vector{
+		ind: ind,
+		mot: mot,
+		obj: obj,
+		win: win,
+	}
 }

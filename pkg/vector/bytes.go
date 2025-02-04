@@ -7,9 +7,9 @@ import (
 )
 
 func (v *Vector) Bytes() []byte {
-	byt := make([]byte, v.len*6)
+	byt := make([]byte, v.ind*6)
 
-	for i := range v.len {
+	for i := range v.ind {
 		f := i * 6
 		b := v.obj[i].Bucket()
 		copy(byt[f:f+6], b[:])

@@ -79,8 +79,8 @@ func Test_Vector_Expand(t *testing.T) {
 
 			vec.Expand(tc.trg)
 
-			if !slices.Equal(vec.obj[:vec.len], tc.exp) {
-				t.Fatalf("expected %#v got %#v", tc.exp, vec.obj[:vec.len])
+			if !slices.Equal(vec.obj[:vec.ind], tc.exp) {
+				t.Fatalf("expected %#v got %#v", tc.exp, vec.obj[:vec.ind])
 			}
 		})
 	}

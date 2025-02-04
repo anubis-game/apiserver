@@ -75,8 +75,8 @@ func Test_Vector_Rotate(t *testing.T) {
 
 			vec.Rotate(tc.trg)
 
-			if !slices.Equal(vec.obj[:vec.len], tc.rot) {
-				t.Fatalf("expected %#v got %#v", tc.rot, vec.obj[:vec.len])
+			if !slices.Equal(vec.obj[:vec.ind], tc.rot) {
+				t.Fatalf("expected %#v got %#v", tc.rot, vec.obj[:vec.ind])
 			}
 		})
 	}

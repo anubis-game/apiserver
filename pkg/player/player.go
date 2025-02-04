@@ -31,18 +31,30 @@ type Player struct {
 }
 
 func New(c Config) *Player {
-	return &Player{
-		Cli: c.Cli,
-		Crx: Charax{
+	var crx Charax
+	{
+		crx = Charax{
 			Rad: Rad,
 			Siz: Siz,
 			Typ: 0, // TODO randomize or configure the player suit based on the user's preference
-		},
+		}
+	}
+
+	var win *window.Window
+	{
+		win = window.New()
+	}
+
+	{
+		win.Exp(c.Vec.Header(), window.Win)
+	}
+
+	return &Player{
+		Cli: c.Cli,
+		Crx: crx,
 		Uid: c.Uid,
 		Vec: c.Vec,
-		Win: window.New(window.Config{
-			Obj: c.Vec.Header(),
-		}),
+		Win: win,
 	}
 }
 
