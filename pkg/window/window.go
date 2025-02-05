@@ -1,6 +1,9 @@
 package window
 
-import "github.com/anubis-game/apiserver/pkg/object"
+import (
+	"github.com/anubis-game/apiserver/pkg/matrix"
+	"github.com/anubis-game/apiserver/pkg/object"
+)
 
 const (
 	// Win describes half of the initial window size in pixels along X and Y. The
@@ -42,29 +45,10 @@ func (w *Window) CTR() object.Object {
 	return object.Object{X: w.ctr.X, Y: w.ctr.Y}
 }
 
-// Exp allows this window to be expanded with a single coordinate object.  This
-// is most relevant for player windows. See also player.New().
-func (w *Window) Exp(obj object.Object, win int) {
-	w.cbl = object.Object{
-		X: obj.X - win,
-		Y: obj.Y - win,
-	}
-	w.ctr = object.Object{
-		X: obj.X + win,
-		Y: obj.Y + win,
-	}
-}
-
-// Has returns whether either of another window's 4 corners is inside of this
-// window.
-func (w *Window) Has(win *Window) bool {
-	return w.has(win.CBL()) || w.has(win.CBR()) || w.has(win.CTL()) || w.has(win.CTR())
-}
-
-// has returns whether the given bucket resides inside the underlying Window. So
-// if obj turns out to be outside of w, then Has returns false.
-func (w *Window) has(obj object.Object) bool {
-	return obj.X >= w.cbl.X && obj.X <= w.ctr.X && obj.Y >= w.cbl.Y && obj.Y <= w.ctr.Y
+// Crx returns whether either of two windows crosses inside another using the
+// AABB check (Axis-Aligned Bounding Box).
+func (w *Window) Crx(win *Window) bool {
+	return !(win.ctr.X < w.cbl.X || win.ctr.Y < w.cbl.Y || win.cbl.X > w.ctr.X || win.cbl.Y > w.ctr.Y)
 }
 
 // Dec allows this window to shrink up to tai, if rem was part of this window's
@@ -94,6 +78,25 @@ func (w *Window) Dec(tai object.Object, rem object.Object) {
 	if w.yfr[rem.Y] == 0 {
 		delete(w.yfr, rem.Y)
 	}
+}
+
+// Exp allows this window to be expanded with a single coordinate object.  This
+// is most relevant for player windows. See also player.New().
+func (w *Window) Exp(obj object.Object, win int) {
+	w.cbl = object.Object{
+		X: obj.X - win,
+		Y: obj.Y - win,
+	}
+	w.ctr = object.Object{
+		X: obj.X + win,
+		Y: obj.Y + win,
+	}
+}
+
+// Has returns whether the given bucket resides inside the underlying Window. So
+// if obj turns out to be outside of w, then Has returns false.
+func (w *Window) Has(obj object.Object) bool {
+	return obj.X >= w.cbl.X && obj.X <= w.ctr.X && obj.Y >= w.cbl.Y && obj.Y <= w.ctr.Y
 }
 
 // Inc allows this window to grow, if trg exceeds any boundary of this window.
@@ -128,5 +131,21 @@ func (w *Window) Ini(obj object.Object) {
 	{
 		w.xfr = map[int]int{obj.X: 1}
 		w.yfr = map[int]int{obj.Y: 1}
+	}
+}
+
+// Key returns a fixed set of coordinates marking the partition boundaries that
+// this window resides within. The returned keys may very well be duplicated.
+func (w *Window) Key() [4]object.Object {
+	blx := w.cbl.X / matrix.Prt * matrix.Prt
+	bly := w.cbl.Y / matrix.Prt * matrix.Prt
+	trx := w.ctr.X / matrix.Prt * matrix.Prt
+	try := w.ctr.Y / matrix.Prt * matrix.Prt
+
+	return [4]object.Object{
+		{X: blx, Y: bly},
+		{X: trx, Y: bly},
+		{X: blx, Y: try},
+		{X: trx, Y: try},
 	}
 }

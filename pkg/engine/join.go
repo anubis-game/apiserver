@@ -29,10 +29,10 @@ func (e *Engine) join(pac router.Packet) {
 	}
 
 	for k, v := range e.mem.ply {
-		// Only add the fanout buffer to the current view of the existing player, if
-		// the body of the new player is placed inside the view of the existing
-		// player.
-		if v.Win.Has(ply.Vec.Window()) {
+		// Only add the fanout buffer to the current view of an existing player, if
+		// the body of the new player is visible inside the view of the existing
+		// player. The logical check here is whether the two given windows overlap.
+		if v.Win.Crx(ply.Vec.Window()) {
 			e.buf.ply.Compute(k, func(old [][]byte, _ bool) ([][]byte, bool) {
 				return append(old, byt), false
 			})
