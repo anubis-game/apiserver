@@ -1,11 +1,11 @@
 package window
 
-import "github.com/anubis-game/apiserver/pkg/object"
+import (
+	"github.com/anubis-game/apiserver/pkg/matrix"
+	"github.com/anubis-game/apiserver/pkg/object"
+)
 
 const (
-	// Prt is the scaling value allowing us to partition the X and Y axis into
-	// logical buckets similar to quadtrees.
-	Prt = 512
 	// Win describes half of the initial window size in pixels along X and Y. The
 	// goal is to put the player into the middle of the screen, which means that
 	// we have to define the edges of the visible view. E.g. a window size of
@@ -137,10 +137,10 @@ func (w *Window) Ini(obj object.Object) {
 // Key returns a fixed set of coordinates marking the partition boundaries that
 // this window resides within. The returned keys may very well be duplicated.
 func (w *Window) Key() [4]object.Object {
-	blx := w.cbl.X / Prt * Prt
-	bly := w.cbl.Y / Prt * Prt
-	trx := w.ctr.X / Prt * Prt
-	try := w.ctr.Y / Prt * Prt
+	blx := w.cbl.X / matrix.Prt * matrix.Prt
+	bly := w.cbl.Y / matrix.Prt * matrix.Prt
+	trx := w.ctr.X / matrix.Prt * matrix.Prt
+	try := w.ctr.Y / matrix.Prt * matrix.Prt
 
 	return [4]object.Object{
 		{X: blx, Y: bly},
