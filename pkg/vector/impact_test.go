@@ -137,6 +137,8 @@ func Test_Vector_Impact_False(t *testing.T) {
 	}
 }
 
+var impSnk bool
+
 func Benchmark_Vector_Impact(b *testing.B) {
 	testCases := []struct {
 		oxy object.Object
@@ -144,27 +146,27 @@ func Benchmark_Vector_Impact(b *testing.B) {
 		txy object.Object
 		tsz byte
 	}{
-		// Case 000, ~0.30 ns/op
+		// Case 000, ~1.20 ns/op
 		{
 			oxy: object.Object{X: 477_999, Y: 510_401}, osz: 80,
 			txy: object.Object{X: 478_109, Y: 510_326}, tsz: 60,
 		},
-		// Case 001, ~0.30 ns/op
+		// Case 001, ~1.20 ns/op
 		{
 			oxy: object.Object{X: 478_087, Y: 510_381}, osz: 50,
 			txy: object.Object{X: 478_047, Y: 510_324}, tsz: 20,
 		},
-		// Case 002, ~0.30 ns/op
+		// Case 002, ~1.20 ns/op
 		{
 			oxy: object.Object{X: 478_222, Y: 510_389}, osz: 50,
 			txy: object.Object{X: 478_131, Y: 510_389}, tsz: 50,
 		},
-		// Case 003, ~0.30 ns/op
+		// Case 003, ~1.20 ns/op
 		{
 			oxy: object.Object{X: 478_305, Y: 510_389}, osz: 30,
 			txy: object.Object{X: 478_305, Y: 510_334}, tsz: 40,
 		},
-		// Case 004, ~0.30 ns/op
+		// Case 004, ~1.20 ns/op
 		{
 			oxy: object.Object{X: 478_305, Y: 510_312}, osz: 10,
 			txy: object.Object{X: 478_305, Y: 510_312}, tsz: 25,
@@ -175,7 +177,7 @@ func Benchmark_Vector_Impact(b *testing.B) {
 		b.Run(fmt.Sprintf("%03d", i), func(b *testing.B) {
 			b.ResetTimer()
 			for range b.N {
-				Impact(tc.oxy, tc.osz, tc.txy, tc.tsz)
+				impSnk = Impact(tc.oxy, tc.osz, tc.txy, tc.tsz)
 			}
 		})
 	}
