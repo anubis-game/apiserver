@@ -1,6 +1,8 @@
 package vector
 
 import (
+	"container/list"
+
 	"github.com/anubis-game/apiserver/pkg/object"
 	"github.com/anubis-game/apiserver/pkg/setter"
 	"github.com/anubis-game/apiserver/pkg/window"
@@ -12,9 +14,8 @@ type Config struct {
 }
 
 type Vector struct {
-	ind int
+	lis *list.List
 	mot setter.Interface[Motion]
-	obj []object.Object
 	win *window.Window
 }
 
@@ -38,31 +39,26 @@ func New(c Config) *Vector {
 		win = window.New()
 	}
 
-	if len(c.Obj) != 0 {
-		win.Ini(c.Obj[0])
-	}
-
-	// Add all injected objects properly to this vector by registering the
-	// injected coordinates and expanding this vector's window accordingly.
-	// Allocating 100 points per segment times 10,000 segments in total allows for
-	// 1,000,000 points per player.
-
-	var obj []object.Object
+	var lis *list.List
 	{
-		obj = make([]object.Object, 10_000)
+		lis = list.New()
 	}
 
-	var ind int
-	for _, x := range c.Obj {
-		win.Inc(x)
-		obj[ind] = x
-		ind++
+	if len(c.Obj) != 0 {
+		{
+			win.Ini(c.Obj[0])
+			lis.PushFront(c.Obj[0])
+		}
+
+		for _, x := range c.Obj[1:] {
+			lis.PushFront(x)
+			win.Inc(x)
+		}
 	}
 
 	return &Vector{
-		ind: ind,
+		lis: lis,
 		mot: mot,
-		obj: obj,
 		win: win,
 	}
 }

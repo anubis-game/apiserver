@@ -2,7 +2,7 @@ package vector
 
 import (
 	"fmt"
-	"slices"
+	"reflect"
 	"testing"
 
 	"github.com/anubis-game/apiserver/pkg/object"
@@ -11,60 +11,45 @@ import (
 func Test_Vector_Expand(t *testing.T) {
 	testCases := []struct {
 		obj []object.Object
-		trg object.Object
+		hea object.Object
+		tai object.Object
 		exp []object.Object
 	}{
 		// Case 000, x+3 y+4
 		{
 			obj: []object.Object{
-				{X: 621_362, Y: 539_077},
 				{X: 621_359, Y: 539_073},
-			},
-			trg: object.Object{X: 621_365, Y: 539_081},
-			exp: []object.Object{
-				{X: 621_365, Y: 539_081},
 				{X: 621_362, Y: 539_077},
-				{X: 621_359, Y: 539_073},
 			},
+			hea: object.Object{X: 621_365, Y: 539_081},
+			tai: object.Object{X: 621_359, Y: 539_073},
 		},
 		// Case 001, y-5
 		{
 			obj: []object.Object{
-				{X: 621_359, Y: 539_068},
 				{X: 621_359, Y: 539_073},
-			},
-			trg: object.Object{X: 621_359, Y: 539_063},
-			exp: []object.Object{
-				{X: 621_359, Y: 539_063},
 				{X: 621_359, Y: 539_068},
-				{X: 621_359, Y: 539_073},
 			},
+			hea: object.Object{X: 621_359, Y: 539_063},
+			tai: object.Object{X: 621_359, Y: 539_073},
 		},
 		// Case 002, x-5
 		{
 			obj: []object.Object{
-				{X: 621_354, Y: 539_073},
 				{X: 621_349, Y: 539_073},
-			},
-			trg: object.Object{X: 621_359, Y: 539_073},
-			exp: []object.Object{
-				{X: 621_359, Y: 539_073},
 				{X: 621_354, Y: 539_073},
-				{X: 621_349, Y: 539_073},
 			},
+			hea: object.Object{X: 621_359, Y: 539_073},
+			tai: object.Object{X: 621_349, Y: 539_073},
 		},
 		// Case 003, x-4 y+3
 		{
 			obj: []object.Object{
-				{X: 621_355, Y: 539_076},
 				{X: 621_351, Y: 539_079},
-			},
-			trg: object.Object{X: 621_359, Y: 539_073},
-			exp: []object.Object{
-				{X: 621_359, Y: 539_073},
 				{X: 621_355, Y: 539_076},
-				{X: 621_351, Y: 539_079},
 			},
+			hea: object.Object{X: 621_359, Y: 539_073},
+			tai: object.Object{X: 621_351, Y: 539_079},
 		},
 	}
 
@@ -77,10 +62,18 @@ func Test_Vector_Expand(t *testing.T) {
 				})
 			}
 
-			vec.Expand(tc.trg)
+			l := vec.lis.Len()
 
-			if !slices.Equal(vec.obj[:vec.ind], tc.exp) {
-				t.Fatalf("expected %#v got %#v", tc.exp, vec.obj[:vec.ind])
+			vec.Expand(tc.hea)
+
+			if vec.lis.Len() != l+1 {
+				t.Fatalf("expected %#v got %#v", l+1, vec.lis.Len())
+			}
+			if !reflect.DeepEqual(vec.lis.Front().Value.(object.Object), tc.hea) {
+				t.Fatalf("expected %#v got %#v", tc.hea, vec.lis.Front().Value.(object.Object))
+			}
+			if !reflect.DeepEqual(vec.lis.Back().Value.(object.Object), tc.tai) {
+				t.Fatalf("expected %#v got %#v", tc.tai, vec.lis.Back().Value.(object.Object))
 			}
 		})
 	}

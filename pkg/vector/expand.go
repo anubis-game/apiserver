@@ -7,9 +7,7 @@ import "github.com/anubis-game/apiserver/pkg/object"
 // has 1 more object, which is the added target head.
 func (v *Vector) Expand(trg object.Object) {
 	{
-		copy(v.obj[1:], v.obj[:v.ind]) // shift all segments
-		v.obj[0] = trg                 // target becomes head
-		v.ind++                        // increment real length
+		v.lis.PushFront(trg)
 	}
 
 	{

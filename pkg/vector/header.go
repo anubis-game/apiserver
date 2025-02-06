@@ -5,5 +5,5 @@ import (
 )
 
 func (v *Vector) Header() object.Object {
-	return v.obj[0]
+	return v.lis.Front().Value.(object.Object)
 }

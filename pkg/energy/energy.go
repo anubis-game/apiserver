@@ -17,8 +17,8 @@ type Energy struct {
 func (e Energy) Bytes() []byte {
 	var buf [8]byte
 
-	b := e.Obj.Bucket()
-	copy(buf[0:6], b[:])
+	byt := e.Obj.Byt()
+	copy(buf[0:6], byt[:])
 
 	buf[6] = e.Siz
 	buf[7] = e.Typ
@@ -32,7 +32,7 @@ func FromBytes(byt []byte) Energy {
 	}
 
 	return Energy{
-		Obj: object.Bucket(byt[0:6]).Object(),
+		Obj: object.FromBytes(byt[0:6]),
 		Siz: byt[6],
 		Typ: byt[7],
 	}
