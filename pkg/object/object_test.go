@@ -9,34 +9,34 @@ import (
 func Test_Object(t *testing.T) {
 	testCases := []struct {
 		o Object
-		b Bucket
+		b [6]byte
 	}{
 		// Case 000
 		{
 			o: Object{X: 0, Y: 0},
-			b: Bucket{0x0, 0x0, 0x0, 0x0, 0x0, 0x0},
+			b: [6]byte{0x0, 0x0, 0x0, 0x0, 0x0, 0x0},
 		},
 		// Case 001
 		{
 			o: Object{X: 5, Y: 0},
-			b: Bucket{0x0, 0x0, 0x0, 0x0, 0x5, 0x0},
+			b: [6]byte{0x0, 0x0, 0x0, 0x0, 0x5, 0x0},
 		},
 		// Case 002
 		{
 			o: Object{X: 255, Y: 256},
-			b: Bucket{0x0, 0x0, 0x3, 0x4, 0x3f, 0x0},
+			b: [6]byte{0x0, 0x0, 0x3, 0x4, 0x3f, 0x0},
 		},
 		// Case 003
 		{
 			o: Object{X: 4_096, Y: 11_623},
-			b: Bucket{0x1, 0x2, 0x0, 0x35, 0x0, 0x27},
+			b: [6]byte{0x1, 0x2, 0x0, 0x35, 0x0, 0x27},
 		},
 	}
 
 	for i, tc := range testCases {
 		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
-			b := tc.o.Bucket()
-			o := b.Object()
+			b := tc.o.Byt()
+			o := New(b[:])
 
 			if !reflect.DeepEqual(b, tc.b) {
 				t.Fatalf("expected %#v got %#v", tc.b, b)
@@ -48,9 +48,9 @@ func Test_Object(t *testing.T) {
 	}
 }
 
-var bucSnk Bucket
+var bucSnk [6]byte
 
-func Benchmark_Object_Bucket(b *testing.B) {
+func Benchmark_Object_Byt(b *testing.B) {
 	testCases := []struct {
 		o Object
 	}{
@@ -76,7 +76,7 @@ func Benchmark_Object_Bucket(b *testing.B) {
 		b.Run(fmt.Sprintf("%03d", i), func(b *testing.B) {
 			b.ResetTimer()
 			for i := 0; i < b.N; i++ {
-				bucSnk = tc.o.Bucket()
+				bucSnk = tc.o.Byt()
 			}
 		})
 	}
@@ -84,25 +84,25 @@ func Benchmark_Object_Bucket(b *testing.B) {
 
 var objSnk Object
 
-func Benchmark_Object_Bucket_Object(b *testing.B) {
+func Benchmark_Object_New(b *testing.B) {
 	testCases := []struct {
-		b Bucket
+		b [6]byte
 	}{
-		// Case 000, ~1.00 ns/op
+		// Case 000, ~0.80 ns/op
 		{
-			b: Bucket{0x0, 0x0, 0x0, 0x0, 0x0, 0x0},
+			b: [6]byte{0x0, 0x0, 0x0, 0x0, 0x0, 0x0},
 		},
-		// Case 001, ~1.00 ns/op
+		// Case 001, ~0.80 ns/op
 		{
-			b: Bucket{0x0, 0x0, 0x0, 0x0, 0x5, 0x0},
+			b: [6]byte{0x0, 0x0, 0x0, 0x0, 0x5, 0x0},
 		},
-		// Case 002, ~1.00 ns/op
+		// Case 002, ~0.80 ns/op
 		{
-			b: Bucket{0x0, 0x0, 0x3, 0x4, 0x3f, 0x0},
+			b: [6]byte{0x0, 0x0, 0x3, 0x4, 0x3f, 0x0},
 		},
-		// Case 003, ~1.00 ns/op
+		// Case 003, ~0.80 ns/op
 		{
-			b: Bucket{0x1, 0x2, 0x0, 0x35, 0x0, 0x27},
+			b: [6]byte{0x1, 0x2, 0x0, 0x35, 0x0, 0x27},
 		},
 	}
 
@@ -110,7 +110,7 @@ func Benchmark_Object_Bucket_Object(b *testing.B) {
 		b.Run(fmt.Sprintf("%03d", i), func(b *testing.B) {
 			b.ResetTimer()
 			for i := 0; i < b.N; i++ {
-				objSnk = tc.b.Object()
+				objSnk = New(tc.b[:])
 			}
 		})
 	}
