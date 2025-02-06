@@ -7,19 +7,19 @@ import (
 )
 
 func (v *Vector) Bytes() []byte {
-	byt := make([]byte, v.siz*6)
+	buf := make([]byte, v.siz*6)
 
 	cur := v.tai
 	ind := 0
 	for cur != nil {
-		f := ind * 6
-		b := cur.val.Bucket()
-		copy(byt[f:f+6], b[:])
+		pos := ind * 6
+		byt := cur.val.Byt()
+		copy(buf[pos:pos+6], byt[:])
 		cur = cur.nxt
 		ind++
 	}
 
-	return byt
+	return buf
 }
 
 func FromBytes(byt []byte) *Vector {
@@ -30,8 +30,8 @@ func FromBytes(byt []byte) *Vector {
 	var obj []object.Object
 
 	for i := 0; i < len(byt)/6; i++ {
-		f := i * 6
-		obj = append(obj, object.Bucket(byt[f:f+6]).Object())
+		pos := i * 6
+		obj = append(obj, object.New(byt[pos:pos+6]))
 	}
 
 	return New(Config{

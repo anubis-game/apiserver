@@ -8,6 +8,6 @@ import (
 
 // lookup
 type lookup struct {
-	nrg *xsync.MapOf[object.Bucket, uuid.UUID]
-	ply *xsync.MapOf[object.Bucket, uuid.UUID]
+	nrg *xsync.MapOf[object.Object, uuid.UUID]
+	ply *xsync.MapOf[object.Object, uuid.UUID]
 }
