@@ -7,12 +7,16 @@ import (
 )
 
 func (v *Vector) Bytes() []byte {
-	byt := make([]byte, v.ind*6)
+	byt := make([]byte, v.siz*6)
 
-	for i := range v.ind {
-		f := i * 6
-		b := v.obj[i].Bucket()
+	cur := v.tai
+	ind := 0
+	for cur != nil {
+		f := ind * 6
+		b := cur.val.Bucket()
 		copy(byt[f:f+6], b[:])
+		cur = cur.nxt
+		ind++
 	}
 
 	return byt

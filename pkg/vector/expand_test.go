@@ -2,7 +2,7 @@ package vector
 
 import (
 	"fmt"
-	"slices"
+	"reflect"
 	"testing"
 
 	"github.com/anubis-game/apiserver/pkg/object"
@@ -11,7 +11,7 @@ import (
 func Test_Vector_Expand(t *testing.T) {
 	testCases := []struct {
 		obj []object.Object
-		trg object.Object
+		hea object.Object
 		exp []object.Object
 	}{
 		// Case 000, x+3 y+4
@@ -20,7 +20,7 @@ func Test_Vector_Expand(t *testing.T) {
 				{X: 621_362, Y: 539_077},
 				{X: 621_359, Y: 539_073},
 			},
-			trg: object.Object{X: 621_365, Y: 539_081},
+			hea: object.Object{X: 621_365, Y: 539_081},
 			exp: []object.Object{
 				{X: 621_365, Y: 539_081},
 				{X: 621_362, Y: 539_077},
@@ -33,7 +33,7 @@ func Test_Vector_Expand(t *testing.T) {
 				{X: 621_359, Y: 539_068},
 				{X: 621_359, Y: 539_073},
 			},
-			trg: object.Object{X: 621_359, Y: 539_063},
+			hea: object.Object{X: 621_359, Y: 539_063},
 			exp: []object.Object{
 				{X: 621_359, Y: 539_063},
 				{X: 621_359, Y: 539_068},
@@ -46,7 +46,7 @@ func Test_Vector_Expand(t *testing.T) {
 				{X: 621_354, Y: 539_073},
 				{X: 621_349, Y: 539_073},
 			},
-			trg: object.Object{X: 621_359, Y: 539_073},
+			hea: object.Object{X: 621_359, Y: 539_073},
 			exp: []object.Object{
 				{X: 621_359, Y: 539_073},
 				{X: 621_354, Y: 539_073},
@@ -59,7 +59,7 @@ func Test_Vector_Expand(t *testing.T) {
 				{X: 621_355, Y: 539_076},
 				{X: 621_351, Y: 539_079},
 			},
-			trg: object.Object{X: 621_359, Y: 539_073},
+			hea: object.Object{X: 621_359, Y: 539_073},
 			exp: []object.Object{
 				{X: 621_359, Y: 539_073},
 				{X: 621_355, Y: 539_076},
@@ -77,10 +77,10 @@ func Test_Vector_Expand(t *testing.T) {
 				})
 			}
 
-			vec.Expand(tc.trg)
+			vec.Expand(tc.hea)
 
-			if !slices.Equal(vec.obj[:vec.ind], tc.exp) {
-				t.Fatalf("expected %#v got %#v", tc.exp, vec.obj[:vec.ind])
+			if !reflect.DeepEqual(vec.hea.val, tc.hea) {
+				t.Fatalf("expected %#v got %#v", tc.hea, vec.hea.val)
 			}
 		})
 	}

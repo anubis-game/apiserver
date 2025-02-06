@@ -1,9 +1,12 @@
 package vector
 
 import (
+	"fmt"
+
 	"github.com/anubis-game/apiserver/pkg/object"
 	"github.com/anubis-game/apiserver/pkg/setter"
 	"github.com/anubis-game/apiserver/pkg/window"
+	"github.com/xh3b4sd/tracer"
 )
 
 type Config struct {
@@ -12,13 +15,18 @@ type Config struct {
 }
 
 type Vector struct {
-	ind int
+	hea *Linker
 	mot setter.Interface[Motion]
-	obj []object.Object
+	siz int
+	tai *Linker
 	win *window.Window
 }
 
 func New(c Config) *Vector {
+	if len(c.Obj) == 0 {
+		tracer.Panic(fmt.Errorf("%T.Obj must not be empty", c))
+	}
+
 	var mot setter.Interface[Motion]
 	{
 		mot = setter.New[Motion]()
@@ -36,33 +44,37 @@ func New(c Config) *Vector {
 	var win *window.Window
 	{
 		win = window.New()
+		win.Ini(c.Obj[0])
 	}
 
-	if len(c.Obj) != 0 {
-		win.Ini(c.Obj[0])
+	var hea *Linker
+	var siz int
+	var tai *Linker
+	{
+		lin := &Linker{val: c.Obj[0]}
+		hea = lin
+		tai = lin
+		siz = 1
 	}
 
 	// Add all injected objects properly to this vector by registering the
 	// injected coordinates and expanding this vector's window accordingly.
-	// Allocating 100 points per segment times 10,000 segments in total allows for
-	// 1,000,000 points per player.
 
-	var obj []object.Object
-	{
-		obj = make([]object.Object, 10_000)
-	}
+	for _, x := range c.Obj[1:] {
+		lin := &Linker{val: x}
 
-	var ind int
-	for _, x := range c.Obj {
+		hea.nxt = lin
+		hea = lin
+		siz++
+
 		win.Inc(x)
-		obj[ind] = x
-		ind++
 	}
 
 	return &Vector{
-		ind: ind,
+		hea: hea,
 		mot: mot,
-		obj: obj,
+		siz: siz,
+		tai: tai,
 		win: win,
 	}
 }
