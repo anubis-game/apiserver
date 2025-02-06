@@ -51,7 +51,7 @@ func init() {
 }
 
 func (v *Vector) Target(mot Motion) object.Object {
-	tpx := v.obj[HD]
+	tpx := v.hea.val
 
 	switch mot.QDR {
 	case 0x1:
