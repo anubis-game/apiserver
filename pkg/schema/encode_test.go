@@ -20,7 +20,7 @@ func Benchmark_Schema_Encode(b *testing.B) {
 				return bytes.Join(append([][]byte{{byte(act)}}, mes...), nil)
 			},
 		},
-		// Case 001 ~65 ns/op
+		// Case 001 ~54 ns/op
 		{
 			f: func(act Action, mes ...[]byte) []byte {
 				return Encode(act, mes...)

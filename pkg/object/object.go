@@ -11,6 +11,10 @@ const (
 	Y2 = 5
 )
 
+const (
+	Len = 6
+)
+
 // Object contains the coordinates X and Y, describing a precise pixel location
 // within the coordinate system.
 type Object struct {
@@ -28,8 +32,8 @@ func New(byt []byte) Object {
 // Byt returns a precise representation of Object compressed to 6 bytes. The
 // encoded version may be used for communicating coordinates over network
 // transport.
-func (o Object) Byt() [6]byte {
-	return [6]byte{
+func (o Object) Byt() [Len]byte {
+	return [Len]byte{
 		byte(o.X / 4096),
 		byte(o.Y / 4096),
 		byte((o.X % 4096) / 64),
