@@ -27,7 +27,9 @@ func (v *Vector) expand(hea object.Object) {
 
 	// Extend the current buffer with the compressed 6 byte version of the given
 	// coordinates. Using preallocated slices via copy gives us 5 ns/op as
-	// compared to using append.
+	// compared to using append. Note that using a new preallocated byte slice
+	// fixes the memory leak incurred during Vector.shrink() where we merely
+	// reslice the partition buffer.
 
 	if ind == 0 {
 		v.buf[prt] = byt[:]

@@ -19,7 +19,12 @@ func (v *Vector) shrink(old object.Object) {
 		}
 	} else {
 
-		// The item to remove is always the very first part of the buffer.
+		// The item to remove is always the very first part of the buffer. Note that
+		// we are only reslicing the given partition buffer, which means that we
+		// keep the bytes of the deleted old tail allocated in the underlying data
+		// array. This alone would imply a memory leak, but we are fixing this
+		// memory leak in due time within Vector.expand() and also once the
+		// partition buffer gets deleted entirely.
 
 		{
 			v.buf[prt] = buf[object.Len:]
