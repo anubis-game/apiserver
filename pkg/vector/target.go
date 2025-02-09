@@ -53,19 +53,19 @@ func init() {
 func (v *Vector) Target(mot Motion) object.Object {
 	tpx := v.hea.val
 
-	switch mot.QDR {
+	switch mot.Qdr {
 	case 0x1:
-		tpx.X += int(Dis*sin[mot.AGL] + 0.5)
-		tpx.Y += int(Dis*cos[mot.AGL] + 0.5)
+		tpx.X += int(Dis*sin[mot.Agl] + 0.5)
+		tpx.Y += int(Dis*cos[mot.Agl] + 0.5)
 	case 0x2:
-		tpx.X += int(Dis*cos[mot.AGL] + 0.5)
-		tpx.Y -= int(Dis*sin[mot.AGL] + 0.5)
+		tpx.X += int(Dis*cos[mot.Agl] + 0.5)
+		tpx.Y -= int(Dis*sin[mot.Agl] + 0.5)
 	case 0x3:
-		tpx.X -= int(Dis*sin[mot.AGL] + 0.5)
-		tpx.Y -= int(Dis*cos[mot.AGL] + 0.5)
+		tpx.X -= int(Dis*sin[mot.Agl] + 0.5)
+		tpx.Y -= int(Dis*cos[mot.Agl] + 0.5)
 	case 0x4:
-		tpx.X -= int(Dis*cos[mot.AGL] + 0.5)
-		tpx.Y += int(Dis*sin[mot.AGL] + 0.5)
+		tpx.X -= int(Dis*cos[mot.Agl] + 0.5)
+		tpx.Y += int(Dis*sin[mot.Agl] + 0.5)
 	}
 
 	return tpx

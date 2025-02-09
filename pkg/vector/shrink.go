@@ -2,10 +2,30 @@ package vector
 
 import "github.com/anubis-game/apiserver/pkg/object"
 
+func (v *Vector) Shrink() {
+	tai := v.tai // remember current tail for new tail
+
+	{
+		v.tai = tai.nxt // next of tail becomes new tail
+	}
+
+	{
+		v.shrink(tai.val) // old tail gets cleaned up
+	}
+}
+
 func (v *Vector) shrink(old object.Object) {
 	prt := old.Prt()
 	buf := v.buf[prt]
 	siz := len(buf)
+
+	// Always keep track of the amount of coordinates that do not occupy their
+	// respective partitions anymore.
+
+	{
+		v.xfr[prt.X]--
+		v.yfr[prt.Y]--
+	}
 
 	// Reduce the fanout buffer given any of the situations described below.
 
@@ -16,6 +36,46 @@ func (v *Vector) shrink(old object.Object) {
 
 		{
 			delete(v.buf, prt)
+		}
+
+		// Shrink the partition boundaries according to the direction of change as
+		// specified by the old tail coordinates.
+
+		tai := v.tai.val.Prt()
+
+		if prt.Y == v.btp && v.yfr[prt.Y] == 0 {
+			{
+				v.btp = tai.Y
+			}
+
+			{
+				delete(v.yfr, prt.Y)
+			}
+		}
+		if prt.X == v.brg && v.xfr[prt.X] == 0 {
+			{
+				v.brg = tai.X
+			}
+
+			{
+				delete(v.xfr, prt.X)
+			}
+		}
+		if prt.Y == v.bbt && v.yfr[prt.Y] == 0 {
+			v.bbt = tai.Y
+
+			{
+				delete(v.yfr, prt.Y)
+			}
+		}
+		if prt.X == v.blf && v.xfr[prt.X] == 0 {
+			{
+				v.blf = tai.X
+			}
+
+			{
+				delete(v.xfr, prt.X)
+			}
 		}
 	} else {
 
@@ -29,33 +89,5 @@ func (v *Vector) shrink(old object.Object) {
 		{
 			v.buf[prt] = buf[object.Len:]
 		}
-	}
-
-	// Shrink the partition boundaries in case the removed coordinates are the
-	// last on that edge.
-
-	{
-		v.xfr[prt.X]--
-		v.yfr[prt.Y]--
-	}
-
-	if prt.Y == v.top && v.yfr[prt.Y] == 0 {
-		v.top = v.tai.val.Prt().Y
-	}
-	if prt.X == v.rig && v.xfr[prt.X] == 0 {
-		v.rig = v.tai.val.Prt().X
-	}
-	if prt.Y == v.bot && v.yfr[prt.Y] == 0 {
-		v.bot = v.tai.val.Prt().Y
-	}
-	if prt.X == v.lef && v.xfr[prt.X] == 0 {
-		v.lef = v.tai.val.Prt().X
-	}
-
-	if v.xfr[prt.X] == 0 {
-		delete(v.xfr, prt.X)
-	}
-	if v.yfr[prt.Y] == 0 {
-		delete(v.yfr, prt.Y)
 	}
 }

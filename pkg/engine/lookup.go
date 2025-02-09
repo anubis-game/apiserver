@@ -6,8 +6,8 @@ import (
 	"github.com/puzpuzpuz/xsync/v3"
 )
 
-// TODO lookup likely becomes matrix.Mapper
+// TODO lookup needs to key partition coordinates
 type lookup struct {
-	nrg *xsync.MapOf[object.Object, uuid.UUID]
-	ply *xsync.MapOf[object.Object, uuid.UUID]
+	nrg *xsync.MapOf[object.Object, map[uuid.UUID]struct{}]
+	ply *xsync.MapOf[object.Object, map[uuid.UUID]struct{}]
 }

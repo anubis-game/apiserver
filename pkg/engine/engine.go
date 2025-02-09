@@ -75,8 +75,8 @@ func New(c Config) *Engine {
 		don: c.Don,
 		fil: c.Fil,
 		lkp: &lookup{
-			nrg: xsync.NewMapOf[object.Object, uuid.UUID](),
-			ply: xsync.NewMapOf[object.Object, uuid.UUID](),
+			nrg: xsync.NewMapOf[object.Object, map[uuid.UUID]struct{}](),
+			ply: xsync.NewMapOf[object.Object, map[uuid.UUID]struct{}](),
 		},
 		log: c.Log,
 		mem: &memory{
