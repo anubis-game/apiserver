@@ -6,7 +6,7 @@ import (
 	"github.com/puzpuzpuz/xsync/v3"
 )
 
-// lookup
+// TODO lookup likely becomes matrix.Mapper
 type lookup struct {
 	nrg *xsync.MapOf[object.Object, uuid.UUID]
 	ply *xsync.MapOf[object.Object, uuid.UUID]

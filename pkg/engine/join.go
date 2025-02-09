@@ -28,15 +28,15 @@ func (e *Engine) join(pac router.Packet) {
 		byt = schema.Encode(schema.Join, pac.Cli.Wallet().Bytes(), ply.Bytes())
 	}
 
-	for k, v := range e.mem.ply {
+	for k := range e.mem.ply {
 		// Only add the fanout buffer to the current view of an existing player, if
 		// the body of the new player is visible inside the view of the existing
 		// player. The logical check here is whether the two given windows overlap.
-		if v.Win.Crx(ply.Vec.Window()) {
-			e.buf.ply.Compute(k, func(old [][]byte, _ bool) ([][]byte, bool) {
-				return append(old, byt), false
-			})
-		}
+		// TODO fix window check if v.Win.Crx(ply.Vec.Window()) {
+		e.buf.ply.Compute(k, func(old [][]byte, _ bool) ([][]byte, bool) {
+			return append(old, byt), false
+		})
+		// }
 	}
 
 	// TODO we need to stream all relevant map details for the initial view to

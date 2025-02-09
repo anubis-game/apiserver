@@ -24,6 +24,10 @@ func (e *Engine) push(tic time.Time) {
 			p, _ = e.buf.ply.Load(k)
 		}
 
+		// TODO any client becoming a liability by blocking available semaphores for
+		// too long have to be terminated in order to address any downstream
+		// bottlenecks.
+
 		{
 			go e.worker(k, v, n, p)
 		}
