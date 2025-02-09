@@ -4,7 +4,7 @@ go 1.22.5
 
 require (
 	github.com/coder/websocket v1.8.12
-	github.com/ethereum/go-ethereum v1.14.13
+	github.com/ethereum/go-ethereum v1.15.0
 	github.com/google/uuid v1.6.0
 	github.com/gorilla/mux v1.8.1
 	github.com/joho/godotenv v1.5.1
