@@ -7,7 +7,7 @@ import "github.com/anubis-game/apiserver/pkg/object"
 // the underlying vector has the same amount of objects as it had before.
 func (v *Vector) Rotate(hea object.Object) {
 	tai := v.tai   // remember tail as new head
-	old := tai.val // the old tail gets cleaned up
+	old := tai.val // old tail gets cleaned up
 
 	{
 		v.tai = tai.nxt // next of tail becomes new tail

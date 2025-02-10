@@ -25,41 +25,51 @@ func (v *Vector) expand(hea object.Object) {
 	byt := hea.Byt()
 	ind := len(buf)
 
-	// Extend the current buffer with the compressed 6 byte version of the given
-	// coordinates. Using preallocated slices via copy gives us 5 ns/op as
-	// compared to using append. Note that using a new preallocated byte slice
-	// fixes the memory leak incurred during Vector.shrink() where we merely
-	// reslice the partition buffer.
-
-	if ind == 0 {
-		v.buf[prt] = byt[:]
-	} else {
-		ext := make([]byte, ind+object.Len)
-
-		copy(ext[:ind], buf)
-		copy(ext[ind:], byt[:])
-
-		v.buf[prt] = ext
-	}
-
-	// In case any of the given partition overflows our currently known
-	// boundaries, update those boundaries according to their direction of change.
+	// Always keep track of the amount of coordinates that occupy their respective
+	// partitions.
 
 	{
 		v.xfr[prt.X]++
 		v.yfr[prt.Y]++
 	}
 
-	if prt.Y > v.top {
-		v.top = prt.Y
-	}
-	if prt.Y < v.bot {
-		v.bot = prt.Y
-	}
-	if prt.X > v.rig {
-		v.rig = prt.X
-	}
-	if prt.X < v.lef {
-		v.lef = prt.X
+	if ind == 0 {
+
+		// Initialize a new partition buffer with the given header bytes.
+
+		{
+			v.buf[prt] = byt[:]
+		}
+
+		// Only if the new header breaks into an unoccupied partition, only then do
+		// we have to check in which direction we are overflowing. And then, update
+		// our boundaries according to their direction of change.
+
+		if prt.Y > v.btp {
+			v.btp = prt.Y
+		}
+		if prt.Y < v.bbt {
+			v.bbt = prt.Y
+		}
+		if prt.X > v.brg {
+			v.brg = prt.X
+		}
+		if prt.X < v.blf {
+			v.blf = prt.X
+		}
+	} else {
+
+		// Extend the current buffer with the compressed 6 byte version of the given
+		// coordinates. Using preallocated slices via copy safes about 5 ns/op
+		// compared to using append. Note that using a new preallocated byte slice
+		// fixes the memory leak incurred during Vector.shrink() where we merely
+		// reslice the partition buffer.
+
+		app := make([]byte, ind+object.Len)
+
+		copy(app[:ind], buf)    // existing buffer goes first
+		copy(app[ind:], byt[:]) // append the new header bytes
+
+		v.buf[prt] = app
 	}
 }

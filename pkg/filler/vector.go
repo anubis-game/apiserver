@@ -19,9 +19,9 @@ func (f *Filler) vector() *vector.Vector {
 	{
 		vec = vector.New(vector.Config{
 			Mot: vector.Motion{
-				QDR: byte(f.qdr.Random()),
-				AGL: byte(f.ang.Random()),
-				VLC: 0x1,
+				Qdr: byte(f.qdr.Random()),
+				Agl: byte(f.ang.Random()),
+				Vlc: 0x1,
 			},
 			Obj: []object.Object{
 				{

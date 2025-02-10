@@ -20,9 +20,9 @@ func Test_Vector_Target(t *testing.T) {
 				{X: 621_359, Y: 539_073},
 			},
 			mot: Motion{
-				QDR: byte(1),   // quadrant 1
-				AGL: byte(108), // 38.12° from 0°
-				VLC: byte(1),   // 100% speed
+				Qdr: byte(1),   // quadrant 1
+				Agl: byte(108), // 38.12° from 0°
+				Vlc: byte(1),   // 100% speed
 			},
 			hea: object.Object{X: 621_362, Y: 539_077}, // x+3 y+4
 		},
@@ -32,9 +32,9 @@ func Test_Vector_Target(t *testing.T) {
 				{X: 621_359, Y: 539_073},
 			},
 			mot: Motion{
-				QDR: byte(2),   // quadrant 2
-				AGL: byte(253), // 89.29° from 90°
-				VLC: byte(4),   // 400% speed
+				Qdr: byte(2),   // quadrant 2
+				Agl: byte(253), // 89.29° from 90°
+				Vlc: byte(4),   // 400% speed
 			},
 			hea: object.Object{X: 621_359, Y: 539_053}, // y-18
 		},
@@ -44,9 +44,9 @@ func Test_Vector_Target(t *testing.T) {
 				{X: 621_359, Y: 539_073},
 			},
 			mot: Motion{
-				QDR: byte(3),   // quadrant 3
-				AGL: byte(253), // 89.29° from 180°
-				VLC: byte(4),   // 400% speed
+				Qdr: byte(3),   // quadrant 3
+				Agl: byte(253), // 89.29° from 180°
+				Vlc: byte(4),   // 400% speed
 			},
 			hea: object.Object{X: 621_339, Y: 539_073}, // x-18
 		},
@@ -56,9 +56,9 @@ func Test_Vector_Target(t *testing.T) {
 				{X: 621_359, Y: 539_073},
 			},
 			mot: Motion{
-				QDR: byte(4),   // quadrant 4
-				AGL: byte(108), // 38.12° from 180°
-				VLC: byte(1),   // 100% speed
+				Qdr: byte(4),   // quadrant 4
+				Agl: byte(108), // 38.12° from 180°
+				Vlc: byte(1),   // 100% speed
 			},
 			hea: object.Object{X: 621_355, Y: 539_076}, // x-4 y+3
 		},
@@ -73,7 +73,7 @@ func Test_Vector_Target(t *testing.T) {
 				})
 			}
 
-			for i := 0; i < int(tc.mot.VLC); i++ {
+			for i := 0; i < int(tc.mot.Vlc); i++ {
 				vec.hea.val = vec.Target(tc.mot)
 			}
 
@@ -95,9 +95,9 @@ func Benchmark_Vector_Target(b *testing.B) {
 				{X: 621_359, Y: 539_073},
 			},
 			mot: Motion{
-				QDR: byte(1),   // quadrant 1
-				AGL: byte(108), // 38.12° from 0°
-				VLC: byte(1),   // 100% speed
+				Qdr: byte(1),   // quadrant 1
+				Agl: byte(108), // 38.12° from 0°
+				Vlc: byte(1),   // 100% speed
 			},
 		},
 		// Case 001, ~1.70 ns/op
@@ -106,9 +106,9 @@ func Benchmark_Vector_Target(b *testing.B) {
 				{X: 621_359, Y: 539_073},
 			},
 			mot: Motion{
-				QDR: byte(2),   // quadrant 2
-				AGL: byte(253), // 89.29° from 90°
-				VLC: byte(4),   // 400% speed
+				Qdr: byte(2),   // quadrant 2
+				Agl: byte(253), // 89.29° from 90°
+				Vlc: byte(4),   // 400% speed
 			},
 		},
 		// Case 002, ~1.70 ns/op
@@ -117,9 +117,9 @@ func Benchmark_Vector_Target(b *testing.B) {
 				{X: 621359, Y: 539073},
 			},
 			mot: Motion{
-				QDR: byte(3),   // quadrant 3
-				AGL: byte(253), // 89.29° from 180°
-				VLC: byte(4),   // 400% speed
+				Qdr: byte(3),   // quadrant 3
+				Agl: byte(253), // 89.29° from 180°
+				Vlc: byte(4),   // 400% speed
 			},
 		},
 		// Case 003, ~1.70 ns/op
@@ -128,9 +128,9 @@ func Benchmark_Vector_Target(b *testing.B) {
 				{X: 621_359, Y: 539_073},
 			},
 			mot: Motion{
-				QDR: byte(4),   // quadrant 4
-				AGL: byte(108), // 38.12° from 180°
-				VLC: byte(1),   // 100% speed
+				Qdr: byte(4),   // quadrant 4
+				Agl: byte(108), // 38.12° from 180°
+				Vlc: byte(1),   // 100% speed
 			},
 		},
 	}

@@ -20,8 +20,8 @@ func (e *Engine) push(tic time.Time) {
 		var n [][]byte
 		var p [][]byte
 		{
-			n, _ = e.buf.nrg.Load(k)
-			p, _ = e.buf.ply.Load(k)
+			n, _ = e.buf.nrg.LoadAndDelete(k)
+			p, _ = e.buf.ply.LoadAndDelete(k)
 		}
 
 		// TODO any client becoming a liability by blocking available semaphores for

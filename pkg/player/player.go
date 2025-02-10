@@ -5,15 +5,7 @@ import (
 
 	"github.com/anubis-game/apiserver/pkg/client"
 	"github.com/anubis-game/apiserver/pkg/vector"
-	"github.com/anubis-game/apiserver/pkg/window"
 	"github.com/google/uuid"
-)
-
-const (
-	// Rad is the initial radius of a player's head and body parts.
-	Rad byte = 10
-	// Siz is the initial amount of points that a player is worth.
-	Siz byte = 50
 )
 
 type Config struct {
@@ -24,54 +16,33 @@ type Config struct {
 
 type Player struct {
 	Cli *client.Client
-	Crx Charax
 	Uid uuid.UUID
 	Vec *vector.Vector
-	Win *window.Window
 }
 
 func New(c Config) *Player {
-	var crx Charax
-	{
-		crx = Charax{
-			Rad: Rad,
-			Siz: Siz,
-			Typ: 0, // TODO randomize or configure the player suit based on the user's preference
-		}
-	}
-
-	var win *window.Window
-	{
-		win = window.New()
-	}
-
-	{
-		win.Exp(c.Vec.Header(), window.Win)
-	}
-
 	return &Player{
 		Cli: c.Cli,
-		Crx: crx,
 		Uid: c.Uid,
 		Vec: c.Vec,
-		Win: win,
 	}
 }
 
 func (p Player) Bytes() []byte {
 	vec := p.Vec.Bytes()
 	byt := make([]byte, 22+len(vec))
+	crx := p.Vec.Charax().Get()
 	mot := p.Vec.Motion().Get()
 
 	copy(byt[0:16], p.Uid[:])
 
-	byt[16] = p.Crx.Rad
-	byt[17] = p.Crx.Siz
-	byt[18] = p.Crx.Typ
+	byt[16] = crx.Rad
+	byt[17] = crx.Siz
+	byt[18] = crx.Typ
 
-	byt[19] = mot.AGL
-	byt[20] = mot.QDR
-	byt[21] = mot.VLC
+	byt[19] = mot.Qdr
+	byt[20] = mot.Agl
+	byt[21] = mot.Vlc
 
 	copy(byt[22:], vec[:])
 
@@ -87,16 +58,18 @@ func FromBytes(byt []byte) Player {
 
 	copy(p.Uid[:], byt[0:16])
 
-	p.Crx.Rad = byt[16]
-	p.Crx.Siz = byt[17]
-	p.Crx.Typ = byt[18]
-
 	p.Vec = vector.FromBytes(byt[22:])
 
+	p.Vec.Charax().Set(vector.Charax{
+		Rad: byt[16],
+		Siz: byt[17],
+		Typ: byt[18],
+	})
+
 	p.Vec.Motion().Set(vector.Motion{
-		AGL: byt[19],
-		QDR: byt[20],
-		VLC: byt[21],
+		Qdr: byt[19],
+		Agl: byt[20],
+		Vlc: byt[21],
 	})
 
 	return p

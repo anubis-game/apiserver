@@ -7,7 +7,7 @@ import (
 	"github.com/anubis-game/apiserver/pkg/object"
 )
 
-func Test_Vector_Window_Change(t *testing.T) {
+func Test_Vector_Buffer_Change(t *testing.T) {
 	//
 	//     +---------HR
 	//     │
@@ -45,17 +45,17 @@ func Test_Vector_Window_Change(t *testing.T) {
 		lef = 0
 	}
 
-	if vec.top != top {
-		t.Fatalf("expected %#v got %#v", top, vec.top)
+	if vec.btp != top {
+		t.Fatalf("expected %#v got %#v", top, vec.btp)
 	}
-	if vec.rig != rig {
-		t.Fatalf("expected %#v got %#v", rig, vec.rig)
+	if vec.brg != rig {
+		t.Fatalf("expected %#v got %#v", rig, vec.brg)
 	}
-	if vec.bot != bot {
-		t.Fatalf("expected %#v got %#v", bot, vec.bot)
+	if vec.bbt != bot {
+		t.Fatalf("expected %#v got %#v", bot, vec.bbt)
 	}
-	if vec.lef != lef {
-		t.Fatalf("expected %#v got %#v", lef, vec.lef)
+	if vec.blf != lef {
+		t.Fatalf("expected %#v got %#v", lef, vec.blf)
 	}
 
 	if len(vec.buf) != 6 {
@@ -96,17 +96,17 @@ func Test_Vector_Window_Change(t *testing.T) {
 		lef = 0
 	}
 
-	if vec.top != top {
-		t.Fatalf("expected %#v got %#v", top, vec.top)
+	if vec.btp != top {
+		t.Fatalf("expected %#v got %#v", top, vec.btp)
 	}
-	if vec.rig != rig {
-		t.Fatalf("expected %#v got %#v", rig, vec.rig)
+	if vec.brg != rig {
+		t.Fatalf("expected %#v got %#v", rig, vec.brg)
 	}
-	if vec.bot != bot {
-		t.Fatalf("expected %#v got %#v", bot, vec.bot)
+	if vec.bbt != bot {
+		t.Fatalf("expected %#v got %#v", bot, vec.bbt)
 	}
-	if vec.lef != lef {
-		t.Fatalf("expected %#v got %#v", lef, vec.lef)
+	if vec.blf != lef {
+		t.Fatalf("expected %#v got %#v", lef, vec.blf)
 	}
 
 	if len(vec.buf) != 5 {
@@ -145,17 +145,17 @@ func Test_Vector_Window_Change(t *testing.T) {
 		lef = 0
 	}
 
-	if vec.top != top {
-		t.Fatalf("expected %#v got %#v", top, vec.top)
+	if vec.btp != top {
+		t.Fatalf("expected %#v got %#v", top, vec.btp)
 	}
-	if vec.rig != rig {
-		t.Fatalf("expected %#v got %#v", rig, vec.rig)
+	if vec.brg != rig {
+		t.Fatalf("expected %#v got %#v", rig, vec.brg)
 	}
-	if vec.bot != bot {
-		t.Fatalf("expected %#v got %#v", bot, vec.bot)
+	if vec.bbt != bot {
+		t.Fatalf("expected %#v got %#v", bot, vec.bbt)
 	}
-	if vec.lef != lef {
-		t.Fatalf("expected %#v got %#v", lef, vec.lef)
+	if vec.blf != lef {
+		t.Fatalf("expected %#v got %#v", lef, vec.blf)
 	}
 
 	if len(vec.buf) != 6 {
@@ -196,17 +196,17 @@ func Test_Vector_Window_Change(t *testing.T) {
 		lef = 0
 	}
 
-	if vec.top != top {
-		t.Fatalf("expected %#v got %#v", top, vec.top)
+	if vec.btp != top {
+		t.Fatalf("expected %#v got %#v", top, vec.btp)
 	}
-	if vec.rig != rig {
-		t.Fatalf("expected %#v got %#v", rig, vec.rig)
+	if vec.brg != rig {
+		t.Fatalf("expected %#v got %#v", rig, vec.brg)
 	}
-	if vec.bot != bot {
-		t.Fatalf("expected %#v got %#v", bot, vec.bot)
+	if vec.bbt != bot {
+		t.Fatalf("expected %#v got %#v", bot, vec.bbt)
 	}
-	if vec.lef != lef {
-		t.Fatalf("expected %#v got %#v", lef, vec.lef)
+	if vec.blf != lef {
+		t.Fatalf("expected %#v got %#v", lef, vec.blf)
 	}
 
 	if len(vec.buf) != 6 {
@@ -247,17 +247,17 @@ func Test_Vector_Window_Change(t *testing.T) {
 		lef = 0
 	}
 
-	if vec.top != top {
-		t.Fatalf("expected %#v got %#v", top, vec.top)
+	if vec.btp != top {
+		t.Fatalf("expected %#v got %#v", top, vec.btp)
 	}
-	if vec.rig != rig {
-		t.Fatalf("expected %#v got %#v", rig, vec.rig)
+	if vec.brg != rig {
+		t.Fatalf("expected %#v got %#v", rig, vec.brg)
 	}
-	if vec.bot != bot {
-		t.Fatalf("expected %#v got %#v", bot, vec.bot)
+	if vec.bbt != bot {
+		t.Fatalf("expected %#v got %#v", bot, vec.bbt)
 	}
-	if vec.lef != lef {
-		t.Fatalf("expected %#v got %#v", lef, vec.lef)
+	if vec.blf != lef {
+		t.Fatalf("expected %#v got %#v", lef, vec.blf)
 	}
 
 	if len(vec.buf) != 5 {
@@ -296,17 +296,17 @@ func Test_Vector_Window_Change(t *testing.T) {
 		lef = 0
 	}
 
-	if vec.top != top {
-		t.Fatalf("expected %#v got %#v", top, vec.top)
+	if vec.btp != top {
+		t.Fatalf("expected %#v got %#v", top, vec.btp)
 	}
-	if vec.rig != rig {
-		t.Fatalf("expected %#v got %#v", rig, vec.rig)
+	if vec.brg != rig {
+		t.Fatalf("expected %#v got %#v", rig, vec.brg)
 	}
-	if vec.bot != bot {
-		t.Fatalf("expected %#v got %#v", bot, vec.bot)
+	if vec.bbt != bot {
+		t.Fatalf("expected %#v got %#v", bot, vec.bbt)
 	}
-	if vec.lef != lef {
-		t.Fatalf("expected %#v got %#v", lef, vec.lef)
+	if vec.blf != lef {
+		t.Fatalf("expected %#v got %#v", lef, vec.blf)
 	}
 
 	if len(vec.buf) != 6 {
@@ -347,17 +347,17 @@ func Test_Vector_Window_Change(t *testing.T) {
 		lef = 0
 	}
 
-	if vec.top != top {
-		t.Fatalf("expected %#v got %#v", top, vec.top)
+	if vec.btp != top {
+		t.Fatalf("expected %#v got %#v", top, vec.btp)
 	}
-	if vec.rig != rig {
-		t.Fatalf("expected %#v got %#v", rig, vec.rig)
+	if vec.brg != rig {
+		t.Fatalf("expected %#v got %#v", rig, vec.brg)
 	}
-	if vec.bot != bot {
-		t.Fatalf("expected %#v got %#v", bot, vec.bot)
+	if vec.bbt != bot {
+		t.Fatalf("expected %#v got %#v", bot, vec.bbt)
 	}
-	if vec.lef != lef {
-		t.Fatalf("expected %#v got %#v", lef, vec.lef)
+	if vec.blf != lef {
+		t.Fatalf("expected %#v got %#v", lef, vec.blf)
 	}
 
 	if len(vec.buf) != 5 {
@@ -396,17 +396,17 @@ func Test_Vector_Window_Change(t *testing.T) {
 		lef = 128
 	}
 
-	if vec.top != top {
-		t.Fatalf("expected %#v got %#v", top, vec.top)
+	if vec.btp != top {
+		t.Fatalf("expected %#v got %#v", top, vec.btp)
 	}
-	if vec.rig != rig {
-		t.Fatalf("expected %#v got %#v", rig, vec.rig)
+	if vec.brg != rig {
+		t.Fatalf("expected %#v got %#v", rig, vec.brg)
 	}
-	if vec.bot != bot {
-		t.Fatalf("expected %#v got %#v", bot, vec.bot)
+	if vec.bbt != bot {
+		t.Fatalf("expected %#v got %#v", bot, vec.bbt)
 	}
-	if vec.lef != lef {
-		t.Fatalf("expected %#v got %#v", lef, vec.lef)
+	if vec.blf != lef {
+		t.Fatalf("expected %#v got %#v", lef, vec.blf)
 	}
 
 	if len(vec.buf) != 5 {
@@ -445,17 +445,17 @@ func Test_Vector_Window_Change(t *testing.T) {
 		lef = 128
 	}
 
-	if vec.top != top {
-		t.Fatalf("expected %#v got %#v", top, vec.top)
+	if vec.btp != top {
+		t.Fatalf("expected %#v got %#v", top, vec.btp)
 	}
-	if vec.rig != rig {
-		t.Fatalf("expected %#v got %#v", rig, vec.rig)
+	if vec.brg != rig {
+		t.Fatalf("expected %#v got %#v", rig, vec.brg)
 	}
-	if vec.bot != bot {
-		t.Fatalf("expected %#v got %#v", bot, vec.bot)
+	if vec.bbt != bot {
+		t.Fatalf("expected %#v got %#v", bot, vec.bbt)
 	}
-	if vec.lef != lef {
-		t.Fatalf("expected %#v got %#v", lef, vec.lef)
+	if vec.blf != lef {
+		t.Fatalf("expected %#v got %#v", lef, vec.blf)
 	}
 
 	if len(vec.buf) != 5 {
@@ -484,7 +484,7 @@ func Test_Vector_Window_Change(t *testing.T) {
 	})
 }
 
-func Test_Vector_Window_Duplicate_Coordinates(t *testing.T) {
+func Test_Vector_Buffer_Duplicate_Coordinates(t *testing.T) {
 	//
 	//     +---------+
 	//     R         │
@@ -521,17 +521,17 @@ func Test_Vector_Window_Duplicate_Coordinates(t *testing.T) {
 		lef = 0
 	}
 
-	if vec.top != top {
-		t.Fatalf("expected %#v got %#v", top, vec.top)
+	if vec.btp != top {
+		t.Fatalf("expected %#v got %#v", top, vec.btp)
 	}
-	if vec.rig != rig {
-		t.Fatalf("expected %#v got %#v", rig, vec.rig)
+	if vec.brg != rig {
+		t.Fatalf("expected %#v got %#v", rig, vec.brg)
 	}
-	if vec.bot != bot {
-		t.Fatalf("expected %#v got %#v", bot, vec.bot)
+	if vec.bbt != bot {
+		t.Fatalf("expected %#v got %#v", bot, vec.bbt)
 	}
-	if vec.lef != lef {
-		t.Fatalf("expected %#v got %#v", lef, vec.lef)
+	if vec.blf != lef {
+		t.Fatalf("expected %#v got %#v", lef, vec.blf)
 	}
 
 	if len(vec.buf) != 4 {
@@ -567,17 +567,17 @@ func Test_Vector_Window_Duplicate_Coordinates(t *testing.T) {
 		lef = 0
 	}
 
-	if vec.top != top {
-		t.Fatalf("expected %#v got %#v", top, vec.top)
+	if vec.btp != top {
+		t.Fatalf("expected %#v got %#v", top, vec.btp)
 	}
-	if vec.rig != rig {
-		t.Fatalf("expected %#v got %#v", rig, vec.rig)
+	if vec.brg != rig {
+		t.Fatalf("expected %#v got %#v", rig, vec.brg)
 	}
-	if vec.bot != bot {
-		t.Fatalf("expected %#v got %#v", bot, vec.bot)
+	if vec.bbt != bot {
+		t.Fatalf("expected %#v got %#v", bot, vec.bbt)
 	}
-	if vec.lef != lef {
-		t.Fatalf("expected %#v got %#v", lef, vec.lef)
+	if vec.blf != lef {
+		t.Fatalf("expected %#v got %#v", lef, vec.blf)
 	}
 
 	if len(vec.buf) != 4 {
@@ -613,17 +613,17 @@ func Test_Vector_Window_Duplicate_Coordinates(t *testing.T) {
 		lef = 0
 	}
 
-	if vec.top != top {
-		t.Fatalf("expected %#v got %#v", top, vec.top)
+	if vec.btp != top {
+		t.Fatalf("expected %#v got %#v", top, vec.btp)
 	}
-	if vec.rig != rig {
-		t.Fatalf("expected %#v got %#v", rig, vec.rig)
+	if vec.brg != rig {
+		t.Fatalf("expected %#v got %#v", rig, vec.brg)
 	}
-	if vec.bot != bot {
-		t.Fatalf("expected %#v got %#v", bot, vec.bot)
+	if vec.bbt != bot {
+		t.Fatalf("expected %#v got %#v", bot, vec.bbt)
 	}
-	if vec.lef != lef {
-		t.Fatalf("expected %#v got %#v", lef, vec.lef)
+	if vec.blf != lef {
+		t.Fatalf("expected %#v got %#v", lef, vec.blf)
 	}
 
 	if len(vec.buf) != 4 {
@@ -659,17 +659,17 @@ func Test_Vector_Window_Duplicate_Coordinates(t *testing.T) {
 		lef = 0
 	}
 
-	if vec.top != top {
-		t.Fatalf("expected %#v got %#v", top, vec.top)
+	if vec.btp != top {
+		t.Fatalf("expected %#v got %#v", top, vec.btp)
 	}
-	if vec.rig != rig {
-		t.Fatalf("expected %#v got %#v", rig, vec.rig)
+	if vec.brg != rig {
+		t.Fatalf("expected %#v got %#v", rig, vec.brg)
 	}
-	if vec.bot != bot {
-		t.Fatalf("expected %#v got %#v", bot, vec.bot)
+	if vec.bbt != bot {
+		t.Fatalf("expected %#v got %#v", bot, vec.bbt)
 	}
-	if vec.lef != lef {
-		t.Fatalf("expected %#v got %#v", lef, vec.lef)
+	if vec.blf != lef {
+		t.Fatalf("expected %#v got %#v", lef, vec.blf)
 	}
 
 	if len(vec.buf) != 4 {
@@ -705,17 +705,17 @@ func Test_Vector_Window_Duplicate_Coordinates(t *testing.T) {
 		lef = 0
 	}
 
-	if vec.top != top {
-		t.Fatalf("expected %#v got %#v", top, vec.top)
+	if vec.btp != top {
+		t.Fatalf("expected %#v got %#v", top, vec.btp)
 	}
-	if vec.rig != rig {
-		t.Fatalf("expected %#v got %#v", rig, vec.rig)
+	if vec.brg != rig {
+		t.Fatalf("expected %#v got %#v", rig, vec.brg)
 	}
-	if vec.bot != bot {
-		t.Fatalf("expected %#v got %#v", bot, vec.bot)
+	if vec.bbt != bot {
+		t.Fatalf("expected %#v got %#v", bot, vec.bbt)
 	}
-	if vec.lef != lef {
-		t.Fatalf("expected %#v got %#v", lef, vec.lef)
+	if vec.blf != lef {
+		t.Fatalf("expected %#v got %#v", lef, vec.blf)
 	}
 
 	if len(vec.buf) != 4 {
@@ -739,9 +739,139 @@ func Test_Vector_Window_Duplicate_Coordinates(t *testing.T) {
 		{X: 200, Y: 200}, // 13
 		{X: 200, Y: 150}, // 14
 	})
+
+	{
+		vec.Shrink()
+	}
+
+	{
+		top = 128
+		rig = 128
+		bot = 0
+		lef = 0
+	}
+
+	if vec.btp != top {
+		t.Fatalf("expected %#v got %#v", top, vec.btp)
+	}
+	if vec.brg != rig {
+		t.Fatalf("expected %#v got %#v", rig, vec.brg)
+	}
+	if vec.bbt != bot {
+		t.Fatalf("expected %#v got %#v", bot, vec.bbt)
+	}
+	if vec.blf != lef {
+		t.Fatalf("expected %#v got %#v", lef, vec.blf)
+	}
+
+	if len(vec.buf) != 4 {
+		t.Fatalf("expected %#v got %#v", 4, len(vec.buf))
+	}
+	musBuf(t, vec, object.Object{X: 0, Y: 0}, []object.Object{
+		{X: 100, Y: 100}, // 9
+	})
+	musBuf(t, vec, object.Object{X: 0, Y: 128}, []object.Object{
+		{X: 100, Y: 150}, // 10
+		{X: 100, Y: 200}, // 11
+	})
+	musBuf(t, vec, object.Object{X: 128, Y: 0}, []object.Object{
+		{X: 200, Y: 100}, // 7
+		{X: 150, Y: 100}, // 8
+	})
+	musBuf(t, vec, object.Object{X: 128, Y: 128}, []object.Object{
+		{X: 200, Y: 150}, // 6
+		{X: 150, Y: 200}, // 12
+		{X: 200, Y: 200}, // 13
+		{X: 200, Y: 150}, // 14
+	})
+
+	{
+		vec.Shrink()
+	}
+
+	{
+		top = 128
+		rig = 128
+		bot = 0
+		lef = 0
+	}
+
+	if vec.btp != top {
+		t.Fatalf("expected %#v got %#v", top, vec.btp)
+	}
+	if vec.brg != rig {
+		t.Fatalf("expected %#v got %#v", rig, vec.brg)
+	}
+	if vec.bbt != bot {
+		t.Fatalf("expected %#v got %#v", bot, vec.bbt)
+	}
+	if vec.blf != lef {
+		t.Fatalf("expected %#v got %#v", lef, vec.blf)
+	}
+
+	if len(vec.buf) != 4 {
+		t.Fatalf("expected %#v got %#v", 4, len(vec.buf))
+	}
+	musBuf(t, vec, object.Object{X: 0, Y: 0}, []object.Object{
+		{X: 100, Y: 100}, // 9
+	})
+	musBuf(t, vec, object.Object{X: 0, Y: 128}, []object.Object{
+		{X: 100, Y: 150}, // 10
+		{X: 100, Y: 200}, // 11
+	})
+	musBuf(t, vec, object.Object{X: 128, Y: 0}, []object.Object{
+		{X: 200, Y: 100}, // 7
+		{X: 150, Y: 100}, // 8
+	})
+	musBuf(t, vec, object.Object{X: 128, Y: 128}, []object.Object{
+		{X: 150, Y: 200}, // 12
+		{X: 200, Y: 200}, // 13
+		{X: 200, Y: 150}, // 14
+	})
+
+	{
+		vec.Shrink()
+		vec.Shrink()
+	}
+
+	{
+		top = 128
+		rig = 128
+		bot = 0
+		lef = 0
+	}
+
+	if vec.btp != top {
+		t.Fatalf("expected %#v got %#v", top, vec.btp)
+	}
+	if vec.brg != rig {
+		t.Fatalf("expected %#v got %#v", rig, vec.brg)
+	}
+	if vec.bbt != bot {
+		t.Fatalf("expected %#v got %#v", bot, vec.bbt)
+	}
+	if vec.blf != lef {
+		t.Fatalf("expected %#v got %#v", lef, vec.blf)
+	}
+
+	if len(vec.buf) != 3 {
+		t.Fatalf("expected %#v got %#v", 4, len(vec.buf))
+	}
+	musBuf(t, vec, object.Object{X: 0, Y: 0}, []object.Object{
+		{X: 100, Y: 100}, // 9
+	})
+	musBuf(t, vec, object.Object{X: 0, Y: 128}, []object.Object{
+		{X: 100, Y: 150}, // 10
+		{X: 100, Y: 200}, // 11
+	})
+	musBuf(t, vec, object.Object{X: 128, Y: 128}, []object.Object{
+		{X: 150, Y: 200}, // 12
+		{X: 200, Y: 200}, // 13
+		{X: 200, Y: 150}, // 14
+	})
 }
 
-func Test_Vector_Window_No_Change(t *testing.T) {
+func Test_Vector_Buffer_No_Change(t *testing.T) {
 	//
 	//     +---------+
 	//     │    R    │
@@ -785,34 +915,34 @@ func Test_Vector_Window_No_Change(t *testing.T) {
 		lef = 0
 	}
 
-	if vec.top != top {
-		t.Fatalf("expected %#v got %#v", top, vec.top)
+	if vec.btp != top {
+		t.Fatalf("expected %#v got %#v", top, vec.btp)
 	}
-	if vec.rig != rig {
-		t.Fatalf("expected %#v got %#v", rig, vec.rig)
+	if vec.brg != rig {
+		t.Fatalf("expected %#v got %#v", rig, vec.brg)
 	}
-	if vec.bot != bot {
-		t.Fatalf("expected %#v got %#v", bot, vec.bot)
+	if vec.bbt != bot {
+		t.Fatalf("expected %#v got %#v", bot, vec.bbt)
 	}
-	if vec.lef != lef {
-		t.Fatalf("expected %#v got %#v", lef, vec.lef)
+	if vec.blf != lef {
+		t.Fatalf("expected %#v got %#v", lef, vec.blf)
 	}
 
 	{
 		vec.Rotate(object.Object{X: 110, Y: 115}) // R
 	}
 
-	if vec.top != top {
-		t.Fatalf("expected %#v got %#v", top, vec.top)
+	if vec.btp != top {
+		t.Fatalf("expected %#v got %#v", top, vec.btp)
 	}
-	if vec.rig != rig {
-		t.Fatalf("expected %#v got %#v", rig, vec.rig)
+	if vec.brg != rig {
+		t.Fatalf("expected %#v got %#v", rig, vec.brg)
 	}
-	if vec.bot != bot {
-		t.Fatalf("expected %#v got %#v", bot, vec.bot)
+	if vec.bbt != bot {
+		t.Fatalf("expected %#v got %#v", bot, vec.bbt)
 	}
-	if vec.lef != lef {
-		t.Fatalf("expected %#v got %#v", lef, vec.lef)
+	if vec.blf != lef {
+		t.Fatalf("expected %#v got %#v", lef, vec.blf)
 	}
 }
 
