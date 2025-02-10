@@ -28,7 +28,11 @@ type Motion struct {
 	// as a single byte in the range of [0, 255], dividing 90 degrees of any
 	// quadrant into 256 possible angles. The measurement of alpha starts at 0°
 	// for quadrant 1, 90° for quadrant 2, 180° for quadrant 3, and 270° for
-	// quadrant 4.
+	// quadrant 4. Note that a single angle byte represents 0.3515625° within any
+	// given quadrant.
+	//
+	//     ( 1 / 256 ) * 90° = 0.3515625°
+	//
 	Agl byte
 	// Vlc is the index for the velocity byte. Every additional byte represents a
 	// factor of 100%.

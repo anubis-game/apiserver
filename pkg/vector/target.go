@@ -14,10 +14,14 @@ const (
 const (
 	// Frm is the standard frame duration in milliseconds travelled at a time.
 	Frm = 25
-	// Dpx is the standard distance travelled in pixels per millisecond.
-	Dpx float64 = 0.2
-	// Dis is the standard distance travelled in pixels per standard frame.
-	Dis float64 = Frm * Dpx
+	// Dis is the standard distance travelled in pixels per standard frame. The
+	// amount of pixels travelled here per millisecond is 0.2, which represents a
+	// velocity of 1.
+	Dis float64 = Frm * 0.2
+	// Ris is the increased distance travelled in pixels per standard frame. The
+	// amount of pixels travelled here per millisecond is 0.8, which represents a
+	// velocity of 4.
+	Ris float64 = Frm * 0.8
 )
 
 const (
@@ -51,22 +55,80 @@ func init() {
 }
 
 func (v *Vector) Target(mot Motion) object.Object {
+	prv := v.mot.Get()
 	tpx := v.hea.val
+
+	// Use normal speed or allow a player to race. The default is always the hard
+	// coded standard speed. Only if a player provides the correct encoding for
+	// racing speed, only then it will be granted. For us it is important to not
+	// allow anyone to select arbitrary speed values.
+
+	// TODO configure motion range limit dynamically
+	dis := Dis
+	lim := byte(100)
+	if mot.Vlc == 0x4 {
+		dis = Ris
+		lim = byte(50)
+	} else {
+		mot.Vlc = 0x1
+	}
+
+	{
+		mot.Qdr, mot.Agl = trgAgl(prv.Qdr, prv.Agl, mot.Qdr, mot.Agl, lim)
+	}
+
+	// Update both coordinates based on the current position and the desired
+	// direction.
 
 	switch mot.Qdr {
 	case 0x1:
-		tpx.X += int(Dis*sin[mot.Agl] + 0.5)
-		tpx.Y += int(Dis*cos[mot.Agl] + 0.5)
+		tpx.X += int(dis*sin[mot.Agl] + 0.5)
+		tpx.Y += int(dis*cos[mot.Agl] + 0.5)
 	case 0x2:
-		tpx.X += int(Dis*cos[mot.Agl] + 0.5)
-		tpx.Y -= int(Dis*sin[mot.Agl] + 0.5)
+		tpx.X += int(dis*cos[mot.Agl] + 0.5)
+		tpx.Y -= int(dis*sin[mot.Agl] + 0.5)
 	case 0x3:
-		tpx.X -= int(Dis*sin[mot.Agl] + 0.5)
-		tpx.Y -= int(Dis*cos[mot.Agl] + 0.5)
+		tpx.X -= int(dis*sin[mot.Agl] + 0.5)
+		tpx.Y -= int(dis*cos[mot.Agl] + 0.5)
 	case 0x4:
-		tpx.X -= int(Dis*cos[mot.Agl] + 0.5)
-		tpx.Y += int(Dis*sin[mot.Agl] + 0.5)
+		tpx.X -= int(dis*cos[mot.Agl] + 0.5)
+		tpx.Y += int(dis*sin[mot.Agl] + 0.5)
+	}
+
+	// Track the latest range of motion according to the reconciliation between
+	// our system rules and the desired state.
+
+	{
+		v.mot.Set(mot)
 	}
 
 	return tpx
+}
+
+func trgAgl(pqd byte, pag byte, nqd byte, nag byte, lim byte) (byte, byte) {
+	// Convert the given inputs to absolute angles on the basis of a full
+	// 1024-step circle.
+
+	apv := (int(pqd)-1)*256 + int(pag)
+	anx := (int(nqd)-1)*256 + int(nag)
+
+	// Compute the desired displacement in either direction.
+
+	dif := anx - apv
+
+	// Resolve the approriate direction and apply the maximum allowed range of
+	// motion.
+
+	var anw int
+	if dif < -int(lim) || dif > 512 {
+		anw = (apv - int(lim) + 1024) % 1024
+	} else if dif > int(lim) || dif < -512 {
+		anw = (apv + int(lim) + 1024) % 1024
+	} else {
+		anw = (apv + dif + 1024) % 1024
+	}
+
+	// Translate the absolute result into the final quadrant and angle.
+
+	return byte(anw/256 + 1), byte(anw % 256)
 }
