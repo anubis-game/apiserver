@@ -7,6 +7,7 @@ func (v *Vector) Shrink() {
 
 	{
 		v.tai = tai.nxt // next of tail becomes new tail
+		v.len--
 	}
 
 	{
@@ -17,7 +18,6 @@ func (v *Vector) Shrink() {
 func (v *Vector) shrink(old object.Object) {
 	prt := old.Prt()
 	buf := v.buf[prt]
-	siz := len(buf)
 
 	// Always keep track of the amount of coordinates that do not occupy their
 	// respective partitions anymore.
@@ -29,7 +29,7 @@ func (v *Vector) shrink(old object.Object) {
 
 	// Reduce the fanout buffer given any of the situations described below.
 
-	if siz == object.Len {
+	if len(buf) == object.Len {
 
 		// There is only one item left. That item is the object we are asked to
 		// delete.
@@ -42,6 +42,8 @@ func (v *Vector) shrink(old object.Object) {
 		// specified by the old tail coordinates.
 
 		tai := v.tai.val.Prt()
+
+		// TODO shrink range of sight
 
 		if prt.Y == v.btp && v.yfr[prt.Y] == 0 {
 			{
