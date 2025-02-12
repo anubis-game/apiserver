@@ -19,7 +19,7 @@ func (f *Filler) vector() *vector.Vector {
 		mot = vector.Motion{
 			Qdr: byte(f.qdr.Random()),
 			Agl: byte(f.ang.Random()),
-			Vlc: 0x1,
+			Vlc: vector.Nrm,
 		}
 	}
 
