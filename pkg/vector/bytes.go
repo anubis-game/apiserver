@@ -7,7 +7,7 @@ import (
 )
 
 func (v *Vector) Bytes() []byte {
-	buf := make([]byte, v.siz*6)
+	buf := make([]byte, v.len*6)
 
 	cur := v.tai
 	ind := 0

@@ -10,6 +10,19 @@ func (f *Filler) Vector() *vector.Vector {
 }
 
 func (f *Filler) vector() *vector.Vector {
+
+	// Create a new Motion object so we can point new players towards a randomized
+	// direction.
+
+	var mot vector.Motion
+	{
+		mot = vector.Motion{
+			Qdr: byte(f.qdr.Random()),
+			Agl: byte(f.ang.Random()),
+			Vlc: vector.Nrm,
+		}
+	}
+
 	// vector.New() allocates a full slice of X and Y coordinates. Allocating most
 	// of the vectors required at runtime helps us to increase runtime
 	// performance, because the vector allocation is not done within performance
@@ -18,11 +31,7 @@ func (f *Filler) vector() *vector.Vector {
 	var vec *vector.Vector
 	{
 		vec = vector.New(vector.Config{
-			Mot: vector.Motion{
-				Qdr: byte(f.qdr.Random()),
-				Agl: byte(f.ang.Random()),
-				Vlc: 0x1,
-			},
+			Mot: mot,
 			Obj: []object.Object{
 				{
 					X: f.crd.Random(),
@@ -38,10 +47,10 @@ func (f *Filler) vector() *vector.Vector {
 	// because we use the same motion configuration every time.
 
 	{
-		vec.Expand(vec.Target(vec.Motion().Get()))
-		vec.Expand(vec.Target(vec.Motion().Get()))
-		vec.Expand(vec.Target(vec.Motion().Get()))
-		vec.Expand(vec.Target(vec.Motion().Get()))
+		vec.Expand(vec.Target(mot.Qdr, mot.Agl, vector.Dis))
+		vec.Expand(vec.Target(mot.Qdr, mot.Agl, vector.Dis))
+		vec.Expand(vec.Target(mot.Qdr, mot.Agl, vector.Dis))
+		vec.Expand(vec.Target(mot.Qdr, mot.Agl, vector.Dis))
 	}
 
 	return vec

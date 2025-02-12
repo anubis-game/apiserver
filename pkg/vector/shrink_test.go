@@ -31,6 +31,10 @@ func Test_Vector_Shrink(t *testing.T) {
 		})
 	}
 
+	if vec.len != 4 {
+		t.Fatalf("expected %#v got %#v", 4, vec.len)
+	}
+
 	var act []object.Object
 	vec.Ranger(func(x object.Object) {
 		act = append(act, x)
@@ -52,6 +56,10 @@ func Test_Vector_Shrink(t *testing.T) {
 
 	{
 		vec.Shrink()
+	}
+
+	if vec.len != 3 {
+		t.Fatalf("expected %#v got %#v", 3, vec.len)
 	}
 
 	act = nil

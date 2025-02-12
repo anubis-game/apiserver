@@ -11,7 +11,7 @@ func (v *Vector) Expand(hea object.Object) {
 	{
 		v.hea.nxt = lin
 		v.hea = lin
-		v.siz++
+		v.len++
 	}
 
 	{
@@ -44,6 +44,8 @@ func (v *Vector) expand(hea object.Object) {
 		// Only if the new header breaks into an unoccupied partition, only then do
 		// we have to check in which direction we are overflowing. And then, update
 		// our boundaries according to their direction of change.
+
+		// TODO expand range of sight
 
 		if prt.Y > v.btp {
 			v.btp = prt.Y

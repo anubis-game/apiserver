@@ -36,8 +36,8 @@ func (p Player) Bytes() []byte {
 
 	copy(byt[0:16], p.Uid[:])
 
-	byt[16] = crx.Rad
-	byt[17] = crx.Siz
+	byt[16] = byte(crx.Rad)
+	byt[17] = byte(crx.Siz)
 	byt[18] = crx.Typ
 
 	byt[19] = mot.Qdr
@@ -61,8 +61,8 @@ func FromBytes(byt []byte) Player {
 	p.Vec = vector.FromBytes(byt[22:])
 
 	p.Vec.Charax().Set(vector.Charax{
-		Rad: byt[16],
-		Siz: byt[17],
+		Rad: int(byt[16]),
+		Siz: int(byt[17]),
 		Typ: byt[18],
 	})
 

@@ -31,7 +31,7 @@ type Vector struct {
 	//
 	hea *Linker
 	tai *Linker
-	siz int
+	len int
 
 	// btp, brg, bbt and blf are the outer boundaries of this Vector's body,
 	// expressed in partition coordinates, that this Vector keeps track of.
@@ -94,8 +94,8 @@ func New(c Config) *Vector {
 			mot: setter.New[Motion](),
 
 			hea: nil,
-			siz: 1,
 			tai: nil,
+			len: 1,
 
 			btp: 0,
 			brg: 0,
