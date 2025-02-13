@@ -37,7 +37,6 @@ func (v *Vector) expand(hea object.Object) {
 	}
 
 	if ind == 0 {
-
 		// Initialize a new partition buffer with the given header bytes.
 
 		{
@@ -57,8 +56,8 @@ func (v *Vector) expand(hea object.Object) {
 				v.btp = prt.Y
 			}
 
-			for i := v.vlf; i <= v.vrg; i += matrix.Prt {
-				v.vpb = append(v.vpb, object.Object{X: i, Y: v.vtp})
+			for x := v.vlf; x <= v.vrg; x += matrix.Prt {
+				v.vpb = append(v.vpb, object.Object{X: x, Y: v.vtp})
 			}
 		}
 		if prt.X > v.brg {
@@ -66,8 +65,8 @@ func (v *Vector) expand(hea object.Object) {
 				v.brg = prt.X
 			}
 
-			for i := v.vbt; i <= v.vtp; i += matrix.Prt {
-				v.vpb = append(v.vpb, object.Object{X: v.vrg, Y: i})
+			for y := v.vbt; y <= v.vtp; y += matrix.Prt {
+				v.vpb = append(v.vpb, object.Object{X: v.vrg, Y: y})
 			}
 		}
 		if prt.Y < v.bbt {
@@ -75,8 +74,8 @@ func (v *Vector) expand(hea object.Object) {
 				v.bbt = prt.Y
 			}
 
-			for i := v.vlf; i <= v.vrg; i += matrix.Prt {
-				v.vpb = append(v.vpb, object.Object{X: i, Y: v.vbt})
+			for x := v.vlf; x <= v.vrg; x += matrix.Prt {
+				v.vpb = append(v.vpb, object.Object{X: x, Y: v.vbt})
 			}
 		}
 		if prt.X < v.blf {
@@ -84,12 +83,11 @@ func (v *Vector) expand(hea object.Object) {
 				v.blf = prt.X
 			}
 
-			for i := v.vbt; i <= v.vtp; i += matrix.Prt {
-				v.vpb = append(v.vpb, object.Object{X: v.vlf, Y: i})
+			for y := v.vbt; y <= v.vtp; y += matrix.Prt {
+				v.vpb = append(v.vpb, object.Object{X: v.vlf, Y: y})
 			}
 		}
 	} else {
-
 		// Extend the current buffer with the compressed 6 byte version of the given
 		// coordinates. Using preallocated slices via copy safes about 5 ns/op
 		// compared to using append. Note that using a new preallocated byte slice

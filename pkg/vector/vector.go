@@ -208,13 +208,17 @@ func New(c Config) *Vector {
 		vec.vlf = prt.X - vpb
 	}
 
+	// We have to reset the partition boundary slice because the initial calls to
+	// Vector.Expand() fill it with invalid values that would pollute the correct
+	// view otherwise.
+
 	{
 		vec.vpb = nil
 	}
 
-	for i := vec.vlf; i <= vec.vrg; i += matrix.Prt {
-		for j := vec.vbt; j <= vec.vtp; j += matrix.Prt {
-			vec.vpb = append(vec.vpb, object.Object{X: i, Y: j})
+	for x := vec.vlf; x <= vec.vrg; x += matrix.Prt {
+		for y := vec.vbt; y <= vec.vtp; y += matrix.Prt {
+			vec.vpb = append(vec.vpb, object.Object{X: x, Y: y})
 		}
 	}
 

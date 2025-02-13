@@ -8,7 +8,8 @@ import (
 
 const (
 	// Sf is the smoothing factor for reducing and shifting the altitude of an
-	// apex point by shrinking its connecting sides within a triangle.
+	// apex point by shrinking its connecting sides within a triangle. E.g. a
+	// value of 0.2 implies an apex reduction of 20%.
 	Sf float64 = 0.2
 )
 

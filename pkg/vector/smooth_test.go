@@ -8,7 +8,7 @@ import (
 	"github.com/anubis-game/apiserver/pkg/object"
 )
 
-// https://www.desmos.com/calculator/9dh5d6lrhb
+// https://www.desmos.com/calculator/cjcyg1ohwz
 var vectSmtObj = [][]object.Object{
 	// New()
 	{
