@@ -1,6 +1,9 @@
 package vector
 
-import "github.com/anubis-game/apiserver/pkg/object"
+import (
+	"github.com/anubis-game/apiserver/pkg/matrix"
+	"github.com/anubis-game/apiserver/pkg/object"
+)
 
 // Expand moves the vector along the direction of the given target object and
 // expands the underlying segments. After calling Expand, the underlying vector
@@ -34,7 +37,6 @@ func (v *Vector) expand(hea object.Object) {
 	}
 
 	if ind == 0 {
-
 		// Initialize a new partition buffer with the given header bytes.
 
 		{
@@ -45,22 +47,47 @@ func (v *Vector) expand(hea object.Object) {
 		// we have to check in which direction we are overflowing. And then, update
 		// our boundaries according to their direction of change.
 
-		// TODO expand range of sight
+		{
+			v.vpb = nil
+		}
 
 		if prt.Y > v.btp {
-			v.btp = prt.Y
-		}
-		if prt.Y < v.bbt {
-			v.bbt = prt.Y
+			{
+				v.btp = prt.Y
+			}
+
+			for x := v.vlf; x <= v.vrg; x += matrix.Prt {
+				v.vpb = append(v.vpb, object.Object{X: x, Y: v.vtp})
+			}
 		}
 		if prt.X > v.brg {
-			v.brg = prt.X
+			{
+				v.brg = prt.X
+			}
+
+			for y := v.vbt; y <= v.vtp; y += matrix.Prt {
+				v.vpb = append(v.vpb, object.Object{X: v.vrg, Y: y})
+			}
+		}
+		if prt.Y < v.bbt {
+			{
+				v.bbt = prt.Y
+			}
+
+			for x := v.vlf; x <= v.vrg; x += matrix.Prt {
+				v.vpb = append(v.vpb, object.Object{X: x, Y: v.vbt})
+			}
 		}
 		if prt.X < v.blf {
-			v.blf = prt.X
+			{
+				v.blf = prt.X
+			}
+
+			for y := v.vbt; y <= v.vtp; y += matrix.Prt {
+				v.vpb = append(v.vpb, object.Object{X: v.vlf, Y: y})
+			}
 		}
 	} else {
-
 		// Extend the current buffer with the compressed 6 byte version of the given
 		// coordinates. Using preallocated slices via copy safes about 5 ns/op
 		// compared to using append. Note that using a new preallocated byte slice

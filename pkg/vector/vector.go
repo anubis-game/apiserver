@@ -9,14 +9,6 @@ import (
 	"github.com/xh3b4sd/tracer"
 )
 
-// Below is a link for some formula ideas that we still need to work out once
-// the backend and the frontend got wired up properly. This is about the
-// relationship between the player size in points, the number of body parts and
-// the body part radius.
-//
-//     https://go.dev/play/p/h4I4GzkgtNw
-//
-
 type Config struct {
 	Mot Motion
 	Obj []object.Object
@@ -69,6 +61,13 @@ type Vector struct {
 	vbt int
 	vlf int
 
+	// vpb is this Vector's movement based list of partition boundaries. The
+	// partitions listed here represent the Vector's most recently reveiled view
+	// due to a player's movement across the coordinate system. In other words,
+	// the partitions here represent what the player can now see, because the
+	// player was moving towards a direction that was unexplored before.
+	vpb []object.Object
+
 	//
 	xfr map[int]int
 	yfr map[int]int
@@ -115,12 +114,20 @@ func New(c Config) *Vector {
 
 	// Ensure the character setter tracks the player's default values.
 
+	var crx Charax
 	{
-		vec.crx.Set(Charax{
+		crx = Charax{
+			Als: byte(Ai),
+			Alr: byte(Ai / 2),
+			Prt: int(Pi),
 			Rad: Rad,
 			Siz: Siz,
 			Typ: 0, // TODO randomize or configure the player suit based on the user's preference
-		})
+		}
+	}
+
+	{
+		vec.crx.Set(crx)
 	}
 
 	// Ensure the motion setter tracks the injected configuration.
@@ -189,11 +196,30 @@ func New(c Config) *Vector {
 		prt = vec.hea.val.Prt()
 	}
 
+	var vpb int
 	{
-		vec.vtp = prt.Y + (4 * matrix.Prt)
-		vec.vrg = prt.X + (4 * matrix.Prt)
-		vec.vbt = prt.Y - (3 * matrix.Prt)
-		vec.vlf = prt.X - (3 * matrix.Prt)
+		vpb = crx.Prt * matrix.Prt
+	}
+
+	{
+		vec.vtp = prt.Y + vpb
+		vec.vrg = prt.X + vpb
+		vec.vbt = prt.Y - vpb
+		vec.vlf = prt.X - vpb
+	}
+
+	// We have to reset the partition boundary slice because the initial calls to
+	// Vector.Expand() fill it with invalid values that would pollute the correct
+	// view otherwise.
+
+	{
+		vec.vpb = nil
+	}
+
+	for x := vec.vlf; x <= vec.vrg; x += matrix.Prt {
+		for y := vec.vbt; y <= vec.vtp; y += matrix.Prt {
+			vec.vpb = append(vec.vpb, object.Object{X: x, Y: y})
+		}
 	}
 
 	return vec
