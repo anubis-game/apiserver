@@ -43,8 +43,6 @@ func (v *Vector) shrink(old object.Object) {
 
 		tai := v.tai.val.Prt()
 
-		// TODO shrink range of sight
-
 		if prt.Y == v.btp && v.yfr[prt.Y] == 0 {
 			{
 				v.btp = tai.Y

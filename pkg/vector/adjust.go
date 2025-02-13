@@ -3,16 +3,19 @@ package vector
 import (
 	"math"
 
+	"github.com/anubis-game/apiserver/pkg/matrix"
 	"github.com/anubis-game/apiserver/pkg/object"
 )
 
 const (
-	Ai float64 = 30     // Initial angle byte
-	Al float64 = 1      // Largest angle byte
-	Li float64 = 10     // Initial number of body parts
-	Ll float64 = 5_000  // Largest number of body parts
-	Pi float64 = 3      // Initial range of sight in partitions
-	Pl float64 = 25     // Largest range of sight in partitions
+	Ai float64 = 30 // Initial angle byte
+	Al float64 = 1  // Largest angle byte
+	Li float64 = 10 // Initial number of body parts
+	// TODO we probably want to reduce max num to 500
+	Ll float64 = 5_000 // Largest number of body parts
+	// TODO if we half the partition size we can double the view expansion quality
+	Pi float64 = 2      // Initial range of sight in partitions
+	Pl float64 = 8      // Largest range of sight in partitions
 	Ri float64 = 10     // Initial body part radius in pixels
 	Rl float64 = 256    // Largest body part radius in pixels
 	Si float64 = 50     // Initial player size in points
@@ -89,6 +92,29 @@ func (v *Vector) Adjust(del int, des Motion) {
 		hea = v.Target(des.Qdr, des.Agl, dis)
 	}
 
+	// Adjust the player's range of sight before we actually shrink, expand or
+	// rotate. The possibly modified range of sight defines the list of partitions
+	// that we eventually move towards in either direction. So we have to compute
+	// the partition boundaries of the player's screen before we advance the
+	// vector header within the coordinate system.
+
+	var prt object.Object
+	{
+		prt = hea.Prt()
+	}
+
+	var vpb int
+	{
+		vpb = crx.Prt * matrix.Prt
+	}
+
+	{
+		v.vtp = prt.Y + vpb
+		v.vrg = prt.X + vpb
+		v.vbt = prt.Y - vpb
+		v.vlf = prt.X - vpb
+	}
+
 	if len < v.len {
 		v.Shrink()
 	}
@@ -108,28 +134,32 @@ func (v *Vector) Adjust(del int, des Motion) {
 	}
 }
 
-// See https://www.desmos.com/calculator/kni7qb0o9y for full turn diameters.
+// See https://www.desmos.com/calculator/kni7qb0o9y for probably outdated full
+// turn diameters.
 func angle(siz float64) byte {
 	agl := math.Min(1, 1-math.Pow(siz/Sl, 0.4)) * Ai
 	return byte(math.Max(Al, math.Ceil(agl)))
 }
 
-// See https://www.desmos.com/calculator/7bntdys5na for length calculations.
+// See https://www.desmos.com/calculator/7bntdys5na for probably outdated length
+// calculations.
 func length(siz float64) int {
 	len := math.Max(Li, Li*math.Pow(siz/Si, 0.9))
 	return int(math.Min(Ll, math.Ceil(len)))
 }
 
-// See https://www.desmos.com/calculator/dokimlkswz for radius calculations.
+// See https://www.desmos.com/calculator/dokimlkswz for probably outdated radius
+// calculations.
 func radius(siz float64) int {
 	rad := math.Max(Ri, Ri*math.Pow(siz/Si, 0.47))
 	return int(math.Min(Rl, math.Ceil(rad)))
 }
 
-// See https://www.desmos.com/calculator/vpiapfimb1 for sight calculations.
+// See https://www.desmos.com/calculator/vpiapfimb1 for probably outdated sight
+// calculations.
 func sight(siz float64) int {
-	prt := math.Max(Pi, Pi+math.Pow(siz/Si, 0.46)-1)
-	return int(math.Min(Pl, math.Ceil(prt)))
+	rad := math.Max(Pi, Pi*math.Pow(siz/Si, 0.2))
+	return int(math.Min(Pl, math.Round(rad)))
 }
 
 func trgAgl(cqd byte, cag byte, dqd byte, dag byte, lim byte) (byte, byte) {

@@ -337,92 +337,92 @@ func Test_Vector_Adjust_sight(t *testing.T) {
 		// Case 000
 		{
 			siz: 10,
-			prt: 3,
+			prt: 2,
 		},
 		// Case 001
 		{
 			siz: 50,
-			prt: 3,
+			prt: 2,
 		},
 		// Case 002
 		{
 			siz: 100,
-			prt: 4,
+			prt: 2,
 		},
 		// Case 003
 		{
 			siz: 250,
-			prt: 5,
+			prt: 3,
 		},
 		// Case 004
 		{
 			siz: 500,
-			prt: 5,
+			prt: 3,
 		},
 		// Case 005
 		{
 			siz: 1_000,
-			prt: 6,
+			prt: 4,
 		},
 		// Case 006
 		{
 			siz: 2_500,
-			prt: 9,
+			prt: 4,
 		},
 		// Case 007
 		{
 			siz: 5_000,
-			prt: 11,
+			prt: 5,
 		},
 		// Case 008
 		{
 			siz: 10_000,
-			prt: 14,
+			prt: 6,
 		},
 		// Case 009
 		{
 			siz: 20_000,
-			prt: 18,
+			prt: 7,
 		},
 		// Case 010
 		{
 			siz: 30_000,
-			prt: 21,
+			prt: 7,
 		},
 		// Case 011
 		{
 			siz: 40_000,
-			prt: 24,
+			prt: 8,
 		},
 		// Case 012
 		{
 			siz: 50_000,
-			prt: 25,
+			prt: 8,
 		},
 		// Case 013
 		{
 			siz: 60_000,
-			prt: 25,
+			prt: 8,
 		},
 		// Case 014
 		{
 			siz: 70_000,
-			prt: 25,
+			prt: 8,
 		},
 		// Case 015
 		{
 			siz: 80_000,
-			prt: 25,
+			prt: 8,
 		},
 		// Case 016
 		{
 			siz: 90_000,
-			prt: 25,
+			prt: 8,
 		},
 		// Case 017
 		{
 			siz: 100_000,
-			prt: 25,
+			prt: 8,
 		},
 	}
 
