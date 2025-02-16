@@ -37,10 +37,16 @@ func (v *Vector) expand(hea object.Object) {
 	}
 
 	if ind == 0 {
-		// Initialize a new partition buffer with the given header bytes.
+		// Initialize a new partition buffer with the Vector specific ID bytes, and
+		// the given header bytes.
 
 		{
-			v.buf[prt] = byt[:]
+			buf := make([]byte, 2+object.Len)
+
+			copy(buf[:2], v.uid[:])
+			copy(buf[2:], byt[:])
+
+			v.buf[prt] = buf
 		}
 
 		// Only if the new header breaks into an unoccupied partition, only then do

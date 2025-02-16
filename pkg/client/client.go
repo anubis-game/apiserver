@@ -34,26 +34,3 @@ func New(c Config) *Client {
 		wal: c.Wal,
 	}
 }
-
-func (c *Client) Expiry() chan struct{} {
-	return c.exp
-}
-
-func (c *Client) Reader() chan struct{} {
-	return c.rea
-}
-
-func (c *Client) Stream(byt []byte) {
-	err := c.con.Write(c.ctx, websocket.MessageBinary, byt)
-	if err != nil {
-		close(c.Writer())
-	}
-}
-
-func (c *Client) Wallet() common.Address {
-	return c.wal
-}
-
-func (c *Client) Writer() chan struct{} {
-	return c.wri
-}

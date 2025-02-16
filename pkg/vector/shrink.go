@@ -3,21 +3,30 @@ package vector
 import "github.com/anubis-game/apiserver/pkg/object"
 
 func (v *Vector) Shrink() {
-	tai := v.tai // remember current tail for new tail
+	// Remember the current tail so we can use its value to shrink this Vector
+	// below.
+
+	tai := v.tai
+
+	// The next item of the old tail becomes the new tail. Also reduce the
+	// internal length counter.
 
 	{
-		v.tai = tai.nxt // next of tail becomes new tail
+		v.tai = tai.nxt
 		v.len--
 	}
 
+	// Shrink this Vector using its old tail value.
+
 	{
-		v.shrink(tai.val) // old tail gets cleaned up
+		v.shrink(tai.val)
 	}
 }
 
 func (v *Vector) shrink(old object.Object) {
 	prt := old.Prt()
 	buf := v.buf[prt]
+	ind := len(buf)
 
 	// Always keep track of the amount of coordinates that do not occupy their
 	// respective partitions anymore.
@@ -27,10 +36,9 @@ func (v *Vector) shrink(old object.Object) {
 		v.yfr[prt.Y]--
 	}
 
-	// Reduce the fanout buffer given any of the situations described below.
+	// Reduce or delete the fanout buffer as described below.
 
-	if len(buf) == object.Len {
-
+	if ind == 2+object.Len {
 		// There is only one item left. That item is the object we are asked to
 		// delete.
 
@@ -78,16 +86,17 @@ func (v *Vector) shrink(old object.Object) {
 			}
 		}
 	} else {
-
-		// The item to remove is always the very first part of the buffer. Note that
-		// we are only reslicing the given partition buffer, which means that we
-		// keep the bytes of the deleted old tail allocated in the underlying data
-		// array. This alone would imply a memory leak, but we are fixing this
-		// memory leak in due time within Vector.expand() and also once the
-		// partition buffer gets deleted entirely.
+		// The item to remove is always represented by the very first 6 bytes of the
+		// buffer after the 2 ID bytes. Note that we are only reslicing the existing
+		// partition buffer, without deleting the remaining tail still allocated in
+		// the underlying data array. This alone would usually imply a memory leak,
+		// but we are fixing this memory leak in due time, either within
+		// Vector.expand(), or once the partition buffer gets deleted entirely as
+		// soon as the Vector moves out of it naturally throughout the game.
 
 		{
-			v.buf[prt] = buf[object.Len:]
+			copy(buf[2:], buf[2+object.Len:])
+			v.buf[prt] = buf[:ind-object.Len]
 		}
 	}
 }

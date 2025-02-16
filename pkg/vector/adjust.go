@@ -35,6 +35,8 @@ const (
 	Ris float64 = Frm * 0.8
 )
 
+// TODO Vector.Adjust must call Vector.Smooth() every second (once in 25 Adjust() calls)
+
 func (v *Vector) Adjust(del int, des Motion) {
 	crx := v.crx.Get()
 	cur := v.mot.Get()

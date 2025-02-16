@@ -8,7 +8,7 @@ import (
 	"github.com/xh3b4sd/tracer"
 )
 
-func (h *Handler) auth(_ uuid.UUID, cli *client.Client, _ []byte) error {
+func (h *Handler) auth(_ [2]byte, cli *client.Client, _ []byte) error {
 	var err error
 
 	// Create a new session token using V4 UUIDs for the requesting Wallet

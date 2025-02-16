@@ -10,12 +10,12 @@ import (
 
 func Test_Energy_Bytes(t *testing.T) {
 	testCases := []struct {
-		e Energy
+		e *Energy
 		b []byte
 	}{
 		// Case 000
 		{
-			e: Energy{
+			e: &Energy{
 				Obj: object.Object{X: 12_547, Y: 512},
 				Siz: 0x7c,
 				Typ: 0x3,
@@ -26,8 +26,8 @@ func Test_Energy_Bytes(t *testing.T) {
 
 	for i, tc := range testCases {
 		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
-			b := tc.e.Bytes()
-			e := FromBytes(b)
+			b := tc.e.Encode()
+			e := Decode(b)
 
 			if !reflect.DeepEqual(e, tc.e) {
 				t.Fatalf("expected %#v got %#v", tc.e, e)
@@ -41,11 +41,11 @@ func Test_Energy_Bytes(t *testing.T) {
 
 func Benchmark_Energy_Bytes(b *testing.B) {
 	testCases := []struct {
-		e Energy
+		e *Energy
 	}{
-		// Case 000 ~1.80 ns/op
+		// Case 000 ~1.50 ns/op
 		{
-			e: Energy{
+			e: &Energy{
 				Obj: object.Object{X: 12_547, Y: 512},
 				Siz: 0x7c,
 				Typ: 0x3,
@@ -57,7 +57,7 @@ func Benchmark_Energy_Bytes(b *testing.B) {
 		b.Run(fmt.Sprintf("%03d", i), func(b *testing.B) {
 			b.ResetTimer()
 			for i := 0; i < b.N; i++ {
-				tc.e.Bytes()
+				tc.e.Encode()
 			}
 		})
 	}

@@ -7,8 +7,9 @@ const (
 	Pong Action = 2
 	Auth Action = 3
 	Join Action = 4
-	Move Action = 5
-	Race Action = 6
-	Kill Action = 7
-	Food Action = 8
+	Body Action = 5
+	Move Action = 6
+	Food Action = 7
+	Race Action = 8
+	Kill Action = 9
 )

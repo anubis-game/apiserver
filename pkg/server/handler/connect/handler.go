@@ -11,6 +11,7 @@ import (
 	"github.com/anubis-game/apiserver/pkg/envvar"
 	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/schema"
+	"github.com/anubis-game/apiserver/pkg/unique"
 	"github.com/coder/websocket"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/google/uuid"
@@ -60,6 +61,7 @@ type Handler struct {
 	ttl time.Duration
 	txp *cache.Time[uuid.UUID]
 	tok cache.Interface[uuid.UUID, common.Address]
+	uni *unique.Unique[common.Address]
 	wxp *cache.Time[common.Address]
 }
 
@@ -100,6 +102,7 @@ func New(c Config) *Handler {
 		ttl: musDur(c.Env.ConnectionTimeout, "s"),
 		txp: cache.NewTime[uuid.UUID](),
 		tok: cache.NewSxnc[uuid.UUID, common.Address](),
+		uni: unique.New[common.Address](max),
 		wxp: cache.NewTime[common.Address](),
 	}
 }

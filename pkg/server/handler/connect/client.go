@@ -8,19 +8,13 @@ import (
 	"github.com/anubis-game/apiserver/pkg/schema"
 	"github.com/coder/websocket"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/google/uuid"
 	"github.com/xh3b4sd/tracer"
 )
 
 func (h *Handler) client(wal common.Address, con *websocket.Conn) error {
-	var err error
-
-	var uid uuid.UUID
+	var uid [2]byte
 	{
-		uid, err = uuid.NewRandom()
-		if err != nil {
-			return tracer.Mask(err)
-		}
+		uid = h.uni.Create(wal)
 	}
 
 	var cli *client.Client
@@ -81,6 +75,7 @@ func (h *Handler) client(wal common.Address, con *websocket.Conn) error {
 	}
 
 	{
+		h.uni.Delete(wal)
 		h.wxp.Delete(wal)
 	}
 
@@ -94,7 +89,7 @@ func (h *Handler) client(wal common.Address, con *websocket.Conn) error {
 	return nil
 }
 
-func (h *Handler) reader(con *websocket.Conn, uid uuid.UUID, cli *client.Client) error {
+func (h *Handler) reader(con *websocket.Conn, uid [2]byte, cli *client.Client) error {
 	for {
 		_, byt, err := con.Read(h.ctx)
 		if err != nil {
