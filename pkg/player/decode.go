@@ -13,7 +13,7 @@ func Decode(byt []byte) Player {
 
 	var p Player
 
-	copy(p.Uid[:], byt[0:2])
+	copy(p.Uid[:], byt[:2])
 
 	p.Vec = vector.Decode(byt[8:])
 

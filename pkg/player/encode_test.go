@@ -5,18 +5,20 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/anubis-game/apiserver/pkg/client"
 	"github.com/anubis-game/apiserver/pkg/object"
 	"github.com/anubis-game/apiserver/pkg/vector"
 )
 
 func Test_Player_EncodeVector(t *testing.T) {
 	testCases := []struct {
-		p Player
+		p *Player
 		b []byte
 	}{
 		// Case 000
 		{
-			p: Player{
+			p: New(Config{
+				Cli: client.New(client.Config{}),
 				Uid: [2]byte{0x0, 0x5},
 				Vec: vector.New(vector.Config{
 					Mot: vector.Motion{
@@ -32,7 +34,7 @@ func Test_Player_EncodeVector(t *testing.T) {
 						{X: 112, Y: 112}, // 4
 					},
 				}),
-			},
+			}),
 			b: []byte{
 				// uid
 				0x0, 0x5,
@@ -52,7 +54,7 @@ func Test_Player_EncodeVector(t *testing.T) {
 
 	for i, tc := range testCases {
 		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
-			b := tc.p.EncodeVector()
+			b := tc.p.Encode()
 			p := Decode(b)
 
 			if !reflect.DeepEqual(p.Uid, tc.p.Uid) {

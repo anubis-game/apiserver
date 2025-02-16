@@ -5,7 +5,6 @@ import (
 
 	"github.com/anubis-game/apiserver/pkg/matrix"
 	"github.com/anubis-game/apiserver/pkg/random"
-	"github.com/anubis-game/apiserver/pkg/vector"
 	"github.com/xh3b4sd/logger"
 	"github.com/xh3b4sd/tracer"
 )
@@ -16,11 +15,11 @@ type Config struct {
 }
 
 type Filler struct {
-	ang *random.Random
+	agl *random.Random
 	crd *random.Random
 	don <-chan struct{}
 	qdr *random.Random
-	vec chan *vector.Vector
+	vec chan Vector
 }
 
 func New(c Config) *Filler {
@@ -31,9 +30,9 @@ func New(c Config) *Filler {
 		tracer.Panic(fmt.Errorf("%T.Log must not be empty", c))
 	}
 
-	var ang *random.Random
+	var agl *random.Random
 	{
-		ang = random.New(random.Config{
+		agl = random.New(random.Config{
 			Buf: 500,
 			Don: c.Don,
 			Log: c.Log,
@@ -65,9 +64,9 @@ func New(c Config) *Filler {
 	}
 
 	return &Filler{
-		ang: ang,
+		agl: agl,
 		crd: crd,
 		qdr: qdr,
-		vec: make(chan *vector.Vector, 500),
+		vec: make(chan Vector, 500),
 	}
 }

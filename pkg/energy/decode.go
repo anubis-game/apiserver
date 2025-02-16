@@ -12,7 +12,7 @@ func Decode(byt []byte) *Energy {
 	}
 
 	return &Energy{
-		Obj: object.New(byt[0:object.Len]),
+		Obj: object.New(byt[:object.Len]),
 		Siz: byt[6],
 		Typ: byt[7],
 	}

@@ -16,7 +16,7 @@ func (e *Engine) join(pac router.Packet) {
 		ply = &player.Player{
 			Cli: pac.Cli,
 			Uid: pac.Uid,
-			Vec: e.fil.Vector(),
+			Vec: e.fil.Vector(pac.Uid),
 		}
 	}
 
@@ -27,8 +27,8 @@ func (e *Engine) join(pac router.Packet) {
 	var bod []byte
 	var joi []byte
 	{
-		bod = schema.Encode(schema.Body, ply.EncodeVector())
-		joi = schema.Encode(schema.Join, ply.EncodeWallet())
+		bod = schema.Encode(schema.Body, ply.Encode())
+		joi = schema.Encode(schema.Join, ply.Wallet())
 	}
 
 	// Send the new player's own ID first so every player can self identify.
@@ -60,7 +60,7 @@ func (e *Engine) join(pac router.Packet) {
 		// byte wallets.
 
 		e.buf.ply.Compute(ply.Uid, func(old [][]byte, _ bool) ([][]byte, bool) {
-			return append(old, schema.Encode(schema.Join, v.EncodeWallet())), false
+			return append(old, schema.Encode(schema.Join, v.Wallet())), false
 		})
 	}
 
@@ -94,7 +94,7 @@ func (e *Engine) join(pac router.Packet) {
 
 			for k := range lkp {
 				e.buf.ply.Compute(ply.Uid, func(old [][]byte, _ bool) ([][]byte, bool) {
-					return append(old, schema.Encode(schema.Body, e.mem.ply[k].EncodeBuffer(x))), false
+					return append(old, schema.Encode(schema.Body, e.mem.ply[k].Vec.Buffer(x))), false
 				})
 			}
 		}

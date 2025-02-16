@@ -5,13 +5,13 @@ import (
 )
 
 func (e *Energy) Encode() []byte {
-	var buf [8]byte
+	byt := make([]byte, 8)
 
 	b := e.Obj.Byt()
-	copy(buf[0:object.Len], b[:])
+	copy(byt[:object.Len], b[:])
 
-	buf[6] = e.Siz
-	buf[7] = e.Typ
+	byt[6] = e.Siz
+	byt[7] = e.Typ
 
-	return buf[:]
+	return byt
 }

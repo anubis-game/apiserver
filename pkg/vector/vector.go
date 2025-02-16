@@ -12,18 +12,17 @@ import (
 type Config struct {
 	Mot Motion
 	Obj []object.Object
+	Uid [2]byte
 }
 
 type Vector struct {
-	// crx
-	crx setter.Interface[Charax]
+	// buf contains the prepared fanout buffers grouped by this Vector's occupied
+	// coordinate partitions.
 	//
-	mot setter.Interface[Motion]
-
+	//                          0                               6
+	//     [X: 128, Y: 512]    [0x0, 0x0, 0x2, 0x8, 0x10, 0x2c, 0x0, 0x0, 0x2, 0x8, 0xc, 0x28]
 	//
-	hea *Linker
-	tai *Linker
-	len int
+	buf map[object.Object][]byte
 
 	// btp, brg, bbt and blf are the outer boundaries of this Vector's body,
 	// expressed in partition coordinates, that this Vector keeps track of.
@@ -47,6 +46,20 @@ type Vector struct {
 	// coordinates that this Vector occupies right now and ensure that Vector.bpb
 	// is properly maintained over this Vector's lifetime.
 	bpb []object.Object
+
+	// crx
+	crx setter.Interface[Charax]
+	// mot
+	mot setter.Interface[Motion]
+
+	//
+	hea *Linker
+	tai *Linker
+	len int
+
+	// Uid is the 2 byte unique identifier for this particular Vector across its
+	// entire lifetime.
+	uid [2]byte
 
 	// vtp, vrg, vbt and vlf are the outer boundaries of this Vector's view,
 	// expressed in partition coordinates, that this Vector keeps track of.
@@ -76,14 +89,6 @@ type Vector struct {
 	//
 	xfr map[int]int
 	yfr map[int]int
-
-	// buf contains the prepared fanout buffers grouped by this Vector's occupied
-	// coordinate partitions.
-	//
-	//                          0                               6
-	//     [X: 128, Y: 512]    [0x0, 0x0, 0x2, 0x8, 0x10, 0x2c, 0x0, 0x0, 0x2, 0x8, 0xc, 0x28]
-	//
-	buf map[object.Object][]byte
 }
 
 func New(c Config) *Vector {
@@ -94,6 +99,13 @@ func New(c Config) *Vector {
 	var vec *Vector
 	{
 		vec = &Vector{
+			buf: map[object.Object][]byte{},
+
+			btp: 0,
+			brg: 0,
+			bbt: 0,
+			blf: 0,
+
 			crx: setter.New[Charax](),
 			mot: setter.New[Motion](),
 
@@ -101,10 +113,7 @@ func New(c Config) *Vector {
 			tai: nil,
 			len: 1,
 
-			btp: 0,
-			brg: 0,
-			bbt: 0,
-			blf: 0,
+			uid: c.Uid,
 
 			vtp: 0,
 			vrg: 0,
@@ -113,7 +122,6 @@ func New(c Config) *Vector {
 
 			xfr: map[int]int{},
 			yfr: map[int]int{},
-			buf: map[object.Object][]byte{},
 		}
 	}
 
@@ -166,7 +174,12 @@ func New(c Config) *Vector {
 	}
 
 	{
-		vec.buf[prt] = byt[:]
+		buf := make([]byte, 2+object.Len)
+
+		copy(buf[:2], vec.uid[:])
+		copy(buf[2:], byt[:])
+
+		vec.buf[prt] = buf
 	}
 
 	// Setting the head and tail elements to the very same pointer reference
