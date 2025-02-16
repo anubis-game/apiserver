@@ -43,6 +43,11 @@ type Vector struct {
 	bbt int
 	blf int
 
+	// TODO add Vector.Occupy() []object.Object to return the partition
+	// coordinates that this Vector occupies right now and ensure that Vector.bpb
+	// is properly maintained over this Vector's lifetime.
+	bpb []object.Object
+
 	// vtp, vrg, vbt and vlf are the outer boundaries of this Vector's view,
 	// expressed in partition coordinates, that this Vector keeps track of.
 	//
@@ -141,7 +146,7 @@ func New(c Config) *Vector {
 	// first coordinate represents the Vector's tail.
 
 	var prt object.Object
-	var byt [6]byte
+	var byt [object.Len]byte
 	{
 		tai := c.Obj[0]
 		prt = tai.Prt()

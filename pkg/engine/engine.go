@@ -11,7 +11,6 @@ import (
 	"github.com/anubis-game/apiserver/pkg/player"
 	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/worker"
-	"github.com/google/uuid"
 	"github.com/puzpuzpuz/xsync/v3"
 	"github.com/xh3b4sd/logger"
 	"github.com/xh3b4sd/tracer"
@@ -69,19 +68,19 @@ func New(c Config) *Engine {
 
 	return &Engine{
 		buf: &buffer{
-			nrg: xsync.NewMapOf[uuid.UUID, [][]byte](),
-			ply: xsync.NewMapOf[uuid.UUID, [][]byte](),
+			nrg: xsync.NewMapOf[[2]byte, [][]byte](),
+			ply: xsync.NewMapOf[[2]byte, [][]byte](),
 		},
 		don: c.Don,
 		fil: c.Fil,
 		lkp: &lookup{
-			nrg: xsync.NewMapOf[object.Object, map[uuid.UUID]struct{}](),
-			ply: xsync.NewMapOf[object.Object, map[uuid.UUID]struct{}](),
+			nrg: xsync.NewMapOf[object.Object, map[object.Object]struct{}](),
+			ply: xsync.NewMapOf[object.Object, map[[2]byte]struct{}](),
 		},
 		log: c.Log,
 		mem: &memory{
-			nrg: map[uuid.UUID]*energy.Energy{},
-			ply: map[uuid.UUID]*player.Player{},
+			nrg: map[object.Object]*energy.Energy{},
+			ply: map[[2]byte]*player.Player{},
 		},
 		rtr: c.Rtr,
 		sem: make(chan struct{}, runtime.NumCPU()),

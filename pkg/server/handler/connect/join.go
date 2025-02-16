@@ -2,9 +2,8 @@ package connect
 
 import (
 	"github.com/anubis-game/apiserver/pkg/client"
-	"github.com/google/uuid"
 )
 
-func (h *Handler) join(uid uuid.UUID, cli *client.Client, _ []byte) error {
+func (h *Handler) join(uid [2]byte, cli *client.Client, _ []byte) error {
 	return h.rtr.Join(uid, cli, nil)
 }

@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/anubis-game/apiserver/pkg/player"
-	"github.com/google/uuid"
 )
 
 func (e *Engine) push(tic time.Time) {
@@ -34,7 +33,7 @@ func (e *Engine) push(tic time.Time) {
 	}
 }
 
-func (e *Engine) worker(_ uuid.UUID, ply *player.Player, nbf [][]byte, pbf [][]byte) {
+func (e *Engine) worker(_ [2]byte, ply *player.Player, nbf [][]byte, pbf [][]byte) {
 	// The semaphore controls the amount of workers that are allowed to process
 	// packets at the same time. Every time we receive a packet, we push a ticket
 	// into the semaphore before doing the work.

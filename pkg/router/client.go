@@ -6,7 +6,6 @@ import (
 
 	"github.com/anubis-game/apiserver/pkg/client"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/google/uuid"
 	"github.com/puzpuzpuz/xsync/v3"
 	"github.com/xh3b4sd/tracer"
 	"go.uber.org/ratelimit"
@@ -20,7 +19,7 @@ type Client struct {
 	lim *xsync.MapOf[common.Address, ratelimit.Limiter]
 }
 
-func (c *Client) Join(uid uuid.UUID, cli *client.Client, _ []byte) error {
+func (c *Client) Join(uid [2]byte, cli *client.Client, _ []byte) error {
 	// Prevent DOS attacks and rate limit client specific stream input, so that
 	// our internal fanout schedule cannot be overloaded maliciously.
 
@@ -48,7 +47,7 @@ func (c *Client) Join(uid uuid.UUID, cli *client.Client, _ []byte) error {
 	return nil
 }
 
-func (c *Client) Move(uid uuid.UUID, cli *client.Client, byt []byte) error {
+func (c *Client) Move(uid [2]byte, cli *client.Client, byt []byte) error {
 	// Prevent DOS attacks and rate limit client specific stream input, so that
 	// our internal fanout schedule cannot be overloaded maliciously.
 
@@ -76,7 +75,7 @@ func (c *Client) Move(uid uuid.UUID, cli *client.Client, byt []byte) error {
 	return nil
 }
 
-func (c *Client) Race(uid uuid.UUID, cli *client.Client, _ []byte) error {
+func (c *Client) Race(uid [2]byte, cli *client.Client, _ []byte) error {
 	// Prevent DOS attacks and rate limit client specific stream input, so that
 	// our internal fanout schedule cannot be overloaded maliciously.
 

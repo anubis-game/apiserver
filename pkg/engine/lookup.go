@@ -2,12 +2,12 @@ package engine
 
 import (
 	"github.com/anubis-game/apiserver/pkg/object"
-	"github.com/google/uuid"
 	"github.com/puzpuzpuz/xsync/v3"
 )
 
-// TODO lookup needs to key partition coordinates
 type lookup struct {
-	nrg *xsync.MapOf[object.Object, map[uuid.UUID]struct{}]
-	ply *xsync.MapOf[object.Object, map[uuid.UUID]struct{}]
+	// nrg key: partition, value: location
+	nrg *xsync.MapOf[object.Object, map[object.Object]struct{}]
+	// ply key: partition, value: player ID
+	ply *xsync.MapOf[object.Object, map[[2]byte]struct{}]
 }
