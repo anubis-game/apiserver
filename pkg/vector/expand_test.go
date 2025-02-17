@@ -77,8 +77,15 @@ func Test_Vector_Expand(t *testing.T) {
 				})
 			}
 
+			if vec.len != len(tc.obj) {
+				t.Fatalf("expected %#v got %#v", len(tc.obj), vec.len)
+			}
+
 			vec.Expand(tc.hea)
 
+			if vec.len != len(tc.exp) {
+				t.Fatalf("expected %#v got %#v", len(tc.exp), vec.len)
+			}
 			if !reflect.DeepEqual(vec.hea.val, tc.hea) {
 				t.Fatalf("expected %#v got %#v", tc.hea, vec.hea.val)
 			}
