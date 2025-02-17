@@ -11,7 +11,7 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/miguelmota/go-ethereum-hdwallet v0.1.2
 	github.com/puzpuzpuz/xsync/v3 v3.5.0
-	github.com/spf13/cobra v1.8.1
+	github.com/spf13/cobra v1.9.1
 	github.com/tyler-smith/go-bip39 v1.1.0
 	github.com/xh3b4sd/logger v0.9.0
 	github.com/xh3b4sd/tracer v0.11.1
