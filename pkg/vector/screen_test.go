@@ -8,7 +8,7 @@ import (
 	"github.com/anubis-game/apiserver/pkg/object"
 )
 
-func Test_Vector_Bounds(t *testing.T) {
+func Test_Vector_Screen(t *testing.T) {
 	//
 	//     +---------HR
 	//     │
@@ -57,14 +57,14 @@ func Test_Vector_Bounds(t *testing.T) {
 
 	{
 		sort.Sort(object.Sorter(exp))
-		sort.Sort(object.Sorter(vec.vpb))
+		sort.Sort(object.Sorter(vec.scr.Prt))
 	}
 
-	if len(vec.vpb) != 25 {
-		t.Fatalf("expected %#v got %#v", 25, len(vec.vpb))
+	if len(vec.scr.Prt) != 25 {
+		t.Fatalf("expected %#v got %#v", 25, len(vec.scr.Prt))
 	}
-	if !slices.Equal(exp, vec.vpb) {
-		t.Fatalf("expected %#v got %#v", exp, vec.vpb)
+	if !slices.Equal(exp, vec.scr.Prt) {
+		t.Fatalf("expected %#v got %#v", exp, vec.scr.Prt)
 	}
 
 	// After 6 iterations of adjusting our view by rotation, we explore a new set
@@ -86,14 +86,14 @@ func Test_Vector_Bounds(t *testing.T) {
 
 	{
 		sort.Sort(object.Sorter(exp))
-		sort.Sort(object.Sorter(vec.vpb))
+		sort.Sort(object.Sorter(vec.scr.Prt))
 	}
 
-	if len(vec.vpb) != 5 {
-		t.Fatalf("expected %#v got %#v", 5, len(vec.vpb))
+	if len(vec.scr.Prt) != 5 {
+		t.Fatalf("expected %#v got %#v", 5, len(vec.scr.Prt))
 	}
-	if !slices.Equal(exp, vec.vpb) {
-		t.Fatalf("expected %#v got %#v", exp, vec.vpb)
+	if !slices.Equal(exp, vec.scr.Prt) {
+		t.Fatalf("expected %#v got %#v", exp, vec.scr.Prt)
 	}
 
 	// After 2 more iterations of adjusting our view by rotation, we explore a new
@@ -111,13 +111,13 @@ func Test_Vector_Bounds(t *testing.T) {
 
 	{
 		sort.Sort(object.Sorter(exp))
-		sort.Sort(object.Sorter(vec.vpb))
+		sort.Sort(object.Sorter(vec.scr.Prt))
 	}
 
-	if len(vec.vpb) != 5 {
-		t.Fatalf("expected %#v got %#v", 5, len(vec.vpb))
+	if len(vec.scr.Prt) != 5 {
+		t.Fatalf("expected %#v got %#v", 5, len(vec.scr.Prt))
 	}
-	if !slices.Equal(exp, vec.vpb) {
-		t.Fatalf("expected %#v got %#v", exp, vec.vpb)
+	if !slices.Equal(exp, vec.scr.Prt) {
+		t.Fatalf("expected %#v got %#v", exp, vec.scr.Prt)
 	}
 }

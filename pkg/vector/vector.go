@@ -24,29 +24,6 @@ type Vector struct {
 	//
 	buf map[object.Object][]byte
 
-	// btp, brg, bbt and blf are the outer boundaries of this Vector's body,
-	// expressed in partition coordinates, that this Vector keeps track of.
-	//
-	//                btp
-	//         +---------------+
-	//         |          #### |
-	//         |          #    |
-	//     blf | #######  #    | brg
-	//         |       #  #    |
-	//         |       ####    |
-	//         +---------------+
-	//                bbt
-	//
-	btp int
-	brg int
-	bbt int
-	blf int
-
-	// TODO add Vector.Occupy() []object.Object to return the partition
-	// coordinates that this Vector occupies right now and ensure that Vector.bpb
-	// is properly maintained over this Vector's lifetime.
-	bpb []object.Object
-
 	// crx
 	crx setter.Interface[Charax]
 	// mot
@@ -57,36 +34,18 @@ type Vector struct {
 	tai *Linker
 	len int
 
+	// occ contains information about partition coordinates that this Vector
+	// occupies.
+	occ *Occupy
+
+	// scr
+	scr *Screen
+
 	// Uid is the 2 byte unique identifier for this particular Vector across its
 	// entire lifetime.
 	uid [2]byte
 
-	// vtp, vrg, vbt and vlf are the outer boundaries of this Vector's view,
-	// expressed in partition coordinates, that this Vector keeps track of.
-	//
-	//                vtp
-	//         +---------------+
-	//         |               |
-	//         |               |
-	//     vlf |    ####       | vrg
-	//         |    #          |
-	//     #######  #          |
-	//         +-#--#----------+
-	//           #### vbt
-	//
-	vtp int
-	vrg int
-	vbt int
-	vlf int
-
-	// vpb is this Vector's movement based list of partition boundaries. The
-	// partitions listed here represent the Vector's most recently reveiled view
-	// due to a player's movement across the coordinate system. In other words,
-	// the partitions here represent what the player can now see, because the
-	// player was moving towards a direction that was unexplored before.
-	vpb []object.Object
-
-	//
+	// TODO move those counters to Vector.Screen
 	xfr map[int]int
 	yfr map[int]int
 }
@@ -101,24 +60,13 @@ func New(c Config) *Vector {
 		vec = &Vector{
 			buf: map[object.Object][]byte{},
 
-			btp: 0,
-			brg: 0,
-			bbt: 0,
-			blf: 0,
-
 			crx: setter.New[Charax](),
 			mot: setter.New[Motion](),
 
-			hea: nil,
-			tai: nil,
-			len: 1,
+			occ: &Occupy{},
+			scr: &Screen{},
 
 			uid: c.Uid,
-
-			vtp: 0,
-			vrg: 0,
-			vbt: 0,
-			vlf: 0,
 
 			xfr: map[int]int{},
 			yfr: map[int]int{},
@@ -162,10 +110,10 @@ func New(c Config) *Vector {
 	}
 
 	{
-		vec.btp = prt.Y
-		vec.brg = prt.X
-		vec.bbt = prt.Y
-		vec.blf = prt.X
+		vec.occ.Top = prt.Y
+		vec.occ.Rig = prt.X
+		vec.occ.Bot = prt.Y
+		vec.occ.Lef = prt.X
 	}
 
 	{
@@ -196,6 +144,7 @@ func New(c Config) *Vector {
 	{
 		vec.hea = lin
 		vec.tai = lin
+		vec.len = 1
 	}
 
 	// Add all injected objects properly to this vector by registering the
@@ -220,23 +169,28 @@ func New(c Config) *Vector {
 	}
 
 	{
-		vec.vtp = prt.Y + vpb
-		vec.vrg = prt.X + vpb
-		vec.vbt = prt.Y - vpb
-		vec.vlf = prt.X - vpb
+		vec.occ.Old = object.Object{}
+		vec.occ.New = object.Object{}
+		vec.occ.Prt = nil
 	}
-
-	// We have to reset the partition boundary slice because the initial calls to
-	// Vector.Expand() fill it with invalid values that would pollute the correct
-	// view otherwise.
 
 	{
-		vec.vpb = nil
+		vec.scr.Top = prt.Y + vpb
+		vec.scr.Rig = prt.X + vpb
+		vec.scr.Bot = prt.Y - vpb
+		vec.scr.Lef = prt.X - vpb
+		vec.scr.Prt = nil
 	}
 
-	for x := vec.vlf; x <= vec.vrg; x += matrix.Prt {
-		for y := vec.vbt; y <= vec.vtp; y += matrix.Prt {
-			vec.vpb = append(vec.vpb, object.Object{X: x, Y: y})
+	for x := vec.scr.Lef; x <= vec.scr.Rig; x += matrix.Prt {
+		for y := vec.scr.Bot; y <= vec.scr.Top; y += matrix.Prt {
+			vec.scr.Prt = append(vec.scr.Prt, object.Object{X: x, Y: y})
+		}
+	}
+
+	for x := vec.occ.Lef; x <= vec.occ.Rig; x += matrix.Prt {
+		for y := vec.occ.Bot; y <= vec.occ.Top; y += matrix.Prt {
+			vec.occ.Prt = append(vec.occ.Prt, object.Object{X: x, Y: y})
 		}
 	}
 

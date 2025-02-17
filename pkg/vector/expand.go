@@ -54,43 +54,43 @@ func (v *Vector) expand(hea object.Object) {
 		// our boundaries according to their direction of change.
 
 		{
-			v.vpb = nil
+			v.occ.New = prt
 		}
 
-		if prt.Y > v.btp {
+		if prt.Y > v.occ.Top {
 			{
-				v.btp = prt.Y
+				v.occ.Top = prt.Y
 			}
 
-			for x := v.vlf; x <= v.vrg; x += matrix.Prt {
-				v.vpb = append(v.vpb, object.Object{X: x, Y: v.vtp})
+			for x := v.scr.Lef; x <= v.scr.Rig; x += matrix.Prt {
+				v.scr.Prt = append(v.scr.Prt, object.Object{X: x, Y: v.scr.Top})
 			}
 		}
-		if prt.X > v.brg {
+		if prt.X > v.occ.Rig {
 			{
-				v.brg = prt.X
+				v.occ.Rig = prt.X
 			}
 
-			for y := v.vbt; y <= v.vtp; y += matrix.Prt {
-				v.vpb = append(v.vpb, object.Object{X: v.vrg, Y: y})
+			for y := v.scr.Bot; y <= v.scr.Top; y += matrix.Prt {
+				v.scr.Prt = append(v.scr.Prt, object.Object{X: v.scr.Rig, Y: y})
 			}
 		}
-		if prt.Y < v.bbt {
+		if prt.Y < v.occ.Bot {
 			{
-				v.bbt = prt.Y
+				v.occ.Bot = prt.Y
 			}
 
-			for x := v.vlf; x <= v.vrg; x += matrix.Prt {
-				v.vpb = append(v.vpb, object.Object{X: x, Y: v.vbt})
+			for x := v.scr.Lef; x <= v.scr.Rig; x += matrix.Prt {
+				v.scr.Prt = append(v.scr.Prt, object.Object{X: x, Y: v.scr.Bot})
 			}
 		}
-		if prt.X < v.blf {
+		if prt.X < v.occ.Lef {
 			{
-				v.blf = prt.X
+				v.occ.Lef = prt.X
 			}
 
-			for y := v.vbt; y <= v.vtp; y += matrix.Prt {
-				v.vpb = append(v.vpb, object.Object{X: v.vlf, Y: y})
+			for y := v.scr.Bot; y <= v.scr.Top; y += matrix.Prt {
+				v.scr.Prt = append(v.scr.Prt, object.Object{X: v.scr.Lef, Y: y})
 			}
 		}
 	} else {
@@ -106,5 +106,12 @@ func (v *Vector) expand(hea object.Object) {
 		copy(app[ind:], byt[:]) // append the new header bytes
 
 		v.buf[prt] = app
+
+		// Reset the newly occupied partition every time the occupation is in fact
+		// not new anymore.
+
+		{
+			v.occ.New = object.Object{}
+		}
 	}
 }

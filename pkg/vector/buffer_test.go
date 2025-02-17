@@ -39,24 +39,34 @@ func Test_Vector_Buffer_Change(t *testing.T) {
 	var rig int
 	var bot int
 	var lef int
+	var old object.Object
+	var new object.Object
 	{
 		top = 384
 		rig = 256
 		bot = 0
 		lef = 0
+		old = object.Object{}
+		new = object.Object{}
 	}
 
-	if vec.btp != top {
-		t.Fatalf("expected %#v got %#v", top, vec.btp)
+	if vec.occ.Top != top {
+		t.Fatalf("expected %#v got %#v", top, vec.occ.Top)
 	}
-	if vec.brg != rig {
-		t.Fatalf("expected %#v got %#v", rig, vec.brg)
+	if vec.occ.Rig != rig {
+		t.Fatalf("expected %#v got %#v", rig, vec.occ.Rig)
 	}
-	if vec.bbt != bot {
-		t.Fatalf("expected %#v got %#v", bot, vec.bbt)
+	if vec.occ.Bot != bot {
+		t.Fatalf("expected %#v got %#v", bot, vec.occ.Bot)
 	}
-	if vec.blf != lef {
-		t.Fatalf("expected %#v got %#v", lef, vec.blf)
+	if vec.occ.Lef != lef {
+		t.Fatalf("expected %#v got %#v", lef, vec.occ.Lef)
+	}
+	if vec.occ.Old != old {
+		t.Fatalf("expected %#v got %#v", old, vec.occ.Old)
+	}
+	if vec.occ.New != new {
+		t.Fatalf("expected %#v got %#v", new, vec.occ.New)
 	}
 
 	if len(vec.buf) != 6 {
@@ -95,19 +105,27 @@ func Test_Vector_Buffer_Change(t *testing.T) {
 		rig = 256
 		bot = 128
 		lef = 0
+		old = object.Object{}
+		new = object.Object{}
 	}
 
-	if vec.btp != top {
-		t.Fatalf("expected %#v got %#v", top, vec.btp)
+	if vec.occ.Top != top {
+		t.Fatalf("expected %#v got %#v", top, vec.occ.Top)
 	}
-	if vec.brg != rig {
-		t.Fatalf("expected %#v got %#v", rig, vec.brg)
+	if vec.occ.Rig != rig {
+		t.Fatalf("expected %#v got %#v", rig, vec.occ.Rig)
 	}
-	if vec.bbt != bot {
-		t.Fatalf("expected %#v got %#v", bot, vec.bbt)
+	if vec.occ.Bot != bot {
+		t.Fatalf("expected %#v got %#v", bot, vec.occ.Bot)
 	}
-	if vec.blf != lef {
-		t.Fatalf("expected %#v got %#v", lef, vec.blf)
+	if vec.occ.Lef != lef {
+		t.Fatalf("expected %#v got %#v", lef, vec.occ.Lef)
+	}
+	if vec.occ.Old != old {
+		t.Fatalf("expected %#v got %#v", old, vec.occ.Old)
+	}
+	if vec.occ.New != new {
+		t.Fatalf("expected %#v got %#v", new, vec.occ.New)
 	}
 
 	if len(vec.buf) != 5 {
@@ -144,19 +162,27 @@ func Test_Vector_Buffer_Change(t *testing.T) {
 		rig = 384
 		bot = 128
 		lef = 0
+		old = object.Object{}
+		new = object.Object{X: 384, Y: 384}
 	}
 
-	if vec.btp != top {
-		t.Fatalf("expected %#v got %#v", top, vec.btp)
+	if vec.occ.Top != top {
+		t.Fatalf("expected %#v got %#v", top, vec.occ.Top)
 	}
-	if vec.brg != rig {
-		t.Fatalf("expected %#v got %#v", rig, vec.brg)
+	if vec.occ.Rig != rig {
+		t.Fatalf("expected %#v got %#v", rig, vec.occ.Rig)
 	}
-	if vec.bbt != bot {
-		t.Fatalf("expected %#v got %#v", bot, vec.bbt)
+	if vec.occ.Bot != bot {
+		t.Fatalf("expected %#v got %#v", bot, vec.occ.Bot)
 	}
-	if vec.blf != lef {
-		t.Fatalf("expected %#v got %#v", lef, vec.blf)
+	if vec.occ.Lef != lef {
+		t.Fatalf("expected %#v got %#v", lef, vec.occ.Lef)
+	}
+	if vec.occ.Old != old {
+		t.Fatalf("expected %#v got %#v", old, vec.occ.Old)
+	}
+	if vec.occ.New != new {
+		t.Fatalf("expected %#v got %#v", new, vec.occ.New)
 	}
 
 	if len(vec.buf) != 6 {
@@ -195,19 +221,27 @@ func Test_Vector_Buffer_Change(t *testing.T) {
 		rig = 384
 		bot = 128
 		lef = 0
+		old = object.Object{}
+		new = object.Object{}
 	}
 
-	if vec.btp != top {
-		t.Fatalf("expected %#v got %#v", top, vec.btp)
+	if vec.occ.Top != top {
+		t.Fatalf("expected %#v got %#v", top, vec.occ.Top)
 	}
-	if vec.brg != rig {
-		t.Fatalf("expected %#v got %#v", rig, vec.brg)
+	if vec.occ.Rig != rig {
+		t.Fatalf("expected %#v got %#v", rig, vec.occ.Rig)
 	}
-	if vec.bbt != bot {
-		t.Fatalf("expected %#v got %#v", bot, vec.bbt)
+	if vec.occ.Bot != bot {
+		t.Fatalf("expected %#v got %#v", bot, vec.occ.Bot)
 	}
-	if vec.blf != lef {
-		t.Fatalf("expected %#v got %#v", lef, vec.blf)
+	if vec.occ.Lef != lef {
+		t.Fatalf("expected %#v got %#v", lef, vec.occ.Lef)
+	}
+	if vec.occ.Old != old {
+		t.Fatalf("expected %#v got %#v", old, vec.occ.Old)
+	}
+	if vec.occ.New != new {
+		t.Fatalf("expected %#v got %#v", new, vec.occ.New)
 	}
 
 	if len(vec.buf) != 6 {
@@ -246,19 +280,27 @@ func Test_Vector_Buffer_Change(t *testing.T) {
 		rig = 384
 		bot = 256
 		lef = 0
+		old = object.Object{X: 0, Y: 128}
+		new = object.Object{}
 	}
 
-	if vec.btp != top {
-		t.Fatalf("expected %#v got %#v", top, vec.btp)
+	if vec.occ.Top != top {
+		t.Fatalf("expected %#v got %#v", top, vec.occ.Top)
 	}
-	if vec.brg != rig {
-		t.Fatalf("expected %#v got %#v", rig, vec.brg)
+	if vec.occ.Rig != rig {
+		t.Fatalf("expected %#v got %#v", rig, vec.occ.Rig)
 	}
-	if vec.bbt != bot {
-		t.Fatalf("expected %#v got %#v", bot, vec.bbt)
+	if vec.occ.Bot != bot {
+		t.Fatalf("expected %#v got %#v", bot, vec.occ.Bot)
 	}
-	if vec.blf != lef {
-		t.Fatalf("expected %#v got %#v", lef, vec.blf)
+	if vec.occ.Lef != lef {
+		t.Fatalf("expected %#v got %#v", lef, vec.occ.Lef)
+	}
+	if vec.occ.Old != old {
+		t.Fatalf("expected %#v got %#v", old, vec.occ.Old)
+	}
+	if vec.occ.New != new {
+		t.Fatalf("expected %#v got %#v", new, vec.occ.New)
 	}
 
 	if len(vec.buf) != 5 {
@@ -295,19 +337,27 @@ func Test_Vector_Buffer_Change(t *testing.T) {
 		rig = 512
 		bot = 256
 		lef = 0
+		old = object.Object{}
+		new = object.Object{X: 512, Y: 384}
 	}
 
-	if vec.btp != top {
-		t.Fatalf("expected %#v got %#v", top, vec.btp)
+	if vec.occ.Top != top {
+		t.Fatalf("expected %#v got %#v", top, vec.occ.Top)
 	}
-	if vec.brg != rig {
-		t.Fatalf("expected %#v got %#v", rig, vec.brg)
+	if vec.occ.Rig != rig {
+		t.Fatalf("expected %#v got %#v", rig, vec.occ.Rig)
 	}
-	if vec.bbt != bot {
-		t.Fatalf("expected %#v got %#v", bot, vec.bbt)
+	if vec.occ.Bot != bot {
+		t.Fatalf("expected %#v got %#v", bot, vec.occ.Bot)
 	}
-	if vec.blf != lef {
-		t.Fatalf("expected %#v got %#v", lef, vec.blf)
+	if vec.occ.Lef != lef {
+		t.Fatalf("expected %#v got %#v", lef, vec.occ.Lef)
+	}
+	if vec.occ.Old != old {
+		t.Fatalf("expected %#v got %#v", old, vec.occ.Old)
+	}
+	if vec.occ.New != new {
+		t.Fatalf("expected %#v got %#v", new, vec.occ.New)
 	}
 
 	if len(vec.buf) != 6 {
@@ -346,19 +396,27 @@ func Test_Vector_Buffer_Change(t *testing.T) {
 		rig = 512
 		bot = 384
 		lef = 0
+		old = object.Object{X: 0, Y: 256}
+		new = object.Object{}
 	}
 
-	if vec.btp != top {
-		t.Fatalf("expected %#v got %#v", top, vec.btp)
+	if vec.occ.Top != top {
+		t.Fatalf("expected %#v got %#v", top, vec.occ.Top)
 	}
-	if vec.brg != rig {
-		t.Fatalf("expected %#v got %#v", rig, vec.brg)
+	if vec.occ.Rig != rig {
+		t.Fatalf("expected %#v got %#v", rig, vec.occ.Rig)
 	}
-	if vec.bbt != bot {
-		t.Fatalf("expected %#v got %#v", bot, vec.bbt)
+	if vec.occ.Bot != bot {
+		t.Fatalf("expected %#v got %#v", bot, vec.occ.Bot)
 	}
-	if vec.blf != lef {
-		t.Fatalf("expected %#v got %#v", lef, vec.blf)
+	if vec.occ.Lef != lef {
+		t.Fatalf("expected %#v got %#v", lef, vec.occ.Lef)
+	}
+	if vec.occ.Old != old {
+		t.Fatalf("expected %#v got %#v", old, vec.occ.Old)
+	}
+	if vec.occ.New != new {
+		t.Fatalf("expected %#v got %#v", new, vec.occ.New)
 	}
 
 	if len(vec.buf) != 5 {
@@ -395,19 +453,27 @@ func Test_Vector_Buffer_Change(t *testing.T) {
 		rig = 640
 		bot = 384
 		lef = 128
+		old = object.Object{X: 0, Y: 384}
+		new = object.Object{X: 640, Y: 384}
 	}
 
-	if vec.btp != top {
-		t.Fatalf("expected %#v got %#v", top, vec.btp)
+	if vec.occ.Top != top {
+		t.Fatalf("expected %#v got %#v", top, vec.occ.Top)
 	}
-	if vec.brg != rig {
-		t.Fatalf("expected %#v got %#v", rig, vec.brg)
+	if vec.occ.Rig != rig {
+		t.Fatalf("expected %#v got %#v", rig, vec.occ.Rig)
 	}
-	if vec.bbt != bot {
-		t.Fatalf("expected %#v got %#v", bot, vec.bbt)
+	if vec.occ.Bot != bot {
+		t.Fatalf("expected %#v got %#v", bot, vec.occ.Bot)
 	}
-	if vec.blf != lef {
-		t.Fatalf("expected %#v got %#v", lef, vec.blf)
+	if vec.occ.Lef != lef {
+		t.Fatalf("expected %#v got %#v", lef, vec.occ.Lef)
+	}
+	if vec.occ.Old != old {
+		t.Fatalf("expected %#v got %#v", old, vec.occ.Old)
+	}
+	if vec.occ.New != new {
+		t.Fatalf("expected %#v got %#v", new, vec.occ.New)
 	}
 
 	if len(vec.buf) != 5 {
@@ -444,19 +510,27 @@ func Test_Vector_Buffer_Change(t *testing.T) {
 		rig = 640
 		bot = 384
 		lef = 128
+		old = object.Object{}
+		new = object.Object{}
 	}
 
-	if vec.btp != top {
-		t.Fatalf("expected %#v got %#v", top, vec.btp)
+	if vec.occ.Top != top {
+		t.Fatalf("expected %#v got %#v", top, vec.occ.Top)
 	}
-	if vec.brg != rig {
-		t.Fatalf("expected %#v got %#v", rig, vec.brg)
+	if vec.occ.Rig != rig {
+		t.Fatalf("expected %#v got %#v", rig, vec.occ.Rig)
 	}
-	if vec.bbt != bot {
-		t.Fatalf("expected %#v got %#v", bot, vec.bbt)
+	if vec.occ.Bot != bot {
+		t.Fatalf("expected %#v got %#v", bot, vec.occ.Bot)
 	}
-	if vec.blf != lef {
-		t.Fatalf("expected %#v got %#v", lef, vec.blf)
+	if vec.occ.Lef != lef {
+		t.Fatalf("expected %#v got %#v", lef, vec.occ.Lef)
+	}
+	if vec.occ.Old != old {
+		t.Fatalf("expected %#v got %#v", old, vec.occ.Old)
+	}
+	if vec.occ.New != new {
+		t.Fatalf("expected %#v got %#v", new, vec.occ.New)
 	}
 
 	if len(vec.buf) != 5 {
@@ -523,17 +597,17 @@ func Test_Vector_Buffer_Duplicate_Coordinates(t *testing.T) {
 		lef = 0
 	}
 
-	if vec.btp != top {
-		t.Fatalf("expected %#v got %#v", top, vec.btp)
+	if vec.occ.Top != top {
+		t.Fatalf("expected %#v got %#v", top, vec.occ.Top)
 	}
-	if vec.brg != rig {
-		t.Fatalf("expected %#v got %#v", rig, vec.brg)
+	if vec.occ.Rig != rig {
+		t.Fatalf("expected %#v got %#v", rig, vec.occ.Rig)
 	}
-	if vec.bbt != bot {
-		t.Fatalf("expected %#v got %#v", bot, vec.bbt)
+	if vec.occ.Bot != bot {
+		t.Fatalf("expected %#v got %#v", bot, vec.occ.Bot)
 	}
-	if vec.blf != lef {
-		t.Fatalf("expected %#v got %#v", lef, vec.blf)
+	if vec.occ.Lef != lef {
+		t.Fatalf("expected %#v got %#v", lef, vec.occ.Lef)
 	}
 
 	if len(vec.buf) != 4 {
@@ -569,17 +643,17 @@ func Test_Vector_Buffer_Duplicate_Coordinates(t *testing.T) {
 		lef = 0
 	}
 
-	if vec.btp != top {
-		t.Fatalf("expected %#v got %#v", top, vec.btp)
+	if vec.occ.Top != top {
+		t.Fatalf("expected %#v got %#v", top, vec.occ.Top)
 	}
-	if vec.brg != rig {
-		t.Fatalf("expected %#v got %#v", rig, vec.brg)
+	if vec.occ.Rig != rig {
+		t.Fatalf("expected %#v got %#v", rig, vec.occ.Rig)
 	}
-	if vec.bbt != bot {
-		t.Fatalf("expected %#v got %#v", bot, vec.bbt)
+	if vec.occ.Bot != bot {
+		t.Fatalf("expected %#v got %#v", bot, vec.occ.Bot)
 	}
-	if vec.blf != lef {
-		t.Fatalf("expected %#v got %#v", lef, vec.blf)
+	if vec.occ.Lef != lef {
+		t.Fatalf("expected %#v got %#v", lef, vec.occ.Lef)
 	}
 
 	if len(vec.buf) != 4 {
@@ -615,17 +689,17 @@ func Test_Vector_Buffer_Duplicate_Coordinates(t *testing.T) {
 		lef = 0
 	}
 
-	if vec.btp != top {
-		t.Fatalf("expected %#v got %#v", top, vec.btp)
+	if vec.occ.Top != top {
+		t.Fatalf("expected %#v got %#v", top, vec.occ.Top)
 	}
-	if vec.brg != rig {
-		t.Fatalf("expected %#v got %#v", rig, vec.brg)
+	if vec.occ.Rig != rig {
+		t.Fatalf("expected %#v got %#v", rig, vec.occ.Rig)
 	}
-	if vec.bbt != bot {
-		t.Fatalf("expected %#v got %#v", bot, vec.bbt)
+	if vec.occ.Bot != bot {
+		t.Fatalf("expected %#v got %#v", bot, vec.occ.Bot)
 	}
-	if vec.blf != lef {
-		t.Fatalf("expected %#v got %#v", lef, vec.blf)
+	if vec.occ.Lef != lef {
+		t.Fatalf("expected %#v got %#v", lef, vec.occ.Lef)
 	}
 
 	if len(vec.buf) != 4 {
@@ -661,17 +735,17 @@ func Test_Vector_Buffer_Duplicate_Coordinates(t *testing.T) {
 		lef = 0
 	}
 
-	if vec.btp != top {
-		t.Fatalf("expected %#v got %#v", top, vec.btp)
+	if vec.occ.Top != top {
+		t.Fatalf("expected %#v got %#v", top, vec.occ.Top)
 	}
-	if vec.brg != rig {
-		t.Fatalf("expected %#v got %#v", rig, vec.brg)
+	if vec.occ.Rig != rig {
+		t.Fatalf("expected %#v got %#v", rig, vec.occ.Rig)
 	}
-	if vec.bbt != bot {
-		t.Fatalf("expected %#v got %#v", bot, vec.bbt)
+	if vec.occ.Bot != bot {
+		t.Fatalf("expected %#v got %#v", bot, vec.occ.Bot)
 	}
-	if vec.blf != lef {
-		t.Fatalf("expected %#v got %#v", lef, vec.blf)
+	if vec.occ.Lef != lef {
+		t.Fatalf("expected %#v got %#v", lef, vec.occ.Lef)
 	}
 
 	if len(vec.buf) != 4 {
@@ -707,17 +781,17 @@ func Test_Vector_Buffer_Duplicate_Coordinates(t *testing.T) {
 		lef = 0
 	}
 
-	if vec.btp != top {
-		t.Fatalf("expected %#v got %#v", top, vec.btp)
+	if vec.occ.Top != top {
+		t.Fatalf("expected %#v got %#v", top, vec.occ.Top)
 	}
-	if vec.brg != rig {
-		t.Fatalf("expected %#v got %#v", rig, vec.brg)
+	if vec.occ.Rig != rig {
+		t.Fatalf("expected %#v got %#v", rig, vec.occ.Rig)
 	}
-	if vec.bbt != bot {
-		t.Fatalf("expected %#v got %#v", bot, vec.bbt)
+	if vec.occ.Bot != bot {
+		t.Fatalf("expected %#v got %#v", bot, vec.occ.Bot)
 	}
-	if vec.blf != lef {
-		t.Fatalf("expected %#v got %#v", lef, vec.blf)
+	if vec.occ.Lef != lef {
+		t.Fatalf("expected %#v got %#v", lef, vec.occ.Lef)
 	}
 
 	if len(vec.buf) != 4 {
@@ -753,17 +827,17 @@ func Test_Vector_Buffer_Duplicate_Coordinates(t *testing.T) {
 		lef = 0
 	}
 
-	if vec.btp != top {
-		t.Fatalf("expected %#v got %#v", top, vec.btp)
+	if vec.occ.Top != top {
+		t.Fatalf("expected %#v got %#v", top, vec.occ.Top)
 	}
-	if vec.brg != rig {
-		t.Fatalf("expected %#v got %#v", rig, vec.brg)
+	if vec.occ.Rig != rig {
+		t.Fatalf("expected %#v got %#v", rig, vec.occ.Rig)
 	}
-	if vec.bbt != bot {
-		t.Fatalf("expected %#v got %#v", bot, vec.bbt)
+	if vec.occ.Bot != bot {
+		t.Fatalf("expected %#v got %#v", bot, vec.occ.Bot)
 	}
-	if vec.blf != lef {
-		t.Fatalf("expected %#v got %#v", lef, vec.blf)
+	if vec.occ.Lef != lef {
+		t.Fatalf("expected %#v got %#v", lef, vec.occ.Lef)
 	}
 
 	if len(vec.buf) != 4 {
@@ -798,17 +872,17 @@ func Test_Vector_Buffer_Duplicate_Coordinates(t *testing.T) {
 		lef = 0
 	}
 
-	if vec.btp != top {
-		t.Fatalf("expected %#v got %#v", top, vec.btp)
+	if vec.occ.Top != top {
+		t.Fatalf("expected %#v got %#v", top, vec.occ.Top)
 	}
-	if vec.brg != rig {
-		t.Fatalf("expected %#v got %#v", rig, vec.brg)
+	if vec.occ.Rig != rig {
+		t.Fatalf("expected %#v got %#v", rig, vec.occ.Rig)
 	}
-	if vec.bbt != bot {
-		t.Fatalf("expected %#v got %#v", bot, vec.bbt)
+	if vec.occ.Bot != bot {
+		t.Fatalf("expected %#v got %#v", bot, vec.occ.Bot)
 	}
-	if vec.blf != lef {
-		t.Fatalf("expected %#v got %#v", lef, vec.blf)
+	if vec.occ.Lef != lef {
+		t.Fatalf("expected %#v got %#v", lef, vec.occ.Lef)
 	}
 
 	if len(vec.buf) != 4 {
@@ -843,17 +917,17 @@ func Test_Vector_Buffer_Duplicate_Coordinates(t *testing.T) {
 		lef = 0
 	}
 
-	if vec.btp != top {
-		t.Fatalf("expected %#v got %#v", top, vec.btp)
+	if vec.occ.Top != top {
+		t.Fatalf("expected %#v got %#v", top, vec.occ.Top)
 	}
-	if vec.brg != rig {
-		t.Fatalf("expected %#v got %#v", rig, vec.brg)
+	if vec.occ.Rig != rig {
+		t.Fatalf("expected %#v got %#v", rig, vec.occ.Rig)
 	}
-	if vec.bbt != bot {
-		t.Fatalf("expected %#v got %#v", bot, vec.bbt)
+	if vec.occ.Bot != bot {
+		t.Fatalf("expected %#v got %#v", bot, vec.occ.Bot)
 	}
-	if vec.blf != lef {
-		t.Fatalf("expected %#v got %#v", lef, vec.blf)
+	if vec.occ.Lef != lef {
+		t.Fatalf("expected %#v got %#v", lef, vec.occ.Lef)
 	}
 
 	if len(vec.buf) != 3 {
@@ -917,34 +991,34 @@ func Test_Vector_Buffer_No_Change(t *testing.T) {
 		lef = 0
 	}
 
-	if vec.btp != top {
-		t.Fatalf("expected %#v got %#v", top, vec.btp)
+	if vec.occ.Top != top {
+		t.Fatalf("expected %#v got %#v", top, vec.occ.Top)
 	}
-	if vec.brg != rig {
-		t.Fatalf("expected %#v got %#v", rig, vec.brg)
+	if vec.occ.Rig != rig {
+		t.Fatalf("expected %#v got %#v", rig, vec.occ.Rig)
 	}
-	if vec.bbt != bot {
-		t.Fatalf("expected %#v got %#v", bot, vec.bbt)
+	if vec.occ.Bot != bot {
+		t.Fatalf("expected %#v got %#v", bot, vec.occ.Bot)
 	}
-	if vec.blf != lef {
-		t.Fatalf("expected %#v got %#v", lef, vec.blf)
+	if vec.occ.Lef != lef {
+		t.Fatalf("expected %#v got %#v", lef, vec.occ.Lef)
 	}
 
 	{
 		vec.Rotate(object.Object{X: 110, Y: 115}) // R
 	}
 
-	if vec.btp != top {
-		t.Fatalf("expected %#v got %#v", top, vec.btp)
+	if vec.occ.Top != top {
+		t.Fatalf("expected %#v got %#v", top, vec.occ.Top)
 	}
-	if vec.brg != rig {
-		t.Fatalf("expected %#v got %#v", rig, vec.brg)
+	if vec.occ.Rig != rig {
+		t.Fatalf("expected %#v got %#v", rig, vec.occ.Rig)
 	}
-	if vec.bbt != bot {
-		t.Fatalf("expected %#v got %#v", bot, vec.bbt)
+	if vec.occ.Bot != bot {
+		t.Fatalf("expected %#v got %#v", bot, vec.occ.Bot)
 	}
-	if vec.blf != lef {
-		t.Fatalf("expected %#v got %#v", lef, vec.blf)
+	if vec.occ.Lef != lef {
+		t.Fatalf("expected %#v got %#v", lef, vec.occ.Lef)
 	}
 }
 
