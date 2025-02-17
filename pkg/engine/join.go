@@ -68,7 +68,7 @@ func (e *Engine) join(pac router.Packet) {
 	// This process implies to find all relevant energy and player details visible
 	// to the new player.
 
-	for _, x := range ply.Vec.Bounds() {
+	for _, x := range ply.Vec.Screen().Prt {
 		{
 			// Search for all the energy packets located within the partition x.
 
@@ -103,7 +103,7 @@ func (e *Engine) join(pac router.Packet) {
 	// Add the new player to the lookup table based on its currently occupied
 	// coordinates.
 
-	for _, x := range ply.Vec.Occupy() {
+	for _, x := range ply.Vec.Occupy().Prt {
 		e.lkp.ply.Compute(x, func(old map[[2]byte]struct{}, exi bool) (map[[2]byte]struct{}, bool) {
 			if !exi {
 				old = map[[2]byte]struct{}{}
@@ -115,6 +115,16 @@ func (e *Engine) join(pac router.Packet) {
 
 			return old, false
 		})
+	}
+
+	// After we add all initially occupied partitions to the lookup table, we can
+	// reset the occupied partitions once below, because all further updates on
+	// the Vector's occupied partitions will be tracked using the Occupy.New and
+	// Occupy.Old fields. The reason for this is the fact that once initialized, a
+	// Vector does only ever change one occupied partition at a time.
+
+	{
+		ply.Vec.Occupy().Prt = nil
 	}
 
 	// Add the new player object to the memory table. This ensures that this new

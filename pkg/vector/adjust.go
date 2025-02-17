@@ -110,11 +110,15 @@ func (v *Vector) Adjust(del int, des Motion) {
 		vpb = crx.Prt * matrix.Prt
 	}
 
+	// We reset the existing *Screen pointer so that we do not allocate all the
+	// time. This safes about 17 ns/op compared to creating a new struct pointer.
+
 	{
-		v.vtp = prt.Y + vpb
-		v.vrg = prt.X + vpb
-		v.vbt = prt.Y - vpb
-		v.vlf = prt.X - vpb
+		v.scr.Top = prt.Y + vpb
+		v.scr.Rig = prt.X + vpb
+		v.scr.Bot = prt.Y - vpb
+		v.scr.Lef = prt.X - vpb
+		v.scr.Prt = nil
 	}
 
 	if len < v.len {

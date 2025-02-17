@@ -611,6 +611,48 @@ func Test_Vector_Adjust_trgAgl(t *testing.T) {
 	}
 }
 
+func Benchmark_Vector_Pointer(b *testing.B) {
+	scr := &Screen{}
+
+	testCases := []struct {
+		f func() *Screen
+	}{
+		// Case 000 ~19.20 ns/op
+		{
+			f: func() *Screen {
+				return &Screen{
+					Top: 1,
+					Rig: 2,
+					Bot: 3,
+					Lef: 4,
+				}
+			},
+		},
+		// Case 001 ~1.90 ns/op
+		{
+			f: func() *Screen {
+				scr.Top = 1
+				scr.Rig = 2
+				scr.Bot = 3
+				scr.Lef = 4
+
+				scr.Prt = nil
+
+				return scr
+			},
+		},
+	}
+
+	for i, tc := range testCases {
+		b.Run(fmt.Sprintf("%03d", i), func(b *testing.B) {
+			b.ResetTimer()
+			for i := 0; i < b.N; i++ {
+				tc.f()
+			}
+		})
+	}
+}
+
 func Benchmark_Vector_Adjust_trgAgl(b *testing.B) {
 	testCases := []struct {
 		pqd byte

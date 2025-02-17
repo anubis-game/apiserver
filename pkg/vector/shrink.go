@@ -51,34 +51,38 @@ func (v *Vector) shrink(old object.Object) {
 
 		tai := v.tai.val.Prt()
 
-		if prt.Y == v.btp && v.yfr[prt.Y] == 0 {
+		{
+			v.occ.Old = prt
+		}
+
+		if prt.Y == v.occ.Top && v.yfr[prt.Y] == 0 {
 			{
-				v.btp = tai.Y
+				v.occ.Top = tai.Y
 			}
 
 			{
 				delete(v.yfr, prt.Y)
 			}
 		}
-		if prt.X == v.brg && v.xfr[prt.X] == 0 {
+		if prt.X == v.occ.Rig && v.xfr[prt.X] == 0 {
 			{
-				v.brg = tai.X
+				v.occ.Rig = tai.X
 			}
 
 			{
 				delete(v.xfr, prt.X)
 			}
 		}
-		if prt.Y == v.bbt && v.yfr[prt.Y] == 0 {
-			v.bbt = tai.Y
+		if prt.Y == v.occ.Bot && v.yfr[prt.Y] == 0 {
+			v.occ.Bot = tai.Y
 
 			{
 				delete(v.yfr, prt.Y)
 			}
 		}
-		if prt.X == v.blf && v.xfr[prt.X] == 0 {
+		if prt.X == v.occ.Lef && v.xfr[prt.X] == 0 {
 			{
-				v.blf = tai.X
+				v.occ.Lef = tai.X
 			}
 
 			{
@@ -97,6 +101,13 @@ func (v *Vector) shrink(old object.Object) {
 		{
 			copy(buf[2:], buf[2+object.Len:])
 			v.buf[prt] = buf[:ind-object.Len]
+		}
+
+		// Reset the recently occupied partition every time the occupation is in
+		// fact not recent anymore.
+
+		{
+			v.occ.Old = object.Object{}
 		}
 	}
 }

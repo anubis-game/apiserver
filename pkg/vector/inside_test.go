@@ -20,10 +20,12 @@ func Test_Vector_Inside_True(t *testing.T) {
 		//
 		{
 			vec: &Vector{
-				btp: 225,
-				brg: 125,
-				bbt: 175,
-				blf: 75,
+				occ: &Occupy{
+					Top: 225,
+					Rig: 125,
+					Bot: 175,
+					Lef: 75,
+				},
 			},
 		},
 		// Case 001
@@ -37,10 +39,12 @@ func Test_Vector_Inside_True(t *testing.T) {
 		//
 		{
 			vec: &Vector{
-				btp: 225,
-				brg: 175,
-				bbt: 175,
-				blf: 125,
+				occ: &Occupy{
+					Top: 225,
+					Rig: 175,
+					Bot: 175,
+					Lef: 125,
+				},
 			},
 		},
 		// Case 002
@@ -54,10 +58,12 @@ func Test_Vector_Inside_True(t *testing.T) {
 		//
 		{
 			vec: &Vector{
-				btp: 225,
-				brg: 225,
-				bbt: 175,
-				blf: 175,
+				occ: &Occupy{
+					Top: 225,
+					Rig: 225,
+					Bot: 175,
+					Lef: 175,
+				},
 			},
 		},
 		// Case 003
@@ -71,10 +77,12 @@ func Test_Vector_Inside_True(t *testing.T) {
 		//
 		{
 			vec: &Vector{
-				btp: 175,
-				brg: 225,
-				bbt: 125,
-				blf: 175,
+				occ: &Occupy{
+					Top: 175,
+					Rig: 225,
+					Bot: 125,
+					Lef: 175,
+				},
 			},
 		},
 		// Case 004
@@ -88,10 +96,12 @@ func Test_Vector_Inside_True(t *testing.T) {
 		//
 		{
 			vec: &Vector{
-				btp: 125,
-				brg: 225,
-				bbt: 75,
-				blf: 175,
+				occ: &Occupy{
+					Top: 125,
+					Rig: 225,
+					Bot: 75,
+					Lef: 175,
+				},
 			},
 		},
 		// Case 005
@@ -105,10 +115,12 @@ func Test_Vector_Inside_True(t *testing.T) {
 		//
 		{
 			vec: &Vector{
-				btp: 125,
-				brg: 175,
-				bbt: 75,
-				blf: 125,
+				occ: &Occupy{
+					Top: 125,
+					Rig: 175,
+					Bot: 75,
+					Lef: 125,
+				},
 			},
 		},
 		// Case 006
@@ -122,10 +134,12 @@ func Test_Vector_Inside_True(t *testing.T) {
 		//
 		{
 			vec: &Vector{
-				btp: 125,
-				brg: 125,
-				bbt: 75,
-				blf: 75,
+				occ: &Occupy{
+					Top: 125,
+					Rig: 125,
+					Bot: 75,
+					Lef: 75,
+				},
 			},
 		},
 		// Case 007
@@ -138,10 +152,12 @@ func Test_Vector_Inside_True(t *testing.T) {
 		//
 		{
 			vec: &Vector{
-				btp: 175,
-				brg: 125,
-				bbt: 125,
-				blf: 75,
+				occ: &Occupy{
+					Top: 175,
+					Rig: 125,
+					Bot: 125,
+					Lef: 75,
+				},
 			},
 		},
 		// Case 008
@@ -154,10 +170,12 @@ func Test_Vector_Inside_True(t *testing.T) {
 		//
 		{
 			vec: &Vector{
-				btp: 175,
-				brg: 175,
-				bbt: 125,
-				blf: 125,
+				occ: &Occupy{
+					Top: 175,
+					Rig: 175,
+					Bot: 125,
+					Lef: 125,
+				},
 			},
 		},
 	}
@@ -165,10 +183,12 @@ func Test_Vector_Inside_True(t *testing.T) {
 	for i, tc := range testCases {
 		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
 			vec := &Vector{
-				vtp: 200,
-				vrg: 200,
-				vbt: 100,
-				vlf: 100,
+				scr: &Screen{
+					Top: 200,
+					Rig: 200,
+					Bot: 100,
+					Lef: 100,
+				},
 			}
 
 			has := tc.vec.Inside(vec.Screen())
@@ -197,10 +217,12 @@ func Test_Vector_Inside_False(t *testing.T) {
 		//
 		{
 			vec: &Vector{
-				btp: 275,
-				brg: 75,
-				bbt: 225,
-				blf: 25,
+				occ: &Occupy{
+					Top: 275,
+					Rig: 75,
+					Bot: 225,
+					Lef: 25,
+				},
 			},
 		},
 		// Case 001
@@ -216,10 +238,12 @@ func Test_Vector_Inside_False(t *testing.T) {
 		//
 		{
 			vec: &Vector{
-				btp: 275,
-				brg: 175,
-				bbt: 225,
-				blf: 125,
+				occ: &Occupy{
+					Top: 275,
+					Rig: 175,
+					Bot: 225,
+					Lef: 125,
+				},
 			},
 		},
 		// Case 002
@@ -235,10 +259,12 @@ func Test_Vector_Inside_False(t *testing.T) {
 		//
 		{
 			vec: &Vector{
-				btp: 275,
-				brg: 275,
-				bbt: 225,
-				blf: 225,
+				occ: &Occupy{
+					Top: 275,
+					Rig: 275,
+					Bot: 225,
+					Lef: 225,
+				},
 			},
 		},
 		// Case 003
@@ -251,10 +277,12 @@ func Test_Vector_Inside_False(t *testing.T) {
 		//
 		{
 			vec: &Vector{
-				btp: 175,
-				brg: 275,
-				bbt: 125,
-				blf: 225,
+				occ: &Occupy{
+					Top: 175,
+					Rig: 275,
+					Bot: 125,
+					Lef: 225,
+				},
 			},
 		},
 		// Case 004
@@ -270,10 +298,12 @@ func Test_Vector_Inside_False(t *testing.T) {
 		//
 		{
 			vec: &Vector{
-				btp: 75,
-				brg: 275,
-				bbt: 25,
-				blf: 225,
+				occ: &Occupy{
+					Top: 75,
+					Rig: 275,
+					Bot: 25,
+					Lef: 225,
+				},
 			},
 		},
 		// Case 005
@@ -289,10 +319,12 @@ func Test_Vector_Inside_False(t *testing.T) {
 		//
 		{
 			vec: &Vector{
-				btp: 75,
-				brg: 175,
-				bbt: 25,
-				blf: 125,
+				occ: &Occupy{
+					Top: 75,
+					Rig: 175,
+					Bot: 25,
+					Lef: 125,
+				},
 			},
 		},
 		// Case 006
@@ -308,10 +340,12 @@ func Test_Vector_Inside_False(t *testing.T) {
 		//
 		{
 			vec: &Vector{
-				btp: 75,
-				brg: 75,
-				bbt: 25,
-				blf: 25,
+				occ: &Occupy{
+					Top: 75,
+					Rig: 75,
+					Bot: 25,
+					Lef: 25,
+				},
 			},
 		},
 		// Case 007
@@ -324,10 +358,12 @@ func Test_Vector_Inside_False(t *testing.T) {
 		//
 		{
 			vec: &Vector{
-				btp: 175,
-				brg: 75,
-				bbt: 125,
-				blf: 25,
+				occ: &Occupy{
+					Top: 175,
+					Rig: 75,
+					Bot: 125,
+					Lef: 25,
+				},
 			},
 		},
 	}
@@ -335,10 +371,12 @@ func Test_Vector_Inside_False(t *testing.T) {
 	for i, tc := range testCases {
 		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
 			vec := &Vector{
-				vtp: 200,
-				vrg: 200,
-				vbt: 100,
-				vlf: 100,
+				scr: &Screen{
+					Top: 200,
+					Rig: 200,
+					Bot: 100,
+					Lef: 100,
+				},
 			}
 
 			has := tc.vec.Inside(vec.Screen())
@@ -356,157 +394,191 @@ func Benchmark_Vector_Inside(b *testing.B) {
 	testCases := []struct {
 		vec *Vector
 	}{
-		// Case 000, ~0.90 ns/op
+		// Case 000, ~1.00 ns/op
 		{
 			vec: &Vector{
-				btp: 225,
-				brg: 125,
-				bbt: 175,
-				blf: 75,
+				occ: &Occupy{
+					Top: 225,
+					Rig: 125,
+					Bot: 175,
+					Lef: 75,
+				},
 			},
 		},
-		// Case 001, ~0.90 ns/op
+		// Case 001, ~1.00 ns/op
 		{
 			vec: &Vector{
-				btp: 225,
-				brg: 175,
-				bbt: 175,
-				blf: 125,
+				occ: &Occupy{
+					Top: 225,
+					Rig: 175,
+					Bot: 175,
+					Lef: 125,
+				},
 			},
 		},
-		// Case 002, ~0.90 ns/op
+		// Case 002, ~1.00 ns/op
 		{
 			vec: &Vector{
-				btp: 225,
-				brg: 225,
-				bbt: 175,
-				blf: 175,
+				occ: &Occupy{
+					Top: 225,
+					Rig: 225,
+					Bot: 175,
+					Lef: 175,
+				},
 			},
 		},
-		// Case 003, ~0.90 ns/op
+		// Case 003, ~1.00 ns/op
 		{
 			vec: &Vector{
-				btp: 175,
-				brg: 225,
-				bbt: 125,
-				blf: 175,
+				occ: &Occupy{
+					Top: 175,
+					Rig: 225,
+					Bot: 125,
+					Lef: 175,
+				},
 			},
 		},
-		// Case 004, ~0.90 ns/op
+		// Case 004, ~1.00 ns/op
 		{
 			vec: &Vector{
-				btp: 125,
-				brg: 225,
-				bbt: 75,
-				blf: 175,
+				occ: &Occupy{
+					Top: 125,
+					Rig: 225,
+					Bot: 75,
+					Lef: 175,
+				},
 			},
 		},
-		// Case 005, ~0.90 ns/op
+		// Case 005, ~1.00 ns/op
 		{
 			vec: &Vector{
-				btp: 125,
-				brg: 175,
-				bbt: 75,
-				blf: 125,
+				occ: &Occupy{
+					Top: 125,
+					Rig: 175,
+					Bot: 75,
+					Lef: 125,
+				},
 			},
 		},
-		// Case 006, ~0.90 ns/op
+		// Case 006, ~1.00 ns/op
 		{
 			vec: &Vector{
-				btp: 125,
-				brg: 125,
-				bbt: 75,
-				blf: 75,
+				occ: &Occupy{
+					Top: 125,
+					Rig: 125,
+					Bot: 75,
+					Lef: 75,
+				},
 			},
 		},
-		// Case 007, ~0.90 ns/op
+		// Case 007, ~1.00 ns/op
 		{
 			vec: &Vector{
-				btp: 175,
-				brg: 125,
-				bbt: 125,
-				blf: 75,
+				occ: &Occupy{
+					Top: 175,
+					Rig: 125,
+					Bot: 125,
+					Lef: 75,
+				},
 			},
 		},
-		// Case 008, ~0.90 ns/op
+		// Case 008, ~1.00 ns/op
 		{
 			vec: &Vector{
-				btp: 175,
-				brg: 175,
-				bbt: 125,
-				blf: 125,
+				occ: &Occupy{
+					Top: 175,
+					Rig: 175,
+					Bot: 125,
+					Lef: 125,
+				},
 			},
 		},
 		// Case 009, ~0.60 ns/op
 		{
 			vec: &Vector{
-				btp: 275,
-				brg: 75,
-				bbt: 225,
-				blf: 25,
+				occ: &Occupy{
+					Top: 275,
+					Rig: 75,
+					Bot: 225,
+					Lef: 25,
+				},
 			},
 		},
 		// Case 010, ~0.60 ns/op
 		{
 			vec: &Vector{
-				btp: 275,
-				brg: 175,
-				bbt: 225,
-				blf: 125,
+				occ: &Occupy{
+					Top: 275,
+					Rig: 175,
+					Bot: 225,
+					Lef: 125,
+				},
 			},
 		},
 		// Case 011, ~0.60 ns/op
 		{
 			vec: &Vector{
-				btp: 275,
-				brg: 275,
-				bbt: 225,
-				blf: 225,
+				occ: &Occupy{
+					Top: 275,
+					Rig: 275,
+					Bot: 225,
+					Lef: 225,
+				},
 			},
 		},
 		// Case 012, ~0.60 ns/op
 		{
 			vec: &Vector{
-				btp: 175,
-				brg: 275,
-				bbt: 125,
-				blf: 225,
+				occ: &Occupy{
+					Top: 175,
+					Rig: 275,
+					Bot: 125,
+					Lef: 225,
+				},
 			},
 		},
 		// Case 013, ~0.60 ns/op
 		{
 			vec: &Vector{
-				btp: 75,
-				brg: 275,
-				bbt: 25,
-				blf: 225,
+				occ: &Occupy{
+					Top: 75,
+					Rig: 275,
+					Bot: 25,
+					Lef: 225,
+				},
 			},
 		},
-		// Case 014, ~0.90 ns/op
+		// Case 014, ~1.00 ns/op
 		{
 			vec: &Vector{
-				btp: 75,
-				brg: 175,
-				bbt: 25,
-				blf: 125,
+				occ: &Occupy{
+					Top: 75,
+					Rig: 175,
+					Bot: 25,
+					Lef: 125,
+				},
 			},
 		},
-		// Case 015, ~0.70 ns/op
+		// Case 015, ~0.80 ns/op
 		{
 			vec: &Vector{
-				btp: 75,
-				brg: 75,
-				bbt: 25,
-				blf: 25,
+				occ: &Occupy{
+					Top: 75,
+					Rig: 75,
+					Bot: 25,
+					Lef: 25,
+				},
 			},
 		},
-		// Case 016, ~0.70 ns/op
+		// Case 016, ~0.80 ns/op
 		{
 			vec: &Vector{
-				btp: 175,
-				brg: 75,
-				bbt: 125,
-				blf: 25,
+				occ: &Occupy{
+					Top: 175,
+					Rig: 75,
+					Bot: 125,
+					Lef: 25,
+				},
 			},
 		},
 	}
@@ -514,10 +586,12 @@ func Benchmark_Vector_Inside(b *testing.B) {
 	for i, tc := range testCases {
 		b.Run(fmt.Sprintf("%03d", i), func(b *testing.B) {
 			vec := &Vector{
-				vtp: 200,
-				vrg: 200,
-				vbt: 100,
-				vlf: 100,
+				scr: &Screen{
+					Top: 200,
+					Rig: 200,
+					Bot: 100,
+					Lef: 100,
+				},
 			}
 
 			b.ResetTimer()
