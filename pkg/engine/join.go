@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"runtime"
 	"time"
 
 	"github.com/anubis-game/apiserver/pkg/player"
@@ -11,11 +12,10 @@ import (
 
 const (
 	// Cap is the duration based capacity that we allow for a single fanout
-	// procedure to take. E.g. a standard frame duration of 25 milliseconds
-	// implies a total amount of 24 milliseconds per fanout procedure, given the
-	// overhead buffer of 1 millisecond that we may incur at runtime.
-	//
-	// TODO:metrics we need to figure out how much overhead there really is
+	// procedure to take per worker process. E.g. a standard frame duration of 25
+	// milliseconds implies a total amount of 24 milliseconds per fanout procedure
+	// per worker, given an overhead buffer of 1 millisecond that we may incur at
+	// runtime each cycle.
 	Cap = (vector.Frm - 1) * time.Millisecond
 )
 
@@ -149,9 +149,12 @@ func (e *Engine) join(pac router.Packet) {
 
 	// After we added the new player to the memory table above, we can calculate
 	// the new write deadline that will be enforced in every single fanout cycle.
-	// See Engine.push() for the respective *time.Timer creation.
+	// The available duration capacity is divided by the amount of active players
+	// that can be processed per active worker process. See engine.New() for the
+	// definition of semaphore tickets. See Engine.push() for the respective
+	// *time.Timer creation.
 
 	{
-		e.tim = Cap / time.Duration(len(e.mem.ply))
+		e.tim = Cap / (time.Duration(len(e.mem.ply)) / time.Duration(runtime.NumCPU()))
 	}
 }

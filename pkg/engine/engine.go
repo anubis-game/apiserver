@@ -45,7 +45,7 @@ type Engine struct {
 	sem chan struct{}
 	// tic is the global pointer keeping track of the fanout related time ticks.
 	// This timestamp tracks at which point the latest fanout procedure has been
-	// executed. The first tick is initialized in Daemon().
+	// executed. The first tick is initialized in Engine.Daemon().
 	tic time.Time
 	// tim is the amount of time that a single cycle of client streams is allowed
 	// to take. Any client taking longer to receive data packets than this
