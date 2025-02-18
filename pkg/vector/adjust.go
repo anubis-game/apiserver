@@ -11,9 +11,9 @@ const (
 	Ai float64 = 30 // Initial angle byte
 	Al float64 = 1  // Largest angle byte
 	Li float64 = 10 // Initial number of body parts
-	// TODO we probably want to reduce max num to 500
+	// TODO:game we probably want to reduce max num to 500
 	Ll float64 = 5_000 // Largest number of body parts
-	// TODO if we half the partition size we can double the view expansion quality
+	// TODO:game if we half the partition size we can double the view expansion quality
 	Pi float64 = 2      // Initial range of sight in partitions
 	Pl float64 = 8      // Largest range of sight in partitions
 	Ri float64 = 10     // Initial body part radius in pixels
@@ -24,6 +24,9 @@ const (
 
 const (
 	// Frm is the standard frame duration in milliseconds travelled at a time.
+	// Note that this constant is the basis for a lot of assumptions made all
+	// across the game engine. Changing this value may break a number of runtime
+	// expectations.
 	Frm = 25
 	// Dis is the standard distance travelled in pixels per standard frame. The
 	// amount of pixels travelled here per millisecond is 0.2, which represents a
@@ -35,7 +38,7 @@ const (
 	Ris float64 = Frm * 0.8
 )
 
-// TODO Vector.Adjust must call Vector.Smooth() every second (once in 25 Adjust() calls)
+// TODO:game Vector.Adjust must call Vector.Smooth() every second (once in 25 Adjust() calls)
 
 func (v *Vector) Adjust(del int, des Motion) {
 	crx := v.crx.Get()

@@ -1,15 +1,12 @@
 package client
 
 import (
-	"context"
-
 	"github.com/coder/websocket"
 	"github.com/ethereum/go-ethereum/common"
 )
 
 type Config struct {
 	Con *websocket.Conn
-	Ctx context.Context
 	Wal common.Address
 }
 
@@ -19,7 +16,6 @@ type Client struct {
 	wri chan struct{}
 
 	con *websocket.Conn
-	ctx context.Context
 	wal common.Address
 }
 
@@ -30,7 +26,6 @@ func New(c Config) *Client {
 		wri: make(chan struct{}),
 
 		con: c.Con,
-		ctx: c.Ctx,
 		wal: c.Wal,
 	}
 }

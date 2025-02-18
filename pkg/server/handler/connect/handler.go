@@ -1,7 +1,6 @@
 package connect
 
 import (
-	"context"
 	"fmt"
 	"strings"
 	"time"
@@ -20,9 +19,9 @@ import (
 )
 
 const (
-	// max is the maximum amount of concurrent client connections accepted by the
+	// Max is the maximum amount of concurrent client connections accepted by the
 	// stream engine.
-	max = 500
+	Max = 500
 )
 
 type Config struct {
@@ -40,13 +39,6 @@ type Config struct {
 }
 
 type Handler struct {
-	// ctx is the global context instance that we inject into every client struct.
-	// We are not leveraging any of the underlying context specific control flow
-	// primitives, but the websocket implementation that we are using requires a
-	// context parameter to be provided.  And so in order to not garbage collect
-	// useless context instances all the time, we define a single global context
-	// and reuse that for the required websocket parameters everywhere.
-	ctx context.Context
 	don <-chan struct{}
 	ind cache.Interface[common.Address, uuid.UUID]
 	log logger.Interface
@@ -82,7 +74,7 @@ func New(c Config) *Handler {
 	var opt *websocket.AcceptOptions
 	{
 		opt = &websocket.AcceptOptions{
-			InsecureSkipVerify: true, // TODO verify origin
+			InsecureSkipVerify: true, // TODO:prod verify request origin in production
 			Subprotocols: []string{
 				string(schema.DualHandshake),
 				string(schema.UserChallenge),
@@ -91,18 +83,17 @@ func New(c Config) *Handler {
 	}
 
 	return &Handler{
-		ctx: context.Background(),
 		don: c.Don,
 		ind: cache.NewSxnc[common.Address, uuid.UUID](),
 		log: c.Log,
 		opt: opt,
 		reg: c.Reg,
 		rtr: c.Rtr,
-		sem: make(chan struct{}, max),
+		sem: make(chan struct{}, Max),
 		ttl: musDur(c.Env.ConnectionTimeout, "s"),
 		txp: cache.NewTime[uuid.UUID](),
 		tok: cache.NewSxnc[uuid.UUID, common.Address](),
-		uni: unique.New[common.Address](max),
+		uni: unique.New[common.Address](Max),
 		wxp: cache.NewTime[common.Address](),
 	}
 }

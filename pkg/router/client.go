@@ -5,10 +5,17 @@ import (
 	"time"
 
 	"github.com/anubis-game/apiserver/pkg/client"
+	"github.com/anubis-game/apiserver/pkg/vector"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/puzpuzpuz/xsync/v3"
 	"github.com/xh3b4sd/tracer"
 	"go.uber.org/ratelimit"
+)
+
+const (
+	// Per is the duration bucket for the client specific rate limiters that guard
+	// the game engine fanout procedure from external overloading.
+	Per = vector.Frm * time.Millisecond
 )
 
 type Client struct {
@@ -105,8 +112,8 @@ func (c *Client) Race(uid [2]byte, cli *client.Client, _ []byte) error {
 
 func newLim() ratelimit.Limiter {
 	return ratelimit.New(
-		3,                                  // 1 move, 1 race, 1 buffer
-		ratelimit.Per(25*time.Millisecond), // per standard frame
-		ratelimit.WithSlack(0),             // without re-using unused capacity
+		5,                      // 2 move, 2 race, 1 buffer
+		ratelimit.Per(Per),     // per standard frame
+		ratelimit.WithSlack(0), // without re-using unused capacity
 	)
 }
