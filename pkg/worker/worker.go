@@ -64,7 +64,7 @@ func New(c Config) *Worker {
 	}
 }
 
-// TODO write some unit tests for this entire reconciliation complexity
+// TODO:test write some unit tests for this entire reconciliation complexity
 
 func (w *Worker) Daemon() {
 	// Setup the re-queue cache to check all expiration callbacks every so often.

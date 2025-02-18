@@ -45,7 +45,7 @@ type Vector struct {
 	// entire lifetime.
 	uid [2]byte
 
-	// TODO move those counters to Vector.Screen
+	// TODO:refactor move those counters to Vector.Screen
 	xfr map[int]int
 	yfr map[int]int
 }
@@ -83,7 +83,7 @@ func New(c Config) *Vector {
 			Prt: int(Pi),
 			Rad: Rad,
 			Siz: Siz,
-			Typ: 0, // TODO randomize or configure the player suit based on the user's preference
+			Typ: 0, // TODO:game configure the player skin/suit, randomly or preference
 		}
 	}
 

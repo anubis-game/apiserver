@@ -27,7 +27,7 @@ func (h *Handler) search(hea []string) (common.Address, error) {
 		}
 	}
 
-	// TODO remove
+	// TODO:prod remove fake auth before deploying to production
 	{
 		fak := uuid.MustParse("f47ac10b-58cc-4372-a567-0e02b2c3d479")
 		if tok.String() == fak.String() {

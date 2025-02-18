@@ -3,6 +3,7 @@ package router
 import (
 	"time"
 
+	"github.com/anubis-game/apiserver/pkg/vector"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/puzpuzpuz/xsync/v3"
 	"go.uber.org/ratelimit"
@@ -14,7 +15,9 @@ type Router struct {
 }
 
 // Router is the bridge between server endpoint and game engine, allowing us to
-// separate client connections and game state.
+// separate client connections and game state. Note that the *time.Ticker used
+// for our fanout procedure is never stopped, because this ticker is used across
+// the lifetime of the entire game engine.
 func New() *Router {
 	var joi chan Packet
 	{
@@ -33,7 +36,7 @@ func New() *Router {
 
 	var psh <-chan time.Time
 	{
-		psh = time.NewTicker(25 * time.Millisecond).C
+		psh = time.NewTicker(vector.Frm * time.Millisecond).C
 	}
 
 	var lim *xsync.MapOf[common.Address, ratelimit.Limiter]

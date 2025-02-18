@@ -43,7 +43,7 @@ func Benchmark_Energy_Bytes(b *testing.B) {
 	testCases := []struct {
 		e *Energy
 	}{
-		// Case 000 ~1.50 ns/op
+		// Case 000, ~1.50 ns/op
 		{
 			e: &Energy{
 				Obj: object.Object{X: 12_547, Y: 512},

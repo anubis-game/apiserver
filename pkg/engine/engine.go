@@ -43,8 +43,18 @@ type Engine struct {
 	// sem is the global worker ticket. The capacity of this semaphore channel
 	// limits the amount of work we can do concurrently.
 	sem chan struct{}
-	// tic is the global fanout ticker. The first tick is initialized in Daemon().
+	// tic is the global pointer keeping track of the fanout related time ticks.
+	// This timestamp tracks at which point the latest fanout procedure has been
+	// executed. The first tick is initialized in Engine.Daemon().
 	tic time.Time
+	// tim is the amount of time that a single cycle of client streams is allowed
+	// to take. Any client taking longer to receive data packets than this
+	// deadline specifies will stop to be served for the blocked cycle. Note that
+	// single writes are globally limited to 5 seconds of allowed write time. So
+	// any client connection that blocks writes for more than 5 seconds per
+	// message will be terminated, which also means that those clients will be
+	// removed from the game that they are playing.
+	tim time.Duration
 	// wrk
 	wrk worker.Ensure
 }

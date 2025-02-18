@@ -1,6 +1,7 @@
 package connect
 
 import (
+	"context"
 	"errors"
 	"net"
 
@@ -21,7 +22,6 @@ func (h *Handler) client(wal common.Address, con *websocket.Conn) error {
 	{
 		cli = client.New(client.Config{
 			Con: con,
-			Ctx: h.ctx,
 			Wal: wal,
 		})
 	}
@@ -91,7 +91,7 @@ func (h *Handler) client(wal common.Address, con *websocket.Conn) error {
 
 func (h *Handler) reader(con *websocket.Conn, uid [2]byte, cli *client.Client) error {
 	for {
-		_, byt, err := con.Read(h.ctx)
+		_, byt, err := con.Read(context.Background())
 		if err != nil {
 			return tracer.Mask(err)
 		}

@@ -11,18 +11,17 @@ import (
 	"github.com/xh3b4sd/tracer"
 )
 
+// TODO:game implement Engine.Kill
+//
+//     Should this even be a client input driven reconciliation?
+//
+
 func (e *Engine) Kill(uid [2]byte, _ *client.Client, inp []byte) error {
 	var err error
 
 	{
 		delete(e.mem.ply, uid)
 	}
-
-	// TODO find the bucket index and remove the deleted player from that lookup
-	// table
-	// {
-	// 	e.lkp.ply.Delete(matrix.Bucket)
-	// }
 
 	//
 	//     inp[0]        action
@@ -82,7 +81,7 @@ func (e *Engine) Kill(uid [2]byte, _ *client.Client, inp []byte) error {
 	// 	out = schema.Encode(schema.Kill, win.Bytes(), los.Bytes())
 	// }
 
-	// TODO h.cli.Ranger(func(_ common.Address, val *client.Client) {
+	// h.cli.Ranger(func(_ common.Address, val *client.Client) {
 	// 	val.Stream(out)
 	// })
 
@@ -94,7 +93,7 @@ func (e *Engine) Kill(uid [2]byte, _ *client.Client, inp []byte) error {
 	// broadcasting worker pool.
 
 	{
-		// TODO h.cli.Delete(los)
+		// h.cli.Delete(los)
 	}
 
 	return nil

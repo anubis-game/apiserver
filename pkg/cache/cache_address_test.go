@@ -186,23 +186,23 @@ func Benchmark_Cache_Address_Create_And_Escape(b *testing.B) {
 	testCases := []struct {
 		c Interface[common.Address, int]
 	}{
-		// Case 000 ~152 ns/op
+		// Case 000, ~152 ns/op
 		{
 			c: NewData[common.Address, int](),
 		},
-		// Case 001 ~114 ns/op
+		// Case 001, ~114 ns/op
 		{
 			c: NewSxnc[common.Address, int](),
 		},
-		// Case 002 ~263 ns/op
+		// Case 002, ~263 ns/op
 		{
 			c: NewSync[common.Address, int](),
 		},
-		// Case 003 ~334 ns/op
+		// Case 003, ~334 ns/op
 		{
 			c: NewCmap[common.Address, int](),
 		},
-		// Case 004 ~116 ns/op
+		// Case 004, ~116 ns/op
 		{
 			c: NewPool[common.Address, int](),
 		},
@@ -222,23 +222,23 @@ func Benchmark_Cache_Address_Lifecycle(b *testing.B) {
 	testCases := []struct {
 		c Interface[common.Address, int]
 	}{
-		// Case 000 ~399 ns/op
+		// Case 000, ~399 ns/op
 		{
 			c: NewData[common.Address, int](),
 		},
-		// Case 001 ~285 ns/op
+		// Case 001, ~285 ns/op
 		{
 			c: NewSxnc[common.Address, int](),
 		},
-		// Case 002 ~649 ns/op
+		// Case 002, ~649 ns/op
 		{
 			c: NewSync[common.Address, int](),
 		},
-		// Case 003 ~942 ns/op
+		// Case 003, ~942 ns/op
 		{
 			c: NewCmap[common.Address, int](),
 		},
-		// Case 004 ~285 ns/op
+		// Case 004, ~285 ns/op
 		{
 			c: NewPool[common.Address, int](),
 		},
@@ -258,23 +258,23 @@ func Benchmark_Cache_Address_Ranger(b *testing.B) {
 	testCases := []struct {
 		c Interface[common.Address, int]
 	}{
-		// Case 000 ~11,550 ns/op
+		// Case 000, ~11,550 ns/op
 		{
 			c: NewData[common.Address, int](),
 		},
-		// Case 001 ~12,080 ns/op
+		// Case 001, ~12,080 ns/op
 		{
 			c: NewSxnc[common.Address, int](),
 		},
-		// Case 002 ~11,800 ns/op
+		// Case 002, ~11,800 ns/op
 		{
 			c: NewSync[common.Address, int](),
 		},
-		// Case 003 ~11,780 ns/op
+		// Case 003, ~11,780 ns/op
 		{
 			c: NewCmap[common.Address, int](),
 		},
-		// Case 004 ~9,320 ns/op
+		// Case 004, ~9,320 ns/op
 		{
 			c: NewPool[common.Address, int](),
 		},
@@ -294,23 +294,23 @@ func Benchmark_Cache_Address_Read_More_Than_Write(b *testing.B) {
 	testCases := []struct {
 		c Interface[common.Address, int]
 	}{
-		// Case 000 ~375,000 ns/op
+		// Case 000, ~375,000 ns/op
 		{
 			c: NewData[common.Address, int](),
 		},
-		// Case 001 ~68,000 ns/op
+		// Case 001, ~68,000 ns/op
 		{
 			c: NewSxnc[common.Address, int](),
 		},
-		// Case 002 ~89,000 ns/op
+		// Case 002, ~89,000 ns/op
 		{
 			c: NewSync[common.Address, int](),
 		},
-		// Case 003 ~1,651,000 ns/op
+		// Case 003, ~1,651,000 ns/op
 		{
 			c: NewCmap[common.Address, int](),
 		},
-		// Case 004 ~67,000 ns/op
+		// Case 004, ~67,000 ns/op
 		{
 			c: NewPool[common.Address, int](),
 		},
@@ -330,23 +330,23 @@ func Benchmark_Cache_Address_Exists(b *testing.B) {
 	testCases := []struct {
 		c Interface[common.Address, int]
 	}{
-		// Case 000 ~159 ns/op
+		// Case 000, ~159 ns/op
 		{
 			c: NewData[common.Address, int](),
 		},
-		// Case 001 ~140 ns/op
+		// Case 001, ~140 ns/op
 		{
 			c: NewSxnc[common.Address, int](),
 		},
-		// Case 002 ~209 ns/op
+		// Case 002, ~209 ns/op
 		{
 			c: NewSync[common.Address, int](),
 		},
-		// Case 003 ~346 ns/op
+		// Case 003, ~346 ns/op
 		{
 			c: NewCmap[common.Address, int](),
 		},
-		// Case 004 ~142 ns/op
+		// Case 004, ~142 ns/op
 		{
 			c: NewPool[common.Address, int](),
 		},

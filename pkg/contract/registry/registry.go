@@ -127,7 +127,7 @@ func (r *Registry) writerOption() *bind.TransactOpts {
 		// Below is a testnet transaction providing some real world insight into
 		// effective gas usage.
 		//
-		//     TODO
+		//     TODO:docs link some useful transactions
 		//
 		GasFeeCap: big.NewInt(5_000_000_000), // 5.00 gwei
 		GasTipCap: big.NewInt(500_000_000),   // 0.50 gwei

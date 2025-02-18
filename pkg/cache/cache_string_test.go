@@ -164,19 +164,19 @@ func Benchmark_Cache_String_Create_And_Escape(b *testing.B) {
 	testCases := []struct {
 		c Interface[string, int]
 	}{
-		// Case 000 ~170 ns/op
+		// Case 000, ~170 ns/op
 		{
 			c: NewData[string, int](),
 		},
-		// Case 001 ~135 ns/op
+		// Case 001, ~135 ns/op
 		{
 			c: NewSxnc[string, int](),
 		},
-		// Case 002 ~270 ns/op
+		// Case 002, ~270 ns/op
 		{
 			c: NewSync[string, int](),
 		},
-		// Case 003 ~332 ns/op
+		// Case 003, ~332 ns/op
 		{
 			c: NewCmap[string, int](),
 		},
@@ -196,19 +196,19 @@ func Benchmark_Cache_String_Lifecycle(b *testing.B) {
 	testCases := []struct {
 		c Interface[string, int]
 	}{
-		// Case 000 ~365 ns/op
+		// Case 000, ~365 ns/op
 		{
 			c: NewData[string, int](),
 		},
-		// Case 001 ~330 ns/op
+		// Case 001, ~330 ns/op
 		{
 			c: NewSxnc[string, int](),
 		},
-		// Case 002 ~675 ns/op
+		// Case 002, ~675 ns/op
 		{
 			c: NewSync[string, int](),
 		},
-		// Case 003 ~918 ns/op
+		// Case 003, ~918 ns/op
 		{
 			c: NewCmap[string, int](),
 		},
@@ -228,19 +228,19 @@ func Benchmark_Cache_String_Ranger(b *testing.B) {
 	testCases := []struct {
 		c Interface[string, int]
 	}{
-		// Case 000 ~750 ns/op
+		// Case 000, ~750 ns/op
 		{
 			c: NewData[string, int](),
 		},
-		// Case 001 ~1000 ns/op
+		// Case 001, ~1000 ns/op
 		{
 			c: NewSxnc[string, int](),
 		},
-		// Case 002 ~1000 ns/op
+		// Case 002, ~1000 ns/op
 		{
 			c: NewSync[string, int](),
 		},
-		// Case 003 ~950 ns/op
+		// Case 003, ~950 ns/op
 		{
 			c: NewCmap[string, int](),
 		},
@@ -260,19 +260,19 @@ func Benchmark_Cache_String_Read_More_Than_Write(b *testing.B) {
 	testCases := []struct {
 		c Interface[string, int]
 	}{
-		// Case 000 ~360,000 ns/op
+		// Case 000, ~360,000 ns/op
 		{
 			c: NewData[string, int](),
 		},
-		// Case 001 ~70,000 ns/op
+		// Case 001, ~70,000 ns/op
 		{
 			c: NewSxnc[string, int](),
 		},
-		// Case 002 ~95,000 ns/op
+		// Case 002, ~95,000 ns/op
 		{
 			c: NewSync[string, int](),
 		},
-		// Case 003 ~1,522,000 ns/op
+		// Case 003, ~1,522,000 ns/op
 		{
 			c: NewCmap[string, int](),
 		},
@@ -292,19 +292,19 @@ func Benchmark_Cache_String_Exists(b *testing.B) {
 	testCases := []struct {
 		c Interface[string, int]
 	}{
-		// Case 000 ~155 ns/op
+		// Case 000, ~155 ns/op
 		{
 			c: NewData[string, int](),
 		},
-		// Case 001 ~144 ns/op
+		// Case 001, ~144 ns/op
 		{
 			c: NewSxnc[string, int](),
 		},
-		// Case 002 ~229 ns/op
+		// Case 002, ~229 ns/op
 		{
 			c: NewSync[string, int](),
 		},
-		// Case 003 ~335 ns/op
+		// Case 003, ~335 ns/op
 		{
 			c: NewCmap[string, int](),
 		},

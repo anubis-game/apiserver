@@ -12,7 +12,7 @@ func (s *Server) router() {
 	{
 		s.rtr.NewRoute().Methods("GET").Path("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			{
-				w.Header().Set("Access-Control-Allow-Origin", "*") // TODO change this for production
+				w.Header().Set("Access-Control-Allow-Origin", "*") // TODO:prod only allow limited origins in production
 				w.Header().Set("Access-Control-Allow-Methods", "GET")
 				w.Header().Set("Content-Type", "plain/text")
 			}
@@ -46,7 +46,7 @@ func (s *Server) router() {
 	{
 		s.rtr.NewRoute().Methods("GET").Path("/version").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			{
-				w.Header().Set("Access-Control-Allow-Origin", "*") // TODO change this for production
+				w.Header().Set("Access-Control-Allow-Origin", "*")
 				w.Header().Set("Access-Control-Allow-Methods", "GET")
 				w.Header().Set("Content-Type", "application/json")
 			}
