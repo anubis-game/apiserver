@@ -16,7 +16,7 @@ const (
 	// milliseconds implies a total amount of 24 milliseconds per fanout procedure
 	// per worker, given an overhead buffer of 1 millisecond that we may incur at
 	// runtime each cycle.
-	Cap = (vector.Frm - 1) * time.Millisecond
+	Cap = time.Duration(vector.Frm-1) * time.Millisecond
 )
 
 func (e *Engine) join(pac router.Packet) {
@@ -155,6 +155,14 @@ func (e *Engine) join(pac router.Packet) {
 	// *time.Timer creation.
 
 	{
-		e.tim = Cap / (time.Duration(len(e.mem.ply)) / time.Duration(runtime.NumCPU()))
+		e.tim = timCap(len(e.mem.ply), runtime.NumCPU())
 	}
+}
+
+func timCap(ply int, cpu int) time.Duration {
+	if ply <= 1 {
+		return Cap / time.Duration(cpu)
+	}
+
+	return Cap / time.Duration(cpu) / time.Duration(ply)
 }

@@ -12,19 +12,19 @@ func Benchmark_Address_Empty_True(b *testing.B) {
 	testCases := []struct {
 		f func(common.Address) bool
 	}{
-		// Case 000 ~3.50 ns/op
+		// Case 000, ~3.50 ns/op
 		{
 			f: func(a common.Address) bool {
 				return bytes.Equal(a.Bytes(), zeroAddress.Bytes())
 			},
 		},
-		// Case 001 ~3.39 ns/op
+		// Case 001, ~3.39 ns/op
 		{
 			f: func(a common.Address) bool {
 				return a.Cmp(zeroAddress) == 0
 			},
 		},
-		// Case 002 ~3.10 ns/op
+		// Case 002, ~3.10 ns/op
 		{
 			f: Empty,
 		},
@@ -51,19 +51,19 @@ func Benchmark_Address_Empty_False(b *testing.B) {
 	testCases := []struct {
 		f func(common.Address) bool
 	}{
-		// Case 000 ~2.59 ns/op
+		// Case 000, ~2.59 ns/op
 		{
 			f: func(a common.Address) bool {
 				return bytes.Equal(a.Bytes(), zeroAddress.Bytes())
 			},
 		},
-		// Case 001 ~3.08 ns/op
+		// Case 001, ~3.08 ns/op
 		{
 			f: func(a common.Address) bool {
 				return a.Cmp(zeroAddress) == 0
 			},
 		},
-		// Case 002 ~2.30 ns/op
+		// Case 002, ~2.30 ns/op
 		{
 			f: Empty,
 		},
@@ -90,19 +90,19 @@ func Benchmark_Address_Equal_True(b *testing.B) {
 	testCases := []struct {
 		f func(common.Address, common.Address) bool
 	}{
-		// Case 000 ~3.47 ns/op
+		// Case 000, ~3.47 ns/op
 		{
 			f: func(a common.Address, b common.Address) bool {
 				return bytes.Equal(a.Bytes(), b.Bytes())
 			},
 		},
-		// Case 001 ~3.30 ns/op
+		// Case 001, ~3.30 ns/op
 		{
 			f: func(a common.Address, b common.Address) bool {
 				return a.Cmp(b) == 0
 			},
 		},
-		// Case 002 ~3.10 ns/op
+		// Case 002, ~3.10 ns/op
 		{
 			f: Equal,
 		},
@@ -134,19 +134,19 @@ func Benchmark_Address_Equal_False(b *testing.B) {
 	testCases := []struct {
 		f func(common.Address, common.Address) bool
 	}{
-		// Case 000 ~2.90 ns/op
+		// Case 000, ~2.90 ns/op
 		{
 			f: func(a common.Address, b common.Address) bool {
 				return bytes.Equal(a.Bytes(), b.Bytes())
 			},
 		},
-		// Case 001 ~2.96 ns/op
+		// Case 001, ~2.96 ns/op
 		{
 			f: func(a common.Address, b common.Address) bool {
 				return a.Cmp(b) == 0
 			},
 		},
-		// Case 002 ~2.60 ns/op
+		// Case 002, ~2.60 ns/op
 		{
 			f: Equal,
 		},
