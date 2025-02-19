@@ -18,7 +18,7 @@ import (
 	"github.com/xh3b4sd/logger"
 )
 
-func Test_Engine_join(t *testing.T) {
+func Test_Engine_uuid(t *testing.T) {
 	var fil *filler.Filler
 	{
 		fil = filler.New(filler.Config{
@@ -60,7 +60,7 @@ func Test_Engine_join(t *testing.T) {
 	}
 
 	{
-		eng.join(router.Packet{
+		eng.uuid(router.Packet{
 			Cli: client.New(client.Config{
 				Wal: wal,
 			}),
@@ -284,7 +284,7 @@ func Test_Engine_timCap(t *testing.T) {
 	}
 }
 
-func Benchmark_Engine_join(b *testing.B) {
+func Benchmark_Engine_uuid(b *testing.B) {
 	b.Run(fmt.Sprintf("%03d", 0), func(b *testing.B) {
 		var fil *filler.Filler
 		{
@@ -328,8 +328,8 @@ func Benchmark_Engine_join(b *testing.B) {
 
 		b.ResetTimer()
 		for i := 0; i < b.N; i++ {
-			// ~4,500 ns/op
-			eng.join(router.Packet{
+			// ~4,300 ns/op
+			eng.uuid(router.Packet{
 				Cli: client.New(client.Config{
 					Wal: wal,
 				}),

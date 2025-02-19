@@ -26,8 +26,8 @@ func (e *Engine) Daemon() {
 		select {
 		case <-e.don:
 			return
-		case x := <-e.rtr.Join():
-			go e.join(x)
+		case x := <-e.rtr.Uuid():
+			go e.uuid(x)
 		case x := <-e.rtr.Move():
 			go e.move(x)
 		case x := <-e.rtr.Race():

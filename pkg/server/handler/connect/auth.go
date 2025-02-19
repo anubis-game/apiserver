@@ -72,9 +72,5 @@ func (h *Handler) auth(_ [2]byte, cli *client.Client, _ []byte) error {
 	// Encode the auth response and send the new session token back to the client
 	// connection that requested this new credential.
 
-	{
-		cli.Stream(schema.Encode(schema.Auth, []byte(tok.String())))
-	}
-
-	return nil
+	return cli.Stream(schema.Encode(schema.Auth, tok[:]))
 }

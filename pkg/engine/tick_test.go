@@ -57,8 +57,9 @@ func Test_Engine_worker_Read(t *testing.T) {
 
 	//
 
-	{
-		ply.Cli.Stream([]byte("ping"))
+	err := ply.Cli.Stream([]byte("ping"))
+	if err != nil {
+		t.Fatalf("expected %#v got %#v", nil, err)
 	}
 }
 
@@ -110,8 +111,9 @@ func Test_Engine_worker_Timeout(t *testing.T) {
 
 	//
 
-	{
-		ply.Cli.Stream([]byte("ping"))
+	err := ply.Cli.Stream([]byte("ping"))
+	if err != nil {
+		t.Fatalf("expected %#v got %#v", nil, err)
 	}
 }
 

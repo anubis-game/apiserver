@@ -8,7 +8,6 @@ import (
 	"github.com/anubis-game/apiserver/pkg/object"
 	"github.com/anubis-game/apiserver/pkg/player"
 	"github.com/anubis-game/apiserver/pkg/router"
-	"github.com/anubis-game/apiserver/pkg/schema"
 	"github.com/anubis-game/apiserver/pkg/vector"
 )
 
@@ -21,7 +20,7 @@ const (
 	Cap = time.Duration(vector.Frm-1) * time.Millisecond
 )
 
-func (e *Engine) join(pac router.Packet) {
+func (e *Engine) uuid(pac router.Packet) {
 	// Generating a new player object for the connected client effectively puts
 	// the player randomly onto the game map due to the Filler.Vector()
 	// randomization.
@@ -45,50 +44,53 @@ func (e *Engine) join(pac router.Packet) {
 	// wallet is associated with that same 2 byte player ID.
 
 	var bod []byte
-	var joi []byte
+	var uid []byte
 	{
-		bod = schema.Encode(schema.Body, vec.Encode())
-		joi = schema.Encode(schema.Join, ply.Wallet())
+		bod = vec.Encode()
+		uid = ply.Wallet()
 	}
 
-	// Send the new player's own ID first so every player can self identify.
+	// Send the new player's own wallet information first so every player can self
+	// identify. Also send the players own body parts and motion configuration.
 
 	var buf []byte
 	{
-		buf = append(buf, joi...)
+		buf = append(buf, uid...)
+		buf = append(buf, bod...)
 	}
 
 	e.mem.ply.Range(func(k [2]byte, v *player.Player) bool {
-		var b []byte
-		{
-			b = v.Buffer().Get()
+		// Only add the new player's body parts to the current view of an existing
+		// player, if the body parts of the new player are visible inside the view
+		// of the existing player. Note that every player joining the game must push
+		// its own identity to all active players first, so the following body parts
+		// can be identified using the player's 2 byte UId.
+
+		if vec.Inside(v.Vec.Screen()) {
+			var b []byte
+			{
+				b = v.Buffer().Get()
+			}
+
+			{
+				b = append(b, uid...)
+				b = append(b, bod...)
+
+				// TODO:infra when the body buffer is separated, we have to send type
+				// and size messages
+			}
+
+			{
+				v.Buffer().Set(b)
+			}
 		}
 
-		// Only add the fanout buffer to the current view of an existing player, if
-		// the body of the new player is visible inside the view of the existing
-		// player.
+		// Only share the existing player's wallet information with an existing
+		// player, if the body parts of the existing player are visible inside the
+		// view of the new player.
 
-		if ply.Vec.Inside(v.Vec.Screen()) {
-			b = append(b, bod...)
-		}
-
-		// Every player joining the game must push its own identity to all active
-		// players.
-
-		{
-			b = append(b, joi...)
-		}
-
-		{
-			v.Buffer().Set(b)
-		}
-
-		// Every player joining a game must receive the full list of active players,
-		// so that we can associate a player's 2 byte IDs with their respective 20
-		// byte wallets.
-
-		{
-			buf = append(buf, schema.Encode(schema.Join, v.Wallet())...)
+		if v.Vec.Inside(vec.Screen()) {
+			buf = append(buf, v.Wallet()...)
 		}
 
 		return true
@@ -98,7 +100,7 @@ func (e *Engine) join(pac router.Packet) {
 	// This process implies to find all relevant energy and player details visible
 	// to the new player.
 
-	for _, x := range ply.Vec.Screen().Prt {
+	for _, x := range vec.Screen().Prt {
 		{
 			// Search for all the energy packets located within the partition x.
 
@@ -117,7 +119,7 @@ func (e *Engine) join(pac router.Packet) {
 				}
 
 				{
-					buf = append(buf, schema.Encode(schema.Food, n.Encode())...)
+					buf = append(buf, n.Encode()...)
 				}
 			}
 		}
@@ -137,7 +139,7 @@ func (e *Engine) join(pac router.Packet) {
 				}
 
 				{
-					buf = append(buf, schema.Encode(schema.Body, p.Vec.Buffer(x))...)
+					buf = append(buf, p.Vec.Buffer(x)...)
 				}
 			}
 		}
@@ -146,7 +148,7 @@ func (e *Engine) join(pac router.Packet) {
 	// Add the new player to the lookup table based on its currently occupied
 	// coordinates.
 
-	for _, x := range ply.Vec.Occupy().Prt {
+	for _, x := range vec.Occupy().Prt {
 		e.lkp.ply.Compute(x, func(old map[[2]byte]struct{}, exi bool) (map[[2]byte]struct{}, bool) {
 			if !exi {
 				old = map[[2]byte]struct{}{}
@@ -167,7 +169,7 @@ func (e *Engine) join(pac router.Packet) {
 	// Vector does only ever change one occupied partition at a time.
 
 	{
-		ply.Vec.Occupy().Prt = nil
+		vec.Occupy().Prt = nil
 	}
 
 	// Store the player's buffer in the player's setter.

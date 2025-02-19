@@ -8,13 +8,13 @@ import (
 
 // decode is only used for testing Energy encoding.
 func decode(byt []byte) *Energy {
-	if len(byt) != 8 {
-		panic(fmt.Sprintf("expected 8 energy bytes, got %d", len(byt)))
+	if len(byt) != 9 {
+		panic(fmt.Sprintf("expected 9 energy bytes, got %d", len(byt)))
 	}
 
-	return &Energy{
-		Obj: object.New(byt[:object.Len]),
-		Siz: byt[6],
-		Typ: byt[7],
-	}
+	return New(Config{
+		Obj: object.New(byt[1 : 1+object.Len]),
+		Siz: byt[7],
+		Typ: byt[8],
+	})
 }

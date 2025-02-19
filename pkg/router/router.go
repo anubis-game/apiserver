@@ -24,9 +24,9 @@ type Router struct {
 // for our fanout procedure is never stopped, because this ticker is used across
 // the lifetime of the entire game engine.
 func New(c Config) *Router {
-	var joi chan Packet
+	var uid chan Packet
 	{
-		joi = make(chan Packet, c.Env.EngineCapacity)
+		uid = make(chan Packet, c.Env.EngineCapacity)
 	}
 
 	var mov chan Packet
@@ -50,8 +50,8 @@ func New(c Config) *Router {
 	}
 
 	return &Router{
-		cli: &Client{joi: joi, mov: mov, rac: rac, lim: lim},
-		eng: &Engine{joi: joi, mov: mov, rac: rac, tic: tic},
+		cli: &Client{uid: uid, mov: mov, rac: rac, lim: lim},
+		eng: &Engine{uid: uid, mov: mov, rac: rac, tic: tic},
 	}
 }
 

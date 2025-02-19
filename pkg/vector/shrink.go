@@ -38,7 +38,7 @@ func (v *Vector) shrink(old object.Object) {
 
 	// Reduce or delete the fanout buffer as described below.
 
-	if ind == 2+object.Len {
+	if ind == 4+object.Len {
 		// There is only one item left. That item is the object we are asked to
 		// delete.
 
@@ -99,8 +99,9 @@ func (v *Vector) shrink(old object.Object) {
 		// soon as the Vector moves out of it naturally throughout the game.
 
 		{
-			copy(buf[2:], buf[2+object.Len:])
-			v.buf[prt] = buf[:ind-object.Len]
+			buf[3]--                          // decrement coordinate amount
+			copy(buf[4:], buf[4+object.Len:]) // remove the first coordinate
+			v.buf[prt] = buf[:ind-object.Len] // cut the outdated buffer end
 		}
 
 		// Reset the recently occupied partition every time the occupation is in

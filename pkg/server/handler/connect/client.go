@@ -74,6 +74,8 @@ func (h *Handler) client(wal common.Address, con *websocket.Conn) error {
 	case <-h.don:
 	}
 
+	// TODO:game the player must be removed from the game
+
 	{
 		h.uni.Delete(wal)
 		h.wxp.Delete(wal)
@@ -101,8 +103,8 @@ func (h *Handler) reader(con *websocket.Conn, uid [2]byte, cli *client.Client) e
 			err = h.ping(uid, cli, byt)
 		case schema.Auth:
 			err = h.auth(uid, cli, byt)
-		case schema.Join:
-			err = h.join(uid, cli, byt)
+		case schema.Uuid:
+			err = h.uuid(uid, cli, byt)
 		case schema.Move:
 			err = h.move(uid, cli, byt)
 		case schema.Race:

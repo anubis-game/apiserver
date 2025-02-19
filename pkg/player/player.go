@@ -2,6 +2,7 @@ package player
 
 import (
 	"github.com/anubis-game/apiserver/pkg/client"
+	"github.com/anubis-game/apiserver/pkg/schema"
 	"github.com/anubis-game/apiserver/pkg/setter"
 	"github.com/anubis-game/apiserver/pkg/vector"
 )
@@ -23,19 +24,26 @@ type Player struct {
 	//     [ 1 action byte ] [ N buffer bytes ] [ 1 action byte ] [ N buffer bytes ] [ 1 action byte ] ...
 	//
 	buf setter.Interface[[]byte]
-	// wal contains this player's wallet specific fanout buffer, containing the
-	// UID and wallet bytes. This buffer is cached during player initialization so
-	// that we do not have to do the same computation all over again every time.
-	wal []byte
+	// uid contains this player's wallet specific fanout buffer, containing the
+	// action, UID and wallet bytes. This buffer is cached during player
+	// initialization so that we do not have to do the same computation all over
+	// again every time.
+	uid []byte
 }
 
 func New(c Config) *Player {
-	var wal []byte
+	var uid []byte
 	{
-		wal = make([]byte, 22)
+		uid = make([]byte, 23)
+	}
 
-		copy(wal[:2], c.Uid[:])
-		copy(wal[2:], c.Cli.Wallet().Bytes())
+	{
+		uid[0] = byte(schema.Uuid)
+	}
+
+	{
+		copy(uid[1:3], c.Uid[:])
+		copy(uid[3:], c.Cli.Wallet().Bytes())
 	}
 
 	return &Player{
@@ -43,6 +51,6 @@ func New(c Config) *Player {
 		Vec: c.Vec,
 
 		buf: setter.New[[]byte](),
-		wal: wal,
+		uid: uid,
 	}
 }

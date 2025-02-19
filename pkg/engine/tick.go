@@ -66,10 +66,12 @@ func (e *Engine) worker(ply *player.Player, buf []byte, tim *time.Timer) {
 	}
 
 	// Send the prepared fanout buffer to the given player. The use of the early
-	// channel below allows us to proceed before our deadline expires.
+	// channel below allows us to proceed before our deadline expires. Note that
+	// we don't check the error below, because Client.Stream() causes the client
+	// connection to be terminated already in case there is an error produced.
 
 	go func() {
-		ply.Cli.Stream(buf)
+		ply.Cli.Stream(buf) // nolint:errcheck
 		close(ear)
 	}()
 

@@ -2,33 +2,25 @@ package vector
 
 import (
 	"github.com/anubis-game/apiserver/pkg/object"
+	"github.com/anubis-game/apiserver/pkg/schema"
 )
 
 func (v *Vector) Encode() []byte {
-	buf := make([]byte, 8+v.len*object.Len)
-
+	var buf []byte
 	{
-		copy(buf[0:2], v.uid[:])
+		buf = make([]byte, 4+v.len*object.Len)
 	}
 
 	{
-		crx := v.Charax().Get()
-		buf[2] = byte(crx.Rad)
-		buf[3] = byte(crx.Siz)
-		buf[4] = crx.Typ
-	}
-
-	{
-		mot := v.Motion().Get()
-		buf[5] = mot.Qdr
-		buf[6] = mot.Agl
-		buf[7] = mot.Vlc
+		buf[0] = byte(schema.Body)
+		copy(buf[1:3], v.uid[:])
+		buf[3] = byte(v.len)
 	}
 
 	cur := v.tai
 	ind := 0
 	for cur != nil {
-		pos := 8 + (ind * object.Len)
+		pos := 4 + (ind * object.Len)
 		byt := cur.val.Byt()
 
 		copy(buf[pos:pos+object.Len], byt[:])

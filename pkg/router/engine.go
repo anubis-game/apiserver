@@ -5,15 +5,15 @@ import (
 )
 
 type Engine struct {
-	joi <-chan Packet
+	uid <-chan Packet
 	mov <-chan Packet
 	rac <-chan Packet
 
 	tic <-chan time.Time
 }
 
-func (e *Engine) Join() <-chan Packet {
-	return e.joi
+func (e *Engine) Uuid() <-chan Packet {
+	return e.uid
 }
 
 func (e *Engine) Move() <-chan Packet {

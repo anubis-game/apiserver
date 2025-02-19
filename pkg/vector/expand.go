@@ -3,6 +3,7 @@ package vector
 import (
 	"github.com/anubis-game/apiserver/pkg/matrix"
 	"github.com/anubis-game/apiserver/pkg/object"
+	"github.com/anubis-game/apiserver/pkg/schema"
 )
 
 // Expand moves the vector along the direction of the given target object and
@@ -41,10 +42,12 @@ func (v *Vector) expand(hea object.Object) {
 		// the given header bytes.
 
 		{
-			buf := make([]byte, 2+object.Len)
+			buf := make([]byte, 4+object.Len)
 
-			copy(buf[:2], v.uid[:])
-			copy(buf[2:], byt[:])
+			buf[0] = byte(schema.Body)
+			copy(buf[1:3], v.uid[:])
+			buf[3] = 0x1
+			copy(buf[4:], byt[:])
 
 			v.buf[prt] = buf
 		}
@@ -102,6 +105,7 @@ func (v *Vector) expand(hea object.Object) {
 
 		app := make([]byte, ind+object.Len)
 
+		buf[3]++                // increment coordinate amount
 		copy(app[:ind], buf)    // existing buffer goes first
 		copy(app[ind:], byt[:]) // append the new header bytes
 

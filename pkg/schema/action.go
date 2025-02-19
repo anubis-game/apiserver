@@ -3,13 +3,74 @@ package schema
 type Action byte
 
 const (
-	Ping Action = 1
-	Pong Action = 2
-	Auth Action = 3
-	Join Action = 4
-	Body Action = 5
-	Move Action = 6
-	Food Action = 7
-	Race Action = 8
-	Kill Action = 9
+	// Ping is sent from the client to the server. TODO
+	//
+	//     [0x1]
+	//
+	Ping Action = 0x1
+
+	// Pong TODO
+	//
+	//     [0x2]
+	//
+	Pong Action = 0x2
+
+	// Auth is sent from the server to the client, with a buffer length of 17.
+	// There is one additional parameter, the granted session token.
+	//
+	//     [action]    [  uuid  ]
+	//     [1 byte]    [16 bytes]
+	//
+	Auth Action = 0x3
+
+	// Uuid is sent from the server to the client, with a buffer length of 23.
+	// There are two additional parameters, the player's 2 byte UID and their
+	// associated wallet address.
+	//
+	//     [action]    [  uid  ]    [ wallet ]
+	//     [1 byte]    [2 bytes]    [20 bytes]
+	//
+	Uuid Action = 0x4
+
+	Size Action = 0x5 // TODO
+
+	Type Action = 0x6 // TODO
+
+	// Body is sent from the server to the client, with a variable buffer length.
+	// There are at least 3 additional parameters, the player's 2 byte UID, the
+	// amount of vector coordinates, and consecutively sets of 6 bytes for every
+	// transmitted body part as defined by the second parameter.
+	//
+	//     [action]    [  uid  ]    [amount]    [  x/y  ] [  x/y  ] [  x/y  ]
+	//     [1 byte]    [2 bytes]    [1 byte]    [6 bytes] [6 bytes] [6 bytes]
+	//
+	Body Action = 0x7
+
+	// Move
+	//
+	//     [0x8]
+	//
+	Move Action = 0x8
+
+	// Food is sent from the server to the client, with a buffer length of 9.
+	// There are three additional parameters, the energy coordinates, the energy
+	// size and the energy type.
+	//
+	//     [action]    [  x/y  ]    [ size ]    [ type ]
+	//     [1 byte]    [6 bytes]    [1 byte]    [1 byte]
+	//
+	Food Action = 0x9
+
+	// Race is sent from the client to the server, with a buffer length of 1.
+	// There are no additional parameters.
+	//
+	//     [0xa]
+	//
+	Race Action = 0xa
+
+	// Kill
+	//
+	//     [0xb]
+	//
+	Kill Action = 0xb
 )

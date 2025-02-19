@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/anubis-game/apiserver/pkg/object"
+	"github.com/anubis-game/apiserver/pkg/schema"
 )
 
 func Test_Vector_Encode(t *testing.T) {
@@ -16,11 +17,6 @@ func Test_Vector_Encode(t *testing.T) {
 		// Case 000
 		{
 			v: New(Config{
-				Mot: Motion{
-					Qdr: 0x1,
-					Agl: 0x80,
-					Vlc: Nrm,
-				},
 				Obj: []object.Object{
 					{X: 100, Y: 100}, // 0
 					{X: 103, Y: 103}, // 1
@@ -28,16 +24,16 @@ func Test_Vector_Encode(t *testing.T) {
 					{X: 109, Y: 109}, // 3
 					{X: 112, Y: 112}, // 4
 				},
-				Uid: [2]byte{0x0, 0x5},
+				Uid: [2]byte{0x3, 0xa},
 			}),
 			b: []byte{
+				// action
+				byte(schema.Body),
 				// uid
-				0x0, 0x5,
-				// crx
-				0xa, 0x32, 0x0,
-				// mot
-				0x1, 0x80, 0x1,
-				// vec
+				0x3, 0xa,
+				// len
+				0x5,
+				// coordinates
 				0x0, 0x0, 0x1, 0x1, 0x24, 0x24, // 0
 				0x0, 0x0, 0x1, 0x1, 0x27, 0x27, // 1
 				0x0, 0x0, 0x1, 0x1, 0x2a, 0x2a, // 2
@@ -69,14 +65,9 @@ func Benchmark_Vector_Encode(b *testing.B) {
 	testCases := []struct {
 		v *Vector
 	}{
-		// Case 000, ~31.30 ns/op
+		// Case 000, ~26.80 ns/op
 		{
 			v: New(Config{
-				Mot: Motion{
-					Qdr: 0x1,
-					Agl: 0x80,
-					Vlc: Nrm,
-				},
 				Obj: []object.Object{
 					{X: 100, Y: 100}, // 0
 					{X: 103, Y: 103}, // 1
@@ -84,7 +75,7 @@ func Benchmark_Vector_Encode(b *testing.B) {
 					{X: 109, Y: 109}, // 3
 					{X: 112, Y: 112}, // 4
 				},
-				Uid: [2]byte{0x0, 0x5},
+				Uid: [2]byte{0x3, 0xa},
 			}),
 		},
 	}
