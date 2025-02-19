@@ -37,7 +37,6 @@ func Test_Engine_join(t *testing.T) {
 	var eng *Engine
 	{
 		eng = &Engine{
-			buf: xsync.NewMapOf[[2]byte, []byte](),
 			fil: fil,
 			lkp: &lookup{
 				nrg: xsync.NewMapOf[object.Object, map[object.Object]struct{}](),
@@ -305,7 +304,6 @@ func Benchmark_Engine_join(b *testing.B) {
 		var eng *Engine
 		{
 			eng = &Engine{
-				buf: xsync.NewMapOf[[2]byte, []byte](),
 				fil: fil,
 				lkp: &lookup{
 					nrg: xsync.NewMapOf[object.Object, map[object.Object]struct{}](),

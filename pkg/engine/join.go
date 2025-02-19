@@ -4,6 +4,8 @@ import (
 	"runtime"
 	"time"
 
+	"github.com/anubis-game/apiserver/pkg/energy"
+	"github.com/anubis-game/apiserver/pkg/object"
 	"github.com/anubis-game/apiserver/pkg/player"
 	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/schema"
@@ -24,12 +26,17 @@ func (e *Engine) join(pac router.Packet) {
 	// the player randomly onto the game map due to the Filler.Vector()
 	// randomization.
 
+	var vec *vector.Vector
+	{
+		vec = e.fil.Vector(pac.Uid)
+	}
+
 	var ply *player.Player
 	{
 		ply = player.New(player.Config{
 			Cli: pac.Cli,
 			Uid: pac.Uid,
-			Vec: e.fil.Vector(pac.Uid),
+			Vec: vec,
 		})
 	}
 
@@ -40,41 +47,49 @@ func (e *Engine) join(pac router.Packet) {
 	var bod []byte
 	var joi []byte
 	{
-		bod = schema.Encode(schema.Body, ply.Vector())
+		bod = schema.Encode(schema.Body, vec.Encode())
 		joi = schema.Encode(schema.Join, ply.Wallet())
 	}
 
 	// Send the new player's own ID first so every player can self identify.
 
-	e.buf.Compute(pac.Uid, func(old []byte, _ bool) ([]byte, bool) {
-		return append(old, joi...), false
-	})
+	var buf []byte
+	{
+		buf = append(buf, joi...)
+	}
 
 	e.mem.ply.Range(func(k [2]byte, v *player.Player) bool {
+		var b []byte
+		{
+			b = v.Buffer().Get()
+		}
+
 		// Only add the fanout buffer to the current view of an existing player, if
 		// the body of the new player is visible inside the view of the existing
 		// player.
 
 		if ply.Vec.Inside(v.Vec.Screen()) {
-			e.buf.Compute(k, func(old []byte, _ bool) ([]byte, bool) {
-				return append(old, bod...), false
-			})
+			b = append(b, bod...)
 		}
 
 		// Every player joining the game must push its own identity to all active
 		// players.
 
-		e.buf.Compute(k, func(old []byte, _ bool) ([]byte, bool) {
-			return append(old, joi...), false
-		})
+		{
+			b = append(b, joi...)
+		}
+
+		{
+			v.Buffer().Set(b)
+		}
 
 		// Every player joining a game must receive the full list of active players,
 		// so that we can associate a player's 2 byte IDs with their respective 20
 		// byte wallets.
 
-		e.buf.Compute(pac.Uid, func(old []byte, _ bool) ([]byte, bool) {
-			return append(old, schema.Encode(schema.Join, v.Wallet())...), false
-		})
+		{
+			buf = append(buf, schema.Encode(schema.Join, v.Wallet())...)
+		}
 
 		return true
 	})
@@ -87,16 +102,23 @@ func (e *Engine) join(pac router.Packet) {
 		{
 			// Search for all the energy packets located within the partition x.
 
-			lkp, _ := e.lkp.nrg.Load(x)
+			var lkp map[object.Object]struct{}
+			{
+				lkp, _ = e.lkp.nrg.Load(x)
+			}
 
 			// For every energy packet in partition x, add its encoded representation to
 			// the new player's fanout buffer.
 
 			for k := range lkp {
-				e.buf.Compute(pac.Uid, func(old []byte, _ bool) ([]byte, bool) {
-					n, _ := e.mem.nrg.Load(k)
-					return append(old, schema.Encode(schema.Food, n.Encode())...), false
-				})
+				var n *energy.Energy
+				{
+					n, _ = e.mem.nrg.Load(k)
+				}
+
+				{
+					buf = append(buf, schema.Encode(schema.Food, n.Encode())...)
+				}
 			}
 		}
 
@@ -109,10 +131,14 @@ func (e *Engine) join(pac router.Packet) {
 			// the new player's fanout buffer.
 
 			for k := range lkp {
-				e.buf.Compute(pac.Uid, func(old []byte, _ bool) ([]byte, bool) {
-					p, _ := e.mem.ply.Load(k)
-					return append(old, schema.Encode(schema.Body, p.Vec.Buffer(x))...), false
-				})
+				var p *player.Player
+				{
+					p, _ = e.mem.ply.Load(k)
+				}
+
+				{
+					buf = append(buf, schema.Encode(schema.Body, p.Vec.Buffer(x))...)
+				}
 			}
 		}
 	}
@@ -142,6 +168,12 @@ func (e *Engine) join(pac router.Packet) {
 
 	{
 		ply.Vec.Occupy().Prt = nil
+	}
+
+	// Store the player's buffer in the player's setter.
+
+	{
+		ply.Buffer().Set(buf)
 	}
 
 	// Add the new player object to the memory table. This ensures that this new
