@@ -13,6 +13,7 @@ type Env struct {
 	ChainRpcEndpoint      string `split_words:"true" required:"true"`
 	CodeRepository        string `split_words:"true" required:"true"`
 	ConnectionTimeout     string `split_words:"true" required:"true"`
+	EngineCapacity        int    `split_words:"true" required:"true"`
 	HttpHost              string `split_words:"true" required:"true"`
 	HttpPort              string `split_words:"true" required:"true"`
 	LogLevel              string `split_words:"true" required:"true"`
@@ -20,7 +21,7 @@ type Env struct {
 	SignerPrivateKey      string `split_words:"true" required:"true"`
 }
 
-func Load(kin string) Env {
+func Create(kin string) Env {
 	var err error
 
 	var fil string

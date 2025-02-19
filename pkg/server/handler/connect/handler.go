@@ -18,12 +18,6 @@ import (
 	"github.com/xh3b4sd/tracer"
 )
 
-const (
-	// Max is the maximum amount of concurrent client connections accepted by the
-	// stream engine.
-	Max = 500
-)
-
 type Config struct {
 	// Don is the global channel to signal program termination. If this channel is
 	// closed, then all streaming connections should be terminated gracefully.
@@ -89,11 +83,11 @@ func New(c Config) *Handler {
 		opt: opt,
 		reg: c.Reg,
 		rtr: c.Rtr,
-		sem: make(chan struct{}, Max),
+		sem: make(chan struct{}, c.Env.EngineCapacity),
 		ttl: musDur(c.Env.ConnectionTimeout, "s"),
 		txp: cache.NewTime[uuid.UUID](),
 		tok: cache.NewSxnc[uuid.UUID, common.Address](),
-		uni: unique.New[common.Address](Max),
+		uni: unique.New[common.Address](c.Env.EngineCapacity),
 		wxp: cache.NewTime[common.Address](),
 	}
 }

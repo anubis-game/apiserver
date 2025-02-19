@@ -8,7 +8,7 @@ import (
 	"github.com/anubis-game/apiserver/pkg/object"
 )
 
-func Test_Energy_Bytes(t *testing.T) {
+func Test_Energy_Encode(t *testing.T) {
 	testCases := []struct {
 		e *Energy
 		b []byte
@@ -27,7 +27,7 @@ func Test_Energy_Bytes(t *testing.T) {
 	for i, tc := range testCases {
 		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
 			b := tc.e.Encode()
-			e := Decode(b)
+			e := decode(b)
 
 			if !reflect.DeepEqual(e, tc.e) {
 				t.Fatalf("expected %#v got %#v", tc.e, e)
@@ -39,7 +39,7 @@ func Test_Energy_Bytes(t *testing.T) {
 	}
 }
 
-func Benchmark_Energy_Bytes(b *testing.B) {
+func Benchmark_Energy_Encode(b *testing.B) {
 	testCases := []struct {
 		e *Energy
 	}{

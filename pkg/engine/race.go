@@ -1,12 +1,21 @@
 package engine
 
 import (
+	"github.com/anubis-game/apiserver/pkg/player"
 	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/vector"
 )
 
 func (e *Engine) race(pac router.Packet) {
-	mot := e.mem.ply[pac.Uid].Vec.Motion().Get()
+	var ply *player.Player
+	{
+		ply, _ = e.mem.ply.Load(pac.Uid)
+	}
+
+	var mot vector.Motion
+	{
+		mot = ply.Vec.Motion().Get()
+	}
 
 	// The race command triggers a simple switch. There is no race payload. All we
 	// do upon receiving the race signal is to flip a player's velocity between
@@ -18,5 +27,7 @@ func (e *Engine) race(pac router.Packet) {
 		mot.Vlc = vector.Nrm
 	}
 
-	e.mem.ply[pac.Uid].Vec.Motion().Set(mot)
+	{
+		ply.Vec.Motion().Set(mot)
+	}
 }

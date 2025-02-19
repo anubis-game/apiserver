@@ -7,6 +7,7 @@ import (
 
 	"github.com/anubis-game/apiserver/pkg/cache"
 	"github.com/anubis-game/apiserver/pkg/contract/registry"
+	"github.com/anubis-game/apiserver/pkg/transaction"
 	"github.com/anubis-game/apiserver/pkg/worker/action"
 	"github.com/anubis-game/apiserver/pkg/worker/record"
 	"github.com/ethereum/go-ethereum/common"
@@ -199,6 +200,13 @@ func (w *Worker) Ensure(act action.Interface) {
 func (w *Worker) worker(act action.Interface) error {
 	var err error
 
+	var txn common.Hash
+	var emp bool
+	{
+		txn = act.Rec().Txn().Get()
+		emp = transaction.Empty(txn)
+	}
+
 	// There are two distinct cases in which we want to sign a new transaction.
 	// The first case happens for all new actions, for which we have to sign the
 	// first transaction. The second case happens if an already signed transaction
@@ -209,8 +217,7 @@ func (w *Worker) worker(act action.Interface) error {
 	// only 1 results in a panic. The same applies when we set the record status
 	// to either "created" or "retried".
 
-	if act.Rec().Txn().Emp() || act.Rec().Prv().Sta().Get() == record.Failure {
-		var txn common.Hash
+	if emp || act.Rec().Prv().Sta().Get() == record.Failure {
 		{
 			txn, err = w.sig[act.Typ()].Sign(act.Arg())
 			if err != nil {
@@ -218,7 +225,7 @@ func (w *Worker) worker(act action.Interface) error {
 			}
 		}
 
-		if act.Rec().Txn().Emp() {
+		if emp {
 			act.Rec().Sta().Set(record.Created)
 		} else {
 			act.Rec().Sta().Set(record.Retried)
@@ -235,7 +242,7 @@ func (w *Worker) worker(act action.Interface) error {
 	// which has either the status "created", "waiting", or "retried".
 
 	{
-		_, err = w.reg.Search(act.Rec().Txn().Get())
+		_, err = w.reg.Search(txn)
 	}
 
 	if registry.IsTransactionNotFoundError(err) {
@@ -245,6 +252,8 @@ func (w *Worker) worker(act action.Interface) error {
 	} else if registry.IsTransactionNotSuccessfulError(err) {
 		act.Rec().Sta().Set(record.Failure)
 	}
+
+	// We want to return in case any error occurs at all.
 
 	if err != nil {
 		return tracer.Mask(err)

@@ -25,8 +25,14 @@ type Config struct {
 }
 
 type Engine struct {
-	// buffer
-	buf *buffer
+	// buf contains various messages prepared to be sent out to all connected
+	// clients during the time based fanout procedure. The 2 byte key identifies
+	// the connected clients to which the associated message bytes should be sent.
+	// The byte slice values may contain multiple encoded messages.
+	//
+	//     [ 1 action byte ] [ N buffer bytes ] [ 1 action byte ] [ N buffer bytes ] [ 1 action byte ] ...
+	//
+	buf *xsync.MapOf[[2]byte, []byte]
 	// don is the global channel to signal program termination. If this channel is
 	// closed, then all streaming connections should be terminated gracefully.
 	don <-chan struct{}
@@ -77,10 +83,7 @@ func New(c Config) *Engine {
 	}
 
 	return &Engine{
-		buf: &buffer{
-			nrg: xsync.NewMapOf[[2]byte, [][]byte](),
-			ply: xsync.NewMapOf[[2]byte, [][]byte](),
-		},
+		buf: xsync.NewMapOf[[2]byte, []byte](),
 		don: c.Don,
 		fil: c.Fil,
 		lkp: &lookup{
@@ -89,8 +92,8 @@ func New(c Config) *Engine {
 		},
 		log: c.Log,
 		mem: &memory{
-			nrg: map[object.Object]*energy.Energy{},
-			ply: map[[2]byte]*player.Player{},
+			nrg: xsync.NewMapOf[object.Object, *energy.Energy](),
+			ply: xsync.NewMapOf[[2]byte, *player.Player](),
 		},
 		rtr: c.Rtr,
 		sem: make(chan struct{}, runtime.NumCPU()),

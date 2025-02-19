@@ -6,7 +6,8 @@ import (
 	"github.com/anubis-game/apiserver/pkg/object"
 )
 
-func Decode(byt []byte) *Energy {
+// decode is only used for testing Energy encoding.
+func decode(byt []byte) *Energy {
 	if len(byt) != 8 {
 		panic(fmt.Sprintf("expected 8 energy bytes, got %d", len(byt)))
 	}

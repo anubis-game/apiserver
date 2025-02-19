@@ -9,7 +9,7 @@ type Engine struct {
 	mov <-chan Packet
 	rac <-chan Packet
 
-	psh <-chan time.Time
+	tic <-chan time.Time
 }
 
 func (e *Engine) Join() <-chan Packet {
@@ -24,6 +24,6 @@ func (e *Engine) Race() <-chan Packet {
 	return e.rac
 }
 
-func (e *Engine) Push() <-chan time.Time {
-	return e.psh
+func (e *Engine) Tick() <-chan time.Time {
+	return e.tic
 }

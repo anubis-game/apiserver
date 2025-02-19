@@ -20,7 +20,7 @@ func (e *Engine) Kill(uid [2]byte, _ *client.Client, inp []byte) error {
 	var err error
 
 	{
-		delete(e.mem.ply, uid)
+		e.mem.ply.Delete(uid)
 	}
 
 	//

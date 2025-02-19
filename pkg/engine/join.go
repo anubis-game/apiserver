@@ -26,11 +26,11 @@ func (e *Engine) join(pac router.Packet) {
 
 	var ply *player.Player
 	{
-		ply = &player.Player{
+		ply = player.New(player.Config{
 			Cli: pac.Cli,
 			Uid: pac.Uid,
 			Vec: e.fil.Vector(pac.Uid),
-		}
+		})
 	}
 
 	// We separate the player identification from the vector representation. The
@@ -40,42 +40,44 @@ func (e *Engine) join(pac router.Packet) {
 	var bod []byte
 	var joi []byte
 	{
-		bod = schema.Encode(schema.Body, ply.Encode())
+		bod = schema.Encode(schema.Body, ply.Vector())
 		joi = schema.Encode(schema.Join, ply.Wallet())
 	}
 
 	// Send the new player's own ID first so every player can self identify.
 
-	e.buf.ply.Compute(ply.Uid, func(old [][]byte, _ bool) ([][]byte, bool) {
-		return append(old, joi), false
+	e.buf.Compute(pac.Uid, func(old []byte, _ bool) ([]byte, bool) {
+		return append(old, joi...), false
 	})
 
-	for k, v := range e.mem.ply {
+	e.mem.ply.Range(func(k [2]byte, v *player.Player) bool {
 		// Only add the fanout buffer to the current view of an existing player, if
 		// the body of the new player is visible inside the view of the existing
 		// player.
 
 		if ply.Vec.Inside(v.Vec.Screen()) {
-			e.buf.ply.Compute(k, func(old [][]byte, _ bool) ([][]byte, bool) {
-				return append(old, bod), false
+			e.buf.Compute(k, func(old []byte, _ bool) ([]byte, bool) {
+				return append(old, bod...), false
 			})
 		}
 
 		// Every player joining the game must push its own identity to all active
 		// players.
 
-		e.buf.ply.Compute(k, func(old [][]byte, _ bool) ([][]byte, bool) {
-			return append(old, joi), false
+		e.buf.Compute(k, func(old []byte, _ bool) ([]byte, bool) {
+			return append(old, joi...), false
 		})
 
 		// Every player joining a game must receive the full list of active players,
 		// so that we can associate a player's 2 byte IDs with their respective 20
 		// byte wallets.
 
-		e.buf.ply.Compute(ply.Uid, func(old [][]byte, _ bool) ([][]byte, bool) {
-			return append(old, schema.Encode(schema.Join, v.Wallet())), false
+		e.buf.Compute(pac.Uid, func(old []byte, _ bool) ([]byte, bool) {
+			return append(old, schema.Encode(schema.Join, v.Wallet())...), false
 		})
-	}
+
+		return true
+	})
 
 	// Stream all relevant map details for the initial view of the new player.
 	// This process implies to find all relevant energy and player details visible
@@ -91,8 +93,9 @@ func (e *Engine) join(pac router.Packet) {
 			// the new player's fanout buffer.
 
 			for k := range lkp {
-				e.buf.ply.Compute(ply.Uid, func(old [][]byte, _ bool) ([][]byte, bool) {
-					return append(old, schema.Encode(schema.Food, e.mem.nrg[k].Encode())), false
+				e.buf.Compute(pac.Uid, func(old []byte, _ bool) ([]byte, bool) {
+					n, _ := e.mem.nrg.Load(k)
+					return append(old, schema.Encode(schema.Food, n.Encode())...), false
 				})
 			}
 		}
@@ -106,8 +109,9 @@ func (e *Engine) join(pac router.Packet) {
 			// the new player's fanout buffer.
 
 			for k := range lkp {
-				e.buf.ply.Compute(ply.Uid, func(old [][]byte, _ bool) ([][]byte, bool) {
-					return append(old, schema.Encode(schema.Body, e.mem.ply[k].Vec.Buffer(x))), false
+				e.buf.Compute(pac.Uid, func(old []byte, _ bool) ([]byte, bool) {
+					p, _ := e.mem.ply.Load(k)
+					return append(old, schema.Encode(schema.Body, p.Vec.Buffer(x))...), false
 				})
 			}
 		}
@@ -123,7 +127,7 @@ func (e *Engine) join(pac router.Packet) {
 			}
 
 			{
-				old[ply.Uid] = struct{}{}
+				old[pac.Uid] = struct{}{}
 			}
 
 			return old, false
@@ -144,7 +148,7 @@ func (e *Engine) join(pac router.Packet) {
 	// player is part of the update loop moving forward.
 
 	{
-		e.mem.ply[pac.Uid] = ply
+		e.mem.ply.Store(pac.Uid, ply)
 	}
 
 	// After we added the new player to the memory table above, we can calculate
@@ -155,7 +159,7 @@ func (e *Engine) join(pac router.Packet) {
 	// *time.Timer creation.
 
 	{
-		e.tim = timCap(len(e.mem.ply), runtime.NumCPU())
+		e.tim = timCap(e.mem.ply.Size(), runtime.NumCPU())
 	}
 }
 

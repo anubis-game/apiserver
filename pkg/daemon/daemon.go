@@ -76,7 +76,9 @@ func New(c Config) *Daemon {
 
 	var rtr *router.Router
 	{
-		rtr = router.New()
+		rtr = router.New(router.Config{
+			Env: c.Env,
+		})
 	}
 
 	var con *connect.Handler
@@ -94,6 +96,7 @@ func New(c Config) *Daemon {
 	{
 		fil = filler.New(filler.Config{
 			Don: c.Don,
+			Env: c.Env,
 			Log: log,
 		})
 	}

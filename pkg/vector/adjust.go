@@ -25,8 +25,8 @@ const (
 const (
 	// Frm is the standard frame duration in milliseconds travelled at a time.
 	// Note that this constant is the basis for a lot of assumptions made all
-	// across the game engine. Changing this value may break a number of runtime
-	// expectations.
+	// across the game engine. Changing this value, especially decreasing it, may
+	// break a number of runtime expectations.
 	Frm = 25
 	// Dis is the standard distance travelled in pixels per standard frame. The
 	// amount of pixels travelled here per millisecond is 0.2, which represents a
