@@ -3,15 +3,21 @@ package schema
 type Action byte
 
 const (
-	// Ping is sent from the client to the server. TODO
+	// Ping is sent from the client to the server, with a buffer length of 2.
+	// There is one additional parameter, the roundtrip byte used to identify the
+	// ping request.
 	//
-	//     [0x1]
+	//     [action]    [ seed ]
+	//     [1 byte]    [1 byte]
 	//
 	Ping Action = 0x1
 
-	// Pong TODO
+	// Pong is sent from the server to the client, with a buffer length of 2.
+	// There is one additional parameter, the roundtrip byte as received from the
+	// ping request.
 	//
-	//     [0x2]
+	//     [action]    [ seed ]
+	//     [1 byte]    [1 byte]
 	//
 	Pong Action = 0x2
 
@@ -53,14 +59,15 @@ const (
 	// Body is sent from the server to the client, with a variable buffer length.
 	// There are at least 3 additional parameters, the player's 2 byte UID, the
 	// amount of vector coordinates, and consecutively sets of 6 bytes for every
-	// transmitted body part as defined by the second parameter.
+	// transmitted body part as defined by the second parameter. The buffer length
+	// of a a new Vector is 34.
 	//
 	//     [action]    [  uid  ]    [amount]    [  x/y  ] [  x/y  ] [  x/y  ]
 	//     [1 byte]    [2 bytes]    [1 byte]    [6 bytes] [6 bytes] [6 bytes]
 	//
 	Body Action = 0x7
 
-	// Move
+	// Move TODO:game
 	//
 	//     [0x8]
 	//
@@ -82,7 +89,7 @@ const (
 	//
 	Race Action = 0xa
 
-	// Kill
+	// Kill TODO:game
 	//
 	//     [0xb]
 	//

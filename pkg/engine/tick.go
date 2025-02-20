@@ -20,13 +20,11 @@ func (e *Engine) tick(tic time.Time) {
 	// engine.New().
 
 	e.mem.ply.Range(func(k [2]byte, v *player.Player) bool {
+		// Get the player specific buffer and reset it to start a new cycle.
+
 		var b []byte
 		{
-			b = v.Buffer().Get()
-		}
-
-		{
-			v.Buffer().Set(nil)
+			b, _ = e.buf.LoadAndDelete(k)
 		}
 
 		// Create a new timer for this fanout cycle. See Engine.join() for the

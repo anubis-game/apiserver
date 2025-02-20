@@ -2,7 +2,7 @@ package vector
 
 import (
 	"fmt"
-	"reflect"
+	"slices"
 	"testing"
 
 	"github.com/anubis-game/apiserver/pkg/object"
@@ -48,13 +48,16 @@ func Test_Vector_Encode(t *testing.T) {
 			b := tc.v.Encode()
 			v := decode(b)
 
-			if !reflect.DeepEqual(v.uid, tc.v.uid) {
+			if !slices.Equal(v.uid[:], tc.v.uid[:]) {
 				t.Fatalf("expected %#v got %#v", tc.v.uid, v.uid)
 			}
-			if !reflect.DeepEqual(v.Encode(), tc.v.Encode()) {
+			if !slices.Equal(v.Encode(), tc.v.Encode()) {
 				t.Fatalf("expected %#v got %#v", tc.v.Encode(), v.Encode())
 			}
-			if !reflect.DeepEqual(b, tc.b) {
+			if len(b) != 34 {
+				t.Fatalf("expected %#v got %#v", 34, len(b))
+			}
+			if !slices.Equal(b, tc.b) {
 				t.Fatalf("expected %#v got %#v", tc.b, b)
 			}
 		})

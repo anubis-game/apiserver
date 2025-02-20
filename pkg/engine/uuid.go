@@ -48,15 +48,14 @@ func (e *Engine) uuid(pac router.Packet) {
 	// body parts are associated with the 2 byte player ID the same way the user's
 	// wallet is associated with that same 2 byte player ID.
 
-	var uid []byte
-	var bod []byte
-	var siz []byte
-	var typ []byte
+	var ini []byte
 	{
-		uid = ply.Wallet()
-		bod = vec.Encode()
-		siz = crx.Size()
-		typ = crx.Type()
+		ini = make([]byte, 65) // 23 + 34 + 4 + 4
+
+		copy(ini[:23], ply.Wallet())   // len(23)
+		copy(ini[23:57], vec.Encode()) // len(34)
+		copy(ini[57:61], crx.Size())   // len(4)
+		copy(ini[61:65], crx.Type())   // len(4)
 	}
 
 	// Send the new player's own wallet information first so every player can self
@@ -64,10 +63,7 @@ func (e *Engine) uuid(pac router.Packet) {
 
 	var buf []byte
 	{
-		buf = append(buf, uid...)
-		buf = append(buf, bod...)
-		buf = append(buf, siz...)
-		buf = append(buf, typ...)
+		buf = ini
 	}
 
 	e.mem.ply.Range(func(k [2]byte, v *player.Player) bool {
@@ -80,24 +76,9 @@ func (e *Engine) uuid(pac router.Packet) {
 		// why we are using MapOf.Compute() below.
 
 		if vec.Inside(v.Vec.Screen()) {
-			e.mem.ply.Compute(pac.Uid, func(p *player.Player, _ bool) (*player.Player, bool) {
-				var b []byte
-				{
-					b = p.Buffer().Get()
-				}
-
-				{
-					b = append(b, uid...)
-					b = append(b, bod...)
-					b = append(b, siz...)
-					b = append(b, typ...)
-				}
-
-				{
-					p.Buffer().Set(b)
-				}
-
-				return p, false
+			e.buf.Compute(pac.Uid, func(b []byte, _ bool) ([]byte, bool) {
+				b = append(b, ini...)
+				return b, false
 			})
 		}
 
@@ -197,16 +178,12 @@ func (e *Engine) uuid(pac router.Packet) {
 		vec.Occupy().Prt = nil
 	}
 
-	// Store the player's buffer in the player's setter.
-
-	{
-		ply.Buffer().Set(buf)
-	}
-
 	// Add the new player object to the memory table. This ensures that this new
-	// player is part of the update loop moving forward.
+	// player is part of the update loop moving forward. Also store the player's
+	// buffer in the player's setter.
 
 	{
+		e.buf.Store(pac.Uid, buf)
 		e.mem.ply.Store(pac.Uid, ply)
 	}
 

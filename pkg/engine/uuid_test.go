@@ -37,6 +37,7 @@ func Test_Engine_uuid(t *testing.T) {
 	var eng *Engine
 	{
 		eng = &Engine{
+			buf: xsync.NewMapOf[[2]byte, []byte](),
 			fil: fil,
 			lkp: &lookup{
 				nrg: xsync.NewMapOf[object.Object, map[object.Object]struct{}](),
@@ -304,6 +305,7 @@ func Benchmark_Engine_uuid(b *testing.B) {
 		var eng *Engine
 		{
 			eng = &Engine{
+				buf: xsync.NewMapOf[[2]byte, []byte](),
 				fil: fil,
 				lkp: &lookup{
 					nrg: xsync.NewMapOf[object.Object, map[object.Object]struct{}](),

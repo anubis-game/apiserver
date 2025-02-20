@@ -123,7 +123,7 @@ func Benchmark_Engine_race(b *testing.B) {
 
 		b.ResetTimer()
 		for i := 0; i < b.N; i++ {
-			// ~9.30 ns/op
+			// ~30.50 ns/op
 			eng.race(router.Packet{Uid: uid})
 		}
 	})
