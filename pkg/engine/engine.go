@@ -10,7 +10,9 @@ import (
 	"github.com/anubis-game/apiserver/pkg/object"
 	"github.com/anubis-game/apiserver/pkg/player"
 	"github.com/anubis-game/apiserver/pkg/router"
+	"github.com/anubis-game/apiserver/pkg/unique"
 	"github.com/anubis-game/apiserver/pkg/worker"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/puzpuzpuz/xsync/v3"
 	"github.com/xh3b4sd/logger"
 	"github.com/xh3b4sd/tracer"
@@ -21,12 +23,15 @@ type Config struct {
 	Fil *filler.Filler
 	Log logger.Interface
 	Rtr *router.Engine
+	Uni *unique.Unique[common.Address]
 	Wrk worker.Ensure
 }
 
 type Engine struct {
-	// buffer
-	buf *buffer
+	// buf contains various messages prepared to be sent out to this player's
+	// client during the time based fanout procedure. The byte slice may contain
+	// multiple encoded messages.
+	buf *xsync.MapOf[[2]byte, []byte]
 	// don is the global channel to signal program termination. If this channel is
 	// closed, then all streaming connections should be terminated gracefully.
 	don <-chan struct{}
@@ -55,6 +60,8 @@ type Engine struct {
 	// message will be terminated, which also means that those clients will be
 	// removed from the game that they are playing.
 	tim time.Duration
+	// uni
+	uni *unique.Unique[common.Address]
 	// wrk
 	wrk worker.Ensure
 }
@@ -72,15 +79,15 @@ func New(c Config) *Engine {
 	if c.Rtr == nil {
 		tracer.Panic(fmt.Errorf("%T.Rtr must not be empty", c))
 	}
+	if c.Uni == nil {
+		tracer.Panic(fmt.Errorf("%T.Uni must not be empty", c))
+	}
 	if c.Wrk == nil {
 		tracer.Panic(fmt.Errorf("%T.Wrk must not be empty", c))
 	}
 
 	return &Engine{
-		buf: &buffer{
-			nrg: xsync.NewMapOf[[2]byte, [][]byte](),
-			ply: xsync.NewMapOf[[2]byte, [][]byte](),
-		},
+		buf: xsync.NewMapOf[[2]byte, []byte](),
 		don: c.Don,
 		fil: c.Fil,
 		lkp: &lookup{
@@ -89,11 +96,12 @@ func New(c Config) *Engine {
 		},
 		log: c.Log,
 		mem: &memory{
-			nrg: map[object.Object]*energy.Energy{},
-			ply: map[[2]byte]*player.Player{},
+			nrg: xsync.NewMapOf[object.Object, *energy.Energy](),
+			ply: xsync.NewMapOf[[2]byte, *player.Player](),
 		},
 		rtr: c.Rtr,
 		sem: make(chan struct{}, runtime.NumCPU()),
+		uni: c.Uni,
 		wrk: c.Wrk,
 	}
 }

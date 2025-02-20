@@ -19,14 +19,14 @@ const (
 )
 
 type Client struct {
-	joi chan<- Packet
+	uid chan<- Packet
 	mov chan<- Packet
 	rac chan<- Packet
 
 	lim *xsync.MapOf[common.Address, ratelimit.Limiter]
 }
 
-func (c *Client) Join(uid [2]byte, cli *client.Client, _ []byte) error {
+func (c *Client) Uuid(uid [2]byte, cli *client.Client, _ []byte) error {
 	// Prevent DOS attacks and rate limit client specific stream input, so that
 	// our internal fanout schedule cannot be overloaded maliciously.
 
@@ -48,7 +48,7 @@ func (c *Client) Join(uid [2]byte, cli *client.Client, _ []byte) error {
 	// synchronization loop.
 
 	{
-		c.joi <- Packet{Byt: nil, Cli: cli, Uid: uid}
+		c.uid <- Packet{Byt: nil, Cli: cli, Uid: uid}
 	}
 
 	return nil

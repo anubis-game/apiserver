@@ -1,16 +1,11 @@
 package setter
 
-type Setter[T comparable] struct {
+type Setter[T any] struct {
 	val T
 }
 
-func New[T comparable]() *Setter[T] {
+func New[T any]() *Setter[T] {
 	return &Setter[T]{}
-}
-
-func (o *Setter[T]) Emp() bool {
-	var zer T
-	return o.val == zer
 }
 
 func (o *Setter[T]) Get() T {

@@ -17,7 +17,7 @@ const (
 	Pi float64 = 2      // Initial range of sight in partitions
 	Pl float64 = 8      // Largest range of sight in partitions
 	Ri float64 = 10     // Initial body part radius in pixels
-	Rl float64 = 256    // Largest body part radius in pixels
+	Rl float64 = 255    // Largest body part radius in pixels
 	Si float64 = 50     // Initial player size in points
 	Sl float64 = 50_000 // Largest player size in points
 )
@@ -25,8 +25,8 @@ const (
 const (
 	// Frm is the standard frame duration in milliseconds travelled at a time.
 	// Note that this constant is the basis for a lot of assumptions made all
-	// across the game engine. Changing this value may break a number of runtime
-	// expectations.
+	// across the game engine. Changing this value, especially decreasing it, may
+	// break a number of runtime expectations.
 	Frm = 25
 	// Dis is the standard distance travelled in pixels per standard frame. The
 	// amount of pixels travelled here per millisecond is 0.2, which represents a
@@ -159,9 +159,9 @@ func length(siz float64) int {
 
 // See https://www.desmos.com/calculator/dokimlkswz for probably outdated radius
 // calculations.
-func radius(siz float64) int {
+func radius(siz float64) byte {
 	rad := math.Max(Ri, Ri*math.Pow(siz/Si, 0.47))
-	return int(math.Min(Rl, math.Ceil(rad)))
+	return byte(math.Min(Rl, math.Ceil(rad)))
 }
 
 // See https://www.desmos.com/calculator/vpiapfimb1 for probably outdated sight

@@ -8,6 +8,8 @@ import (
 )
 
 func Test_Setter(t *testing.T) {
+	var zer common.Hash
+
 	var foo testStruct
 	{
 		foo = testStruct{
@@ -15,7 +17,7 @@ func Test_Setter(t *testing.T) {
 		}
 	}
 
-	if !foo.Setter().Emp() {
+	if foo.Setter().Get() != zer {
 		t.Fatal("expected", true, "got", false)
 	}
 
@@ -28,7 +30,7 @@ func Test_Setter(t *testing.T) {
 		foo.Setter().Set(exp)
 	}
 
-	if foo.Setter().Emp() {
+	if foo.Setter().Get() == zer {
 		t.Fatal("expected", false, "got", true)
 	}
 
@@ -46,6 +48,6 @@ type testStruct struct {
 	hsh *Setter[common.Hash]
 }
 
-func (t testStruct) Setter() *Setter[common.Hash] {
+func (t testStruct) Setter() Interface[common.Hash] {
 	return t.hsh
 }

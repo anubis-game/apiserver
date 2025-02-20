@@ -5,6 +5,7 @@ import (
 
 	"github.com/anubis-game/apiserver/pkg/matrix"
 	"github.com/anubis-game/apiserver/pkg/object"
+	"github.com/anubis-game/apiserver/pkg/schema"
 	"github.com/anubis-game/apiserver/pkg/setter"
 	"github.com/xh3b4sd/tracer"
 )
@@ -88,6 +89,26 @@ func New(c Config) *Vector {
 	}
 
 	{
+		siz := make([]byte, 4)
+
+		siz[0] = byte(schema.Size)
+		copy(siz[1:3], vec.uid[:])
+		siz[3] = crx.Rad
+
+		crx.siz = siz
+	}
+
+	{
+		typ := make([]byte, 4)
+
+		typ[0] = byte(schema.Type)
+		copy(typ[1:3], vec.uid[:])
+		typ[3] = crx.Rad
+
+		crx.typ = typ
+	}
+
+	{
 		vec.crx.Set(crx)
 	}
 
@@ -122,10 +143,12 @@ func New(c Config) *Vector {
 	}
 
 	{
-		buf := make([]byte, 2+object.Len)
+		buf := make([]byte, 4+object.Len)
 
-		copy(buf[:2], vec.uid[:])
-		copy(buf[2:], byt[:])
+		buf[0] = byte(schema.Body)
+		copy(buf[1:3], vec.uid[:])
+		buf[3] = 0x1
+		copy(buf[4:], byt[:])
 
 		vec.buf[prt] = buf
 	}

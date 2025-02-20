@@ -21,7 +21,7 @@ func (r *run) runE(cmd *cobra.Command, arg []string) error {
 
 	var env envvar.Env
 	{
-		env = envvar.Load(r.flag.Env)
+		env = envvar.Create(r.flag.Env)
 	}
 
 	var log logger.Interface

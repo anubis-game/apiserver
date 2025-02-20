@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/coder/websocket"
+	"github.com/xh3b4sd/tracer"
 )
 
 const (
@@ -14,7 +15,7 @@ const (
 	Max = 5 * time.Second
 )
 
-func (c *Client) Stream(byt []byte) {
+func (c *Client) Stream(byt []byte) error {
 	// Setup the prerequisites for a timeout limited write stream. It doesn't
 	// matter where Client.Stream originates from, we always have to ensure that
 	// no single client write blocks the global runtime.
@@ -29,7 +30,8 @@ func (c *Client) Stream(byt []byte) {
 
 	err := c.con.Write(ctx, websocket.MessageBinary, byt)
 	if err != nil {
-		close(c.Writer())
+		don()
+		return tracer.Mask(err)
 	}
 
 	// In case the client write above finished early, cleanup the context related
@@ -38,4 +40,6 @@ func (c *Client) Stream(byt []byte) {
 	{
 		don()
 	}
+
+	return nil
 }

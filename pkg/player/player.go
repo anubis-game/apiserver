@@ -2,6 +2,7 @@ package player
 
 import (
 	"github.com/anubis-game/apiserver/pkg/client"
+	"github.com/anubis-game/apiserver/pkg/schema"
 	"github.com/anubis-game/apiserver/pkg/vector"
 )
 
@@ -13,48 +14,34 @@ type Config struct {
 
 type Player struct {
 	Cli *client.Client
-	Uid [2]byte
 	Vec *vector.Vector
 
-	ply []byte
-	wal []byte
+	// uid contains this player's wallet specific fanout buffer, containing the
+	// action, UID and wallet bytes. This buffer is cached during player
+	// initialization so that we do not have to do the same computation all over
+	// again every time.
+	uid []byte
 }
 
 func New(c Config) *Player {
-	vec := c.Vec.Encode()
-	crx := c.Vec.Charax().Get()
-	mot := c.Vec.Motion().Get()
-
-	var ply []byte
+	var uid []byte
 	{
-		ply = make([]byte, 8+len(vec))
-
-		copy(ply[0:2], c.Uid[:])
-		copy(ply[8:], vec)
-
-		ply[2] = byte(crx.Rad)
-		ply[3] = byte(crx.Siz)
-		ply[4] = crx.Typ
-
-		ply[5] = mot.Qdr
-		ply[6] = mot.Agl
-		ply[7] = mot.Vlc
+		uid = make([]byte, 23)
 	}
 
-	var wal []byte
 	{
-		wal = make([]byte, 22)
+		uid[0] = byte(schema.Uuid)
+	}
 
-		copy(wal[:2], c.Uid[:])
-		copy(wal[2:], c.Cli.Wallet().Bytes())
+	{
+		copy(uid[1:3], c.Uid[:])
+		copy(uid[3:], c.Cli.Wallet().Bytes())
 	}
 
 	return &Player{
 		Cli: c.Cli,
-		Uid: c.Uid,
 		Vec: c.Vec,
 
-		ply: ply,
-		wal: wal,
+		uid: uid,
 	}
 }

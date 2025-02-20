@@ -20,7 +20,7 @@ func (e *Engine) Kill(uid [2]byte, _ *client.Client, inp []byte) error {
 	var err error
 
 	{
-		delete(e.mem.ply, uid)
+		e.mem.ply.Delete(uid)
 	}
 
 	//
@@ -94,6 +94,12 @@ func (e *Engine) Kill(uid [2]byte, _ *client.Client, inp []byte) error {
 
 	{
 		// h.cli.Delete(los)
+	}
+
+	{
+		// Player UIDs are not deleted when the client connection is lost. Only
+		// losing the game causes UIDs to be freed.
+		// h.uni.Delete(wal)
 	}
 
 	return nil

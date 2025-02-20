@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/anubis-game/apiserver/pkg/object"
+	"github.com/anubis-game/apiserver/pkg/schema"
 )
 
 func Test_Vector_Buffer_Change(t *testing.T) {
@@ -1026,7 +1027,7 @@ func musBuf(t *testing.T, vec *Vector, prt object.Object, obj []object.Object) {
 	act := vec.buf[prt]
 	exp := objByt(vec.uid, obj)
 
-	if slices.Equal(act[:2], []byte{0x0, 0x0}) {
+	if slices.Equal(act[1:3], []byte{0x0, 0x0}) {
 		t.Fatalf("expected %#v got %#v", "non-zero ID bytes", act[:2])
 	}
 	if !slices.Equal(act, exp) {
@@ -1038,8 +1039,10 @@ func objByt(uid [2]byte, obj []object.Object) []byte {
 	var buf []byte
 	{
 		buf = []byte{
+			byte(schema.Body),
 			uid[0],
 			uid[1],
+			byte(len(obj)),
 		}
 	}
 

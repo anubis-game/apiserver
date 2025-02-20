@@ -18,12 +18,6 @@ import (
 	"github.com/xh3b4sd/tracer"
 )
 
-const (
-	// Max is the maximum amount of concurrent client connections accepted by the
-	// stream engine.
-	Max = 500
-)
-
 type Config struct {
 	// Don is the global channel to signal program termination. If this channel is
 	// closed, then all streaming connections should be terminated gracefully.
@@ -36,6 +30,10 @@ type Config struct {
 	Reg *registry.Registry
 	// Rtr
 	Rtr *router.Client
+	// Uni provides a thread safe mechanism to allocate compact player IDs.
+	// Allocation happens in the server handler, freeing allocated player IDs
+	// happens in the game engine.
+	Uni *unique.Unique[common.Address]
 }
 
 type Handler struct {
@@ -70,6 +68,9 @@ func New(c Config) *Handler {
 	if c.Rtr == nil {
 		tracer.Panic(fmt.Errorf("%T.Rtr must not be empty", c))
 	}
+	if c.Uni == nil {
+		tracer.Panic(fmt.Errorf("%T.Uni must not be empty", c))
+	}
 
 	var opt *websocket.AcceptOptions
 	{
@@ -89,11 +90,11 @@ func New(c Config) *Handler {
 		opt: opt,
 		reg: c.Reg,
 		rtr: c.Rtr,
-		sem: make(chan struct{}, Max),
+		sem: make(chan struct{}, c.Env.EngineCapacity),
 		ttl: musDur(c.Env.ConnectionTimeout, "s"),
 		txp: cache.NewTime[uuid.UUID](),
 		tok: cache.NewSxnc[uuid.UUID, common.Address](),
-		uni: unique.New[common.Address](Max),
+		uni: c.Uni,
 		wxp: cache.NewTime[common.Address](),
 	}
 }

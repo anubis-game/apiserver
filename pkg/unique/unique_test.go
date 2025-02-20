@@ -3,6 +3,8 @@ package unique
 import (
 	"encoding/binary"
 	"fmt"
+	"sync"
+	"sync/atomic"
 	"testing"
 )
 
@@ -18,12 +20,12 @@ func Test_Unique_500(t *testing.T) {
 	}
 
 	for i := 0; i < 384; i++ {
-		uni.Create(fmt.Sprintf("%d", i))
+		uni.Ensure(fmt.Sprintf("%d", i))
 	}
 
 	var act [2]byte
 	{
-		act = uni.Create(fmt.Sprintf("%d", 385))
+		act = uni.Ensure(fmt.Sprintf("%d", 385))
 	}
 
 	var exp [2]byte
@@ -68,11 +70,11 @@ func Test_Unique_Lifecycle(t *testing.T) {
 	var au3 [2]byte
 	var au4 [2]byte
 	{
-		au0 = uni.Create("0")
-		au1 = uni.Create("1")
-		au2 = uni.Create("2")
-		au3 = uni.Create("3")
-		au4 = uni.Create("4")
+		au0 = uni.Ensure("0")
+		au1 = uni.Ensure("1")
+		au2 = uni.Ensure("2")
+		au3 = uni.Ensure("3")
+		au4 = uni.Ensure("4")
 	}
 
 	var eu0 [2]byte
@@ -104,6 +106,36 @@ func Test_Unique_Lifecycle(t *testing.T) {
 		t.Fatalf("expected %#v got %#v", eu4, au4)
 	}
 
+	// Once allocated, we can call Unique.Ensure() multiple times with the same
+	// input and get the same output every time.
+
+	{
+		au0 = uni.Ensure("0")
+		au2 = uni.Ensure("2")
+	}
+
+	if au0 != eu0 {
+		t.Fatalf("expected %#v got %#v", eu0, au0)
+	}
+	if au2 != eu2 {
+		t.Fatalf("expected %#v got %#v", eu2, au2)
+	}
+
+	// Once allocated, we can call Unique.Ensure() multiple times with the same
+	// input and get the same output every time.
+
+	{
+		au0 = uni.Ensure("0")
+		au2 = uni.Ensure("2")
+	}
+
+	if au0 != eu0 {
+		t.Fatalf("expected %#v got %#v", eu0, au0)
+	}
+	if au2 != eu2 {
+		t.Fatalf("expected %#v got %#v", eu2, au2)
+	}
+
 	{
 		uni.Delete("1") // 0x1 is freed
 		uni.Delete("3") // 0x3 is freed
@@ -115,11 +147,11 @@ func Test_Unique_Lifecycle(t *testing.T) {
 	var au8 [2]byte
 	var au9 [2]byte
 	{
-		au5 = uni.Create("5")
-		au6 = uni.Create("6")
-		au7 = uni.Create("7")
-		au8 = uni.Create("8")
-		au9 = uni.Create("9")
+		au5 = uni.Ensure("5")
+		au6 = uni.Ensure("6")
+		au7 = uni.Ensure("7")
+		au8 = uni.Ensure("8")
+		au9 = uni.Ensure("9")
 	}
 
 	var eu5 [2]byte
@@ -164,11 +196,11 @@ func Test_Unique_Lifecycle(t *testing.T) {
 	var a13 [2]byte
 	var a14 [2]byte
 	{
-		a10 = uni.Create("10")
-		a11 = uni.Create("11")
-		a12 = uni.Create("12")
-		a13 = uni.Create("13")
-		a14 = uni.Create("14")
+		a10 = uni.Ensure("10")
+		a11 = uni.Ensure("11")
+		a12 = uni.Ensure("12")
+		a13 = uni.Ensure("13")
+		a14 = uni.Ensure("14")
 	}
 
 	var e10 [2]byte
@@ -201,6 +233,72 @@ func Test_Unique_Lifecycle(t *testing.T) {
 	}
 }
 
+func Test_Unique_Mutex(t *testing.T) {
+	wrk := 100
+	ops := 100
+	cap := wrk * ops
+
+	var uni *Unique[string]
+	{
+		uni = New[string](cap)
+	}
+
+	var wai sync.WaitGroup
+
+	var mut sync.Mutex
+	see := map[[2]byte]struct{}{}
+
+	var len int32
+	for i := 0; i < wrk; i++ {
+		{
+			wai.Add(1)
+		}
+
+		go func(i int) {
+			for j := 0; j < ops; j++ {
+				var val string
+				{
+					val = fmt.Sprintf("%03d-%03d", i, j)
+				}
+
+				var uid [2]byte
+				{
+					uid = uni.Ensure(val)
+				}
+
+				mut.Lock()
+				_, exi := see[uid]
+				if !exi {
+					see[uid] = struct{}{}
+					atomic.AddInt32(&len, +1)
+				}
+				mut.Unlock()
+
+				if j%2 == 0 {
+					mut.Lock()
+					delete(see, uid)
+					mut.Unlock()
+
+					uni.Delete(val)
+					atomic.AddInt32(&len, -1)
+				}
+			}
+
+			{
+				wai.Done()
+			}
+		}(i)
+	}
+
+	{
+		wai.Wait()
+	}
+
+	if uni.length() != int(len) {
+		t.Fatalf("expected %#v got %#v", len, uni.length())
+	}
+}
+
 func Benchmark_Unique(b *testing.B) {
 	var uni *Unique[string]
 	{
@@ -208,14 +306,14 @@ func Benchmark_Unique(b *testing.B) {
 	}
 
 	{
-		uni.Create("0")
-		uni.Create("1")
-		uni.Create("2")
-		uni.Create("3")
-		uni.Create("4")
-		uni.Create("5")
-		uni.Create("6")
-		uni.Create("7")
+		uni.Ensure("0")
+		uni.Ensure("1")
+		uni.Ensure("2")
+		uni.Ensure("3")
+		uni.Ensure("4")
+		uni.Ensure("5")
+		uni.Ensure("6")
+		uni.Ensure("7")
 	}
 
 	{
@@ -227,8 +325,8 @@ func Benchmark_Unique(b *testing.B) {
 	b.Run(fmt.Sprintf("%03d", 0), func(b *testing.B) {
 		b.ResetTimer()
 		for range b.N {
-			// ~10.50 ns/op for both Unique.Create() and Unique.Delete()
-			uni.Create("8")
+			// ~36.50 ns/op for both Unique.Ensure() and Unique.Delete()
+			uni.Ensure("8")
 			uni.Delete("8")
 		}
 	})

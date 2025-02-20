@@ -3,22 +3,37 @@ package engine
 func (e *Engine) Daemon() {
 	// Initialize the first fanout tick so that we can keep track of the actually
 	// executed interval moving forward.
+
 	{
-		e.tic = <-e.rtr.Push()
+		e.tic = <-e.rtr.Tick()
 	}
+
+	// Run all engine processes concurrently in order to utilize all available
+	// host CPUs.
+	//
+	//       <--join-->      <--join-->  <--join-->            <--join--><--join-->       <--join-->
+	//
+	//      <-move->   <-move-> <-move->   <-move->  <-move-><-move->  <-move->   <-move-><-move->
+	//
+	//                      <race>         <race>    <race>                    <race>       <race>
+	//
+	//     <------------tick------------><------------tick------------><------------tick------------>
+	//
+	//     0ms                           25ms                          50ms
+	//
 
 	for {
 		select {
 		case <-e.don:
 			return
-		case x := <-e.rtr.Join():
-			e.join(x)
+		case x := <-e.rtr.Uuid():
+			go e.uuid(x)
 		case x := <-e.rtr.Move():
-			e.move(x)
+			go e.move(x)
 		case x := <-e.rtr.Race():
-			e.race(x)
-		case x := <-e.rtr.Push():
-			e.push(x)
+			go e.race(x)
+		case x := <-e.rtr.Tick():
+			go e.tick(x)
 		}
 	}
 }
