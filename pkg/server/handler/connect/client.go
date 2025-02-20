@@ -13,9 +13,13 @@ import (
 )
 
 func (h *Handler) client(wal common.Address, con *websocket.Conn) error {
+	// Create a compact 2 byte UID and associate it with the given wallet address.
+	// If clients ever reconnect using their session tokens, we can allow them to
+	// continue playing their game after any intermittend interruption.
+
 	var uid [2]byte
 	{
-		uid = h.uni.Create(wal)
+		uid = h.uni.Ensure(wal)
 	}
 
 	var cli *client.Client
@@ -69,15 +73,20 @@ func (h *Handler) client(wal common.Address, con *websocket.Conn) error {
 
 	select {
 	case <-cli.Expiry():
+	// TODO:refactor maybe call this Client.Server() and Client.Engine().
 	case <-cli.Reader():
+	// TODO:infra we don't use Client.Writer since we return errors from
+	// Client.Stream(). We may still need this for Engine.Kill().
 	case <-cli.Writer():
 	case <-h.don:
 	}
 
-	// TODO:game the player must be removed from the game
+	// The expiration callback setup above is client connection specific. Once a
+	// client gets disconnected, we cleanup the expiration callback. Should the
+	// same client reconnect, then we setup a new expiration callback that
+	// accounts for the necessary deadline.
 
 	{
-		h.uni.Delete(wal)
 		h.wxp.Delete(wal)
 	}
 

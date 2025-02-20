@@ -31,7 +31,6 @@ func (c *Client) Stream(byt []byte) error {
 	err := c.con.Write(ctx, websocket.MessageBinary, byt)
 	if err != nil {
 		don()
-		close(c.Writer())
 		return tracer.Mask(err)
 	}
 

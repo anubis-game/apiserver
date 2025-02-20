@@ -10,9 +10,11 @@ import (
 	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/server"
 	"github.com/anubis-game/apiserver/pkg/server/handler/connect"
+	"github.com/anubis-game/apiserver/pkg/unique"
 	"github.com/anubis-game/apiserver/pkg/worker"
 	"github.com/anubis-game/apiserver/pkg/worker/release"
 	"github.com/anubis-game/apiserver/pkg/worker/resolve"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/xh3b4sd/logger"
 	"github.com/xh3b4sd/tracer"
 )
@@ -81,6 +83,11 @@ func New(c Config) *Daemon {
 		})
 	}
 
+	var uni *unique.Unique[common.Address]
+	{
+		uni = unique.New[common.Address](c.Env.EngineCapacity)
+	}
+
 	var con *connect.Handler
 	{
 		con = connect.New(connect.Config{
@@ -89,6 +96,7 @@ func New(c Config) *Daemon {
 			Log: log,
 			Reg: reg,
 			Rtr: rtr.Client(),
+			Uni: uni,
 		})
 	}
 
@@ -108,6 +116,7 @@ func New(c Config) *Daemon {
 			Fil: fil,
 			Log: log,
 			Rtr: rtr.Engine(),
+			Uni: uni,
 			Wrk: wrk,
 		})
 	}

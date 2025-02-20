@@ -30,6 +30,10 @@ type Config struct {
 	Reg *registry.Registry
 	// Rtr
 	Rtr *router.Client
+	// Uni provides a thread safe mechanism to allocate compact player IDs.
+	// Allocation happens in the server handler, freeing allocated player IDs
+	// happens in the game engine.
+	Uni *unique.Unique[common.Address]
 }
 
 type Handler struct {
@@ -64,6 +68,9 @@ func New(c Config) *Handler {
 	if c.Rtr == nil {
 		tracer.Panic(fmt.Errorf("%T.Rtr must not be empty", c))
 	}
+	if c.Uni == nil {
+		tracer.Panic(fmt.Errorf("%T.Uni must not be empty", c))
+	}
 
 	var opt *websocket.AcceptOptions
 	{
@@ -87,7 +94,7 @@ func New(c Config) *Handler {
 		ttl: musDur(c.Env.ConnectionTimeout, "s"),
 		txp: cache.NewTime[uuid.UUID](),
 		tok: cache.NewSxnc[uuid.UUID, common.Address](),
-		uni: unique.New[common.Address](c.Env.EngineCapacity),
+		uni: c.Uni,
 		wxp: cache.NewTime[common.Address](),
 	}
 }

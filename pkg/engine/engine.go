@@ -10,7 +10,9 @@ import (
 	"github.com/anubis-game/apiserver/pkg/object"
 	"github.com/anubis-game/apiserver/pkg/player"
 	"github.com/anubis-game/apiserver/pkg/router"
+	"github.com/anubis-game/apiserver/pkg/unique"
 	"github.com/anubis-game/apiserver/pkg/worker"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/puzpuzpuz/xsync/v3"
 	"github.com/xh3b4sd/logger"
 	"github.com/xh3b4sd/tracer"
@@ -21,6 +23,7 @@ type Config struct {
 	Fil *filler.Filler
 	Log logger.Interface
 	Rtr *router.Engine
+	Uni *unique.Unique[common.Address]
 	Wrk worker.Ensure
 }
 
@@ -57,6 +60,8 @@ type Engine struct {
 	// message will be terminated, which also means that those clients will be
 	// removed from the game that they are playing.
 	tim time.Duration
+	// uni
+	uni *unique.Unique[common.Address]
 	// wrk
 	wrk worker.Ensure
 }
@@ -73,6 +78,9 @@ func New(c Config) *Engine {
 	}
 	if c.Rtr == nil {
 		tracer.Panic(fmt.Errorf("%T.Rtr must not be empty", c))
+	}
+	if c.Uni == nil {
+		tracer.Panic(fmt.Errorf("%T.Uni must not be empty", c))
 	}
 	if c.Wrk == nil {
 		tracer.Panic(fmt.Errorf("%T.Wrk must not be empty", c))
@@ -93,6 +101,7 @@ func New(c Config) *Engine {
 		},
 		rtr: c.Rtr,
 		sem: make(chan struct{}, runtime.NumCPU()),
+		uni: c.Uni,
 		wrk: c.Wrk,
 	}
 }
