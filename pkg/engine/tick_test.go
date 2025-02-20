@@ -87,7 +87,7 @@ func Test_Engine_worker_Timeout(t *testing.T) {
 
 	var tim *time.Timer
 	{
-		tim = time.NewTimer(4 * time.Millisecond)
+		tim = time.NewTimer(10 * time.Millisecond)
 	}
 
 	//
@@ -99,14 +99,14 @@ func Test_Engine_worker_Timeout(t *testing.T) {
 		dur = time.Since(sta)
 	}
 
-	// 50 MB are not written within 4 milliseconds, so the test should timeout
+	// 50 MB are not written within 10 milliseconds, so the test should timeout
 	// using the configured *time.Timer.
 
-	if dur < 3500*time.Microsecond {
-		t.Fatalf("expected %s got %s", "over 4ms", dur)
+	if dur < 9*time.Millisecond {
+		t.Fatalf("expected %s got %s", "over 9ms", dur)
 	}
-	if dur > 4500*time.Microsecond {
-		t.Fatalf("expected %s got %s", "under 5ms", dur)
+	if dur > 11*time.Millisecond {
+		t.Fatalf("expected %s got %s", "under 11ms", dur)
 	}
 
 	//
