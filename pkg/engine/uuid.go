@@ -30,6 +30,11 @@ func (e *Engine) uuid(pac router.Packet) {
 		vec = e.fil.Vector(pac.Uid)
 	}
 
+	var crx vector.Charax
+	{
+		crx = vec.Charax().Get()
+	}
+
 	var ply *player.Player
 	{
 		ply = player.New(player.Config{
@@ -43,11 +48,15 @@ func (e *Engine) uuid(pac router.Packet) {
 	// body parts are associated with the 2 byte player ID the same way the user's
 	// wallet is associated with that same 2 byte player ID.
 
-	var bod []byte
 	var uid []byte
+	var bod []byte
+	var siz []byte
+	var typ []byte
 	{
-		bod = vec.Encode()
 		uid = ply.Wallet()
+		bod = vec.Encode()
+		siz = crx.Size()
+		typ = crx.Type()
 	}
 
 	// Send the new player's own wallet information first so every player can self
@@ -57,6 +66,8 @@ func (e *Engine) uuid(pac router.Packet) {
 	{
 		buf = append(buf, uid...)
 		buf = append(buf, bod...)
+		buf = append(buf, siz...)
+		buf = append(buf, typ...)
 	}
 
 	e.mem.ply.Range(func(k [2]byte, v *player.Player) bool {
@@ -64,33 +75,47 @@ func (e *Engine) uuid(pac router.Packet) {
 		// player, if the body parts of the new player are visible inside the view
 		// of the existing player. Note that every player joining the game must push
 		// its own identity to all active players first, so the following body parts
-		// can be identified using the player's 2 byte UId.
+		// can be identified using the player's 2 byte UId. Further note that any
+		// buffer modifications of existing players must be synchronized, which is
+		// why we are using MapOf.Compute() below.
 
 		if vec.Inside(v.Vec.Screen()) {
-			var b []byte
-			{
-				b = v.Buffer().Get()
-			}
+			e.mem.ply.Compute(pac.Uid, func(p *player.Player, _ bool) (*player.Player, bool) {
+				var b []byte
+				{
+					b = p.Buffer().Get()
+				}
 
-			{
-				b = append(b, uid...)
-				b = append(b, bod...)
+				{
+					b = append(b, uid...)
+					b = append(b, bod...)
+					b = append(b, siz...)
+					b = append(b, typ...)
+				}
 
-				// TODO:infra when the body buffer is separated, we have to send type
-				// and size messages
-			}
+				{
+					p.Buffer().Set(b)
+				}
 
-			{
-				v.Buffer().Set(b)
-			}
+				return p, false
+			})
 		}
 
-		// Only share the existing player's wallet information with an existing
-		// player, if the body parts of the existing player are visible inside the
-		// view of the new player.
+		// Only share the existing player's information with the new player, if the
+		// body parts of the existing player are visible inside the view of the new
+		// player.
 
 		if v.Vec.Inside(vec.Screen()) {
-			buf = append(buf, v.Wallet()...)
+			var c vector.Charax
+			{
+				c = v.Vec.Charax().Get()
+			}
+
+			{
+				buf = append(buf, v.Wallet()...)
+				buf = append(buf, c.Size()...)
+				buf = append(buf, c.Type()...) // TODO:infra how can we prevent sending type twice?
+			}
 		}
 
 		return true

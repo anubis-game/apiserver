@@ -17,7 +17,7 @@ const (
 	Pi float64 = 2      // Initial range of sight in partitions
 	Pl float64 = 8      // Largest range of sight in partitions
 	Ri float64 = 10     // Initial body part radius in pixels
-	Rl float64 = 256    // Largest body part radius in pixels
+	Rl float64 = 255    // Largest body part radius in pixels
 	Si float64 = 50     // Initial player size in points
 	Sl float64 = 50_000 // Largest player size in points
 )
@@ -159,9 +159,9 @@ func length(siz float64) int {
 
 // See https://www.desmos.com/calculator/dokimlkswz for probably outdated radius
 // calculations.
-func radius(siz float64) int {
+func radius(siz float64) byte {
 	rad := math.Max(Ri, Ri*math.Pow(siz/Si, 0.47))
-	return int(math.Min(Rl, math.Ceil(rad)))
+	return byte(math.Min(Rl, math.Ceil(rad)))
 }
 
 // See https://www.desmos.com/calculator/vpiapfimb1 for probably outdated sight

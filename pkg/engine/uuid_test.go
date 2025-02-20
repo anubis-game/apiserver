@@ -328,7 +328,7 @@ func Benchmark_Engine_uuid(b *testing.B) {
 
 		b.ResetTimer()
 		for i := 0; i < b.N; i++ {
-			// ~4,300 ns/op
+			// ~4,400 ns/op
 			eng.uuid(router.Packet{
 				Cli: client.New(client.Config{
 					Wal: wal,

@@ -32,9 +32,23 @@ const (
 	//
 	Uuid Action = 0x4
 
-	Size Action = 0x5 // TODO
+	// Size is sent from the server to the client, with a buffer length of 4.
+	// There are two additional parameters, the player's 2 byte UID and their
+	// associated body part radius.
+	//
+	//     [action]    [  uid  ]    [ size ]
+	//     [1 byte]    [2 bytes]    [1 byte]
+	//
+	Size Action = 0x5
 
-	Type Action = 0x6 // TODO
+	// Type is sent from the server to the client, with a buffer length of 4.
+	// There are two additional parameters, the player's 2 byte UID and their
+	// associated character type.
+	//
+	//     [action]    [  uid  ]    [ type ]
+	//     [1 byte]    [2 bytes]    [1 byte]
+	//
+	Type Action = 0x6
 
 	// Body is sent from the server to the client, with a variable buffer length.
 	// There are at least 3 additional parameters, the player's 2 byte UID, the

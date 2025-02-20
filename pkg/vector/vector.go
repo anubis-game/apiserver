@@ -89,6 +89,26 @@ func New(c Config) *Vector {
 	}
 
 	{
+		siz := make([]byte, 4)
+
+		siz[0] = byte(schema.Size)
+		copy(siz[1:3], vec.uid[:])
+		siz[3] = crx.Rad
+
+		crx.siz = siz
+	}
+
+	{
+		typ := make([]byte, 4)
+
+		typ[0] = byte(schema.Type)
+		copy(typ[1:3], vec.uid[:])
+		typ[3] = crx.Rad
+
+		crx.typ = typ
+	}
+
+	{
 		vec.crx.Set(crx)
 	}
 

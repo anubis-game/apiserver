@@ -224,7 +224,7 @@ func Test_Vector_Adjust_length(t *testing.T) {
 func Test_Vector_Adjust_radius(t *testing.T) {
 	testCases := []struct {
 		siz float64
-		rad int
+		rad byte
 	}{
 		// Case 000
 		{
@@ -289,32 +289,32 @@ func Test_Vector_Adjust_radius(t *testing.T) {
 		// Case 012
 		{
 			siz: 50_000,
-			rad: 256,
+			rad: 255,
 		},
 		// Case 013
 		{
 			siz: 60_000,
-			rad: 256,
+			rad: 255,
 		},
 		// Case 014
 		{
 			siz: 70_000,
-			rad: 256,
+			rad: 255,
 		},
 		// Case 015
 		{
 			siz: 80_000,
-			rad: 256,
+			rad: 255,
 		},
 		// Case 016
 		{
 			siz: 90_000,
-			rad: 256,
+			rad: 255,
 		},
 		// Case 017
 		{
 			siz: 100_000,
-			rad: 256,
+			rad: 255,
 		},
 	}
 
