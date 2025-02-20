@@ -26,7 +26,7 @@ type Client struct {
 	lim *xsync.MapOf[common.Address, ratelimit.Limiter]
 }
 
-func (c *Client) Uuid(uid [2]byte, cli *client.Client, _ []byte) error {
+func (c *Client) Uuid(uid byte, cli *client.Client, _ []byte) error {
 	// Prevent DOS attacks and rate limit client specific stream input, so that
 	// our internal fanout schedule cannot be overloaded maliciously.
 
@@ -54,7 +54,7 @@ func (c *Client) Uuid(uid [2]byte, cli *client.Client, _ []byte) error {
 	return nil
 }
 
-func (c *Client) Move(uid [2]byte, cli *client.Client, byt []byte) error {
+func (c *Client) Move(uid byte, cli *client.Client, byt []byte) error {
 	// Prevent DOS attacks and rate limit client specific stream input, so that
 	// our internal fanout schedule cannot be overloaded maliciously.
 
@@ -82,7 +82,7 @@ func (c *Client) Move(uid [2]byte, cli *client.Client, byt []byte) error {
 	return nil
 }
 
-func (c *Client) Race(uid [2]byte, cli *client.Client, _ []byte) error {
+func (c *Client) Race(uid byte, cli *client.Client, _ []byte) error {
 	// Prevent DOS attacks and rate limit client specific stream input, so that
 	// our internal fanout schedule cannot be overloaded maliciously.
 

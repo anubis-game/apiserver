@@ -1,25 +1,29 @@
 package unique
 
 import (
-	"encoding/binary"
 	"sync"
 )
 
-type Unique[T comparable] struct {
-	lis []T
+type Unique[K comparable, V Number] struct {
+	lis []K
 	mut sync.Mutex
-	rev map[T]uint16
-	zer T
+	rev map[K]V
+	zer K
 }
 
-func New[T comparable](len int) *Unique[T] {
-	return &Unique[T]{
-		lis: make([]T, len),
-		rev: make(map[T]uint16, len),
+func New[K comparable, V Number]() *Unique[K, V] {
+	var len int
+	{
+		len = maxOf[V]()
+	}
+
+	return &Unique[K, V]{
+		lis: make([]K, len),
+		rev: make(map[K]V, len),
 	}
 }
 
-func (u *Unique[T]) Delete(v T) {
+func (u *Unique[K, V]) Delete(v K) {
 	u.mut.Lock()
 
 	i, e := u.rev[v]
@@ -31,37 +35,33 @@ func (u *Unique[T]) Delete(v T) {
 	u.mut.Unlock()
 }
 
-func (u *Unique[T]) Ensure(v T) [2]byte {
+func (u *Unique[K, V]) Ensure(v K) V {
 	u.mut.Lock()
 
 	i, e := u.rev[v]
 	if e {
 		u.mut.Unlock()
 
-		var b [2]byte
-		binary.BigEndian.PutUint16(b[:], uint16(i))
-		return b
+		return i
 	}
 
 	for i, x := range u.lis {
 		if x == u.zer {
 			u.lis[i] = v
-			u.rev[v] = uint16(i)
+			u.rev[v] = V(i)
 
 			u.mut.Unlock()
 
-			var b [2]byte
-			binary.BigEndian.PutUint16(b[:], uint16(i))
-			return b
+			return V(i)
 		}
 	}
 
 	u.mut.Unlock()
-	return [2]byte{}
+	return 0
 }
 
 // length is only used for testing.
-func (u *Unique[T]) length() int {
+func (u *Unique[K, V]) length() int {
 	u.mut.Lock()
 	l := len(u.rev)
 	u.mut.Unlock()

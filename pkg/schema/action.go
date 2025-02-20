@@ -29,41 +29,41 @@ const (
 	//
 	Auth Action = 0x3
 
-	// Uuid is sent from the server to the client, with a buffer length of 23.
-	// There are two additional parameters, the player's 2 byte UID and their
+	// Uuid is sent from the server to the client, with a buffer length of 22.
+	// There are two additional parameters, the player's byte ID and their
 	// associated wallet address.
 	//
-	//     [action]    [  uid  ]    [ wallet ]
-	//     [1 byte]    [2 bytes]    [20 bytes]
+	//     [action]    [  id  ]    [ wallet ]
+	//     [1 byte]    [1 byte]    [20 bytes]
 	//
 	Uuid Action = 0x4
 
-	// Size is sent from the server to the client, with a buffer length of 4.
-	// There are two additional parameters, the player's 2 byte UID and their
+	// Size is sent from the server to the client, with a buffer length of 3.
+	// There are two additional parameters, the player's byte ID and their
 	// associated body part radius.
 	//
-	//     [action]    [  uid  ]    [ size ]
-	//     [1 byte]    [2 bytes]    [1 byte]
+	//     [action]    [  id  ]    [ size ]
+	//     [1 byte]    [1 byte]    [1 byte]
 	//
 	Size Action = 0x5
 
-	// Type is sent from the server to the client, with a buffer length of 4.
-	// There are two additional parameters, the player's 2 byte UID and their
+	// Type is sent from the server to the client, with a buffer length of 3.
+	// There are two additional parameters, the player's byte ID and their
 	// associated character type.
 	//
-	//     [action]    [  uid  ]    [ type ]
-	//     [1 byte]    [2 bytes]    [1 byte]
+	//     [action]    [  id  ]    [ type ]
+	//     [1 byte]    [1 byte]    [1 byte]
 	//
 	Type Action = 0x6
 
 	// Body is sent from the server to the client, with a variable buffer length.
-	// There are at least 3 additional parameters, the player's 2 byte UID, the
+	// There are at least 3 additional parameters, the player's byte ID, the
 	// amount of vector coordinates, and consecutively sets of 6 bytes for every
 	// transmitted body part as defined by the second parameter. The buffer length
-	// of a a new Vector is 34.
+	// of a a new Vector is 33.
 	//
-	//     [action]    [  uid  ]    [amount]    [  x/y  ] [  x/y  ] [  x/y  ]
-	//     [1 byte]    [2 bytes]    [1 byte]    [6 bytes] [6 bytes] [6 bytes]
+	//     [action]    [  id  ]    [amount]    [  x/y  ] [  x/y  ] [  x/y  ]
+	//     [1 byte]    [1 byte]    [1 byte]    [6 bytes] [6 bytes] [6 bytes]
 	//
 	Body Action = 0x7
 

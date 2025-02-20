@@ -23,7 +23,7 @@ type Config struct {
 	Fil *filler.Filler
 	Log logger.Interface
 	Rtr *router.Engine
-	Uni *unique.Unique[common.Address]
+	Uni *unique.Unique[common.Address, byte]
 	Wrk worker.Ensure
 }
 
@@ -31,7 +31,7 @@ type Engine struct {
 	// buf contains various messages prepared to be sent out to this player's
 	// client during the time based fanout procedure. The byte slice may contain
 	// multiple encoded messages.
-	buf *xsync.MapOf[[2]byte, []byte]
+	buf *xsync.MapOf[byte, []byte]
 	// don is the global channel to signal program termination. If this channel is
 	// closed, then all streaming connections should be terminated gracefully.
 	don <-chan struct{}
@@ -61,7 +61,7 @@ type Engine struct {
 	// removed from the game that they are playing.
 	tim time.Duration
 	// uni
-	uni *unique.Unique[common.Address]
+	uni *unique.Unique[common.Address, byte]
 	// wrk
 	wrk worker.Ensure
 }
@@ -87,17 +87,17 @@ func New(c Config) *Engine {
 	}
 
 	return &Engine{
-		buf: xsync.NewMapOf[[2]byte, []byte](),
+		buf: xsync.NewMapOf[byte, []byte](),
 		don: c.Don,
 		fil: c.Fil,
 		lkp: &lookup{
 			nrg: xsync.NewMapOf[object.Object, map[object.Object]struct{}](),
-			ply: xsync.NewMapOf[object.Object, map[[2]byte]struct{}](),
+			ply: xsync.NewMapOf[object.Object, map[byte]struct{}](),
 		},
 		log: c.Log,
 		mem: &memory{
 			nrg: xsync.NewMapOf[object.Object, *energy.Energy](),
-			ply: xsync.NewMapOf[[2]byte, *player.Player](),
+			ply: xsync.NewMapOf[byte, *player.Player](),
 		},
 		rtr: c.Rtr,
 		sem: make(chan struct{}, runtime.NumCPU()),

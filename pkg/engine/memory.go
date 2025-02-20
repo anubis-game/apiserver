@@ -16,5 +16,5 @@ type memory struct {
 	nrg *xsync.MapOf[object.Object, *energy.Energy]
 	// ply contains all active player information, including their connected
 	// clients.
-	ply *xsync.MapOf[[2]byte, *player.Player]
+	ply *xsync.MapOf[byte, *player.Player]
 }

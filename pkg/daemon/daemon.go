@@ -1,6 +1,8 @@
 package daemon
 
 import (
+	"fmt"
+	"math"
 	"net"
 
 	"github.com/anubis-game/apiserver/pkg/contract/registry"
@@ -37,6 +39,10 @@ type Daemon struct {
 
 func New(c Config) *Daemon {
 	var err error
+
+	if c.Env.EngineCapacity > math.MaxUint8 {
+		tracer.Panic(fmt.Errorf("c.Env.EngineCapacity must not be larger than 1 byte"))
+	}
 
 	var log logger.Interface
 	{
@@ -83,9 +89,9 @@ func New(c Config) *Daemon {
 		})
 	}
 
-	var uni *unique.Unique[common.Address]
+	var uni *unique.Unique[common.Address, byte]
 	{
-		uni = unique.New[common.Address](c.Env.EngineCapacity)
+		uni = unique.New[common.Address, byte]()
 	}
 
 	var con *connect.Handler

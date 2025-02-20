@@ -16,7 +16,7 @@ import (
 //     Should this even be a client input driven reconciliation?
 //
 
-func (e *Engine) Kill(uid [2]byte, _ *client.Client, inp []byte) error {
+func (e *Engine) Kill(uid byte, _ *client.Client, inp []byte) error {
 	var err error
 
 	{

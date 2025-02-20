@@ -42,12 +42,12 @@ func (v *Vector) expand(hea object.Object) {
 		// the given header bytes.
 
 		{
-			buf := make([]byte, 4+object.Len)
+			buf := make([]byte, 3+object.Len)
 
 			buf[0] = byte(schema.Body)
-			copy(buf[1:3], v.uid[:])
-			buf[3] = 0x1
-			copy(buf[4:], byt[:])
+			buf[1] = v.uid
+			buf[2] = 0x1
+			copy(buf[3:], byt[:])
 
 			v.buf[prt] = buf
 		}
@@ -103,13 +103,8 @@ func (v *Vector) expand(hea object.Object) {
 		// fixes the memory leak incurred during Vector.shrink() where we merely
 		// reslice the partition buffer.
 
-		app := make([]byte, ind+object.Len)
-
-		buf[3]++                // increment coordinate amount
-		copy(app[:ind], buf)    // existing buffer goes first
-		copy(app[ind:], byt[:]) // append the new header bytes
-
-		v.buf[prt] = app
+		buf[2]++ // increment coordinate amount
+		v.buf[prt] = append(buf, byt[:]...)
 
 		// Reset the newly occupied partition every time the occupation is in fact
 		// not new anymore.

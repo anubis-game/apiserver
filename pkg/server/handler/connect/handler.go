@@ -33,7 +33,7 @@ type Config struct {
 	// Uni provides a thread safe mechanism to allocate compact player IDs.
 	// Allocation happens in the server handler, freeing allocated player IDs
 	// happens in the game engine.
-	Uni *unique.Unique[common.Address]
+	Uni *unique.Unique[common.Address, byte]
 }
 
 type Handler struct {
@@ -51,7 +51,7 @@ type Handler struct {
 	ttl time.Duration
 	txp *cache.Time[uuid.UUID]
 	tok cache.Interface[uuid.UUID, common.Address]
-	uni *unique.Unique[common.Address]
+	uni *unique.Unique[common.Address, byte]
 	wxp *cache.Time[common.Address]
 }
 

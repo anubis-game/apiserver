@@ -12,7 +12,7 @@ type Vector struct {
 	Oby int
 }
 
-func (f *Filler) Vector(uid [2]byte) *vector.Vector {
+func (f *Filler) Vector(uid byte) *vector.Vector {
 	var vfl Vector
 	{
 		vfl = <-f.vec

@@ -7,5 +7,5 @@ import (
 type Packet struct {
 	Byt []byte
 	Cli *client.Client
-	Uid [2]byte
+	Uid byte
 }

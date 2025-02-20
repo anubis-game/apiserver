@@ -24,13 +24,13 @@ func Test_Vector_Encode(t *testing.T) {
 					{X: 109, Y: 109}, // 3
 					{X: 112, Y: 112}, // 4
 				},
-				Uid: [2]byte{0x3, 0xa},
+				Uid: 0xa,
 			}),
 			b: []byte{
 				// action
 				byte(schema.Body),
 				// uid
-				0x3, 0xa,
+				0xa,
 				// len
 				0x5,
 				// coordinates
@@ -48,14 +48,14 @@ func Test_Vector_Encode(t *testing.T) {
 			b := tc.v.Encode()
 			v := decode(b)
 
-			if !slices.Equal(v.uid[:], tc.v.uid[:]) {
+			if v.uid != tc.v.uid {
 				t.Fatalf("expected %#v got %#v", tc.v.uid, v.uid)
 			}
 			if !slices.Equal(v.Encode(), tc.v.Encode()) {
 				t.Fatalf("expected %#v got %#v", tc.v.Encode(), v.Encode())
 			}
-			if len(b) != 34 {
-				t.Fatalf("expected %#v got %#v", 34, len(b))
+			if len(b) != 33 {
+				t.Fatalf("expected %#v got %#v", 33, len(b))
 			}
 			if !slices.Equal(b, tc.b) {
 				t.Fatalf("expected %#v got %#v", tc.b, b)
@@ -68,7 +68,7 @@ func Benchmark_Vector_Encode(b *testing.B) {
 	testCases := []struct {
 		v *Vector
 	}{
-		// Case 000, ~26.80 ns/op
+		// Case 000, ~26.50 ns/op
 		{
 			v: New(Config{
 				Obj: []object.Object{
@@ -78,7 +78,7 @@ func Benchmark_Vector_Encode(b *testing.B) {
 					{X: 109, Y: 109}, // 3
 					{X: 112, Y: 112}, // 4
 				},
-				Uid: [2]byte{0x3, 0xa},
+				Uid: 0xa,
 			}),
 		},
 	}
