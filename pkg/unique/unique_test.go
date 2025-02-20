@@ -1,74 +1,53 @@
 package unique
 
 import (
-	"encoding/binary"
 	"fmt"
 	"sync"
-	"sync/atomic"
 	"testing"
 )
 
 func Test_Unique_500(t *testing.T) {
-	var len int
+	var uni *Unique[string, int16]
 	{
-		len = 500
-	}
-
-	var uni *Unique[string]
-	{
-		uni = New[string](len)
+		uni = New[string, int16]()
 	}
 
 	for i := 0; i < 384; i++ {
 		uni.Ensure(fmt.Sprintf("%d", i))
 	}
 
-	var act [2]byte
+	var act int16
 	{
 		act = uni.Ensure(fmt.Sprintf("%d", 385))
 	}
 
-	var exp [2]byte
+	var exp int16
 	{
-		exp = [2]byte{0x1, 0x80} // 256 + 128 = 384
+		exp = 384
 	}
 
 	if act != exp {
 		t.Fatalf("expected %#v got %#v", exp, act)
 	}
-
-	var unt uint16
-	{
-		unt = binary.BigEndian.Uint16(exp[:])
-	}
-
-	if unt != 384 {
-		t.Fatalf("expected %d got %d", 384, unt)
-	}
 }
 
 func Test_Unique_Lifecycle(t *testing.T) {
-	var len int
+	var uni *Unique[string, byte]
 	{
-		len = 6
+		uni = New[string, byte]()
 	}
 
-	var uni *Unique[string]
-	{
-		uni = New[string](len)
-	}
-
-	for i := 0; i < len; i++ {
+	for i := 0; i < len(uni.lis); i++ {
 		if uni.lis[i] != "" {
 			t.Fatalf("expected %#v got %#v", "''", uni.lis[i])
 		}
 	}
 
-	var au0 [2]byte
-	var au1 [2]byte
-	var au2 [2]byte
-	var au3 [2]byte
-	var au4 [2]byte
+	var au0 byte
+	var au1 byte
+	var au2 byte
+	var au3 byte
+	var au4 byte
 	{
 		au0 = uni.Ensure("0")
 		au1 = uni.Ensure("1")
@@ -77,17 +56,17 @@ func Test_Unique_Lifecycle(t *testing.T) {
 		au4 = uni.Ensure("4")
 	}
 
-	var eu0 [2]byte
-	var eu1 [2]byte
-	var eu2 [2]byte
-	var eu3 [2]byte
-	var eu4 [2]byte
+	var eu0 byte
+	var eu1 byte
+	var eu2 byte
+	var eu3 byte
+	var eu4 byte
 	{
-		eu0 = [2]byte{0x0, 0x0}
-		eu1 = [2]byte{0x0, 0x1}
-		eu2 = [2]byte{0x0, 0x2}
-		eu3 = [2]byte{0x0, 0x3}
-		eu4 = [2]byte{0x0, 0x4}
+		eu0 = 0x0
+		eu1 = 0x1
+		eu2 = 0x2
+		eu3 = 0x3
+		eu4 = 0x4
 	}
 
 	if au0 != eu0 {
@@ -141,30 +120,22 @@ func Test_Unique_Lifecycle(t *testing.T) {
 		uni.Delete("3") // 0x3 is freed
 	}
 
-	var au5 [2]byte
-	var au6 [2]byte
-	var au7 [2]byte
-	var au8 [2]byte
-	var au9 [2]byte
+	var au5 byte
+	var au6 byte
+	var au7 byte
 	{
 		au5 = uni.Ensure("5")
 		au6 = uni.Ensure("6")
 		au7 = uni.Ensure("7")
-		au8 = uni.Ensure("8")
-		au9 = uni.Ensure("9")
 	}
 
-	var eu5 [2]byte
-	var eu6 [2]byte
-	var eu7 [2]byte
-	var eu8 [2]byte
-	var eu9 [2]byte
+	var eu5 byte
+	var eu6 byte
+	var eu7 byte
 	{
-		eu5 = [2]byte{0x0, 0x1} // "5" gets the freed ID of "1": 0x1
-		eu6 = [2]byte{0x0, 0x3} // "6" gets the freed ID of "3": 0x3
-		eu7 = [2]byte{0x0, 0x5} // "7" continues with 0x5
-		eu8 = [2]byte{0x0, 0x0} // "8" is out of range
-		eu9 = [2]byte{0x0, 0x0} // "9" is out of range
+		eu5 = 0x1 // "5" gets the freed ID of "1": 0x1
+		eu6 = 0x3 // "6" gets the freed ID of "3": 0x3
+		eu7 = 0x5 // "7" continues with 0x5
 	}
 
 	if au5 != eu5 {
@@ -176,12 +147,6 @@ func Test_Unique_Lifecycle(t *testing.T) {
 	if au7 != eu7 {
 		t.Fatalf("expected %#v got %#v", eu7, au7)
 	}
-	if au8 != eu8 {
-		t.Fatalf("expected %#v got %#v", eu8, au8)
-	}
-	if au9 != eu9 {
-		t.Fatalf("expected %#v got %#v", eu9, au9)
-	}
 
 	{
 		uni.Delete("4") // 0x4 is freed
@@ -190,65 +155,85 @@ func Test_Unique_Lifecycle(t *testing.T) {
 		uni.Delete("6") // 0x3 is freed again
 	}
 
-	var a10 [2]byte
-	var a11 [2]byte
-	var a12 [2]byte
-	var a13 [2]byte
-	var a14 [2]byte
+	var au8 byte
+	var au9 byte
+	var a10 byte
+	var a11 byte
 	{
+		au8 = uni.Ensure("8")
+		au9 = uni.Ensure("9")
 		a10 = uni.Ensure("10")
 		a11 = uni.Ensure("11")
-		a12 = uni.Ensure("12")
-		a13 = uni.Ensure("13")
-		a14 = uni.Ensure("14")
 	}
 
-	var e10 [2]byte
-	var e11 [2]byte
-	var e12 [2]byte
-	var e13 [2]byte
-	var e14 [2]byte
+	var eu8 byte
+	var eu9 byte
+	var e10 byte
+	var e11 byte
 	{
-		e10 = [2]byte{0x0, 0x0} // "10" gets the freed ID of "0": 0x0
-		e11 = [2]byte{0x0, 0x3} // "11" gets the freed ID of "3" and "6": 0x3
-		e12 = [2]byte{0x0, 0x4} // "12" gets the freed ID of "4": 0x4
-		e13 = [2]byte{0x0, 0x5} // "13" gets the freed ID of "7": 0x5
-		e14 = [2]byte{0x0, 0x0} // "14" is out of range again
+		eu8 = 0x0 // "8" gets the freed ID of "0": 0x0
+		eu9 = 0x3 // "9" gets the freed ID of "3" and "6": 0x3
+		e10 = 0x4 // "10" gets the freed ID of "4": 0x4
+		e11 = 0x5 // "11" gets the freed ID of "7": 0x5
 	}
 
+	if au8 != eu8 {
+		t.Fatalf("expected %#v got %#v", eu8, au8)
+	}
+	if au9 != eu9 {
+		t.Fatalf("expected %#v got %#v", eu9, au9)
+	}
 	if a10 != e10 {
 		t.Fatalf("expected %#v got %#v", e10, a10)
 	}
 	if a11 != e11 {
 		t.Fatalf("expected %#v got %#v", e11, a11)
 	}
+
+	// Allocating all free UIDs allows us to test for out of range cases below.
+
+	for i := 0; i < len(uni.lis); i++ {
+		uni.Ensure(fmt.Sprintf("%03d", i))
+	}
+
+	var e12 byte
+	var e13 byte
+	{
+		e12 = 0x0 // "12" is out of range
+		e13 = 0x0 // "13" is out of range
+	}
+
+	var a12 byte
+	var a13 byte
+	{
+		a12 = uni.Ensure("12")
+		a13 = uni.Ensure("13")
+	}
+
 	if a12 != e12 {
 		t.Fatalf("expected %#v got %#v", e12, a12)
 	}
 	if a13 != e13 {
 		t.Fatalf("expected %#v got %#v", e13, a13)
 	}
-	if a14 != e14 {
-		t.Fatalf("expected %#v got %#v", e14, a14)
-	}
 }
 
 func Test_Unique_Mutex(t *testing.T) {
-	wrk := 100
-	ops := 100
-	cap := wrk * ops
+	// We define 30,000 calls which fits right into the capacity of an int16.
 
-	var uni *Unique[string]
+	wrk := 1000
+	ops := 30
+
+	var uni *Unique[string, int16]
 	{
-		uni = New[string](cap)
+		uni = New[string, int16]()
 	}
 
 	var wai sync.WaitGroup
 
 	var mut sync.Mutex
-	see := map[[2]byte]struct{}{}
+	see := map[int16]int{}
 
-	var len int32
 	for i := 0; i < wrk; i++ {
 		{
 			wai.Add(1)
@@ -261,26 +246,24 @@ func Test_Unique_Mutex(t *testing.T) {
 					val = fmt.Sprintf("%03d-%03d", i, j)
 				}
 
-				var uid [2]byte
+				var uid int16
 				{
 					uid = uni.Ensure(val)
 				}
 
 				mut.Lock()
-				_, exi := see[uid]
-				if !exi {
-					see[uid] = struct{}{}
-					atomic.AddInt32(&len, +1)
-				}
+				see[uid]++
 				mut.Unlock()
 
 				if j%2 == 0 {
 					mut.Lock()
-					delete(see, uid)
+					see[uid]--
+					if see[uid] == 0 {
+						delete(see, uid)
+					}
 					mut.Unlock()
 
 					uni.Delete(val)
-					atomic.AddInt32(&len, -1)
 				}
 			}
 
@@ -294,15 +277,20 @@ func Test_Unique_Mutex(t *testing.T) {
 		wai.Wait()
 	}
 
-	if uni.length() != int(len) {
-		t.Fatalf("expected %#v got %#v", len, uni.length())
+	if uni.length() != len(see) {
+		t.Fatalf("expected %#v got %#v", len(see), uni.length())
+	}
+	for _, v := range see {
+		if v != 1 {
+			t.Fatalf("expected %#v got %#v", 1, v)
+		}
 	}
 }
 
-func Benchmark_Unique(b *testing.B) {
-	var uni *Unique[string]
+func Benchmark_Unique_Cache(b *testing.B) {
+	var uni *Unique[string, int8]
 	{
-		uni = New[string](10)
+		uni = New[string, int8]()
 	}
 
 	{
@@ -317,17 +305,56 @@ func Benchmark_Unique(b *testing.B) {
 	}
 
 	{
-		uni.Delete("2")
-		uni.Delete("5")
+		uni.Delete("4")
 		uni.Delete("6")
+		uni.Delete("7")
 	}
 
 	b.Run(fmt.Sprintf("%03d", 0), func(b *testing.B) {
 		b.ResetTimer()
 		for range b.N {
-			// ~36.50 ns/op for both Unique.Ensure() and Unique.Delete()
+			// ~72.30 ns/op
+			uni.Ensure("8")
+			uni.Ensure("9")
+
+			uni.Delete("8")
+			uni.Delete("9")
+		}
+	})
+}
+
+func Benchmark_Unique_Multi(b *testing.B) {
+	var uni *Unique[string, int8]
+	{
+		uni = New[string, int8]()
+	}
+
+	{
+		uni.Ensure("0")
+		uni.Ensure("1")
+		uni.Ensure("2")
+		uni.Ensure("3")
+		uni.Ensure("4")
+		uni.Ensure("5")
+		uni.Ensure("6")
+		uni.Ensure("7")
+	}
+
+	{
+		uni.Delete("4")
+		uni.Delete("6")
+		uni.Delete("7")
+	}
+
+	b.Run(fmt.Sprintf("%03d", 0), func(b *testing.B) {
+		b.ResetTimer()
+		for range b.N {
+			// ~73.50 ns/op
 			uni.Ensure("8")
 			uni.Delete("8")
+
+			uni.Ensure("9")
+			uni.Delete("9")
 		}
 	})
 }

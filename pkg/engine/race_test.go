@@ -16,14 +16,14 @@ func Test_Engine_race(t *testing.T) {
 	{
 		eng = &Engine{
 			mem: &memory{
-				ply: xsync.NewMapOf[[2]byte, *player.Player](),
+				ply: xsync.NewMapOf[byte, *player.Player](),
 			},
 		}
 	}
 
-	var uid [2]byte
+	var uid byte
 	{
-		uid = [2]byte{0x0, 0x5}
+		uid = 0x5
 	}
 
 	var ply *player.Player
@@ -86,14 +86,14 @@ func Benchmark_Engine_race(b *testing.B) {
 		{
 			eng = &Engine{
 				mem: &memory{
-					ply: xsync.NewMapOf[[2]byte, *player.Player](),
+					ply: xsync.NewMapOf[byte, *player.Player](),
 				},
 			}
 		}
 
-		var uid [2]byte
+		var uid byte
 		{
-			uid = [2]byte{0x0, 0x5}
+			uid = 0x5
 		}
 
 		var ply *player.Player
@@ -123,7 +123,7 @@ func Benchmark_Engine_race(b *testing.B) {
 
 		b.ResetTimer()
 		for i := 0; i < b.N; i++ {
-			// ~30.50 ns/op
+			// ~28.60 ns/op
 			eng.race(router.Packet{Uid: uid})
 		}
 	})

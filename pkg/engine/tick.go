@@ -19,7 +19,7 @@ func (e *Engine) tick(tic time.Time) {
 	// then also why the fanout cycle deadline does not have to be initialized in
 	// engine.New().
 
-	e.mem.ply.Range(func(k [2]byte, v *player.Player) bool {
+	e.mem.ply.Range(func(k byte, v *player.Player) bool {
 		// Get the player specific buffer and reset it to start a new cycle.
 
 		var b []byte

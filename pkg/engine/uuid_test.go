@@ -37,22 +37,22 @@ func Test_Engine_uuid(t *testing.T) {
 	var eng *Engine
 	{
 		eng = &Engine{
-			buf: xsync.NewMapOf[[2]byte, []byte](),
+			buf: xsync.NewMapOf[byte, []byte](),
 			fil: fil,
 			lkp: &lookup{
 				nrg: xsync.NewMapOf[object.Object, map[object.Object]struct{}](),
-				ply: xsync.NewMapOf[object.Object, map[[2]byte]struct{}](),
+				ply: xsync.NewMapOf[object.Object, map[byte]struct{}](),
 			},
 			mem: &memory{
 				nrg: xsync.NewMapOf[object.Object, *energy.Energy](),
-				ply: xsync.NewMapOf[[2]byte, *player.Player](),
+				ply: xsync.NewMapOf[byte, *player.Player](),
 			},
 		}
 	}
 
-	var uid [2]byte
+	var uid byte
 	{
-		uid = [2]byte{0x0, 0x5}
+		uid = 0x5
 	}
 
 	var wal common.Address
@@ -305,22 +305,22 @@ func Benchmark_Engine_uuid(b *testing.B) {
 		var eng *Engine
 		{
 			eng = &Engine{
-				buf: xsync.NewMapOf[[2]byte, []byte](),
+				buf: xsync.NewMapOf[byte, []byte](),
 				fil: fil,
 				lkp: &lookup{
 					nrg: xsync.NewMapOf[object.Object, map[object.Object]struct{}](),
-					ply: xsync.NewMapOf[object.Object, map[[2]byte]struct{}](),
+					ply: xsync.NewMapOf[object.Object, map[byte]struct{}](),
 				},
 				mem: &memory{
 					nrg: xsync.NewMapOf[object.Object, *energy.Energy](),
-					ply: xsync.NewMapOf[[2]byte, *player.Player](),
+					ply: xsync.NewMapOf[byte, *player.Player](),
 				},
 			}
 		}
 
-		var uid [2]byte
+		var uid byte
 		{
-			uid = [2]byte{0x0, 0x5}
+			uid = 0x5
 		}
 
 		var wal common.Address

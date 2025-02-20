@@ -32,7 +32,7 @@ func Test_Vector_Buffer_Change(t *testing.T) {
 				{X: 250, Y: 400},
 				{X: 300, Y: 400}, // H
 			},
-			Uid: [2]byte{0x3, 0x5},
+			Uid: 0x5,
 		})
 	}
 
@@ -583,7 +583,7 @@ func Test_Vector_Buffer_Duplicate_Coordinates(t *testing.T) {
 				{X: 100, Y: 100},
 				{X: 100, Y: 150}, // H
 			},
-			Uid: [2]byte{0x3, 0x5},
+			Uid: 0x5,
 		})
 	}
 
@@ -1027,21 +1027,20 @@ func musBuf(t *testing.T, vec *Vector, prt object.Object, obj []object.Object) {
 	act := vec.buf[prt]
 	exp := objByt(vec.uid, obj)
 
-	if slices.Equal(act[1:3], []byte{0x0, 0x0}) {
-		t.Fatalf("expected %#v got %#v", "non-zero ID bytes", act[:2])
+	if act[1] == 0x0 {
+		t.Fatalf("expected %#v got %#v", "non-zero ID bytes", act[1])
 	}
 	if !slices.Equal(act, exp) {
 		t.Fatalf("expected %#v got %#v", exp, act)
 	}
 }
 
-func objByt(uid [2]byte, obj []object.Object) []byte {
+func objByt(uid byte, obj []object.Object) []byte {
 	var buf []byte
 	{
 		buf = []byte{
 			byte(schema.Body),
-			uid[0],
-			uid[1],
+			uid,
 			byte(len(obj)),
 		}
 	}

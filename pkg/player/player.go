@@ -8,7 +8,7 @@ import (
 
 type Config struct {
 	Cli *client.Client
-	Uid [2]byte
+	Uid byte
 	Vec *vector.Vector
 }
 
@@ -26,16 +26,16 @@ type Player struct {
 func New(c Config) *Player {
 	var uid []byte
 	{
-		uid = make([]byte, 23)
+		uid = make([]byte, 22)
 	}
 
 	{
 		uid[0] = byte(schema.Uuid)
+		uid[1] = c.Uid
 	}
 
 	{
-		copy(uid[1:3], c.Uid[:])
-		copy(uid[3:], c.Cli.Wallet().Bytes())
+		copy(uid[2:], c.Cli.Wallet().Bytes())
 	}
 
 	return &Player{

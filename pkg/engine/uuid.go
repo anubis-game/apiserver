@@ -50,12 +50,12 @@ func (e *Engine) uuid(pac router.Packet) {
 
 	var ini []byte
 	{
-		ini = make([]byte, 65) // 23 + 34 + 4 + 4
+		ini = make([]byte, 61) // 22 + 33 + 3 + 3
 
-		copy(ini[:23], ply.Wallet())   // len(23)
-		copy(ini[23:57], vec.Encode()) // len(34)
-		copy(ini[57:61], crx.Size())   // len(4)
-		copy(ini[61:65], crx.Type())   // len(4)
+		copy(ini[:22], ply.Wallet())   // len(22)
+		copy(ini[22:55], vec.Encode()) // len(33)
+		copy(ini[55:58], crx.Size())   // len(3)
+		copy(ini[58:61], crx.Type())   // len(3)
 	}
 
 	// Send the new player's own wallet information first so every player can self
@@ -66,7 +66,7 @@ func (e *Engine) uuid(pac router.Packet) {
 		buf = ini
 	}
 
-	e.mem.ply.Range(func(k [2]byte, v *player.Player) bool {
+	e.mem.ply.Range(func(k byte, v *player.Player) bool {
 		// Only add the new player's body parts to the current view of an existing
 		// player, if the body parts of the new player are visible inside the view
 		// of the existing player. Note that every player joining the game must push
@@ -155,9 +155,9 @@ func (e *Engine) uuid(pac router.Packet) {
 	// coordinates.
 
 	for _, x := range vec.Occupy().Prt {
-		e.lkp.ply.Compute(x, func(old map[[2]byte]struct{}, exi bool) (map[[2]byte]struct{}, bool) {
+		e.lkp.ply.Compute(x, func(old map[byte]struct{}, exi bool) (map[byte]struct{}, bool) {
 			if !exi {
-				old = map[[2]byte]struct{}{}
+				old = map[byte]struct{}{}
 			}
 
 			{

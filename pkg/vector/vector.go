@@ -13,7 +13,7 @@ import (
 type Config struct {
 	Mot Motion
 	Obj []object.Object
-	Uid [2]byte
+	Uid byte
 }
 
 type Vector struct {
@@ -42,9 +42,9 @@ type Vector struct {
 	// scr
 	scr *Screen
 
-	// Uid is the 2 byte unique identifier for this particular Vector across its
-	// entire lifetime.
-	uid [2]byte
+	// Uid is the unique identifier for this particular Vector across its entire
+	// lifetime.
+	uid byte
 
 	// TODO:refactor move those counters to Vector.Screen
 	xfr map[int]int
@@ -89,21 +89,21 @@ func New(c Config) *Vector {
 	}
 
 	{
-		siz := make([]byte, 4)
+		siz := make([]byte, 3)
 
 		siz[0] = byte(schema.Size)
-		copy(siz[1:3], vec.uid[:])
-		siz[3] = crx.Rad
+		siz[1] = vec.uid
+		siz[2] = crx.Rad
 
 		crx.siz = siz
 	}
 
 	{
-		typ := make([]byte, 4)
+		typ := make([]byte, 3)
 
 		typ[0] = byte(schema.Type)
-		copy(typ[1:3], vec.uid[:])
-		typ[3] = crx.Rad
+		typ[1] = vec.uid
+		typ[2] = crx.Rad
 
 		crx.typ = typ
 	}
@@ -143,12 +143,12 @@ func New(c Config) *Vector {
 	}
 
 	{
-		buf := make([]byte, 4+object.Len)
+		buf := make([]byte, 3+object.Len)
 
 		buf[0] = byte(schema.Body)
-		copy(buf[1:3], vec.uid[:])
-		buf[3] = 0x1
-		copy(buf[4:], byt[:])
+		buf[1] = vec.uid
+		buf[2] = 0x1
+		copy(buf[3:], byt[:])
 
 		vec.buf[prt] = buf
 	}

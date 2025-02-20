@@ -1,6 +1,8 @@
 package vector
 
-import "github.com/anubis-game/apiserver/pkg/object"
+import (
+	"github.com/anubis-game/apiserver/pkg/object"
+)
 
 func (v *Vector) Shrink() {
 	// Remember the current tail so we can use its value to shrink this Vector
@@ -38,7 +40,7 @@ func (v *Vector) shrink(old object.Object) {
 
 	// Reduce or delete the fanout buffer as described below.
 
-	if ind == 4+object.Len {
+	if ind == 3+object.Len {
 		// There is only one item left. That item is the object we are asked to
 		// delete.
 
@@ -94,13 +96,13 @@ func (v *Vector) shrink(old object.Object) {
 		// buffer after the 2 ID bytes. Note that we are only reslicing the existing
 		// partition buffer, without deleting the remaining tail still allocated in
 		// the underlying data array. This alone would usually imply a memory leak,
-		// but we are fixing this memory leak in due time, either within
-		// Vector.expand(), or once the partition buffer gets deleted entirely as
-		// soon as the Vector moves out of it naturally throughout the game.
+		// but we are fixing this memory leak in due time, once the partition buffer
+		// gets deleted entirely as soon as the Vector moves out of it naturally
+		// throughout the game.
 
 		{
-			buf[3]--                          // decrement coordinate amount
-			copy(buf[4:], buf[4+object.Len:]) // remove the first coordinate
+			buf[2]--                          // decrement coordinate amount
+			copy(buf[3:], buf[3+object.Len:]) // remove the first coordinate
 			v.buf[prt] = buf[:ind-object.Len] // cut the outdated buffer end
 		}
 

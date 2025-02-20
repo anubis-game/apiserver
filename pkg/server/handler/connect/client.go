@@ -17,7 +17,7 @@ func (h *Handler) client(wal common.Address, con *websocket.Conn) error {
 	// If clients ever reconnect using their session tokens, we can allow them to
 	// continue playing their game after any intermittend interruption.
 
-	var uid [2]byte
+	var uid byte
 	{
 		uid = h.uni.Ensure(wal)
 	}
@@ -100,7 +100,7 @@ func (h *Handler) client(wal common.Address, con *websocket.Conn) error {
 	return nil
 }
 
-func (h *Handler) reader(con *websocket.Conn, uid [2]byte, cli *client.Client) error {
+func (h *Handler) reader(con *websocket.Conn, uid byte, cli *client.Client) error {
 	for {
 		_, byt, err := con.Read(context.Background())
 		if err != nil {
