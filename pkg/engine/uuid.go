@@ -1,7 +1,6 @@
 package engine
 
 import (
-	"runtime"
 	"time"
 
 	"github.com/anubis-game/apiserver/pkg/energy"
@@ -45,8 +44,8 @@ func (e *Engine) uuid(pac router.Packet) {
 	}
 
 	// We separate the player identification from the vector representation. The
-	// body parts are associated with the 2 byte player ID the same way the user's
-	// wallet is associated with that same 2 byte player ID.
+	// body parts are associated with the player ID the same way the user's wallet
+	// is associated with that same player ID.
 
 	var ini []byte
 	{
@@ -71,7 +70,7 @@ func (e *Engine) uuid(pac router.Packet) {
 		// player, if the body parts of the new player are visible inside the view
 		// of the existing player. Note that every player joining the game must push
 		// its own identity to all active players first, so the following body parts
-		// can be identified using the player's 2 byte UId. Further note that any
+		// can be identified using the player's byte Id. Further note that any
 		// buffer modifications of existing players must be synchronized, which is
 		// why we are using MapOf.Compute() below.
 
@@ -186,23 +185,4 @@ func (e *Engine) uuid(pac router.Packet) {
 		e.buf.Store(pac.Uid, buf)
 		e.mem.ply.Store(pac.Uid, ply)
 	}
-
-	// After we added the new player to the memory table above, we can calculate
-	// the new write deadline that will be enforced in every single fanout cycle.
-	// The available duration capacity is divided by the amount of active players
-	// that can be processed per active worker process. See engine.New() for the
-	// definition of semaphore tickets. See Engine.push() for the respective
-	// *time.Timer creation.
-
-	{
-		e.tim = timCap(e.mem.ply.Size(), runtime.NumCPU())
-	}
-}
-
-func timCap(ply int, cpu int) time.Duration {
-	if ply <= 1 {
-		return Cap / time.Duration(cpu)
-	}
-
-	return Cap / time.Duration(cpu) / time.Duration(ply)
 }

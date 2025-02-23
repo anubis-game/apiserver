@@ -62,6 +62,7 @@ func (r *run) runE(cmd *cobra.Command, arg []string) error {
 
 	// Closing the done channel allows all listening goroutines to stop as soon as
 	// we get the first instruction to shutdown the process.
+
 	{
 		close(don)
 	}

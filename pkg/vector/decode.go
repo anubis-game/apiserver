@@ -13,7 +13,7 @@ func decode(byt []byte) *Vector {
 	}
 
 	var obj []object.Object
-	for i := 0; i < (len(byt)-3)/object.Len; i++ {
+	for i := range (len(byt) - 3) / object.Len {
 		pos := 3 + (i * object.Len)
 		obj = append(obj, object.New(byt[pos:pos+object.Len]))
 	}

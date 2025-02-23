@@ -30,7 +30,7 @@ type Worker struct {
 	que chan action.Interface
 	reg *registry.Registry
 	req *cache.Time[uuid.UUID]
-	sem chan struct{}
+	seq chan action.Interface
 	sig map[string]Signer
 }
 
@@ -54,13 +54,13 @@ func New(c Config) *Worker {
 	}
 
 	return &Worker{
-		all: []action.Interface{},
+		all: make([]action.Interface, 0),
 		don: c.Don,
 		log: c.Log,
 		que: make(chan action.Interface, 5000),
 		reg: c.Reg,
 		req: cache.NewTime[uuid.UUID](),
-		sem: make(chan struct{}, runtime.NumCPU()),
+		seq: make(chan action.Interface, 1),
 		sig: sig,
 	}
 }
@@ -74,66 +74,49 @@ func (w *Worker) Daemon() {
 		go w.req.Expire(time.Second)
 	}
 
-	for {
-		select {
-		case <-w.don:
-			// The injected global done channel may signal a program shutdown. In that
-			// case we are not accepting any new actions anymore. Once the global done
-			// channel got closed, we simply return below. Note that there is an
-			// option to explicitly wait for the last action to be processed, if the
-			// program's process would not give ample time to gracefully shutdown the
-			// entire system.
-			//
-			//     for len(w.sem) > 0 {
-			//       time.Sleep(500 * time.Millisecond)
-			//     }
-			//
-			//     {
-			//       close(w.sem)
-			//     }
-			//
+	// We need to persist every action whether it is going to succeed or not,
+	// so that we can provide a full record of all worker actions being
+	// processed throughout the Guardian's lifetime.
 
-			return
-		case x := <-w.que:
-			// The semaphore controls the amount of workers that are allowed to
-			// process actions at the same time. Every time we receive an action, we
-			// push a ticket into the semaphore before doing the work.
+	// TODO:infra we have to expose and maybe even backup all of those actions,
+	// because those actions represent the gains and losses of the winners and
+	// losers.
 
-			{
-				w.sem <- struct{}{}
-			}
+	go func() {
+		for a := range w.seq {
+			w.all = append(w.all, a)
+		}
+	}()
 
-			// We need to persist every action whether it is going to succeed or not,
-			// so that we can provide a full record of all worker actions being
-			// processed throughout the Guardian's lifetime.
+	// Create a static worker pool to distribute work across all available host
+	// CPUs.
 
-			{
-				w.all = append(w.all, x)
-			}
+	// TODO:infra the game has to stop if the action queue ever fills up due to
+	// network outages, because the static worker pool may saturate at some point.
 
-			// A new goroutine is created for every piece of work. That way we can
-			// work on actions in parallel. Note that the received action must be
-			// injected into the goroutine as an argument, in order to work on the
-			// exact action that we received in this asynchronous environment.
+	// TODO:infra add some RPC failover mechanism so we can switch to a healthy
+	// RPC provider.
 
-			go func(act action.Interface) {
+	for range runtime.NumCPU() {
+		go func() {
+			for a := range w.que {
 				// Trying to attach status updates to an empty record set would result
 				// in a panic. So before we can process the given action, we have to add
 				// a new record for us to always be able to attach any relevant status
 				// updates.
 
 				{
-					act.Rec().Add()
+					a.Rec().Add()
 				}
 
 				// Process the given action and attach any relevant status updates to
 				// the latest record.
 
 				{
-					err := w.worker(act)
+					err := w.worker(a)
 					if err != nil {
 						{
-							act.Rec().Err().Set(err)
+							a.Rec().Err().Set(err)
 						}
 
 						w.log.Log(
@@ -147,11 +130,11 @@ func (w *Worker) Daemon() {
 				// Unless we receive a success status, we add the given action back to
 				// the internal queue, effectively retrying it once more.
 
-				if act.Rec().Sta().Get() != record.Success {
+				if a.Rec().Sta().Get() != record.Success {
 					var fai int
 
-					for i := 0; i < act.Rec().Len(); i++ {
-						if act.Rec().Sta().Get() == record.Failure {
+					for range a.Rec().Len() {
+						if a.Rec().Sta().Get() == record.Failure {
 							fai++
 						}
 					}
@@ -162,20 +145,13 @@ func (w *Worker) Daemon() {
 					// succeeds, or fails a third time, which is when we give up on it.
 
 					if fai < 3 {
-						w.req.Ensure(act.Uid(), act.Rec().Wai().Get(), func() {
-							w.que <- act
+						w.req.Ensure(a.Uid(), a.Rec().Wai().Get(), func() {
+							w.que <- a
 						})
 					}
 				}
-
-				// Ensure we remove our ticket from the semaphore once all work was
-				// completed.
-
-				{
-					<-w.sem
-				}
-			}(x)
-		}
+			}
+		}()
 	}
 }
 
@@ -192,6 +168,7 @@ func (w *Worker) Ensure(act action.Interface) {
 		)
 	} else {
 		{
+			w.seq <- act
 			w.que <- act
 		}
 	}

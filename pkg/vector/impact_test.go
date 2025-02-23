@@ -176,7 +176,7 @@ func Benchmark_Vector_Impact(b *testing.B) {
 	for i, tc := range testCases {
 		b.Run(fmt.Sprintf("%03d", i), func(b *testing.B) {
 			b.ResetTimer()
-			for range b.N {
+			for b.Loop() {
 				impSnk = Impact(tc.oxy, tc.osz, tc.txy, tc.tsz)
 			}
 		})

@@ -68,7 +68,7 @@ func Benchmark_Vector_Encode(b *testing.B) {
 	testCases := []struct {
 		v *Vector
 	}{
-		// Case 000, ~26.50 ns/op
+		// Case 000, ~24.50 ns/op
 		{
 			v: New(Config{
 				Obj: []object.Object{
@@ -85,8 +85,7 @@ func Benchmark_Vector_Encode(b *testing.B) {
 
 	for i, tc := range testCases {
 		b.Run(fmt.Sprintf("%03d", i), func(b *testing.B) {
-			b.ResetTimer()
-			for i := 0; i < b.N; i++ {
+			for b.Loop() {
 				tc.v.Encode()
 			}
 		})

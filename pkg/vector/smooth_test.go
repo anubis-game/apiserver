@@ -262,7 +262,7 @@ func Benchmark_Vector_Smooth(b *testing.B) {
 	}
 
 	b.Run(fmt.Sprintf("%03d", 0), func(b *testing.B) {
-		for range b.N {
+		for b.Loop() {
 			// Case 000, 14.00 ns/op at 11 body parts
 			vec.Smooth()
 		}
@@ -320,7 +320,7 @@ func Benchmark_Vector_smooth(b *testing.B) {
 	for i, tc := range testCases {
 		b.Run(fmt.Sprintf("%03d", i), func(b *testing.B) {
 			b.ResetTimer()
-			for range b.N {
+			for b.Loop() {
 				smxSin, smySin = smooth(tc.lef, tc.mid, tc.rig)
 			}
 		})

@@ -595,7 +595,7 @@ func Benchmark_Vector_Inside(b *testing.B) {
 			}
 
 			b.ResetTimer()
-			for range b.N {
+			for b.Loop() {
 				crxSnk = tc.vec.Inside(vec.Screen())
 			}
 		})

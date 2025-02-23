@@ -122,7 +122,7 @@ func Benchmark_Vector_Target(b *testing.B) {
 			}
 
 			b.ResetTimer()
-			for range b.N {
+			for b.Loop() {
 				vec.Target(tc.qdr, tc.agl, tc.dis)
 			}
 		})

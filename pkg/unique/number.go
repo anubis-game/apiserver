@@ -9,7 +9,7 @@ type Number interface {
 	uint8 | uint16 | int8 | int16
 }
 
-func maxOf[T Number]() int {
+func length[T Number]() int {
 	var z T
 
 	switch t := any(z).(type) {

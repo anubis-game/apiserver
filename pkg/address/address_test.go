@@ -37,8 +37,7 @@ func Benchmark_Address_Empty_True(b *testing.B) {
 		}
 
 		b.Run(fmt.Sprintf("%03d", i), func(b *testing.B) {
-			b.ResetTimer()
-			for i := 0; i < b.N; i++ {
+			for b.Loop() {
 				if !tc.f(add) {
 					b.Fatal("expected", true, "got", false)
 				}
@@ -76,8 +75,7 @@ func Benchmark_Address_Empty_False(b *testing.B) {
 		}
 
 		b.Run(fmt.Sprintf("%03d", i), func(b *testing.B) {
-			b.ResetTimer()
-			for i := 0; i < b.N; i++ {
+			for b.Loop() {
 				if tc.f(add) {
 					b.Fatal("expected", false, "got", true)
 				}
@@ -120,8 +118,7 @@ func Benchmark_Address_Equal_True(b *testing.B) {
 		}
 
 		b.Run(fmt.Sprintf("%03d", i), func(b *testing.B) {
-			b.ResetTimer()
-			for i := 0; i < b.N; i++ {
+			for b.Loop() {
 				if !tc.f(one, two) {
 					b.Fatal("expected", true, "got", false)
 				}
@@ -164,8 +161,7 @@ func Benchmark_Address_Equal_False(b *testing.B) {
 		}
 
 		b.Run(fmt.Sprintf("%03d", i), func(b *testing.B) {
-			b.ResetTimer()
-			for i := 0; i < b.N; i++ {
+			for b.Loop() {
 				if tc.f(one, two) {
 					b.Fatal("expected", false, "got", true)
 				}

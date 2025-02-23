@@ -394,7 +394,7 @@ func Benchmark_Window_Has(b *testing.B) {
 			}
 
 			b.ResetTimer()
-			for range b.N {
+			for b.Loop() {
 				hasSnk = win.Has(tc.obj)
 			}
 		})

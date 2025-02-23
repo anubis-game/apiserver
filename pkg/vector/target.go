@@ -30,7 +30,7 @@ var (
 )
 
 func init() {
-	for i := 0; i < 256; i++ {
+	for i := range 256 {
 		cos[i] = math.Cos(float64(i) * qrf)
 		sin[i] = math.Sin(float64(i) * qrf)
 	}

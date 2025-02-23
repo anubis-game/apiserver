@@ -2,18 +2,18 @@ package unique
 
 import "testing"
 
-func Test_Unique_Number(t *testing.T) {
+func Test_Unique_Number_length(t *testing.T) {
 	var byt int
 	var u08 int
 	var u16 int
 	var i08 int
 	var i16 int
 	{
-		byt = maxOf[byte]()
-		u08 = maxOf[uint8]()
-		u16 = maxOf[uint16]()
-		i08 = maxOf[int8]()
-		i16 = maxOf[int16]()
+		byt = length[byte]()
+		u08 = length[uint8]()
+		u16 = length[uint16]()
+		i08 = length[int8]()
+		i16 = length[int16]()
 	}
 
 	if byt != 255 {
