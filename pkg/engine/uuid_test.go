@@ -80,7 +80,7 @@ func Test_Engine_uuid(t *testing.T) {
 	}
 }
 
-// ~4,300 ns/op
+// ~8,000 ns/op, 61 allocs/op
 func Benchmark_Engine_uuid(b *testing.B) {
 	b.Run(fmt.Sprintf("%03d", 0), func(b *testing.B) {
 		var fil *filler.Filler

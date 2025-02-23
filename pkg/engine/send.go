@@ -51,6 +51,21 @@ func (e *Engine) send(tic time.Time) {
 		// aware processing. The buffer channels provided by each client must never
 		// block.
 
+		// TODO:infra we do not want to remove players from the game if their client
+		// connection is accidentally flaky. But a disconnected client cannot
+		// consume messages anymore, causing the fanout buffers below to fill up.
+		// Such congested buffer channels block the entire fanout procedure, which
+		// must remain linear up to this point. If we want to keep disconnected
+		// players in the game, then we have to stop serving them below until they
+		// can process messages again.
+		//
+		//     1. What is the mechanism to decide whether to send any more messages
+		//        to any given client?
+		//
+		//     2. How do we restore a websocket connection for players that never
+		//        left the game?
+		//
+
 		{
 			p.Cli.Buffer() <- b
 		}

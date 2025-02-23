@@ -1,22 +1,11 @@
 package engine
 
 import (
-	"time"
-
 	"github.com/anubis-game/apiserver/pkg/energy"
 	"github.com/anubis-game/apiserver/pkg/object"
 	"github.com/anubis-game/apiserver/pkg/player"
 	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/vector"
-)
-
-const (
-	// Cap is the duration based capacity that we allow for a single fanout
-	// procedure to take per worker process. E.g. a standard frame duration of 25
-	// milliseconds implies a total amount of 24 milliseconds per fanout procedure
-	// per worker, given an overhead buffer of 1 millisecond that we may incur at
-	// runtime each cycle.
-	Cap = time.Duration(vector.Frm-1) * time.Millisecond
 )
 
 func (e *Engine) uuid(pac router.Packet) {
