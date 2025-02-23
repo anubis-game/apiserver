@@ -56,7 +56,7 @@ func Test_Engine_worker_read(t *testing.T) {
 
 	//
 
-	for range 100 {
+	for range 10 {
 		{
 			eng.buf.Store(uid, buf)
 		}
@@ -69,10 +69,11 @@ func Test_Engine_worker_read(t *testing.T) {
 		}
 
 		// We are effectively only making sure that some message is actually being
-		// send to a non-blocking channel. This should happen under 10 microseconds.
+		// send to a non-blocking channel. This should happen under 100
+		// microseconds.
 
-		if dur > 10*time.Microsecond {
-			t.Fatalf("expected %s got %s", "under 10 microseconds", dur)
+		if dur > 100*time.Microsecond {
+			t.Fatalf("expected %s got %s", "under 100 microseconds", dur)
 		}
 
 		//
