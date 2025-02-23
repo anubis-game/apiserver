@@ -241,6 +241,7 @@ func Test_Vector_smooth(t *testing.T) {
 	}
 }
 
+// ~15.00 ns/op
 func Benchmark_Vector_Smooth(b *testing.B) {
 	var vec *Vector
 	{
@@ -263,13 +264,10 @@ func Benchmark_Vector_Smooth(b *testing.B) {
 
 	b.Run(fmt.Sprintf("%03d", 0), func(b *testing.B) {
 		for b.Loop() {
-			// Case 000, 14.00 ns/op at 11 body parts
 			vec.Smooth()
 		}
 	})
 }
-
-var smxSin, smySin int
 
 func Benchmark_Vector_smooth(b *testing.B) {
 	testCases := []struct {
@@ -279,37 +277,37 @@ func Benchmark_Vector_smooth(b *testing.B) {
 		smx int
 		smy int
 	}{
-		// Case 000, 1.40 ns/op
+		// Case 000, 1.90 ns/op
 		{
 			lef: object.Object{X: 00, Y: 00},
 			mid: object.Object{X: 05, Y: 10},
 			rig: object.Object{X: 10, Y: 00},
 		},
-		// Case 001, 1.40 ns/op
+		// Case 001, 1.90 ns/op
 		{
 			lef: object.Object{X: 00, Y: 20},
 			mid: object.Object{X: 05, Y: 10},
 			rig: object.Object{X: 10, Y: 20},
 		},
-		// Case 002, 1.40 ns/op
+		// Case 002, 1.90 ns/op
 		{
 			lef: object.Object{X: 00, Y: 00},
 			mid: object.Object{X: 05, Y: 00},
 			rig: object.Object{X: 10, Y: 00},
 		},
-		// Case 003, 1.40 ns/op
+		// Case 003, 1.90 ns/op
 		{
 			lef: object.Object{X: 04, Y: 12},
 			mid: object.Object{X: 05, Y: 12},
 			rig: object.Object{X: 11, Y: 12},
 		},
-		// Case 004, 1.40 ns/op
+		// Case 004, 1.90 ns/op
 		{
 			lef: object.Object{X: 04, Y: 02},
 			mid: object.Object{X: 05, Y: 12},
 			rig: object.Object{X: 11, Y: 02},
 		},
-		// Case 005, 1.40 ns/op
+		// Case 005, 1.90 ns/op
 		{
 			lef: object.Object{X: 5, Y: 63},
 			mid: object.Object{X: 30, Y: 96},
@@ -319,9 +317,8 @@ func Benchmark_Vector_smooth(b *testing.B) {
 
 	for i, tc := range testCases {
 		b.Run(fmt.Sprintf("%03d", i), func(b *testing.B) {
-			b.ResetTimer()
 			for b.Loop() {
-				smxSin, smySin = smooth(tc.lef, tc.mid, tc.rig)
+				smooth(tc.lef, tc.mid, tc.rig)
 			}
 		})
 	}

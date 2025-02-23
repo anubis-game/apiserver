@@ -310,77 +310,75 @@ func Test_Window_Has_False(t *testing.T) {
 	}
 }
 
-var hasSnk bool
-
 func Benchmark_Window_Has(b *testing.B) {
 	testCases := []struct {
 		obj object.Object
 	}{
-		// Case 000, 0.60 ns/op
+		// Case 000, 1.70 ns/op
 		{
 			obj: object.Object{X: 100, Y: 200},
 		},
-		// Case 001, 0.60 ns/op
+		// Case 001, 1.70 ns/op
 		{
 			obj: object.Object{X: 150, Y: 200},
 		},
-		// Case 002, 0.60 ns/op
+		// Case 002, 1.70 ns/op
 		{
 			obj: object.Object{X: 200, Y: 200},
 		},
-		// Case 003, 0.60 ns/op
+		// Case 003, 1.70 ns/op
 		{
 			obj: object.Object{X: 200, Y: 150},
 		},
-		// Case 004, 0.60 ns/op
+		// Case 004, 1.70 ns/op
 		{
 			obj: object.Object{X: 200, Y: 100},
 		},
-		// Case 005, 0.60 ns/op
+		// Case 005, 1.70 ns/op
 		{
 			obj: object.Object{X: 150, Y: 100},
 		},
-		// Case 006, 0.60 ns/op
+		// Case 006, 1.70 ns/op
 		{
 			obj: object.Object{X: 100, Y: 100},
 		},
-		// Case 007, 0.60 ns/op
+		// Case 007, 1.70 ns/op
 		{
 			obj: object.Object{X: 100, Y: 150},
 		},
-		// Case 008, 0.60 ns/op
+		// Case 008, 1.70 ns/op
 		{
 			obj: object.Object{X: 137, Y: 143},
 		},
-		// Case 009, 0.60 ns/op
+		// Case 009, 1.70 ns/op
 		{
 			obj: object.Object{X: 86, Y: 206},
 		},
-		// Case 010, 0.60 ns/op
+		// Case 010, 1.70 ns/op
 		{
 			obj: object.Object{X: 149, Y: 201},
 		},
-		// Case 011, 0.60 ns/op
+		// Case 011, 1.70 ns/op
 		{
 			obj: object.Object{X: 201, Y: 200},
 		},
-		// Case 012, 0.60 ns/op
+		// Case 012, 1.70 ns/op
 		{
 			obj: object.Object{X: 264, Y: 149},
 		},
-		// Case 013, 0.60 ns/op
+		// Case 013, 1.70 ns/op
 		{
 			obj: object.Object{X: 201, Y: 99},
 		},
-		// Case 014, 0.60 ns/op
+		// Case 014, 1.70 ns/op
 		{
 			obj: object.Object{X: 149, Y: 99},
 		},
-		// Case 015, 0.60 ns/op
+		// Case 015, 1.70 ns/op
 		{
 			obj: object.Object{X: 100, Y: 99},
 		},
-		// Case 016, 0.60 ns/op
+		// Case 016, 1.70 ns/op
 		{
 			obj: object.Object{X: 99, Y: 150},
 		},
@@ -393,9 +391,8 @@ func Benchmark_Window_Has(b *testing.B) {
 				ctr: object.Object{X: 200, Y: 200},
 			}
 
-			b.ResetTimer()
 			for b.Loop() {
-				hasSnk = win.Has(tc.obj)
+				win.Has(tc.obj)
 			}
 		})
 	}

@@ -22,9 +22,7 @@ func Test_Schema_Encode(t *testing.T) {
 		},
 		// Case 001
 		{
-			f: func(act Action, mes []byte) []byte {
-				return Encode(act, mes)
-			},
+			f: Encode,
 		},
 	}
 
@@ -42,7 +40,7 @@ func Benchmark_Schema_Encode(b *testing.B) {
 	testCases := []struct {
 		f func(Action, []byte) []byte
 	}{
-		// Case 000, ~60.40 ns/op
+		// Case 000, ~59.40 ns/op
 		{
 			f: func(act Action, mes []byte) []byte {
 				return bytes.Join(append([][]byte{{byte(act)}}, mes), nil)
@@ -50,9 +48,7 @@ func Benchmark_Schema_Encode(b *testing.B) {
 		},
 		// Case 001, ~26.00 ns/op
 		{
-			f: func(act Action, mes []byte) []byte {
-				return Encode(act, mes)
-			},
+			f: Encode,
 		},
 	}
 

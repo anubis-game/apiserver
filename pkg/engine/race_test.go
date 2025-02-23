@@ -122,7 +122,6 @@ func Benchmark_Engine_race(b *testing.B) {
 			eng.mem.ply.Store(uid, ply)
 		}
 
-		b.ResetTimer()
 		for b.Loop() {
 			eng.race(router.Packet{Uid: uid})
 		}
