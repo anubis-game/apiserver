@@ -19,7 +19,7 @@ func (c *Client) Daemon() {
 		}
 	}()
 
-	// Ensure the client connection gets terminated on excessive saturation. The
+	// Ensure the client connection gets terminated on excessive saturation.
 	// Every 5 seconds we check for the current amount of buffer congestion. We
 	// allow every client to accumulate 256 pending messages before we close the
 	// ticker channel below, which then triggers the client termination in the

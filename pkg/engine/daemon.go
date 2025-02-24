@@ -8,7 +8,7 @@ func (e *Engine) Daemon() {
 		e.tic = <-e.rtr.Tick()
 	}
 
-	// Joining a game incurs at least 4,500 ns/op for the first player. This
+	// Joining a game incurs at least 8,000 ns/op for the first player. This
 	// process becomes more expensive the more players are active within the
 	// same partition coordinates.
 
@@ -36,7 +36,7 @@ func (e *Engine) Daemon() {
 		}
 	}()
 
-	// Sending the prepared fanout buffer to a single player costs about 4,500
+	// Sending the prepared fanout buffer to a single player costs about 3,900
 	// ns/op, which is mainly due to some quirky websocket overhead. We want to
 	// serve about 250 players concurrently, which means that we have to
 	// distribute code execution across all available host CPUs. The way this

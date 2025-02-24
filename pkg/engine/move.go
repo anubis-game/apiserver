@@ -6,13 +6,11 @@ import (
 	"github.com/anubis-game/apiserver/pkg/vector"
 )
 
-// TODO:infra we could use a separate sync map for the move and race commands
-// and potentially decouple lock contention between move inputs and position
-// reconciliation.
+// TODO:infra use a separate move slice indexed by player byte IDs. This works
+// because there is only a single sequential writer for this data.
 
-// TODO:infra following from the above, the question would be if the motion
-// struct and the charax struct should even be part of the player/vector
-// objects.
+// TODO:infra motion and charax structs should not even be part of the
+// player/vector objects.
 
 func (e *Engine) move(pac router.Packet) {
 	// If we do not receive exactly two bytes, then we simply ignore the user

@@ -2,6 +2,7 @@ package unique
 
 import (
 	"sync"
+	"sync/atomic"
 )
 
 // Unique generates numerical IDs in constant time within a given capacity. Note
@@ -9,7 +10,7 @@ import (
 // sync.RWMutex, because the synchronized code is many times faster than the
 // additional overhead incurred by sync.RWMutex.
 type Unique[K comparable, V Number] struct {
-	ind int
+	ind *atomic.Int32
 	lis []V
 	mut sync.Mutex
 	rev map[K]V
@@ -34,6 +35,7 @@ func New[K comparable, V Number]() *Unique[K, V] {
 	}
 
 	return &Unique[K, V]{
+		ind: &atomic.Int32{},
 		lis: lis,
 		rev: make(map[K]V, len),
 	}
@@ -45,8 +47,7 @@ func (u *Unique[K, V]) Delete(k K) {
 	r, e := u.rev[k]
 	if e {
 		delete(u.rev, k)
-		u.ind--
-		u.lis[u.ind] = r
+		u.lis[u.ind.Add(-1)] = r
 	}
 
 	u.mut.Unlock()
@@ -65,7 +66,8 @@ func (u *Unique[K, V]) Ensure(k K) V {
 
 	// If we run out of capacity we stop early
 
-	if u.ind >= len(u.lis) {
+	i := u.ind.Load()
+	if int(i) >= len(u.lis) {
 		u.mut.Unlock()
 		return 0
 	}
@@ -73,9 +75,9 @@ func (u *Unique[K, V]) Ensure(k K) V {
 	// We just take the next available item from the stack and increment our
 	// pointer.
 
-	v := u.lis[u.ind]
+	v := u.lis[i]
 	u.rev[k] = v
-	u.ind++
+	u.ind.Add(+1)
 	u.mut.Unlock()
 
 	return v
@@ -96,8 +98,5 @@ func (u *Unique[K, V]) Exists(k K) bool {
 //	  ...
 //	}
 func (u *Unique[K, V]) Length() V {
-	u.mut.Lock()
-	l := u.ind
-	u.mut.Unlock()
-	return V(l)
+	return V(u.ind.Load())
 }

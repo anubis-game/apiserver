@@ -6,6 +6,9 @@ import (
 	"github.com/anubis-game/apiserver/pkg/vector"
 )
 
+// TODO:infra use a separate race slice indexed by player byte IDs. This works
+// because there is only a single sequential writer for this data.
+
 func (e *Engine) race(pac router.Packet) {
 	e.mem.ply.Compute(pac.Uid, func(ply *player.Player, _ bool) (*player.Player, bool) {
 		var mot vector.Motion

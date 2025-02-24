@@ -342,7 +342,7 @@ func Test_Unique_Mutex(t *testing.T) {
 	}
 }
 
-// ~0.19 ns/op
+// ~0.11 ns/op
 func Benchmark_Unique_concurrency(b *testing.B) {
 	n := 1_000_000
 	k := "key"
