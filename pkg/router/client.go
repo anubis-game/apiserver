@@ -20,8 +20,8 @@ const (
 
 type Client struct {
 	uid chan<- Packet
-	mov chan<- Packet
 	rac chan<- Packet
+	tur chan<- Packet
 
 	lim *xsync.MapOf[common.Address, ratelimit.Limiter]
 }
@@ -49,34 +49,6 @@ func (c *Client) Uuid(uid byte, cli *client.Client, _ []byte) error {
 
 	{
 		c.uid <- Packet{Byt: nil, Cli: cli, Uid: uid}
-	}
-
-	return nil
-}
-
-func (c *Client) Move(uid byte, cli *client.Client, byt []byte) error {
-	// Prevent DOS attacks and rate limit client specific stream input, so that
-	// our internal fanout schedule cannot be overloaded maliciously.
-
-	var lim ratelimit.Limiter
-	var exi bool
-	{
-		lim, exi = c.lim.LoadOrCompute(cli.Wallet(), newLim)
-	}
-
-	if !exi {
-		return tracer.Mask(fmt.Errorf("client %q not joined", cli.Wallet()))
-	}
-
-	{
-		lim.Take()
-	}
-
-	// Once a ticket was available for the client, we can proceed to enter the
-	// synchronization loop.
-
-	{
-		c.mov <- Packet{Byt: byt, Cli: nil, Uid: uid}
 	}
 
 	return nil
@@ -110,9 +82,37 @@ func (c *Client) Race(uid byte, cli *client.Client, _ []byte) error {
 	return nil
 }
 
+func (c *Client) Turn(uid byte, cli *client.Client, byt []byte) error {
+	// Prevent DOS attacks and rate limit client specific stream input, so that
+	// our internal fanout schedule cannot be overloaded maliciously.
+
+	var lim ratelimit.Limiter
+	var exi bool
+	{
+		lim, exi = c.lim.LoadOrCompute(cli.Wallet(), newLim)
+	}
+
+	if !exi {
+		return tracer.Mask(fmt.Errorf("client %q not joined", cli.Wallet()))
+	}
+
+	{
+		lim.Take()
+	}
+
+	// Once a ticket was available for the client, we can proceed to enter the
+	// synchronization loop.
+
+	{
+		c.tur <- Packet{Byt: byt, Cli: nil, Uid: uid}
+	}
+
+	return nil
+}
+
 func newLim() ratelimit.Limiter {
 	return ratelimit.New(
-		5,                      // 2 move, 2 race, 1 buffer
+		5,                      // 2 race, 2 turn, 1 buffer
 		ratelimit.Per(Per),     // per standard frame
 		ratelimit.WithSlack(0), // without re-using unused capacity
 	)

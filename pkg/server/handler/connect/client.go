@@ -89,10 +89,10 @@ func (h *Handler) looper(con *websocket.Conn, uid byte, cli *client.Client) erro
 			err = h.auth(uid, cli, byt)
 		case schema.Uuid:
 			err = h.uuid(uid, cli, byt)
-		case schema.Move:
-			err = h.move(uid, cli, byt)
 		case schema.Race:
 			err = h.race(uid, cli, byt)
+		case schema.Turn:
+			err = h.turn(uid, cli, byt)
 		}
 
 		if err != nil {
