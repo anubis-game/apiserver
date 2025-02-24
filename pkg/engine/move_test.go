@@ -11,7 +11,7 @@ import (
 	"github.com/puzpuzpuz/xsync/v3"
 )
 
-func Test_Engine_move_quadrant_inside_range(t *testing.T) {
+func Test_Engine_turn_quadrant_inside_range(t *testing.T) {
 	testCases := []struct {
 		b byte
 	}{
@@ -43,7 +43,7 @@ func Test_Engine_move_quadrant_inside_range(t *testing.T) {
 	}
 }
 
-func Test_Engine_move_quadrant_outside_range(t *testing.T) {
+func Test_Engine_turn_quadrant_outside_range(t *testing.T) {
 	testCases := []struct {
 		b byte
 	}{
@@ -79,7 +79,7 @@ func Test_Engine_move_quadrant_outside_range(t *testing.T) {
 	}
 }
 
-func Test_Engine_move(t *testing.T) {
+func Test_Engine_turn(t *testing.T) {
 	var eng *Engine
 	{
 		eng = &Engine{
@@ -127,7 +127,7 @@ func Test_Engine_move(t *testing.T) {
 	}
 
 	{
-		eng.move(router.Packet{Uid: uid, Byt: []byte{0x1, 0x76}})
+		eng.turn(router.Packet{Uid: uid, Byt: []byte{0x1, 0x76}})
 	}
 
 	if ply.Vec.Motion().Get().Qdr != 0x1 {
@@ -138,7 +138,7 @@ func Test_Engine_move(t *testing.T) {
 	}
 
 	{
-		eng.move(router.Packet{Uid: uid, Byt: []byte{0x3, 0xa}})
+		eng.turn(router.Packet{Uid: uid, Byt: []byte{0x3, 0xa}})
 	}
 
 	if ply.Vec.Motion().Get().Qdr != 0x3 {
@@ -149,7 +149,7 @@ func Test_Engine_move(t *testing.T) {
 	}
 
 	{
-		eng.move(router.Packet{Uid: uid, Byt: []byte{0x1, 0x80}})
+		eng.turn(router.Packet{Uid: uid, Byt: []byte{0x1, 0x80}})
 	}
 
 	if ply.Vec.Motion().Get().Qdr != 0x1 {
@@ -161,7 +161,7 @@ func Test_Engine_move(t *testing.T) {
 }
 
 // ~26.10 ns/op
-func Benchmark_Engine_move(b *testing.B) {
+func Benchmark_Engine_turn(b *testing.B) {
 	b.Run(fmt.Sprintf("%03d", 0), func(b *testing.B) {
 		var eng *Engine
 		{
@@ -203,12 +203,12 @@ func Benchmark_Engine_move(b *testing.B) {
 		}
 
 		for b.Loop() {
-			eng.move(router.Packet{Uid: uid, Byt: []byte{0x1, 0x76}})
+			eng.turn(router.Packet{Uid: uid, Byt: []byte{0x1, 0x76}})
 		}
 	})
 }
 
-func Benchmark_Engine_move_quadrant_one_condition(b *testing.B) {
+func Benchmark_Engine_turn_quadrant_one_condition(b *testing.B) {
 	testCases := []struct {
 		b byte
 	}{
@@ -259,7 +259,7 @@ func Benchmark_Engine_move_quadrant_one_condition(b *testing.B) {
 	}
 }
 
-func Benchmark_Engine_move_quadrant_two_conditions(b *testing.B) {
+func Benchmark_Engine_turn_quadrant_two_conditions(b *testing.B) {
 	testCases := []struct {
 		b byte
 	}{

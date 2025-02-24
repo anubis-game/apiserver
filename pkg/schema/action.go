@@ -67,11 +67,14 @@ const (
 	//
 	Body Action = 0x7
 
-	// Move TODO:game
+	// Turn is sent from the client to the server, with a buffer length of 3.
+	// There are two additional parameters, the quadrant and angle bytes
+	// indicating the player's desired direction.
 	//
-	//     [0x8]
+	//     [action]    [ qudr ]    [ angl ]
+	//     [1 byte]    [1 byte]    [1 byte]
 	//
-	Move Action = 0x8
+	Turn Action = 0x8
 
 	// Food is sent from the server to the client, with a buffer length of 9.
 	// There are three additional parameters, the energy coordinates, the energy

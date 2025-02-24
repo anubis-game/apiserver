@@ -6,13 +6,13 @@ import (
 	"github.com/anubis-game/apiserver/pkg/vector"
 )
 
-// TODO:infra use a separate move slice indexed by player byte IDs. This works
+// TODO:infra use a separate Direct slice indexed by player byte IDs. This works
 // because there is only a single sequential writer for this data.
 
 // TODO:infra motion and charax structs should not even be part of the
 // player/vector objects.
 
-func (e *Engine) move(pac router.Packet) {
+func (e *Engine) turn(pac router.Packet) {
 	// If we do not receive exactly two bytes, then we simply ignore the user
 	// input. The two required bytes here are the quadrant byte and the angle
 	// byte.

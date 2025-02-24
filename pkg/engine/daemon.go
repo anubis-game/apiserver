@@ -22,8 +22,8 @@ func (e *Engine) Daemon() {
 	// cost is constant and rate limitted per client connection.
 
 	go func() {
-		for p := range e.rtr.Move() {
-			e.move(p)
+		for p := range e.rtr.Turn() {
+			e.turn(p)
 		}
 	}()
 

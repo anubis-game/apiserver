@@ -29,14 +29,14 @@ func New(c Config) *Router {
 		uid = make(chan Packet, c.Env.EngineCapacity)
 	}
 
-	var mov chan Packet
-	{
-		mov = make(chan Packet, c.Env.EngineCapacity*2)
-	}
-
 	var rac chan Packet
 	{
 		rac = make(chan Packet, c.Env.EngineCapacity*2)
+	}
+
+	var tur chan Packet
+	{
+		tur = make(chan Packet, c.Env.EngineCapacity*2)
 	}
 
 	var tic <-chan time.Time
@@ -50,8 +50,8 @@ func New(c Config) *Router {
 	}
 
 	return &Router{
-		cli: &Client{uid: uid, mov: mov, rac: rac, lim: lim},
-		eng: &Engine{uid: uid, mov: mov, rac: rac, tic: tic},
+		cli: &Client{uid: uid, rac: rac, tur: tur, lim: lim},
+		eng: &Engine{uid: uid, rac: rac, tur: tur, tic: tic},
 	}
 }
 
