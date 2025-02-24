@@ -20,7 +20,6 @@ func Test_Vector_Occupy(t *testing.T) {
 			Mot: Motion{
 				Qdr: 0x1,
 				Agl: 0x80,
-				Vlc: Rcn,
 			},
 			Obj: []object.Object{
 				{X: 100, Y: 100}, // T

@@ -26,7 +26,6 @@ func (f *Filler) Vector(uid byte) *vector.Vector {
 		mot = vector.Motion{
 			Qdr: byte(vfl.Qdr),
 			Agl: byte(vfl.Agl),
-			Vlc: vector.Nrm,
 		}
 	}
 
@@ -49,7 +48,7 @@ func (f *Filler) Vector(uid byte) *vector.Vector {
 		})
 	}
 
-	// We initialize the head of the new vector above with a single object.  Below
+	// We initialize the head of the new vector above with a single object. Below
 	// we use this head as basis for vector expansion. 1 head plus 4 expansions
 	// gives us a vector with 5 segments lined up towards the same direction,
 	// because we use the same motion configuration every time.

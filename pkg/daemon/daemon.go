@@ -119,6 +119,7 @@ func New(c Config) *Daemon {
 	{
 		eng = engine.New(engine.Config{
 			Don: c.Don,
+			Env: c.Env,
 			Fil: fil,
 			Log: log,
 			Rtr: rtr.Engine(),
