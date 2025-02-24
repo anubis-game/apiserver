@@ -38,6 +38,10 @@ func (e *Engine) send(tic time.Time) {
 		// buffer.  Player's may be nil if player IDs have been allocated upon
 		// joining a game, while no client has been setup just yet.
 
+		// TODO:infra given that Engine.uuid() is the only sequential writer for the
+		// player clients, we can use a simple slice indexed by the player byte IDs
+		// in order to store and read the client pointers.
+
 		var p *player.Player
 		{
 			p, _ = e.mem.ply.Load(u)
