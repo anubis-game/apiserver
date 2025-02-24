@@ -1,35 +1,20 @@
 package engine
 
 import (
-	"github.com/anubis-game/apiserver/pkg/player"
 	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/vector"
 )
 
-// TODO:infra use a separate race slice indexed by player byte IDs. This works
-// because there is only a single sequential writer for this data.
-
+// race switches between normal and racing speed for the given byte ID. The
+// method strictly requires to be called sequentially in order to function
+// properly. Further a note on an implementation detail. The *Engine type starts
+// out with a preallocated empty slice of racing bytes. The game starts with
+// every player operating at normal speed. The first call to Engine.race() must
+// therefore switch to racing mode.
 func (e *Engine) race(pac router.Packet) {
-	e.mem.ply.Compute(pac.Uid, func(ply *player.Player, _ bool) (*player.Player, bool) {
-		var mot vector.Motion
-		{
-			mot = ply.Vec.Motion().Get()
-		}
-
-		// The race command triggers a simple switch. There is no race payload. All we
-		// do upon receiving the race signal is to flip a player's velocity between
-		// normal and racing.
-
-		if mot.Vlc == vector.Nrm {
-			mot.Vlc = vector.Rcn
-		} else {
-			mot.Vlc = vector.Nrm
-		}
-
-		{
-			ply.Vec.Motion().Set(mot)
-		}
-
-		return ply, false
-	})
+	if e.rac[pac.Uid] == vector.Rcn {
+		e.rac[pac.Uid] = vector.Nrm
+	} else {
+		e.rac[pac.Uid] = vector.Rcn
+	}
 }

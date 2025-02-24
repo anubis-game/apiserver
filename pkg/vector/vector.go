@@ -27,8 +27,8 @@ type Vector struct {
 
 	// crx
 	crx setter.Interface[Charax]
-	// mot
-	mot setter.Interface[Motion]
+	// mot contains this Vector's current direction of travel.
+	mot Motion
 
 	//
 	hea *Linker
@@ -62,7 +62,7 @@ func New(c Config) *Vector {
 			buf: map[object.Object][]byte{},
 
 			crx: setter.New[Charax](),
-			mot: setter.New[Motion](),
+			mot: c.Mot,
 
 			occ: &Occupy{},
 			scr: &Screen{},
@@ -110,12 +110,6 @@ func New(c Config) *Vector {
 
 	{
 		vec.crx.Set(crx)
-	}
-
-	// Ensure the motion setter tracks the injected configuration.
-
-	{
-		vec.mot.Set(c.Mot)
 	}
 
 	// Initialize the vector with the first coordinate partition, so that we are

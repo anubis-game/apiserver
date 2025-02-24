@@ -3,7 +3,59 @@ package vector
 import (
 	"fmt"
 	"testing"
+
+	"github.com/anubis-game/apiserver/pkg/object"
 )
+
+func Test_Vector_Adjust_Motion(t *testing.T) {
+	//
+	//     +---------HR
+	//     │
+	//     │
+	//     |
+	//     T
+	//
+	var vec *Vector
+	{
+		vec = New(Config{
+			Mot: Motion{
+				Qdr: 0x1,
+				Agl: 0x80,
+			},
+			Obj: []object.Object{
+				{X: 100, Y: 100}, // T
+				{X: 100, Y: 150},
+				{X: 100, Y: 200},
+				{X: 100, Y: 250},
+				{X: 100, Y: 300},
+				{X: 100, Y: 350},
+				{X: 100, Y: 400},
+				{X: 150, Y: 400},
+				{X: 200, Y: 400},
+				{X: 250, Y: 400},
+				{X: 300, Y: 400}, // H
+			},
+		})
+	}
+
+	if vec.mot.Qdr != 0x1 {
+		t.Fatalf("expected %#v got %#v", 0x1, vec.mot.Qdr)
+	}
+	if vec.mot.Agl != 0x80 {
+		t.Fatalf("expected %#v got %#v", 0x80, vec.mot.Agl)
+	}
+
+	{
+		vec.Adjust(0, 0x3, 0x71, Nrm)
+	}
+
+	if vec.mot.Qdr != 0x1 {
+		t.Fatalf("expected %#v got %#v", 0x1, vec.mot.Qdr)
+	}
+	if vec.mot.Agl != 0xba {
+		t.Fatalf("expected %#v got %#v", 0xba, vec.mot.Agl)
+	}
+}
 
 func Test_Vector_Adjust_angle(t *testing.T) {
 	testCases := []struct {

@@ -23,6 +23,13 @@ const (
 )
 
 const (
+	// Nrm is a player's normal speed.
+	Nrm byte = 0x1
+	// Rcn is a player's racing speed.
+	Rcn byte = 0x4
+)
+
+const (
 	// Frm is the standard frame duration in milliseconds travelled at a time.
 	// Note that this constant is the basis for a lot of assumptions made all
 	// across the game engine. Changing this value, especially decreasing it, may
@@ -40,9 +47,8 @@ const (
 
 // TODO:game Vector.Adjust must call Vector.Smooth() every second (once in 25 Adjust() calls)
 
-func (v *Vector) Adjust(del int, des Motion) {
+func (v *Vector) Adjust(del int, qdr byte, agl byte, vlc byte) {
 	crx := v.crx.Get()
-	cur := v.mot.Get()
 
 	// Increment or decrement size based on the given delta.
 
@@ -71,7 +77,7 @@ func (v *Vector) Adjust(del int, des Motion) {
 
 	dis := Dis
 	lim := crx.Als
-	if des.Vlc == Rcn {
+	if vlc == Rcn {
 		dis = Ris
 		lim = crx.Alr
 	}
@@ -80,7 +86,7 @@ func (v *Vector) Adjust(del int, des Motion) {
 	// and desired direction to move next.
 
 	{
-		des.Qdr, des.Agl = trgAgl(cur.Qdr, cur.Agl, des.Qdr, des.Agl, lim)
+		v.mot.Qdr, v.mot.Agl = trgAgl(v.mot.Qdr, v.mot.Agl, qdr, agl, lim)
 	}
 
 	// The reconciled range of motion enables us now to define the next target
@@ -94,7 +100,7 @@ func (v *Vector) Adjust(del int, des Motion) {
 
 	var hea object.Object
 	{
-		hea = v.Target(des.Qdr, des.Agl, dis)
+		hea = v.Target(qdr, agl, dis)
 	}
 
 	// Adjust the player's range of sight before we actually shrink, expand or
@@ -134,12 +140,11 @@ func (v *Vector) Adjust(del int, des Motion) {
 		v.Rotate(hea)
 	}
 
-	// Track the latest range of motion and character settings according to the
-	// reconciliation between our system rules and the desired state.
+	// Track the latest character settings according to the reconciliation between
+	// our system rules and the desired state.
 
 	{
 		v.crx.Set(crx)
-		v.mot.Set(des)
 	}
 }
 

@@ -35,7 +35,7 @@ func (e *Engine) send(tic time.Time) {
 		}
 
 		// Get the player specific client so we can stream the prepared fanout
-		// buffer.  Player's may be nil if player IDs have been allocated upon
+		// buffer. Player's may be nil if player IDs have been allocated upon
 		// joining a game, while no client has been setup just yet.
 
 		// TODO:infra given that Engine.uuid() is the only sequential writer for the

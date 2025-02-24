@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/anubis-game/apiserver/pkg/energy"
+	"github.com/anubis-game/apiserver/pkg/envvar"
 	"github.com/anubis-game/apiserver/pkg/filler"
 	"github.com/anubis-game/apiserver/pkg/object"
 	"github.com/anubis-game/apiserver/pkg/player"
@@ -19,6 +20,7 @@ import (
 
 type Config struct {
 	Don <-chan struct{}
+	Env envvar.Env
 	Fil *filler.Filler
 	Log logger.Interface
 	Rtr *router.Engine
@@ -42,12 +44,16 @@ type Engine struct {
 	log logger.Interface
 	// mem
 	mem *memory
+	// rac
+	rac []byte
 	// rtr is the bridge synchronizing the server handler and the game engine
 	rtr *router.Engine
 	// tic is the global pointer keeping track of the fanout related time ticks.
 	// This timestamp tracks at which point the latest fanout procedure has been
 	// executed. The first tick is initialized in Engine.Daemon().
 	tic time.Time
+	// tur
+	tur []Turn
 	// uni
 	uni *unique.Unique[common.Address, byte]
 	// wrk
@@ -87,7 +93,9 @@ func New(c Config) *Engine {
 			nrg: xsync.NewMapOf[object.Object, *energy.Energy](),
 			ply: xsync.NewMapOf[byte, *player.Player](),
 		},
+		rac: make([]byte, c.Env.EngineCapacity),
 		rtr: c.Rtr,
+		tur: make([]Turn, c.Env.EngineCapacity),
 		uni: c.Uni,
 		wrk: c.Wrk,
 	}

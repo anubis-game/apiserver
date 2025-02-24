@@ -1,5 +1,7 @@
 package engine
 
+import "time"
+
 func (e *Engine) Daemon() {
 	// Initialize the first fanout tick so that we can keep track of the actually
 	// executed interval moving forward.
@@ -18,8 +20,10 @@ func (e *Engine) Daemon() {
 		}
 	}()
 
-	// Defining a player's direction to move towards costs about 30 ns/op. This
-	// cost is constant and rate limitted per client connection.
+	// Defining a player's direction to move towards costs about 2.90 ns/op. This
+	// cost is constant, and the player instructions are rate limitted per client
+	// connection. It is critically important that Engine.turn() is only called
+	// sequentially by a single goroutine.
 
 	go func() {
 		for p := range e.rtr.Turn() {
@@ -27,12 +31,32 @@ func (e *Engine) Daemon() {
 		}
 	}()
 
-	// Switching a player's velocity costs about 28 ns/op. This cost is constant
-	// and rate limitted per client connection.
+	// Switching a player's velocity costs about 2.00 ns/op. This cost is
+	// constant, and the player instructions are rate limitted per client
+	// connection. It is critically important that Engine.race() is only called
+	// sequentially by a single goroutine.
 
 	go func() {
 		for p := range e.rtr.Race() {
 			e.race(p)
+		}
+	}()
+
+	// Since we have more than one function to call within the same fixed
+	// interval, we are distributing the ticks across static goroutines using
+	// dedicated channels.
+
+	var sen chan time.Time
+	var tic chan struct{}
+	{
+		sen = make(chan time.Time, 1)
+		tic = make(chan struct{}, 1)
+	}
+
+	go func() {
+		for t := range e.rtr.Tick() {
+			sen <- t
+			tic <- struct{}{}
 		}
 	}()
 
@@ -48,12 +72,18 @@ func (e *Engine) Daemon() {
 	// resetting of the client specific fanout buffers.
 
 	go func() {
-		for t := range e.rtr.Tick() {
+		for t := range sen {
 			e.send(t)
 		}
 	}()
 
-	// TODO:game Engine.tick() must also adapt the client window coordinates
+	// Adjust the game state on every tick.
+
+	go func() {
+		for range tic {
+			e.tick()
+		}
+	}()
 
 	// Block the engine daemon until the program shuts down.
 

@@ -9,6 +9,14 @@ import (
 )
 
 func Test_Vector_Screen(t *testing.T) {
+	var mot Motion
+	{
+		mot = Motion{
+			Qdr: 0x1,
+			Agl: 0x80,
+		}
+	}
+
 	//
 	//     +---------HR
 	//     │
@@ -19,11 +27,7 @@ func Test_Vector_Screen(t *testing.T) {
 	var vec *Vector
 	{
 		vec = New(Config{
-			Mot: Motion{
-				Qdr: 0x1,
-				Agl: 0x80,
-				Vlc: Rcn,
-			},
+			Mot: mot,
 			Obj: []object.Object{
 				{X: 100, Y: 100}, // T
 				{X: 100, Y: 150},
@@ -71,7 +75,7 @@ func Test_Vector_Screen(t *testing.T) {
 	// of boundary partitions to the east.
 
 	for range 6 {
-		vec.Adjust(0, vec.mot.Get())
+		vec.Adjust(0, vec.mot.Qdr, vec.mot.Agl, Rcn)
 	}
 
 	{
@@ -100,7 +104,7 @@ func Test_Vector_Screen(t *testing.T) {
 	// set of boundary partitions to the north.
 
 	for range 2 {
-		vec.Adjust(0, vec.mot.Get())
+		vec.Adjust(0, vec.mot.Qdr, vec.mot.Agl, Rcn)
 	}
 
 	{

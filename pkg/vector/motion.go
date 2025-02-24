@@ -1,16 +1,6 @@
 package vector
 
-import "github.com/anubis-game/apiserver/pkg/setter"
-
-const (
-	// Nrm is a player's normal speed.
-	Nrm byte = 0x1
-	// Rcn is a player's racing speed.
-	Rcn byte = 0x4
-)
-
-// Motion contains all information necessary to calculate a player's change in
-// direction.
+// Motion contains a Vector's current direction of travel.
 type Motion struct {
 	// Qdr is the index for the quadrant byte. This is one of [0x01, 0x02, 0x03,
 	// 0x04], indicating the logical quadrant any given player is moving towards.
@@ -41,11 +31,4 @@ type Motion struct {
 	//     ( 1 / 256 ) * 90° = 0.3515625°
 	//
 	Agl byte
-	// Vlc is the index for the velocity byte. Every additional byte represents an
-	// added factor of 100%.
-	Vlc byte
-}
-
-func (v *Vector) Motion() setter.Interface[Motion] {
-	return v.mot
 }
