@@ -13,7 +13,7 @@ import (
 )
 
 func (h *Handler) client(wal common.Address, con *websocket.Conn) error {
-	// Create a compact 2 byte UID and associate it with the given wallet address.
+	// Create a compact byte ID and associate it with the given wallet address.
 	// If clients ever reconnect using their session tokens, we can allow them to
 	// continue playing their game after any intermittend interruption.
 
@@ -30,15 +30,6 @@ func (h *Handler) client(wal common.Address, con *websocket.Conn) error {
 		})
 	}
 
-	// With setting up the client connection, we also setup an expiration callback
-	// in order to limit the connection lifetime of every client.
-
-	{
-		h.wxp.Ensure(wal, h.ttl, func() {
-			defer close(cli.Expiry())
-		})
-	}
-
 	// Below we manage the connection specific reader loop. Any error occuring
 	// here causes the connection to close, regardless where the underlying error
 	// originated from. In some cases, reading from the websocket connection may
@@ -46,22 +37,10 @@ func (h *Handler) client(wal common.Address, con *websocket.Conn) error {
 	// produce an error, either due to invalid reconciliation results, or
 	// websocket writes.
 
-	go func() {
-		err := h.reader(con, uid, cli)
-		if errors.Is(err, net.ErrClosed) {
-			// fall through
-		} else if err != nil {
-			h.log.Log(
-				"level", "error",
-				"message", err.Error(),
-				"stack", tracer.Stack(err),
-			)
-		}
-
-		{
-			close(cli.Reader())
-		}
-	}()
+	{
+		go cli.Daemon()
+		go h.reader(con, uid, cli)
+	}
 
 	// We block this client specific goroutine until either the client or the
 	// server shuts down, each of which may happen for various reasons. Once a
@@ -72,13 +51,11 @@ func (h *Handler) client(wal common.Address, con *websocket.Conn) error {
 	// back quickly using its auth token and continue playing their game.
 
 	select {
-	case <-cli.Expiry():
-	// TODO:refactor maybe call this Client.Server() and Client.Engine().
-	case <-cli.Reader():
-	// TODO:infra we don't use Client.Writer since we return errors from
-	// Client.Stream(). We may still need this for Engine.Kill().
-	case <-cli.Writer():
 	case <-h.don:
+	case <-cli.Expiry():
+	case <-cli.Reader():
+	case <-cli.Ticker():
+	case <-cli.Writer():
 	}
 
 	// The expiration callback setup above is client connection specific. Once a
@@ -90,17 +67,15 @@ func (h *Handler) client(wal common.Address, con *websocket.Conn) error {
 		h.wxp.Delete(wal)
 	}
 
-	{
-		err := con.CloseNow()
-		if err != nil {
-			return tracer.Mask(err)
-		}
+	err := con.CloseNow()
+	if err != nil {
+		return tracer.Mask(err)
 	}
 
 	return nil
 }
 
-func (h *Handler) reader(con *websocket.Conn, uid byte, cli *client.Client) error {
+func (h *Handler) looper(con *websocket.Conn, uid byte, cli *client.Client) error {
 	for {
 		_, byt, err := con.Read(context.Background())
 		if err != nil {
@@ -123,5 +98,31 @@ func (h *Handler) reader(con *websocket.Conn, uid byte, cli *client.Client) erro
 		if err != nil {
 			return tracer.Mask(err)
 		}
+	}
+}
+
+func (h *Handler) reader(con *websocket.Conn, uid byte, cli *client.Client) {
+	// With setting up the client connection, we also setup an expiration callback
+	// in order to limit the total connection lifetime of every client.
+
+	h.wxp.Ensure(cli.Wallet(), h.ttl, func() {
+		close(cli.Expiry())
+	})
+
+	// The reader loop blocks this call until any error occurs.
+
+	err := h.looper(con, uid, cli)
+	if errors.Is(err, net.ErrClosed) {
+		// fall through
+	} else if err != nil {
+		h.log.Log(
+			"level", "error",
+			"message", err.Error(),
+			"stack", tracer.Stack(err),
+		)
+	}
+
+	{
+		close(cli.Reader())
 	}
 }

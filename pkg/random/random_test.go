@@ -26,7 +26,7 @@ func Test_Random_Random_coordinates(t *testing.T) {
 
 	dic := map[int]int{}
 
-	for i := 0; i < 10000; i++ {
+	for range 10000 {
 		var b int
 		{
 			b = ran.Random()
@@ -73,7 +73,7 @@ func Test_Random_Random_uint8(t *testing.T) {
 
 	dic := map[int]int{}
 
-	for i := 0; i < 10000; i++ {
+	for range 10000 {
 		dic[ran.Random()]++
 	}
 
@@ -106,7 +106,7 @@ func Test_Random_backup_coordinates(t *testing.T) {
 
 	dic := map[int]int{}
 
-	for i := 0; i < 10000; i++ {
+	for range 10000 {
 		var b int
 		{
 			b = ran.backup()
@@ -153,7 +153,7 @@ func Test_Random_backup_uint8(t *testing.T) {
 
 	dic := map[int]int{}
 
-	for i := 0; i < 10000; i++ {
+	for range 10000 {
 		dic[ran.backup()]++
 	}
 

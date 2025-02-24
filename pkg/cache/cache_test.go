@@ -365,7 +365,7 @@ func readMoreThanWrite[K comparable, V int](t Testing, c Interface[K, V], k test
 	w.Add(1)
 	go func() {
 		defer w.Done()
-		for i := 0; i < 1000; i++ {
+		for range 1000 {
 			{
 				exi := c.Exists(k.Foo)
 				if !exi {
@@ -424,7 +424,7 @@ func readMoreThanWrite[K comparable, V int](t Testing, c Interface[K, V], k test
 	w.Add(1)
 	go func() {
 		defer w.Done()
-		for i := 0; i < 1000; i++ {
+		for range 1000 {
 			{
 				val, _ := c.Search(k.Foo)
 				if val != 33 {

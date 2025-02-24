@@ -131,6 +131,7 @@ func New(c Config) *Daemon {
 	{
 		ser = server.New(server.Config{
 			Con: con,
+			Don: c.Don,
 			Env: c.Env,
 			Lis: lis,
 			Log: log,

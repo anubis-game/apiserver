@@ -80,6 +80,7 @@ func Test_Engine_race(t *testing.T) {
 	}
 }
 
+// ~24.40 ns/op
 func Benchmark_Engine_race(b *testing.B) {
 	b.Run(fmt.Sprintf("%03d", 0), func(b *testing.B) {
 		var eng *Engine
@@ -121,9 +122,7 @@ func Benchmark_Engine_race(b *testing.B) {
 			eng.mem.ply.Store(uid, ply)
 		}
 
-		b.ResetTimer()
-		for i := 0; i < b.N; i++ {
-			// ~28.60 ns/op
+		for b.Loop() {
 			eng.race(router.Packet{Uid: uid})
 		}
 	})

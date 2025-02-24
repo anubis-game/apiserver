@@ -617,7 +617,7 @@ func Benchmark_Vector_Pointer(b *testing.B) {
 	testCases := []struct {
 		f func() *Screen
 	}{
-		// Case 000, ~19.20 ns/op
+		// Case 000, ~15.80 ns/op
 		{
 			f: func() *Screen {
 				return &Screen{
@@ -645,8 +645,7 @@ func Benchmark_Vector_Pointer(b *testing.B) {
 
 	for i, tc := range testCases {
 		b.Run(fmt.Sprintf("%03d", i), func(b *testing.B) {
-			b.ResetTimer()
-			for i := 0; i < b.N; i++ {
+			for b.Loop() {
 				tc.f()
 			}
 		})
@@ -661,7 +660,7 @@ func Benchmark_Vector_Adjust_trgAgl(b *testing.B) {
 		nag byte
 		lim byte
 	}{
-		// Case 000, ~1.80 ns/op
+		// Case 000, ~2.00 ns/op
 		{
 			pqd: byte(1),
 			pag: byte(107),
@@ -669,7 +668,7 @@ func Benchmark_Vector_Adjust_trgAgl(b *testing.B) {
 			nag: byte(87),
 			lim: byte(100),
 		},
-		// Case 001, ~1.80 ns/op
+		// Case 001, ~2.00 ns/op
 		{
 			pqd: byte(1),
 			pag: byte(107),
@@ -677,7 +676,7 @@ func Benchmark_Vector_Adjust_trgAgl(b *testing.B) {
 			nag: byte(87),
 			lim: byte(100),
 		},
-		// Case 002, ~1.80 ns/op
+		// Case 002, ~2.00 ns/op
 		{
 			pqd: byte(1),
 			pag: byte(5),
@@ -685,7 +684,7 @@ func Benchmark_Vector_Adjust_trgAgl(b *testing.B) {
 			nag: byte(4), // under 180°, move clockwise
 			lim: byte(100),
 		},
-		// Case 003, ~1.80 ns/op
+		// Case 003, ~2.00 ns/op
 		{
 			pqd: byte(1),
 			pag: byte(5),
@@ -693,7 +692,7 @@ func Benchmark_Vector_Adjust_trgAgl(b *testing.B) {
 			nag: byte(5), // exactly 180°, move clockwise
 			lim: byte(100),
 		},
-		// Case 004, ~1.80 ns/op
+		// Case 004, ~2.00 ns/op
 		{
 			pqd: byte(1),
 			pag: byte(5),
@@ -701,7 +700,7 @@ func Benchmark_Vector_Adjust_trgAgl(b *testing.B) {
 			nag: byte(6), // over 180°, move counter clockwise
 			lim: byte(100),
 		},
-		// Case 005, ~1.70 ns/op
+		// Case 005, ~2.00 ns/op
 		{
 			pqd: byte(4),
 			pag: byte(161),
@@ -709,7 +708,7 @@ func Benchmark_Vector_Adjust_trgAgl(b *testing.B) {
 			nag: byte(1), // under 180°, move counter clockwise
 			lim: byte(100),
 		},
-		// Case 006, ~1.80 ns/op
+		// Case 006, ~2.00 ns/op
 		{
 			pqd: byte(2),
 			pag: byte(88),
@@ -717,7 +716,7 @@ func Benchmark_Vector_Adjust_trgAgl(b *testing.B) {
 			nag: byte(77), // under 180°, move clockwise
 			lim: byte(75),
 		},
-		// Case 007, ~1.80 ns/op
+		// Case 007, ~2.00 ns/op
 		{
 			pqd: byte(2),
 			pag: byte(88),
@@ -725,7 +724,7 @@ func Benchmark_Vector_Adjust_trgAgl(b *testing.B) {
 			nag: byte(99), // above 180°, move counter clockwise
 			lim: byte(75),
 		},
-		// Case 008, ~1.80 ns/op
+		// Case 008, ~2.00 ns/op
 		{
 			pqd: byte(2),
 			pag: byte(88),
@@ -733,7 +732,7 @@ func Benchmark_Vector_Adjust_trgAgl(b *testing.B) {
 			nag: byte(90), // under 180°, move clockwise
 			lim: byte(175),
 		},
-		// Case 009, ~1.80 ns/op
+		// Case 009, ~2.00 ns/op
 		{
 			pqd: byte(2),
 			pag: byte(88),
@@ -741,7 +740,7 @@ func Benchmark_Vector_Adjust_trgAgl(b *testing.B) {
 			nag: byte(85), // under 180°, move clockwise
 			lim: byte(175),
 		},
-		// Case 010, ~1.80 ns/op
+		// Case 010, ~2.00 ns/op
 		{
 			pqd: byte(2),
 			pag: byte(88),
@@ -749,7 +748,7 @@ func Benchmark_Vector_Adjust_trgAgl(b *testing.B) {
 			nag: byte(2), // under 180°, move counter clockwise
 			lim: byte(175),
 		},
-		// Case 011, ~1.80 ns/op
+		// Case 011, ~2.00 ns/op
 		{
 			pqd: byte(2),
 			pag: byte(88),
@@ -757,7 +756,7 @@ func Benchmark_Vector_Adjust_trgAgl(b *testing.B) {
 			nag: byte(88), // exactly 180°, move clockwise
 			lim: byte(175),
 		},
-		// Case 012, ~1.80 ns/op
+		// Case 012, ~2.00 ns/op
 		{
 			pqd: byte(2),
 			pag: byte(88),
@@ -769,8 +768,7 @@ func Benchmark_Vector_Adjust_trgAgl(b *testing.B) {
 
 	for i, tc := range testCases {
 		b.Run(fmt.Sprintf("%03d", i), func(b *testing.B) {
-			b.ResetTimer()
-			for range b.N {
+			for b.Loop() {
 				trgAgl(tc.pqd, tc.pag, tc.nqd, tc.nag, tc.lim)
 			}
 		})

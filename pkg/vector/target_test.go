@@ -80,28 +80,28 @@ func Benchmark_Vector_Target(b *testing.B) {
 		agl byte
 		dis float64
 	}{
-		// Case 000, ~1.50 ns/op
+		// Case 000, ~1.90 ns/op
 		{
 			obj: object.Object{X: 621_359, Y: 539_073},
 			qdr: byte(1),   // quadrant 1
 			agl: byte(108), // 38.12° from 0°
 			dis: Dis,       // normal speed
 		},
-		// Case 001, ~1.70 ns/op
+		// Case 001, ~1.90 ns/op
 		{
 			obj: object.Object{X: 621_359, Y: 539_073},
 			qdr: byte(2),   // quadrant 2
 			agl: byte(253), // 89.29° from 90°
 			dis: Ris,       // racing speed
 		},
-		// Case 002, ~1.70 ns/op
+		// Case 002, ~1.90 ns/op
 		{
 			obj: object.Object{X: 621_359, Y: 539_073},
 			qdr: byte(3),   // quadrant 3
 			agl: byte(253), // 89.29° from 180°
 			dis: Ris,       // racing speed
 		},
-		// Case 003, ~1.70 ns/op
+		// Case 003, ~1.90 ns/op
 		{
 			obj: object.Object{X: 621_359, Y: 539_073},
 			qdr: byte(4),   // quadrant 4
@@ -121,8 +121,7 @@ func Benchmark_Vector_Target(b *testing.B) {
 				})
 			}
 
-			b.ResetTimer()
-			for range b.N {
+			for b.Loop() {
 				vec.Target(tc.qdr, tc.agl, tc.dis)
 			}
 		})

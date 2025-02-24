@@ -388,13 +388,11 @@ func Test_Vector_Inside_False(t *testing.T) {
 	}
 }
 
-var crxSnk bool
-
 func Benchmark_Vector_Inside(b *testing.B) {
 	testCases := []struct {
 		vec *Vector
 	}{
-		// Case 000, ~1.00 ns/op
+		// Case 000, ~1.80 ns/op
 		{
 			vec: &Vector{
 				occ: &Occupy{
@@ -405,7 +403,7 @@ func Benchmark_Vector_Inside(b *testing.B) {
 				},
 			},
 		},
-		// Case 001, ~1.00 ns/op
+		// Case 001, ~1.80 ns/op
 		{
 			vec: &Vector{
 				occ: &Occupy{
@@ -416,7 +414,7 @@ func Benchmark_Vector_Inside(b *testing.B) {
 				},
 			},
 		},
-		// Case 002, ~1.00 ns/op
+		// Case 002, ~1.80 ns/op
 		{
 			vec: &Vector{
 				occ: &Occupy{
@@ -427,7 +425,7 @@ func Benchmark_Vector_Inside(b *testing.B) {
 				},
 			},
 		},
-		// Case 003, ~1.00 ns/op
+		// Case 003, ~1.80 ns/op
 		{
 			vec: &Vector{
 				occ: &Occupy{
@@ -438,7 +436,7 @@ func Benchmark_Vector_Inside(b *testing.B) {
 				},
 			},
 		},
-		// Case 004, ~1.00 ns/op
+		// Case 004, ~1.80 ns/op
 		{
 			vec: &Vector{
 				occ: &Occupy{
@@ -449,7 +447,7 @@ func Benchmark_Vector_Inside(b *testing.B) {
 				},
 			},
 		},
-		// Case 005, ~1.00 ns/op
+		// Case 005, ~1.80 ns/op
 		{
 			vec: &Vector{
 				occ: &Occupy{
@@ -460,7 +458,7 @@ func Benchmark_Vector_Inside(b *testing.B) {
 				},
 			},
 		},
-		// Case 006, ~1.00 ns/op
+		// Case 006, ~1.80 ns/op
 		{
 			vec: &Vector{
 				occ: &Occupy{
@@ -471,7 +469,7 @@ func Benchmark_Vector_Inside(b *testing.B) {
 				},
 			},
 		},
-		// Case 007, ~1.00 ns/op
+		// Case 007, ~1.80 ns/op
 		{
 			vec: &Vector{
 				occ: &Occupy{
@@ -482,7 +480,7 @@ func Benchmark_Vector_Inside(b *testing.B) {
 				},
 			},
 		},
-		// Case 008, ~1.00 ns/op
+		// Case 008, ~1.80 ns/op
 		{
 			vec: &Vector{
 				occ: &Occupy{
@@ -493,7 +491,7 @@ func Benchmark_Vector_Inside(b *testing.B) {
 				},
 			},
 		},
-		// Case 009, ~0.60 ns/op
+		// Case 009, ~1.80 ns/op
 		{
 			vec: &Vector{
 				occ: &Occupy{
@@ -504,7 +502,7 @@ func Benchmark_Vector_Inside(b *testing.B) {
 				},
 			},
 		},
-		// Case 010, ~0.60 ns/op
+		// Case 010, ~1.80 ns/op
 		{
 			vec: &Vector{
 				occ: &Occupy{
@@ -515,7 +513,7 @@ func Benchmark_Vector_Inside(b *testing.B) {
 				},
 			},
 		},
-		// Case 011, ~0.60 ns/op
+		// Case 011, ~1.80 ns/op
 		{
 			vec: &Vector{
 				occ: &Occupy{
@@ -526,7 +524,7 @@ func Benchmark_Vector_Inside(b *testing.B) {
 				},
 			},
 		},
-		// Case 012, ~0.60 ns/op
+		// Case 012, ~1.80 ns/op
 		{
 			vec: &Vector{
 				occ: &Occupy{
@@ -537,7 +535,7 @@ func Benchmark_Vector_Inside(b *testing.B) {
 				},
 			},
 		},
-		// Case 013, ~0.60 ns/op
+		// Case 013, ~1.80 ns/op
 		{
 			vec: &Vector{
 				occ: &Occupy{
@@ -548,7 +546,7 @@ func Benchmark_Vector_Inside(b *testing.B) {
 				},
 			},
 		},
-		// Case 014, ~1.00 ns/op
+		// Case 014, ~1.80 ns/op
 		{
 			vec: &Vector{
 				occ: &Occupy{
@@ -559,7 +557,7 @@ func Benchmark_Vector_Inside(b *testing.B) {
 				},
 			},
 		},
-		// Case 015, ~0.80 ns/op
+		// Case 015, ~1.80 ns/op
 		{
 			vec: &Vector{
 				occ: &Occupy{
@@ -570,7 +568,7 @@ func Benchmark_Vector_Inside(b *testing.B) {
 				},
 			},
 		},
-		// Case 016, ~0.80 ns/op
+		// Case 016, ~1.80 ns/op
 		{
 			vec: &Vector{
 				occ: &Occupy{
@@ -594,9 +592,8 @@ func Benchmark_Vector_Inside(b *testing.B) {
 				},
 			}
 
-			b.ResetTimer()
-			for range b.N {
-				crxSnk = tc.vec.Inside(vec.Screen())
+			for b.Loop() {
+				tc.vec.Inside(vec.Screen())
 			}
 		})
 	}
