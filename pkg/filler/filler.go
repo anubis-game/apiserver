@@ -11,6 +11,7 @@ import (
 )
 
 type Config struct {
+	Cap int
 	Don <-chan struct{}
 	Env envvar.Env
 	Log logger.Interface
@@ -28,14 +29,11 @@ func New(c Config) *Filler {
 	if c.Don == nil {
 		tracer.Panic(fmt.Errorf("%T.Don must not be empty", c))
 	}
-	if c.Log == nil {
-		tracer.Panic(fmt.Errorf("%T.Log must not be empty", c))
-	}
 
 	var agl *random.Random
 	{
 		agl = random.New(random.Config{
-			Buf: c.Env.EngineCapacity,
+			Buf: c.Cap,
 			Don: c.Don,
 			Log: c.Log,
 			Max: 255,
@@ -46,7 +44,7 @@ func New(c Config) *Filler {
 	var crd *random.Random
 	{
 		crd = random.New(random.Config{
-			Buf: c.Env.EngineCapacity * 2,
+			Buf: c.Cap * 2,
 			Don: c.Don,
 			Log: c.Log,
 			Max: matrix.Max - matrix.Thr,
@@ -57,7 +55,7 @@ func New(c Config) *Filler {
 	var qdr *random.Random
 	{
 		qdr = random.New(random.Config{
-			Buf: c.Env.EngineCapacity,
+			Buf: c.Cap,
 			Don: c.Don,
 			Log: c.Log,
 			Max: 4,
@@ -69,6 +67,6 @@ func New(c Config) *Filler {
 		agl: agl,
 		crd: crd,
 		qdr: qdr,
-		vec: make(chan Vector, c.Env.EngineCapacity),
+		vec: make(chan Vector, c.Cap),
 	}
 }

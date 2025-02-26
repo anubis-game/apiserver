@@ -9,7 +9,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/anubis-game/apiserver/pkg/envvar"
 	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/tokenx"
 	"github.com/coder/websocket"
@@ -42,9 +41,7 @@ func Test_Client_Daemon_cleanup(t *testing.T) {
 		var rtr *router.Router
 		{
 			rtr = router.New(router.Config{
-				Env: envvar.Env{
-					EngineCapacity: 50,
-				},
+				Cap: 50,
 			})
 		}
 

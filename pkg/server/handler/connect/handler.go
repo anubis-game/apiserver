@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/anubis-game/apiserver/pkg/contract/registry"
-	"github.com/anubis-game/apiserver/pkg/envvar"
 	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/schema"
 	"github.com/anubis-game/apiserver/pkg/tokenx"
@@ -16,11 +15,11 @@ import (
 )
 
 type Config struct {
+	// Cap
+	Cap int
 	// Don is the global channel to signal program termination. If this channel is
 	// closed, then all streaming connections should be terminated gracefully.
 	Don <-chan struct{}
-	// Env
-	Env envvar.Env
 	// Log is the logger interface for printing structured log messages.
 	Log logger.Interface
 	// Reg is the onchain interface for the Registry smart contract.
@@ -83,7 +82,7 @@ func New(c Config) *Handler {
 		opt: opt,
 		reg: c.Reg,
 		rtr: c.Rtr,
-		sem: make(chan struct{}, c.Env.EngineCapacity),
+		sem: make(chan struct{}, c.Cap),
 		tkx: c.Tkx,
 		uni: c.Uni,
 	}

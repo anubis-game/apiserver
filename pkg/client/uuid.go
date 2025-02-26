@@ -15,9 +15,6 @@ func (c *Client) uuid(byt []byte) error {
 
 	// Just send the turn signal to the engine for reconciliation.
 
-	// TODO:test unit test the garbage collection of leaving players using the
-	// router.Drop byte.
-
 	{
 		c.rtr.Uuid() <- router.Uuid{Uid: c.uid, Jod: router.Join, Wal: c.wal, Fcn: c.fcn}
 	}

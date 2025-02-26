@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/anubis-game/apiserver/pkg/energy"
-	"github.com/anubis-game/apiserver/pkg/envvar"
 	"github.com/anubis-game/apiserver/pkg/filler"
 	"github.com/anubis-game/apiserver/pkg/object"
 	"github.com/anubis-game/apiserver/pkg/player"
@@ -21,10 +20,8 @@ func Test_Engine_uuid(t *testing.T) {
 	var fil *filler.Filler
 	{
 		fil = filler.New(filler.Config{
+			Cap: 50,
 			Don: make(<-chan struct{}),
-			Env: envvar.Env{
-				EngineCapacity: 50,
-			},
 			Log: logger.Fake(),
 		})
 	}
@@ -82,10 +79,8 @@ func Benchmark_Engine_uuid(b *testing.B) {
 		var fil *filler.Filler
 		{
 			fil = filler.New(filler.Config{
+				Cap: 50,
 				Don: make(<-chan struct{}),
-				Env: envvar.Env{
-					EngineCapacity: 50,
-				},
 				Log: logger.Fake(),
 			})
 		}

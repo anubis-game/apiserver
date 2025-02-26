@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/anubis-game/apiserver/pkg/energy"
-	"github.com/anubis-game/apiserver/pkg/envvar"
 	"github.com/anubis-game/apiserver/pkg/filler"
 	"github.com/anubis-game/apiserver/pkg/object"
 	"github.com/anubis-game/apiserver/pkg/player"
@@ -20,8 +19,8 @@ import (
 )
 
 type Config struct {
+	Cap int
 	Don <-chan struct{}
-	Env envvar.Env
 	Fil *filler.Filler
 	Log logger.Interface
 	Rtr *router.Engine
@@ -94,7 +93,7 @@ func New(c Config) *Engine {
 	return &Engine{
 		don: c.Don,
 		fbf: xsync.NewMapOf[byte, []byte](),
-		fcn: make([]chan<- []byte, c.Env.EngineCapacity),
+		fcn: make([]chan<- []byte, c.Cap),
 		fil: c.Fil,
 		lkp: &lookup{
 			nrg: xsync.NewMapOf[object.Object, map[object.Object]struct{}](),
@@ -105,10 +104,10 @@ func New(c Config) *Engine {
 			nrg: xsync.NewMapOf[object.Object, *energy.Energy](),
 			ply: xsync.NewMapOf[byte, *player.Player](),
 		},
-		rac: make([]byte, c.Env.EngineCapacity),
+		rac: make([]byte, c.Cap),
 		rtr: c.Rtr,
 		tkx: c.Tkx,
-		tur: make([]router.Turn, c.Env.EngineCapacity),
+		tur: make([]router.Turn, c.Cap),
 		uni: c.Uni,
 		wrk: c.Wrk,
 	}

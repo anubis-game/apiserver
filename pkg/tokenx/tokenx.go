@@ -70,12 +70,6 @@ func (t *TokenX[K]) Daemon() {
 	}
 }
 
-func (t *TokenX[K]) Delete(key K) {
-	t.mut.Lock()
-	t.delete(key)
-	t.mut.Unlock()
-}
-
 func (t *TokenX[K]) Search(tok uuid.UUID) (K, bool) {
 	t.mut.Lock()
 	key, exi := t.rev[tok]

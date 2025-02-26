@@ -107,6 +107,7 @@ func Test_TokenX_Expiry(t *testing.T) {
 		time.Sleep(10 * time.Millisecond)
 	}
 
+	tkx.mut.Lock()
 	if len(tkx.exp) != 3 {
 		t.Fatalf("expected %#v got %#v", 3, len(tkx.exp))
 	}
@@ -116,6 +117,7 @@ func Test_TokenX_Expiry(t *testing.T) {
 	if len(tkx.rev) != 3 {
 		t.Fatalf("expected %#v got %#v", 3, len(tkx.rev))
 	}
+	tkx.mut.Unlock()
 
 	{
 		key, exi := tkx.Search(tk1)
@@ -151,6 +153,7 @@ func Test_TokenX_Expiry(t *testing.T) {
 		time.Sleep(50 * time.Millisecond)
 	}
 
+	tkx.mut.Lock()
 	if len(tkx.exp) != 2 {
 		t.Fatalf("expected %#v got %#v", 2, len(tkx.exp))
 	}
@@ -160,6 +163,7 @@ func Test_TokenX_Expiry(t *testing.T) {
 	if len(tkx.rev) != 2 {
 		t.Fatalf("expected %#v got %#v", 2, len(tkx.rev))
 	}
+	tkx.mut.Unlock()
 
 	{
 		key, exi := tkx.Search(tk1)
@@ -192,6 +196,7 @@ func Test_TokenX_Expiry(t *testing.T) {
 		time.Sleep(50 * time.Millisecond)
 	}
 
+	tkx.mut.Lock()
 	if len(tkx.exp) != 0 {
 		t.Fatalf("expected %#v got %#v", 0, len(tkx.exp))
 	}
@@ -201,6 +206,7 @@ func Test_TokenX_Expiry(t *testing.T) {
 	if len(tkx.rev) != 0 {
 		t.Fatalf("expected %#v got %#v", 0, len(tkx.rev))
 	}
+	tkx.mut.Unlock()
 }
 
 func Test_TokenX_Random(t *testing.T) {
@@ -281,7 +287,7 @@ func Benchmark_TokenX_Create(b *testing.B) {
 	}
 }
 
-// ~0.27 ns/op
+// ~0.23 ns/op
 func Benchmark_TokenX_concurrency(b *testing.B) {
 	n := 250_000
 	k := "key"
@@ -308,16 +314,6 @@ func Benchmark_TokenX_concurrency(b *testing.B) {
 		<-c
 
 		for range n {
-			x.Delete(k)
-		}
-
-		w.Done()
-	}()
-
-	go func() {
-		<-c
-
-		for range n {
 			_, err := x.Create(k)
 			if err != nil {
 				panic(err)
@@ -337,7 +333,7 @@ func Benchmark_TokenX_concurrency(b *testing.B) {
 		w.Done()
 	}()
 
-	w.Add(3)
+	w.Add(2)
 	close(c)
 	w.Wait()
 }

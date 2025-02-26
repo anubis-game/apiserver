@@ -43,7 +43,7 @@ func New(c Config) *Daemon {
 	var err error
 
 	if c.Env.EngineCapacity > math.MaxUint8 {
-		tracer.Panic(fmt.Errorf("c.Env.EngineCapacity must not be larger than 1 byte"))
+		tracer.Panic(fmt.Errorf("c.Env.EngineCapacity must not be larger than max byte"))
 	}
 
 	var log logger.Interface
@@ -87,7 +87,7 @@ func New(c Config) *Daemon {
 	var rtr *router.Router
 	{
 		rtr = router.New(router.Config{
-			Env: c.Env,
+			Cap: c.Env.EngineCapacity,
 		})
 	}
 
@@ -104,8 +104,8 @@ func New(c Config) *Daemon {
 	var con *connect.Handler
 	{
 		con = connect.New(connect.Config{
+			Cap: c.Env.EngineCapacity,
 			Don: c.Don,
-			Env: c.Env,
 			Log: log,
 			Reg: reg,
 			Rtr: rtr.Client(),
@@ -126,8 +126,8 @@ func New(c Config) *Daemon {
 	var eng *engine.Engine
 	{
 		eng = engine.New(engine.Config{
+			Cap: c.Env.EngineCapacity,
 			Don: c.Don,
-			Env: c.Env,
 			Fil: fil,
 			Log: log,
 			Rtr: rtr.Engine(),

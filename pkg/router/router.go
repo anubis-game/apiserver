@@ -3,12 +3,11 @@ package router
 import (
 	"time"
 
-	"github.com/anubis-game/apiserver/pkg/envvar"
 	"github.com/anubis-game/apiserver/pkg/vector"
 )
 
 type Config struct {
-	Env envvar.Env
+	Cap int
 }
 
 type Router struct {
@@ -23,9 +22,9 @@ func New(c Config) *Router {
 	var tur chan Turn
 	var uid chan Uuid
 	{
-		rac = make(chan byte, c.Env.EngineCapacity*2)
-		tur = make(chan Turn, c.Env.EngineCapacity*2)
-		uid = make(chan Uuid, c.Env.EngineCapacity)
+		rac = make(chan byte, c.Cap*2)
+		tur = make(chan Turn, c.Cap*2)
+		uid = make(chan Uuid, c.Cap)
 	}
 
 	var tic <-chan time.Time
