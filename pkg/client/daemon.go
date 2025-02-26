@@ -106,10 +106,21 @@ func (c *Client) logger(err error) error {
 
 func (c *Client) reader() error {
 	for {
+		// Prevent DOS attacks and rate limit client specific stream input, so that
+		// our internal fanout schedule cannot be overloaded maliciously.
+
+		{
+			c.lim.Take()
+		}
+
+		// Read the next incoming message from the client connection.
+
 		_, byt, err := c.con.Read(context.Background())
 		if err != nil {
 			return tracer.Mask(err)
 		}
+
+		// Dispatch according to the action byte.
 
 		switch schema.Action(byt[0]) {
 		case schema.Ping:

@@ -107,6 +107,16 @@ func Test_TokenX_Expiry(t *testing.T) {
 		time.Sleep(10 * time.Millisecond)
 	}
 
+	if len(tkx.exp) != 3 {
+		t.Fatalf("expected %#v got %#v", 3, len(tkx.exp))
+	}
+	if len(tkx.lis) != 3 {
+		t.Fatalf("expected %#v got %#v", 3, len(tkx.lis))
+	}
+	if len(tkx.rev) != 3 {
+		t.Fatalf("expected %#v got %#v", 3, len(tkx.rev))
+	}
+
 	{
 		key, exi := tkx.Search(tk1)
 		if !exi {
@@ -141,6 +151,16 @@ func Test_TokenX_Expiry(t *testing.T) {
 		time.Sleep(50 * time.Millisecond)
 	}
 
+	if len(tkx.exp) != 2 {
+		t.Fatalf("expected %#v got %#v", 2, len(tkx.exp))
+	}
+	if len(tkx.lis) != 2 {
+		t.Fatalf("expected %#v got %#v", 2, len(tkx.lis))
+	}
+	if len(tkx.rev) != 2 {
+		t.Fatalf("expected %#v got %#v", 2, len(tkx.rev))
+	}
+
 	{
 		key, exi := tkx.Search(tk1)
 		if exi {
@@ -167,6 +187,20 @@ func Test_TokenX_Expiry(t *testing.T) {
 			t.Fatalf("expected %#v got %#v", ky3, key)
 		}
 	}
+
+	{
+		time.Sleep(50 * time.Millisecond)
+	}
+
+	if len(tkx.exp) != 0 {
+		t.Fatalf("expected %#v got %#v", 0, len(tkx.exp))
+	}
+	if len(tkx.lis) != 0 {
+		t.Fatalf("expected %#v got %#v", 0, len(tkx.lis))
+	}
+	if len(tkx.rev) != 0 {
+		t.Fatalf("expected %#v got %#v", 0, len(tkx.rev))
+	}
 }
 
 func Test_TokenX_Random(t *testing.T) {
@@ -175,6 +209,17 @@ func Test_TokenX_Random(t *testing.T) {
 		tkx = New[string]()
 	}
 
+	if len(tkx.exp) != 0 {
+		t.Fatalf("expected %#v got %#v", 0, len(tkx.exp))
+	}
+	if len(tkx.lis) != 0 {
+		t.Fatalf("expected %#v got %#v", 0, len(tkx.lis))
+	}
+	if len(tkx.rev) != 0 {
+		t.Fatalf("expected %#v got %#v", 0, len(tkx.rev))
+	}
+
+	prv := []uuid.UUID{}
 	see := map[uuid.UUID]int{}
 	for range 1000 {
 		tok, err := tkx.Create("ky1")
@@ -182,8 +227,35 @@ func Test_TokenX_Random(t *testing.T) {
 			t.Fatal(err)
 		}
 
+		// Check that we do not accumulate any resources when we overwrite existing
+		// tokens.
+
+		if len(tkx.exp) != 1 {
+			t.Fatalf("expected %#v got %#v", 1, len(tkx.exp))
+		}
+		if len(tkx.lis) != 1 {
+			t.Fatalf("expected %#v got %#v", 1, len(tkx.lis))
+		}
+		if len(tkx.rev) != 1 {
+			t.Fatalf("expected %#v got %#v", 1, len(tkx.rev))
+		}
+
 		{
 			see[tok]++
+		}
+
+		// No overwritten token is allowed to exist anymore. So search for all
+		// previous tokens and verify that none of them refers back to any key.
+
+		for _, p := range prv {
+			key, exi := tkx.Search(p)
+			if exi {
+				t.Fatalf("expected %#v got %#v", "no key", key)
+			}
+		}
+
+		{
+			prv = append(prv, tok)
 		}
 	}
 

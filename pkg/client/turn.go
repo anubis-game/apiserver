@@ -21,13 +21,6 @@ func (c *Client) turn(byt []byte) error {
 		return tracer.Maskf(turnQuadrantRangeError, "%#v", byt[1])
 	}
 
-	// Prevent DOS attacks and rate limit client specific stream input, so that
-	// our internal fanout schedule cannot be overloaded maliciously.
-
-	{
-		c.lim.Take()
-	}
-
 	// Just send the turn signal to the engine for reconciliation.
 
 	{

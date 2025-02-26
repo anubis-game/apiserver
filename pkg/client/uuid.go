@@ -13,13 +13,6 @@ func (c *Client) uuid(byt []byte) error {
 		return tracer.Maskf(uuidBytesInvalidError, "%d", len(byt))
 	}
 
-	// Prevent DOS attacks and rate limit client specific stream input, so that
-	// our internal fanout schedule cannot be overloaded maliciously.
-
-	{
-		c.lim.Take()
-	}
-
 	// Just send the turn signal to the engine for reconciliation.
 
 	// TODO:test unit test the garbage collection of leaving players using the

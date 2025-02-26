@@ -12,13 +12,6 @@ func (c *Client) race(byt []byte) error {
 		return tracer.Maskf(raceBytesInvalidError, "%d", len(byt))
 	}
 
-	// Prevent DOS attacks and rate limit client specific stream input, so that
-	// our internal fanout schedule cannot be overloaded maliciously.
-
-	{
-		c.lim.Take()
-	}
-
 	// Just send the race signal to the engine for reconciliation.
 
 	{
