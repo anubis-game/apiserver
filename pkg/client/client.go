@@ -57,8 +57,8 @@ func New(c Config) *Client {
 	}
 
 	return &Client{
-		exp: make(chan struct{}), // closed in server/handler/connect/client.go
-		rea: make(chan struct{}), // closed in server/handler/connect/client.go
+		exp: make(chan struct{}), // closed in client/daemon.go
+		rea: make(chan struct{}), // closed in client/daemon.go
 		tic: make(chan struct{}), // closed in client/daemon.go
 		wri: make(chan struct{}), // closed in client/daemon.go
 

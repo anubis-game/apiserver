@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"net/http/httptest"
 	"testing"
 	"time"
 
@@ -14,6 +15,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/puzpuzpuz/xsync/v3"
 	"github.com/xh3b4sd/logger"
+	"go.uber.org/ratelimit"
 )
 
 func Test_Engine_worker_read(t *testing.T) {
@@ -39,9 +41,10 @@ func Test_Engine_worker_read(t *testing.T) {
 	var cli *client.Client
 	{
 		cli = client.New(client.Config{
-			Con: tesCon("localhost:30001", "read", tesHan),
+			Con: tesCon(),
 			Don: make(<-chan struct{}),
 			Fcn: fcn,
+			Lim: ratelimit.New(1),
 			Log: logger.Fake(),
 			Tkx: tokenx.New[common.Address](),
 		})
@@ -159,9 +162,10 @@ func Benchmark_Engine_send(b *testing.B) {
 	var cli *client.Client
 	{
 		cli = client.New(client.Config{
-			Con: tesCon("localhost:30003", "bench", tesHan),
+			Con: tesCon(),
 			Don: make(<-chan struct{}),
 			Fcn: fcn,
+			Lim: ratelimit.New(1),
 			Log: logger.Fake(),
 			Tkx: tokenx.New[common.Address](),
 		})
@@ -194,47 +198,32 @@ func Benchmark_Engine_send(b *testing.B) {
 	}
 }
 
-func tesHan(w http.ResponseWriter, r *http.Request) {
-	con, err := websocket.Accept(w, r, nil)
-	if err != nil {
-		return
-	}
-
-	// We disable the read limit to work around some default settings causing
-	// runtime panics.
-	//
-	//     panic serving 127.0.0.1:61559: failed to read: read limited at 32769 bytes
-	//
-
-	{
-		con.SetReadLimit(-1)
-	}
-
-	for {
-		_, _, err := con.Read(context.Background())
+func tesCon() *websocket.Conn {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		con, err := websocket.Accept(w, r, nil)
 		if err != nil {
-			panic(err)
+			return
 		}
-	}
-}
 
-func tesCon(add string, pat string, han http.HandlerFunc) *websocket.Conn {
-	go func() {
+		// We disable the read limit to work around some default settings causing
+		// runtime panics.
+		//
+		//     panic serving 127.0.0.1:61559: failed to read: read limited at 32769 bytes
+		//
+
 		{
-			http.HandleFunc("/"+pat, han)
+			con.SetReadLimit(-1)
 		}
 
-		err := http.ListenAndServe(add, nil)
-		if err != nil {
-			panic(err)
+		for {
+			_, _, err := con.Read(context.Background())
+			if err != nil {
+				panic(err)
+			}
 		}
-	}()
+	}))
 
-	{
-		time.Sleep(100 * time.Millisecond)
-	}
-
-	con, _, err := websocket.Dial(context.Background(), "ws://"+add+"/"+pat, nil)
+	con, _, err := websocket.Dial(context.Background(), srv.URL, nil)
 	if err != nil {
 		panic(err)
 	}

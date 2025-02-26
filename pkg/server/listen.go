@@ -7,8 +7,6 @@ import (
 )
 
 func (s *Server) listen() {
-	var err error
-
 	var srv *http.Server
 	{
 		srv = &http.Server{
@@ -25,7 +23,7 @@ func (s *Server) listen() {
 	}
 
 	{
-		err = srv.Serve(s.lis)
+		err := srv.Serve(s.lis)
 		if err != nil {
 			tracer.Panic(tracer.Mask(err))
 		}

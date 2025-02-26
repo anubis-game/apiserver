@@ -31,6 +31,8 @@ func (c *Client) Daemon() {
 			select {
 			case <-c.don:
 				return
+			case <-c.rea:
+				return
 			case b := <-c.fcn:
 				if c.logger(c.Stream(b)) != nil {
 					close(c.wri)
@@ -51,6 +53,8 @@ func (c *Client) Daemon() {
 			select {
 			case <-c.don:
 				return
+			case <-c.rea:
+				return
 			case <-c.tiC:
 				if len(c.fcn) >= c.cap {
 					close(c.tic)
@@ -68,6 +72,8 @@ func (c *Client) Daemon() {
 		for {
 			select {
 			case <-c.don:
+				return
+			case <-c.rea:
 				return
 			case <-time.After(TTL):
 				close(c.exp)

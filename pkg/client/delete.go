@@ -1,26 +1,17 @@
 package client
 
 import (
-	"errors"
-	"net"
-
 	"github.com/anubis-game/apiserver/pkg/router"
-	"github.com/xh3b4sd/tracer"
+	"github.com/coder/websocket"
 )
 
 func (c *Client) Delete() {
 	// Try to close the client connection, if it is not already closed, or
-	// closing.
+	// closing. Once the client connection gets closed, the reader loop should
+	// stop and close the reader channel.
 
-	err := c.con.CloseNow()
-	if errors.Is(err, net.ErrClosed) {
-		// fall through
-	} else if err != nil {
-		c.log.Log(
-			"level", "error",
-			"message", err.Error(),
-			"stack", tracer.Stack(err),
-		)
+	{
+		c.logger(c.con.Close(websocket.StatusNormalClosure, "")) // nolint:errcheck
 	}
 
 	// After the client connection cannot accept any more incoming messages, we
