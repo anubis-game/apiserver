@@ -61,7 +61,7 @@ func Test_Stream_Verify_verTim(t *testing.T) {
 		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
 			err := verTim(tc.now, tc.mes)
 			if !errors.Is(err, tc.err) {
-				t.Fatalf("expected error %v, got %v", tc.err, err)
+				t.Fatalf("expected error %v got %v", tc.err, err)
 			}
 		})
 	}

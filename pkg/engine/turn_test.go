@@ -11,7 +11,7 @@ func Test_Engine_turn(t *testing.T) {
 	var eng *Engine
 	{
 		eng = &Engine{
-			tur: make([]Turn, 6),
+			tur: make([]router.Turn, 6),
 		}
 	}
 
@@ -27,7 +27,7 @@ func Test_Engine_turn(t *testing.T) {
 		t.Fatalf("expected %#v got %#v", 0x0, eng.tur[uid].Agl)
 	}
 
-	eng.turn(router.Packet{Uid: uid, Byt: []byte{0x1, 0x80}})
+	eng.turn(router.Turn{Uid: uid, Qdr: 0x1, Agl: 0x80})
 
 	if eng.tur[uid].Qdr != 0x1 {
 		t.Fatalf("expected %#v got %#v", 0x1, eng.tur[uid].Qdr)
@@ -37,7 +37,7 @@ func Test_Engine_turn(t *testing.T) {
 	}
 
 	{
-		eng.turn(router.Packet{Uid: uid, Byt: []byte{0x1, 0x76}})
+		eng.turn(router.Turn{Uid: uid, Qdr: 0x1, Agl: 0x76})
 	}
 
 	if eng.tur[uid].Qdr != 0x1 {
@@ -48,7 +48,7 @@ func Test_Engine_turn(t *testing.T) {
 	}
 
 	{
-		eng.turn(router.Packet{Uid: uid, Byt: []byte{0x3, 0xa}})
+		eng.turn(router.Turn{Uid: uid, Qdr: 0x3, Agl: 0xa})
 	}
 
 	if eng.tur[uid].Qdr != 0x3 {
@@ -59,7 +59,7 @@ func Test_Engine_turn(t *testing.T) {
 	}
 
 	{
-		eng.turn(router.Packet{Uid: uid, Byt: []byte{0x1, 0x80}})
+		eng.turn(router.Turn{Uid: uid, Qdr: 0x1, Agl: 0x80})
 	}
 
 	if eng.tur[uid].Qdr != 0x1 {
@@ -76,7 +76,7 @@ func Benchmark_Engine_turn(b *testing.B) {
 		var eng *Engine
 		{
 			eng = &Engine{
-				tur: make([]Turn, 6),
+				tur: make([]router.Turn, 6),
 			}
 		}
 
@@ -86,7 +86,7 @@ func Benchmark_Engine_turn(b *testing.B) {
 		}
 
 		for b.Loop() {
-			eng.turn(router.Packet{Uid: uid, Byt: []byte{0x1, 0x76}})
+			eng.turn(router.Turn{Uid: uid, Qdr: 0x1, Agl: 0x76})
 		}
 	})
 }

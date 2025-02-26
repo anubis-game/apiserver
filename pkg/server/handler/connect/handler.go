@@ -2,34 +2,32 @@ package connect
 
 import (
 	"fmt"
-	"strings"
-	"time"
 
-	"github.com/anubis-game/apiserver/pkg/cache"
 	"github.com/anubis-game/apiserver/pkg/contract/registry"
-	"github.com/anubis-game/apiserver/pkg/envvar"
 	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/schema"
+	"github.com/anubis-game/apiserver/pkg/tokenx"
 	"github.com/anubis-game/apiserver/pkg/unique"
 	"github.com/coder/websocket"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/google/uuid"
 	"github.com/xh3b4sd/logger"
 	"github.com/xh3b4sd/tracer"
 )
 
 type Config struct {
+	// Cap
+	Cap int
 	// Don is the global channel to signal program termination. If this channel is
 	// closed, then all streaming connections should be terminated gracefully.
 	Don <-chan struct{}
-	// Env
-	Env envvar.Env
 	// Log is the logger interface for printing structured log messages.
 	Log logger.Interface
 	// Reg is the onchain interface for the Registry smart contract.
 	Reg *registry.Registry
 	// Rtr
 	Rtr *router.Client
+	// Tkx
+	Tkx *tokenx.TokenX[common.Address]
 	// Uni provides a thread safe mechanism to allocate compact player IDs.
 	// Allocation happens in the server handler, freeing allocated player IDs
 	// happens in the game engine.
@@ -38,21 +36,13 @@ type Config struct {
 
 type Handler struct {
 	don <-chan struct{}
-	ind cache.Interface[common.Address, uuid.UUID]
 	log logger.Interface
 	opt *websocket.AcceptOptions
 	reg *registry.Registry
-	// rtr is the bridge synchronizing the server handler and the game engine
 	rtr *router.Client
 	sem chan struct{}
-	// ttl is the connection timeout that the stream engine should enforce upon
-	// connected clients. All associated onchain and offchain resources must be
-	// released after having served clients successfully for this amount of time.
-	ttl time.Duration
-	txp *cache.Time[uuid.UUID]
-	tok cache.Interface[uuid.UUID, common.Address]
+	tkx *tokenx.TokenX[common.Address]
 	uni *unique.Unique[common.Address, byte]
-	wxp *cache.Time[common.Address]
 }
 
 func New(c Config) *Handler {
@@ -67,6 +57,9 @@ func New(c Config) *Handler {
 	}
 	if c.Rtr == nil {
 		tracer.Panic(fmt.Errorf("%T.Rtr must not be empty", c))
+	}
+	if c.Tkx == nil {
+		tracer.Panic(fmt.Errorf("%T.Tkx must not be empty", c))
 	}
 	if c.Uni == nil {
 		tracer.Panic(fmt.Errorf("%T.Uni must not be empty", c))
@@ -85,25 +78,12 @@ func New(c Config) *Handler {
 
 	return &Handler{
 		don: c.Don,
-		ind: cache.NewSxnc[common.Address, uuid.UUID](),
 		log: c.Log,
 		opt: opt,
 		reg: c.Reg,
 		rtr: c.Rtr,
-		sem: make(chan struct{}, c.Env.EngineCapacity),
-		ttl: musDur(c.Env.ConnectionTimeout, "s"),
-		txp: cache.NewTime[uuid.UUID](),
-		tok: cache.NewSxnc[uuid.UUID, common.Address](),
+		sem: make(chan struct{}, c.Cap),
+		tkx: c.Tkx,
 		uni: c.Uni,
-		wxp: cache.NewTime[common.Address](),
 	}
-}
-
-func musDur(str string, uni string) time.Duration {
-	dur, err := time.ParseDuration(strings.ReplaceAll(str, "_", "") + uni)
-	if err != nil {
-		tracer.Panic(err)
-	}
-
-	return dur
 }

@@ -2,8 +2,6 @@ package engine
 
 import (
 	"time"
-
-	"github.com/anubis-game/apiserver/pkg/player"
 )
 
 func (e *Engine) send(tic time.Time) {
@@ -27,27 +25,25 @@ func (e *Engine) send(tic time.Time) {
 
 		var b []byte
 		{
-			b, _ = e.buf.LoadAndDelete(u)
+			b, _ = e.fbf.LoadAndDelete(u)
 		}
 
 		if len(b) == 0 {
 			continue
 		}
 
-		// Get the player specific client so we can stream the prepared fanout
-		// buffer. Player's may be nil if player IDs have been allocated upon
-		// joining a game, while no client has been setup just yet.
+		// Get the player specific fanout channel so we can forward the prepared
+		// fanout buffer to the underlying client. Channels may be nil if player IDs
+		// have been allocated upon joining a game, while no client has been setup
+		// just yet. It is also possible for players to get disconnected
+		// intermittently, which would nil the formerly established channel as well.
 
-		// TODO:infra given that Engine.uuid() is the only sequential writer for the
-		// player clients, we can use a simple slice indexed by the player byte IDs
-		// in order to store and read the client pointers.
-
-		var p *player.Player
+		var c chan<- []byte
 		{
-			p, _ = e.mem.ply.Load(u)
+			c = e.fcn[u]
 		}
 
-		if p == nil {
+		if c == nil {
 			continue
 		}
 
@@ -55,23 +51,8 @@ func (e *Engine) send(tic time.Time) {
 		// aware processing. The buffer channels provided by each client must never
 		// block.
 
-		// TODO:infra we do not want to remove players from the game if their client
-		// connection is accidentally flaky. But a disconnected client cannot
-		// consume messages anymore, causing the fanout buffers below to fill up.
-		// Such congested buffer channels block the entire fanout procedure, which
-		// must remain linear up to this point. If we want to keep disconnected
-		// players in the game, then we have to stop serving them below until they
-		// can process messages again.
-		//
-		//     1. What is the mechanism to decide whether to send any more messages
-		//        to any given client?
-		//
-		//     2. How do we restore a websocket connection for players that never
-		//        left the game?
-		//
-
 		{
-			p.Cli.Buffer() <- b
+			c <- b
 		}
 	}
 }

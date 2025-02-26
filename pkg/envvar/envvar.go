@@ -12,7 +12,6 @@ type Env struct {
 	ChainRegistryContract string `split_words:"true" required:"true"`
 	ChainRpcEndpoint      string `split_words:"true" required:"true"`
 	CodeRepository        string `split_words:"true" required:"true"`
-	ConnectionTimeout     string `split_words:"true" required:"true"`
 	EngineCapacity        int    `split_words:"true" required:"true"`
 	HttpHost              string `split_words:"true" required:"true"`
 	HttpPort              string `split_words:"true" required:"true"`

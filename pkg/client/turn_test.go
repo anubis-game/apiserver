@@ -1,11 +1,11 @@
-package connect
+package client
 
 import (
 	"fmt"
 	"testing"
 )
 
-func Test_Handler_Connect_turn_quadrant_inside_range(t *testing.T) {
+func Test_Client_turn_quadrant_inside_range(t *testing.T) {
 	testCases := []struct {
 		b byte
 	}{
@@ -37,7 +37,7 @@ func Test_Handler_Connect_turn_quadrant_inside_range(t *testing.T) {
 	}
 }
 
-func Test_Handler_Connect_turn_quadrant_outside_range(t *testing.T) {
+func Test_Client_turn_quadrant_outside_range(t *testing.T) {
 	testCases := []struct {
 		b byte
 	}{
@@ -73,7 +73,7 @@ func Test_Handler_Connect_turn_quadrant_outside_range(t *testing.T) {
 	}
 }
 
-func Benchmark_Handler_Connect_turn_quadrant_one_condition(b *testing.B) {
+func Benchmark_Client_turn_quadrant_one_condition(b *testing.B) {
 	testCases := []struct {
 		b byte
 	}{
@@ -124,7 +124,7 @@ func Benchmark_Handler_Connect_turn_quadrant_one_condition(b *testing.B) {
 	}
 }
 
-func Benchmark_Handler_Connect_turn_quadrant_two_conditions(b *testing.B) {
+func Benchmark_Client_turn_quadrant_two_conditions(b *testing.B) {
 	testCases := []struct {
 		b byte
 	}{

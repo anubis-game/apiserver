@@ -5,11 +5,11 @@ import (
 	"time"
 
 	"github.com/anubis-game/apiserver/pkg/energy"
-	"github.com/anubis-game/apiserver/pkg/envvar"
 	"github.com/anubis-game/apiserver/pkg/filler"
 	"github.com/anubis-game/apiserver/pkg/object"
 	"github.com/anubis-game/apiserver/pkg/player"
 	"github.com/anubis-game/apiserver/pkg/router"
+	"github.com/anubis-game/apiserver/pkg/tokenx"
 	"github.com/anubis-game/apiserver/pkg/unique"
 	"github.com/anubis-game/apiserver/pkg/worker"
 	"github.com/ethereum/go-ethereum/common"
@@ -19,23 +19,28 @@ import (
 )
 
 type Config struct {
+	Cap int
 	Don <-chan struct{}
-	Env envvar.Env
 	Fil *filler.Filler
 	Log logger.Interface
 	Rtr *router.Engine
+	Tkx *tokenx.TokenX[common.Address]
 	Uni *unique.Unique[common.Address, byte]
 	Wrk worker.Ensure
 }
 
 type Engine struct {
-	// buf contains various messages prepared to be sent out to this player's
-	// client during the time based fanout procedure. The byte slice may contain
-	// multiple encoded messages.
-	buf *xsync.MapOf[byte, []byte]
 	// don is the global channel to signal program termination. If this channel is
 	// closed, then all streaming connections should be terminated gracefully.
 	don <-chan struct{}
+	// fbf contains the fanout buffers ready to be sent out to every player during
+	// the ticker based fanout procedure. Any respective byte slice may be empty,
+	// or contain one, or multiple encoded messages.
+	fbf *xsync.MapOf[byte, []byte]
+	// fcn contains the fanout channels for every player. It is critically
+	// important that modifications on fcn are only done sequentially by a single
+	// writer.
+	fcn []chan<- []byte
 	// filler
 	fil *filler.Filler
 	// lkp
@@ -52,8 +57,10 @@ type Engine struct {
 	// This timestamp tracks at which point the latest fanout procedure has been
 	// executed. The first tick is initialized in Engine.Daemon().
 	tic time.Time
+	// tkx
+	tkx *tokenx.TokenX[common.Address]
 	// tur
-	tur []Turn
+	tur []router.Turn
 	// uni
 	uni *unique.Unique[common.Address, byte]
 	// wrk
@@ -73,6 +80,9 @@ func New(c Config) *Engine {
 	if c.Rtr == nil {
 		tracer.Panic(fmt.Errorf("%T.Rtr must not be empty", c))
 	}
+	if c.Tkx == nil {
+		tracer.Panic(fmt.Errorf("%T.Tkx must not be empty", c))
+	}
 	if c.Uni == nil {
 		tracer.Panic(fmt.Errorf("%T.Uni must not be empty", c))
 	}
@@ -81,8 +91,9 @@ func New(c Config) *Engine {
 	}
 
 	return &Engine{
-		buf: xsync.NewMapOf[byte, []byte](),
 		don: c.Don,
+		fbf: xsync.NewMapOf[byte, []byte](),
+		fcn: make([]chan<- []byte, c.Cap),
 		fil: c.Fil,
 		lkp: &lookup{
 			nrg: xsync.NewMapOf[object.Object, map[object.Object]struct{}](),
@@ -93,9 +104,10 @@ func New(c Config) *Engine {
 			nrg: xsync.NewMapOf[object.Object, *energy.Energy](),
 			ply: xsync.NewMapOf[byte, *player.Player](),
 		},
-		rac: make([]byte, c.Env.EngineCapacity),
+		rac: make([]byte, c.Cap),
 		rtr: c.Rtr,
-		tur: make([]Turn, c.Env.EngineCapacity),
+		tkx: c.Tkx,
+		tur: make([]router.Turn, c.Cap),
 		uni: c.Uni,
 		wrk: c.Wrk,
 	}

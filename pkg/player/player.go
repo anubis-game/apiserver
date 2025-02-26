@@ -1,19 +1,18 @@
 package player
 
 import (
-	"github.com/anubis-game/apiserver/pkg/client"
 	"github.com/anubis-game/apiserver/pkg/schema"
 	"github.com/anubis-game/apiserver/pkg/vector"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 type Config struct {
-	Cli *client.Client
 	Uid byte
 	Vec *vector.Vector
+	Wal common.Address
 }
 
 type Player struct {
-	Cli *client.Client
 	Vec *vector.Vector
 
 	// uid contains this player's wallet specific fanout buffer, containing the
@@ -35,11 +34,10 @@ func New(c Config) *Player {
 	}
 
 	{
-		copy(uid[2:], c.Cli.Wallet().Bytes())
+		copy(uid[2:], c.Wal.Bytes())
 	}
 
 	return &Player{
-		Cli: c.Cli,
 		Vec: c.Vec,
 
 		uid: uid,

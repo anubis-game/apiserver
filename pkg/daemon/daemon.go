@@ -12,6 +12,7 @@ import (
 	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/server"
 	"github.com/anubis-game/apiserver/pkg/server/handler/connect"
+	"github.com/anubis-game/apiserver/pkg/tokenx"
 	"github.com/anubis-game/apiserver/pkg/unique"
 	"github.com/anubis-game/apiserver/pkg/worker"
 	"github.com/anubis-game/apiserver/pkg/worker/release"
@@ -34,6 +35,7 @@ type Daemon struct {
 	log logger.Interface
 	reg *registry.Registry
 	ser *server.Server
+	tkx *tokenx.TokenX[common.Address]
 	wrk *worker.Worker
 }
 
@@ -41,7 +43,7 @@ func New(c Config) *Daemon {
 	var err error
 
 	if c.Env.EngineCapacity > math.MaxUint8 {
-		tracer.Panic(fmt.Errorf("c.Env.EngineCapacity must not be larger than 1 byte"))
+		tracer.Panic(fmt.Errorf("c.Env.EngineCapacity must not be larger than max byte"))
 	}
 
 	var log logger.Interface
@@ -85,8 +87,13 @@ func New(c Config) *Daemon {
 	var rtr *router.Router
 	{
 		rtr = router.New(router.Config{
-			Env: c.Env,
+			Cap: c.Env.EngineCapacity,
 		})
+	}
+
+	var tkx *tokenx.TokenX[common.Address]
+	{
+		tkx = tokenx.New[common.Address]()
 	}
 
 	var uni *unique.Unique[common.Address, byte]
@@ -97,11 +104,12 @@ func New(c Config) *Daemon {
 	var con *connect.Handler
 	{
 		con = connect.New(connect.Config{
+			Cap: c.Env.EngineCapacity,
 			Don: c.Don,
-			Env: c.Env,
 			Log: log,
 			Reg: reg,
 			Rtr: rtr.Client(),
+			Tkx: tkx,
 			Uni: uni,
 		})
 	}
@@ -118,11 +126,12 @@ func New(c Config) *Daemon {
 	var eng *engine.Engine
 	{
 		eng = engine.New(engine.Config{
+			Cap: c.Env.EngineCapacity,
 			Don: c.Don,
-			Env: c.Env,
 			Fil: fil,
 			Log: log,
 			Rtr: rtr.Engine(),
+			Tkx: tkx,
 			Uni: uni,
 			Wrk: wrk,
 		})
@@ -147,6 +156,7 @@ func New(c Config) *Daemon {
 		log: log,
 		reg: reg,
 		ser: ser,
+		tkx: tkx,
 		wrk: wrk,
 	}
 }

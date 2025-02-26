@@ -3,15 +3,11 @@ package router
 import (
 	"time"
 
-	"github.com/anubis-game/apiserver/pkg/envvar"
 	"github.com/anubis-game/apiserver/pkg/vector"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/puzpuzpuz/xsync/v3"
-	"go.uber.org/ratelimit"
 )
 
 type Config struct {
-	Env envvar.Env
+	Cap int
 }
 
 type Router struct {
@@ -20,37 +16,24 @@ type Router struct {
 }
 
 // Router is the bridge between server endpoint and game engine, allowing us to
-// separate client connections and game state. Note that the *time.Ticker used
-// for our fanout procedure is never stopped, because this ticker is used across
-// the lifetime of the entire game engine.
+// separate client connections and game state.
 func New(c Config) *Router {
-	var uid chan Packet
+	var rac chan byte
+	var tur chan Turn
+	var uid chan Uuid
 	{
-		uid = make(chan Packet, c.Env.EngineCapacity)
-	}
-
-	var rac chan Packet
-	{
-		rac = make(chan Packet, c.Env.EngineCapacity*2)
-	}
-
-	var tur chan Packet
-	{
-		tur = make(chan Packet, c.Env.EngineCapacity*2)
+		rac = make(chan byte, c.Cap*2)
+		tur = make(chan Turn, c.Cap*2)
+		uid = make(chan Uuid, c.Cap)
 	}
 
 	var tic <-chan time.Time
 	{
-		tic = time.NewTicker(vector.Frm * time.Millisecond).C
-	}
-
-	var lim *xsync.MapOf[common.Address, ratelimit.Limiter]
-	{
-		lim = xsync.NewMapOf[common.Address, ratelimit.Limiter]()
+		tic = time.Tick(vector.Frm * time.Millisecond)
 	}
 
 	return &Router{
-		cli: &Client{uid: uid, rac: rac, tur: tur, lim: lim},
+		cli: &Client{uid: uid, rac: rac, tur: tur},
 		eng: &Engine{uid: uid, rac: rac, tur: tur, tic: tic},
 	}
 }

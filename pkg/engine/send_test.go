@@ -4,26 +4,27 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"net/http/httptest"
 	"testing"
 	"time"
 
 	"github.com/anubis-game/apiserver/pkg/client"
-	"github.com/anubis-game/apiserver/pkg/player"
+	"github.com/anubis-game/apiserver/pkg/tokenx"
 	"github.com/anubis-game/apiserver/pkg/unique"
 	"github.com/coder/websocket"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/puzpuzpuz/xsync/v3"
+	"github.com/xh3b4sd/logger"
+	"go.uber.org/ratelimit"
 )
 
 func Test_Engine_worker_read(t *testing.T) {
 	var eng *Engine
 	{
 		eng = &Engine{
-			buf: xsync.NewMapOf[byte, []byte](),
-			mem: &memory{
-				ply: xsync.NewMapOf[byte, *player.Player](),
-			},
+			fbf: xsync.NewMapOf[byte, []byte](),
 			uni: unique.New[common.Address, byte](),
+			fcn: make([]chan<- []byte, 6),
 		}
 	}
 
@@ -32,17 +33,29 @@ func Test_Engine_worker_read(t *testing.T) {
 		uid = eng.uni.Ensure(common.Address{})
 	}
 
-	var ply *player.Player
+	var fcn chan []byte
 	{
-		ply = &player.Player{
-			Cli: client.New(client.Config{
-				Con: tesCon("localhost:30001", "read", tesHan),
-			}),
-		}
+		fcn = make(chan []byte, 1024)
+	}
+
+	var cli *client.Client
+	{
+		cli = client.New(client.Config{
+			Con: tesCon(),
+			Don: make(<-chan struct{}),
+			Fcn: fcn,
+			Lim: ratelimit.New(1),
+			Log: logger.Fake(),
+			Tkx: tokenx.New[common.Address](),
+		})
 	}
 
 	{
-		go ply.Cli.Daemon()
+		go cli.Daemon()
+	}
+
+	{
+		eng.fcn[uid] = fcn
 	}
 
 	var buf []byte
@@ -50,15 +63,11 @@ func Test_Engine_worker_read(t *testing.T) {
 		buf = make([]byte, 32)
 	}
 
-	{
-		eng.mem.ply.Store(uid, ply)
-	}
-
 	//
 
 	for range 10 {
 		{
-			eng.buf.Store(uid, buf)
+			eng.fbf.Store(uid, buf)
 		}
 
 		var dur time.Duration
@@ -78,7 +87,7 @@ func Test_Engine_worker_read(t *testing.T) {
 
 		//
 
-		err := ply.Cli.Stream([]byte("ping"))
+		err := cli.Stream([]byte("ping"))
 		if err != nil {
 			t.Fatalf("expected %#v got %#v", nil, err)
 		}
@@ -89,35 +98,35 @@ func Benchmark_Engine_send(b *testing.B) {
 	testCases := []struct {
 		buf []byte
 	}{
-		// Case 000, ~3,900 ns/op, 1 allocs/op
+		// Case 000, ~3,800 ns/op, 1 allocs/op
 		{
 			buf: make([]byte, 2),
 		},
-		// Case 001, ~3,900 ns/op, 2 allocs/op
+		// Case 001, ~3,800 ns/op, 2 allocs/op
 		{
 			buf: make([]byte, 32),
 		},
-		// Case 002, ~3,900 ns/op, 2 allocs/op
+		// Case 002, ~3,800 ns/op, 2 allocs/op
 		{
 			buf: make([]byte, 64),
 		},
-		// Case 003, ~3,900 ns/op, 2 allocs/op
+		// Case 003, ~3,800 ns/op, 2 allocs/op
 		{
 			buf: make([]byte, 128),
 		},
-		// Case 004, ~3,900 ns/op, 2 allocs/op
+		// Case 004, ~3,800 ns/op, 2 allocs/op
 		{
 			buf: make([]byte, 256),
 		},
-		// Case 005, ~4,100 ns/op, 2 allocs/op
+		// Case 005, ~3,900 ns/op, 2 allocs/op
 		{
 			buf: make([]byte, 512),
 		},
-		// Case 006, ~4,200 ns/op, 3 allocs/op
+		// Case 006, ~4,000 ns/op, 3 allocs/op
 		{
 			buf: make([]byte, 1024),
 		},
-		// Case 007, ~6,300 ns/op, 6 allocs/op
+		// Case 007, ~6,300 ns/op, 5 allocs/op
 		{
 			buf: make([]byte, 2048),
 		},
@@ -125,7 +134,7 @@ func Benchmark_Engine_send(b *testing.B) {
 		{
 			buf: make([]byte, 4096),
 		},
-		// Case 009, ~17,800 ns/op, 10 allocs/op
+		// Case 009, ~18,000 ns/op, 10 allocs/op
 		{
 			buf: make([]byte, 8192),
 		},
@@ -134,11 +143,9 @@ func Benchmark_Engine_send(b *testing.B) {
 	var eng *Engine
 	{
 		eng = &Engine{
-			buf: xsync.NewMapOf[byte, []byte](),
-			mem: &memory{
-				ply: xsync.NewMapOf[byte, *player.Player](),
-			},
+			fbf: xsync.NewMapOf[byte, []byte](),
 			uni: unique.New[common.Address, byte](),
+			fcn: make([]chan<- []byte, 6),
 		}
 	}
 
@@ -147,21 +154,29 @@ func Benchmark_Engine_send(b *testing.B) {
 		uid = eng.uni.Ensure(common.Address{})
 	}
 
-	var ply *player.Player
+	var fcn chan []byte
 	{
-		ply = &player.Player{
-			Cli: client.New(client.Config{
-				Con: tesCon("localhost:30003", "bench", tesHan),
-			}),
-		}
+		fcn = make(chan []byte, 1024)
+	}
+
+	var cli *client.Client
+	{
+		cli = client.New(client.Config{
+			Con: tesCon(),
+			Don: make(<-chan struct{}),
+			Fcn: fcn,
+			Lim: ratelimit.New(1),
+			Log: logger.Fake(),
+			Tkx: tokenx.New[common.Address](),
+		})
 	}
 
 	{
-		go ply.Cli.Daemon()
+		go cli.Daemon()
 	}
 
 	{
-		eng.mem.ply.Store(uid, ply)
+		eng.fcn[uid] = fcn
 	}
 
 	tic := time.Now()
@@ -169,54 +184,46 @@ func Benchmark_Engine_send(b *testing.B) {
 	for i, tc := range testCases {
 		b.Run(fmt.Sprintf("%03d", i), func(b *testing.B) {
 			for b.Loop() {
-				eng.buf.Store(uid, tc.buf)
+				eng.fbf.Store(uid, tc.buf)
 				eng.send(tic)
 			}
 		})
 	}
-}
 
-func tesHan(w http.ResponseWriter, r *http.Request) {
-	con, err := websocket.Accept(w, r, nil)
+	//
+
+	err := cli.Stream([]byte("ping"))
 	if err != nil {
-		return
-	}
-
-	// We disable the read limit to work around some default settings causing
-	// runtime panics.
-	//
-	//     panic serving 127.0.0.1:61559: failed to read: read limited at 32769 bytes
-	//
-
-	{
-		con.SetReadLimit(-1)
-	}
-
-	for {
-		_, _, err := con.Read(context.Background())
-		if err != nil {
-			panic(err)
-		}
+		b.Fatalf("expected %#v got %#v", nil, err)
 	}
 }
 
-func tesCon(add string, pat string, han http.HandlerFunc) *websocket.Conn {
-	go func() {
-		{
-			http.HandleFunc("/"+pat, han)
-		}
-
-		err := http.ListenAndServe(add, nil)
+func tesCon() *websocket.Conn {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		con, err := websocket.Accept(w, r, nil)
 		if err != nil {
-			panic(err)
+			return
 		}
-	}()
 
-	{
-		time.Sleep(100 * time.Millisecond)
-	}
+		// We disable the read limit to work around some default settings causing
+		// runtime panics.
+		//
+		//     panic serving 127.0.0.1:61559: failed to read: read limited at 32769 bytes
+		//
 
-	con, _, err := websocket.Dial(context.Background(), "ws://"+add+"/"+pat, nil)
+		{
+			con.SetReadLimit(-1)
+		}
+
+		for {
+			_, _, err := con.Read(context.Background())
+			if err != nil {
+				panic(err)
+			}
+		}
+	}))
+
+	con, _, err := websocket.Dial(context.Background(), srv.URL, nil)
 	if err != nil {
 		panic(err)
 	}

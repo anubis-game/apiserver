@@ -1,4 +1,4 @@
-package connect
+package client
 
 import (
 	"github.com/xh3b4sd/tracer"
@@ -6,7 +6,7 @@ import (
 
 var turnBytesInvalidError = &tracer.Error{
 	Kind: "turnBytesInvalidError",
-	Desc: "The request expects exactly 2 input bytes, one for the quadrant and one for the angle. The input bytes were not found to comply with this requirement. Therefore the request failed.",
+	Desc: "The request expects exactly 3 input bytes, one byte for the action, one byte for the quadrant, and one byte for the angle. The input bytes were not found to comply with this requirement. Therefore the request failed.",
 }
 
 var turnQuadrantRangeError = &tracer.Error{
