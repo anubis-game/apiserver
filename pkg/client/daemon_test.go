@@ -6,7 +6,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/anubis-game/apiserver/pkg/tokenx"
 	"github.com/coder/websocket"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/xh3b4sd/logger"
 )
 
 func Test_Client_Daemon_overload(t *testing.T) {
@@ -14,6 +17,10 @@ func Test_Client_Daemon_overload(t *testing.T) {
 	{
 		cli = New(Config{
 			Con: tesCon("localhost:30004", "overload", tesHan),
+			Don: make(<-chan struct{}),
+			Fcn: make(chan []byte, 1024),
+			Log: logger.Fake(),
+			Tkx: tokenx.New[common.Address](),
 		})
 	}
 
@@ -32,7 +39,7 @@ func Test_Client_Daemon_overload(t *testing.T) {
 	}
 
 	for range 6 {
-		cli.buf <- buf               // the first message processes immediatelly, the 5 following messages accumulate
+		cli.fcn <- buf               // the first message processes immediatelly, the 5 following messages accumulate
 		time.Sleep(time.Millisecond) // give the test time to propagate
 	}
 

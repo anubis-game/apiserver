@@ -12,6 +12,7 @@ import (
 	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/server"
 	"github.com/anubis-game/apiserver/pkg/server/handler/connect"
+	"github.com/anubis-game/apiserver/pkg/tokenx"
 	"github.com/anubis-game/apiserver/pkg/unique"
 	"github.com/anubis-game/apiserver/pkg/worker"
 	"github.com/anubis-game/apiserver/pkg/worker/release"
@@ -34,6 +35,7 @@ type Daemon struct {
 	log logger.Interface
 	reg *registry.Registry
 	ser *server.Server
+	tkx *tokenx.TokenX[common.Address]
 	wrk *worker.Worker
 }
 
@@ -89,6 +91,11 @@ func New(c Config) *Daemon {
 		})
 	}
 
+	var tkx *tokenx.TokenX[common.Address]
+	{
+		tkx = tokenx.New[common.Address]()
+	}
+
 	var uni *unique.Unique[common.Address, byte]
 	{
 		uni = unique.New[common.Address, byte]()
@@ -102,6 +109,7 @@ func New(c Config) *Daemon {
 			Log: log,
 			Reg: reg,
 			Rtr: rtr.Client(),
+			Tkx: tkx,
 			Uni: uni,
 		})
 	}
@@ -123,6 +131,7 @@ func New(c Config) *Daemon {
 			Fil: fil,
 			Log: log,
 			Rtr: rtr.Engine(),
+			Tkx: tkx,
 			Uni: uni,
 			Wrk: wrk,
 		})
@@ -147,6 +156,7 @@ func New(c Config) *Daemon {
 		log: log,
 		reg: reg,
 		ser: ser,
+		tkx: tkx,
 		wrk: wrk,
 	}
 }

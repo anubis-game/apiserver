@@ -1,11 +1,10 @@
 package engine
 
 import (
+	"bytes"
 	"fmt"
 	"testing"
 
-	"github.com/anubis-game/apiserver/pkg/address"
-	"github.com/anubis-game/apiserver/pkg/client"
 	"github.com/anubis-game/apiserver/pkg/energy"
 	"github.com/anubis-game/apiserver/pkg/envvar"
 	"github.com/anubis-game/apiserver/pkg/filler"
@@ -37,7 +36,8 @@ func Test_Engine_uuid(t *testing.T) {
 	var eng *Engine
 	{
 		eng = &Engine{
-			buf: xsync.NewMapOf[byte, []byte](),
+			fbf: xsync.NewMapOf[byte, []byte](),
+			fcn: make([]chan<- []byte, 6),
 			fil: fil,
 			lkp: &lookup{
 				nrg: xsync.NewMapOf[object.Object, map[object.Object]struct{}](),
@@ -62,12 +62,7 @@ func Test_Engine_uuid(t *testing.T) {
 	}
 
 	{
-		eng.uuid(router.Packet{
-			Cli: client.New(client.Config{
-				Wal: wal,
-			}),
-			Uid: uid,
-		})
+		eng.uuid(router.Uuid{Uid: uid, Jod: router.Join, Wal: wal})
 	}
 
 	if eng.mem.ply.Size() != 1 {
@@ -75,12 +70,13 @@ func Test_Engine_uuid(t *testing.T) {
 	}
 
 	ply, _ := eng.mem.ply.Load(uid)
-	if !address.Equal(ply.Cli.Wallet(), wal) {
-		t.Fatalf("expected %#v got %#v", wal, ply.Cli.Wallet())
+
+	if !bytes.Contains(ply.Wallet(), wal.Bytes()) {
+		t.Fatalf("expected %#v got %#v", wal, ply.Wallet())
 	}
 }
 
-// ~8,000 ns/op, 61 allocs/op
+// ~4,300 ns/op, 49 allocs/op
 func Benchmark_Engine_uuid(b *testing.B) {
 	b.Run(fmt.Sprintf("%03d", 0), func(b *testing.B) {
 		var fil *filler.Filler
@@ -101,7 +97,8 @@ func Benchmark_Engine_uuid(b *testing.B) {
 		var eng *Engine
 		{
 			eng = &Engine{
-				buf: xsync.NewMapOf[byte, []byte](),
+				fbf: xsync.NewMapOf[byte, []byte](),
+				fcn: make([]chan<- []byte, 6),
 				fil: fil,
 				lkp: &lookup{
 					nrg: xsync.NewMapOf[object.Object, map[object.Object]struct{}](),
@@ -126,12 +123,7 @@ func Benchmark_Engine_uuid(b *testing.B) {
 		}
 
 		for b.Loop() {
-			eng.uuid(router.Packet{
-				Cli: client.New(client.Config{
-					Wal: wal,
-				}),
-				Uid: uid,
-			})
+			eng.uuid(router.Uuid{Uid: uid, Jod: router.Join, Wal: wal})
 		}
 	})
 }

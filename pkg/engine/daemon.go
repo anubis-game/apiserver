@@ -15,8 +15,8 @@ func (e *Engine) Daemon() {
 	// same partition coordinates.
 
 	go func() {
-		for p := range e.rtr.Uuid() {
-			e.uuid(p)
+		for u := range e.rtr.Uuid() {
+			e.uuid(u)
 		}
 	}()
 
@@ -26,8 +26,8 @@ func (e *Engine) Daemon() {
 	// sequentially by a single goroutine.
 
 	go func() {
-		for p := range e.rtr.Turn() {
-			e.turn(p)
+		for t := range e.rtr.Turn() {
+			e.turn(t)
 		}
 	}()
 
@@ -37,8 +37,8 @@ func (e *Engine) Daemon() {
 	// sequentially by a single goroutine.
 
 	go func() {
-		for p := range e.rtr.Race() {
-			e.race(p)
+		for b := range e.rtr.Race() {
+			e.race(b)
 		}
 	}()
 

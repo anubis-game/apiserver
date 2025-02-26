@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/vector"
 )
 
@@ -29,7 +28,7 @@ func Test_Engine_race(t *testing.T) {
 	}
 
 	{
-		eng.race(router.Packet{Uid: uid})
+		eng.race(uid)
 	}
 
 	// The first call to Engine.race() must switch to racing mode.
@@ -39,7 +38,7 @@ func Test_Engine_race(t *testing.T) {
 	}
 
 	{
-		eng.race(router.Packet{Uid: uid})
+		eng.race(uid)
 	}
 
 	// Further calls to Engine.race() must alternative between normal and racing
@@ -50,7 +49,7 @@ func Test_Engine_race(t *testing.T) {
 	}
 
 	{
-		eng.race(router.Packet{Uid: uid})
+		eng.race(uid)
 	}
 
 	if eng.rac[uid] != vector.Rcn {
@@ -58,7 +57,7 @@ func Test_Engine_race(t *testing.T) {
 	}
 
 	{
-		eng.race(router.Packet{Uid: uid})
+		eng.race(uid)
 	}
 
 	if eng.rac[uid] != vector.Nrm {
@@ -82,7 +81,7 @@ func Benchmark_Engine_race(b *testing.B) {
 		}
 
 		for b.Loop() {
-			eng.race(router.Packet{Uid: uid})
+			eng.race(uid)
 		}
 	})
 }

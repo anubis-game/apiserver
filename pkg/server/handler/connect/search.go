@@ -31,15 +31,14 @@ func (h *Handler) search(hea []string) (common.Address, error) {
 	{
 		fak := uuid.MustParse("f47ac10b-58cc-4372-a567-0e02b2c3d479")
 		if tok.String() == fak.String() {
-			wal := common.HexToAddress("0xAD63B2262EB7D1591Ee8E6a85959a523dEce7983")
-			h.tok.Update(fak, wal)
+			return common.HexToAddress("0xAD63B2262EB7D1591Ee8E6a85959a523dEce7983"), nil
 		}
 	}
 
 	var wal common.Address
 	var exi bool
 	{
-		wal, exi = h.tok.Search(tok)
+		wal, exi = h.tkx.Search(tok)
 		if !exi {
 			return common.Address{}, tracer.Mask(challengeValidationFailedError)
 		}

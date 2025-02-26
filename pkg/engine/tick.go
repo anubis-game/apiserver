@@ -1,8 +1,10 @@
 package engine
 
+import "github.com/anubis-game/apiserver/pkg/router"
+
 func (e *Engine) tick() {
 	for u := range e.uni.Length() {
-		var tur Turn
+		var tur router.Turn
 		{
 			tur = e.tur[u]
 		}

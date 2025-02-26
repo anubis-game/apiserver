@@ -6,16 +6,26 @@ import (
 	"github.com/anubis-game/apiserver/pkg/player"
 	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/vector"
+	"github.com/ethereum/go-ethereum/common"
 )
 
-func (e *Engine) uuid(pac router.Packet) {
+func (e *Engine) uuid(pac router.Uuid) {
+	if pac.Jod == router.Join {
+		e.join(pac.Uid, pac.Wal, pac.Fcn)
+	} else {
+		e.drop(pac.Uid)
+	}
+}
+
+func (e *Engine) join(uid byte, wal common.Address, fcn chan<- []byte) {
+
 	// Generating a new player object for the connected client effectively puts
 	// the player randomly onto the game map due to the Filler.Vector()
 	// randomization.
 
 	var vec *vector.Vector
 	{
-		vec = e.fil.Vector(pac.Uid)
+		vec = e.fil.Vector(uid)
 	}
 
 	var crx vector.Charax
@@ -26,9 +36,9 @@ func (e *Engine) uuid(pac router.Packet) {
 	var ply *player.Player
 	{
 		ply = player.New(player.Config{
-			Cli: pac.Cli,
-			Uid: pac.Uid,
+			Uid: uid,
 			Vec: vec,
+			Wal: wal,
 		})
 	}
 
@@ -64,7 +74,7 @@ func (e *Engine) uuid(pac router.Packet) {
 		// why we are using MapOf.Compute() below.
 
 		if vec.Inside(v.Vec.Screen()) {
-			e.buf.Compute(pac.Uid, func(b []byte, _ bool) ([]byte, bool) {
+			e.fbf.Compute(uid, func(b []byte, _ bool) ([]byte, bool) {
 				b = append(b, ini...)
 				return b, false
 			})
@@ -149,7 +159,7 @@ func (e *Engine) uuid(pac router.Packet) {
 			}
 
 			{
-				old[pac.Uid] = struct{}{}
+				old[uid] = struct{}{}
 			}
 
 			return old, false
@@ -171,7 +181,16 @@ func (e *Engine) uuid(pac router.Packet) {
 	// buffer in the player's setter.
 
 	{
-		e.buf.Store(pac.Uid, buf)
-		e.mem.ply.Store(pac.Uid, ply)
+		e.fbf.Store(uid, buf)
+		e.mem.ply.Store(uid, ply)
 	}
+
+	// As the very last step, assign the player's fanout channel
+	{
+		e.fcn[uid] = fcn
+	}
+}
+
+func (e *Engine) drop(uid byte) {
+	e.fcn[uid] = nil // TODO:test ensure we can concurrently read while a single writer modifies the fanout channel
 }

@@ -81,25 +81,30 @@ func (e *Engine) Kill(uid byte, _ *client.Client, inp []byte) error {
 	// 	out = schema.Encode(schema.Kill, win.Bytes(), los.Bytes())
 	// }
 
-	// h.cli.Ranger(func(_ common.Address, val *client.Client) {
+	// e.cli.Ranger(func(_ common.Address, val *client.Client) {
 	// 	val.Stream(out)
 	// })
 
-	// Since the loser got killed, they must be removed from the current game.
-	// Regardless, we can only remove the loser from the broadcasting worker pool,
-	// once they received their own kill signal over the broadcast in the step
-	// above. So only once the kill state got communicated to everyone, including
-	// the losing player themselves, only then can we remove the loser from the
-	// broadcasting worker pool.
-
 	{
-		// h.cli.Delete(los)
+		// Since the loser got killed, they must be removed from the current game.
+		// Regardless, we can only remove the loser from the broadcasting worker
+		// pool, once they received their own kill signal over the broadcast in the
+		// step above. So only once the kill state got communicated to everyone,
+		// including the losing player themselves, only then can we remove the loser
+		// from the broadcasting worker pool. E.g. e.cli.Delete(los).
 	}
 
 	{
 		// Player UIDs are not deleted when the client connection is lost. Only
-		// losing the game causes UIDs to be freed.
-		// h.uni.Delete(wal)
+		// losing the game causes UIDs to be freed. E.g. e.uni.Delete(wal).
+	}
+
+	{
+		// We map the player's wallet address to their respective session tokens,
+		// because we want to allow active players to quickly reconnect if they
+		// experience intermittent network issues. This means the engine must clear
+		// a player's session token if a player leaves the game. E.g.
+		// e.tkx.Delete(wal)
 	}
 
 	return nil

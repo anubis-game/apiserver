@@ -1,7 +1,6 @@
 package engine
 
 import (
-	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/vector"
 )
 
@@ -11,10 +10,10 @@ import (
 // out with a preallocated empty slice of racing bytes. The game starts with
 // every player operating at normal speed. The first call to Engine.race() must
 // therefore switch to racing mode.
-func (e *Engine) race(pac router.Packet) {
-	if e.rac[pac.Uid] == vector.Rcn {
-		e.rac[pac.Uid] = vector.Nrm
+func (e *Engine) race(uid byte) {
+	if e.rac[uid] == vector.Rcn {
+		e.rac[uid] = vector.Nrm
 	} else {
-		e.rac[pac.Uid] = vector.Rcn
+		e.rac[uid] = vector.Rcn
 	}
 }
