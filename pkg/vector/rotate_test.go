@@ -87,7 +87,7 @@ func Benchmark_Vector_Rotate(b *testing.B) {
 		obj []object.Object
 		hea object.Object
 	}{
-		// Case 000, ~54.00 ns/op
+		// Case 000, ~730 ns/op, 0 allocs/op
 		{
 			obj: []object.Object{
 				{X: 621_362, Y: 539_077},
@@ -95,7 +95,7 @@ func Benchmark_Vector_Rotate(b *testing.B) {
 			},
 			hea: object.Object{X: 621_365, Y: 539_081},
 		},
-		// Case 001, ~54.00 ns/op
+		// Case 001, ~715 ns/op, 0 allocs/op
 		{
 			obj: []object.Object{
 				{X: 621_359, Y: 539_068},
@@ -103,7 +103,7 @@ func Benchmark_Vector_Rotate(b *testing.B) {
 			},
 			hea: object.Object{X: 621_359, Y: 539_063},
 		},
-		// Case 002, ~54.00 ns/op
+		// Case 002, ~730 ns/op, 0 allocs/op
 		{
 			obj: []object.Object{
 				{X: 621_354, Y: 539_073},
@@ -111,7 +111,7 @@ func Benchmark_Vector_Rotate(b *testing.B) {
 			},
 			hea: object.Object{X: 621_359, Y: 539_073},
 		},
-		// Case 003, ~54.00 ns/op
+		// Case 003, ~705 ns/op, 0 allocs/op
 		{
 			obj: []object.Object{
 				{X: 621_355, Y: 539_076},
@@ -137,6 +137,7 @@ func Benchmark_Vector_Rotate(b *testing.B) {
 	}
 }
 
+// ~1059 ns/op, 0 allocs/op
 func Benchmark_Vector_Rotate_Big(b *testing.B) {
 	var vec *Vector
 	{
@@ -698,10 +699,7 @@ func Benchmark_Vector_Rotate_Big(b *testing.B) {
 
 	hea := object.Object{X: 621_359, Y: 539_073}
 
-	b.Run(fmt.Sprintf("%03d", 0), func(b *testing.B) {
-		for b.Loop() {
-			// ~90.00 ns/op
-			vec.Rotate(hea)
-		}
-	})
+	for b.Loop() {
+		vec.Rotate(hea)
+	}
 }

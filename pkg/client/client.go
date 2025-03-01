@@ -32,6 +32,7 @@ type Client struct {
 	wri chan struct{}
 
 	cap int
+	seq byte
 	tiC <-chan time.Time
 
 	con *websocket.Conn
@@ -63,6 +64,7 @@ func New(c Config) *Client {
 		wri: make(chan struct{}), // closed in client/daemon.go
 
 		cap: 256,
+		seq: 0,
 		tiC: time.Tick(5 * time.Second),
 
 		con: c.Con,

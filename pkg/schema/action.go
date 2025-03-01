@@ -7,7 +7,7 @@ const (
 	// There is one additional parameter, the roundtrip byte used to identify the
 	// ping request.
 	//
-	//     [action]    [ seed ]
+	//     [action]    [  rt  ]
 	//     [1 byte]    [1 byte]
 	//
 	Ping Action = 0x1
@@ -16,7 +16,7 @@ const (
 	// There is one additional parameter, the roundtrip byte as received from the
 	// ping request.
 	//
-	//     [action]    [ seed ]
+	//     [action]    [  rt  ]
 	//     [1 byte]    [1 byte]
 	//
 	Pong Action = 0x2
@@ -24,7 +24,7 @@ const (
 	// Auth is sent from the server to the client, with a buffer length of 17.
 	// There is one additional parameter, the granted session token.
 	//
-	//     [action]    [  uuid  ]
+	//     [action]    [  auth  ]
 	//     [1 byte]    [16 bytes]
 	//
 	Auth Action = 0x3
@@ -67,6 +67,18 @@ const (
 	//
 	Body Action = 0x7
 
+	//
+	//     [action]    [  id  ]    [  x/y  ]
+	//     [1 byte]    [1 byte]    [6 bytes]
+	//
+	Head Action = 0x8
+
+	//
+	//     [action]    [  id  ]    [  x/y  ]
+	//     [1 byte]    [1 byte]    [6 bytes]
+	//
+	Tail Action = 0x9
+
 	// Turn is sent from the client to the server, with a buffer length of 3.
 	// There are two additional parameters, the quadrant and angle bytes
 	// indicating the player's desired direction.
@@ -74,7 +86,7 @@ const (
 	//     [action]    [ qudr ]    [ angl ]
 	//     [1 byte]    [1 byte]    [1 byte]
 	//
-	Turn Action = 0x8
+	Turn Action = 0xa
 
 	// Food is sent from the server to the client, with a buffer length of 9.
 	// There are three additional parameters, the energy coordinates, the energy
@@ -83,18 +95,20 @@ const (
 	//     [action]    [  x/y  ]    [ size ]    [ type ]
 	//     [1 byte]    [6 bytes]    [1 byte]    [1 byte]
 	//
-	Food Action = 0x9
+	Food Action = 0xb
 
 	// Race is sent from the client to the server, with a buffer length of 1.
 	// There are no additional parameters.
 	//
-	//     [0xa]
+	//     [action]
+	//     [1 byte]
 	//
-	Race Action = 0xa
+	Race Action = 0xc
 
 	// Kill TODO:game
 	//
-	//     [0xb]
+	//     [action] ...
+	//     [1 byte] ...
 	//
-	Kill Action = 0xb
+	Kill Action = 0xd
 )

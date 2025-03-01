@@ -3,12 +3,22 @@ package engine
 import "time"
 
 func (e *Engine) Daemon() {
-	// Initialize the first fanout tick so that we can keep track of the actually
-	// executed interval moving forward.
+	// We are constantly filling the game map with energy packages and place
+	// different sizes of different types randomly onto the game map. Smaller
+	// energy appears more often than bigger energy.
 
-	{
-		e.tic = <-e.rtr.Tick()
-	}
+	go func() {
+		for {
+			select {
+			case <-time.Tick(2 * time.Second):
+				e.food(e.fil.Energy(2))
+			case <-time.Tick(5 * time.Second):
+				e.food(e.fil.Energy(5))
+			case <-time.Tick(10 * time.Second):
+				e.food(e.fil.Energy(10))
+			}
+		}
+	}()
 
 	// Joining a game incurs at least 8,000 ns/op for the first player. This
 	// process becomes more expensive the more players are active within the
@@ -42,46 +52,19 @@ func (e *Engine) Daemon() {
 		}
 	}()
 
-	// Since we have more than one function to call within the same fixed
-	// interval, we are distributing the ticks across static goroutines using
-	// dedicated channels.
+	// Initialize the first fanout tick so that we can keep track of the actually
+	// executed interval moving forward.
 
-	var sen chan time.Time
-	var tic chan struct{}
 	{
-		sen = make(chan time.Time, 1)
-		tic = make(chan struct{}, 1)
+		e.tic = time.Now().UTC()
 	}
 
-	go func() {
-		for t := range e.rtr.Tick() {
-			sen <- t
-			tic <- struct{}{}
-		}
-	}()
-
-	// Sending the prepared fanout buffer to a single player costs about 3,900
-	// ns/op, which is mainly due to some quirky websocket overhead. We want to
-	// serve about 250 players concurrently, which means that we have to
-	// distribute code execution across all available host CPUs. The way this
-	// distribution works is by sending the prepared fanout buffers to a client
-	// specific goroutine, which is specifically maintained throughout the
-	// client's lifetime, for the sole purpose of writing to the client's own
-	// websocket connection. Important here is that Engine.send() is guaranteed to
-	// execute sequentially, in order to guarantee the accurate reading and
-	// resetting of the client specific fanout buffers.
+	// TODO:docs move, diff, send
 
 	go func() {
-		for t := range sen {
-			e.send(t)
-		}
-	}()
-
-	// Adjust the game state on every tick.
-
-	go func() {
-		for range tic {
-			e.tick()
+		for range e.rtr.Tick() {
+			e.move() // move every player on the map      (read turn/race, write Vector)
+			e.send() // forward fanout buffers to writer  (read/write fanout buffers)
 		}
 	}()
 

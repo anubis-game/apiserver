@@ -24,17 +24,6 @@ type Charax struct {
 	Siz int
 	// Typ is the player's style indicator.
 	Typ byte
-
-	siz []byte
-	typ []byte
-}
-
-func (c Charax) Size() []byte {
-	return c.siz
-}
-
-func (c Charax) Type() []byte {
-	return c.typ
 }
 
 func (v *Vector) Charax() setter.Interface[Charax] {

@@ -3,8 +3,8 @@ package engine
 import (
 	"github.com/anubis-game/apiserver/pkg/energy"
 	"github.com/anubis-game/apiserver/pkg/object"
-	"github.com/anubis-game/apiserver/pkg/player"
 	"github.com/anubis-game/apiserver/pkg/router"
+	"github.com/anubis-game/apiserver/pkg/schema"
 	"github.com/anubis-game/apiserver/pkg/vector"
 	"github.com/ethereum/go-ethereum/common"
 )
@@ -33,13 +33,14 @@ func (e *Engine) join(uid byte, wal common.Address, fcn chan<- []byte) {
 		crx = vec.Charax().Get()
 	}
 
-	var ply *player.Player
+	var fuw []byte
 	{
-		ply = player.New(player.Config{
-			Uid: uid,
-			Vec: vec,
-			Wal: wal,
-		})
+		fuw = make([]byte, 22)
+
+		fuw[0] = byte(schema.Uuid)
+		fuw[1] = uid
+
+		copy(fuw[2:], wal.Bytes())
 	}
 
 	// We separate the player identification from the vector representation. The
@@ -50,7 +51,7 @@ func (e *Engine) join(uid byte, wal common.Address, fcn chan<- []byte) {
 	{
 		ini = make([]byte, 61) // 22 + 33 + 3 + 3
 
-		copy(ini[:22], ply.Wallet())   // len(22)
+		copy(ini[:22], fuw)            // len(22)
 		copy(ini[22:55], vec.Encode()) // len(33)
 		copy(ini[55:58], crx.Size())   // len(3)
 		copy(ini[58:61], crx.Type())   // len(3)
@@ -64,7 +65,21 @@ func (e *Engine) join(uid byte, wal common.Address, fcn chan<- []byte) {
 		buf = ini
 	}
 
-	e.mem.ply.Range(func(k byte, v *player.Player) bool {
+	// Iterate over all allocated Vectors. This loop will always iterate over
+	// Config.Cap items.
+
+	for u := range e.uni.Length() {
+		// Skip all unallocated Vectors.
+
+		var v *vector.Vector
+		{
+			v = e.mvc[u].Load()
+		}
+
+		if v == nil {
+			continue
+		}
+
 		// Only add the new player's body parts to the current view of an existing
 		// player, if the body parts of the new player are visible inside the view
 		// of the existing player. Note that every player joining the game must push
@@ -73,32 +88,27 @@ func (e *Engine) join(uid byte, wal common.Address, fcn chan<- []byte) {
 		// buffer modifications of existing players must be synchronized, which is
 		// why we are using MapOf.Compute() below.
 
-		if vec.Inside(v.Vec.Screen()) {
-			e.fbf.Compute(uid, func(b []byte, _ bool) ([]byte, bool) {
-				b = append(b, ini...)
-				return b, false
-			})
+		if vec.Inside(v.Screen()) {
+			//
 		}
 
 		// Only share the existing player's information with the new player, if the
 		// body parts of the existing player are visible inside the view of the new
 		// player.
 
-		if v.Vec.Inside(vec.Screen()) {
+		if v.Inside(vec.Screen()) {
 			var c vector.Charax
 			{
-				c = v.Vec.Charax().Get()
+				c = v.Charax().Get()
 			}
 
 			{
-				buf = append(buf, v.Wallet()...)
+				buf = append(buf, e.fuw[u]...)
 				buf = append(buf, c.Size()...)
 				buf = append(buf, c.Type()...) // TODO:infra how can we prevent sending type twice?
 			}
 		}
-
-		return true
-	})
+	}
 
 	// Stream all relevant map details for the initial view of the new player.
 	// This process implies to find all relevant energy and player details visible
@@ -110,16 +120,16 @@ func (e *Engine) join(uid byte, wal common.Address, fcn chan<- []byte) {
 
 			var lkp map[object.Object]struct{}
 			{
-				lkp, _ = e.lkp.nrg.Load(x)
+				lkp, _ = e.pen.Load(x)
 			}
 
-			// For every energy packet in partition x, add its encoded representation to
-			// the new player's fanout buffer.
+			// For every energy package in partition x, add its encoded representation
+			// to the new player's fanout buffer.
 
-			for k := range lkp {
+			for o := range lkp {
 				var n *energy.Energy
 				{
-					n, _ = e.mem.nrg.Load(k)
+					n, _ = e.men.Load(o)
 				}
 
 				{
@@ -131,19 +141,19 @@ func (e *Engine) join(uid byte, wal common.Address, fcn chan<- []byte) {
 		{
 			// Search for all the player segments located within the partition x.
 
-			lkp, _ := e.lkp.ply.Load(x)
+			lkp, _ := e.pvc.Load(x)
 
 			// For every player segment in partition x, add its encoded representation to
 			// the new player's fanout buffer.
 
-			for k := range lkp {
-				var p *player.Player
+			for u := range lkp {
+				var v *vector.Vector
 				{
-					p, _ = e.mem.ply.Load(k)
+					v = e.mvc[u].Load()
 				}
 
 				{
-					buf = append(buf, p.Vec.Buffer(x)...)
+					buf = append(buf, v.Buffer(x)...)
 				}
 			}
 		}
@@ -153,7 +163,7 @@ func (e *Engine) join(uid byte, wal common.Address, fcn chan<- []byte) {
 	// coordinates.
 
 	for _, x := range vec.Occupy().Prt {
-		e.lkp.ply.Compute(x, func(old map[byte]struct{}, exi bool) (map[byte]struct{}, bool) {
+		e.pvc.Compute(x, func(old map[byte]struct{}, exi bool) (map[byte]struct{}, bool) {
 			if !exi {
 				old = map[byte]struct{}{}
 			}
@@ -166,23 +176,14 @@ func (e *Engine) join(uid byte, wal common.Address, fcn chan<- []byte) {
 		})
 	}
 
-	// After we add all initially occupied partitions to the lookup table, we can
-	// reset the occupied partitions once below, because all further updates on
-	// the Vector's occupied partitions will be tracked using the Occupy.New and
-	// Occupy.Old fields. The reason for this is the fact that once initialized, a
-	// Vector does only ever change one occupied partition at a time.
-
-	{
-		vec.Occupy().Prt = nil
-	}
-
 	// Add the new player object to the memory table. This ensures that this new
 	// player is part of the update loop moving forward. Also store the player's
 	// buffer in the player's setter.
 
 	{
-		e.fbf.Store(uid, buf)
-		e.mem.ply.Store(uid, ply)
+		e.fbf[uid].Store(&buf)
+		e.fuw[uid] = fuw
+		e.mvc[uid].Store(vec)
 	}
 
 	// As the very last step, assign the player's fanout channel
