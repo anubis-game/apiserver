@@ -4,7 +4,7 @@ type Action byte
 
 const (
 	// Ping is sent from the client to the server, with a buffer length of 2.
-	// There is one additional parameter, the roundtrip byte used to identify the
+	// There is 1 additional parameter, the roundtrip byte used to identify the
 	// ping request.
 	//
 	//     [action]    [  rt  ]
@@ -13,7 +13,7 @@ const (
 	Ping Action = 0x1
 
 	// Pong is sent from the server to the client, with a buffer length of 2.
-	// There is one additional parameter, the roundtrip byte as received from the
+	// There is 1 additional parameter, the roundtrip byte as received from the
 	// ping request.
 	//
 	//     [action]    [  rt  ]
@@ -22,7 +22,7 @@ const (
 	Pong Action = 0x2
 
 	// Auth is sent from the server to the client, with a buffer length of 17.
-	// There is one additional parameter, the granted session token.
+	// There is 1 additional parameter, the granted session token.
 	//
 	//     [action]    [  auth  ]
 	//     [1 byte]    [16 bytes]
@@ -30,7 +30,7 @@ const (
 	Auth Action = 0x3
 
 	// Uuid is sent from the server to the client, with a buffer length of 22.
-	// There are two additional parameters, the player's byte ID and their
+	// There are 2 additional parameters, the player's byte ID and their
 	// associated wallet address.
 	//
 	//     [action]    [  id  ]    [ wallet ]
@@ -39,7 +39,7 @@ const (
 	Uuid Action = 0x4
 
 	// Size is sent from the server to the client, with a buffer length of 3.
-	// There are two additional parameters, the player's byte ID and their
+	// There are 2 additional parameters, the player's byte ID and their
 	// associated body part radius.
 	//
 	//     [action]    [  id  ]    [ size ]
@@ -48,7 +48,7 @@ const (
 	Size Action = 0x5
 
 	// Type is sent from the server to the client, with a buffer length of 3.
-	// There are two additional parameters, the player's byte ID and their
+	// There are 2 additional parameters, the player's byte ID and their
 	// associated character type.
 	//
 	//     [action]    [  id  ]    [ type ]
@@ -67,12 +67,18 @@ const (
 	//
 	Body Action = 0x7
 
+	// Head is sent from the server to the client, with a buffer length of 3.
+	// There are 2 additional parameters, the player's byte ID, and the
+	// coordinates of the new head to add.
 	//
 	//     [action]    [  id  ]    [  x/y  ]
 	//     [1 byte]    [1 byte]    [6 bytes]
 	//
 	Head Action = 0x8
 
+	// Tail is sent from the server to the client, with a buffer length of 3.
+	// There are 2 additional parameters, the player's byte ID, and the
+	// coordinates of the old tail to remove.
 	//
 	//     [action]    [  id  ]    [  x/y  ]
 	//     [1 byte]    [1 byte]    [6 bytes]
@@ -80,8 +86,8 @@ const (
 	Tail Action = 0x9
 
 	// Turn is sent from the client to the server, with a buffer length of 3.
-	// There are two additional parameters, the quadrant and angle bytes
-	// indicating the player's desired direction.
+	// There are 2 additional parameters, the quadrant and angle bytes indicating
+	// the player's desired direction.
 	//
 	//     [action]    [ qudr ]    [ angl ]
 	//     [1 byte]    [1 byte]    [1 byte]

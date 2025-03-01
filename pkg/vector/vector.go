@@ -36,7 +36,6 @@ type Vector struct {
 	// scr
 	scr *Screen
 
-	// TODO:refactor move those counters to Vector.Screen
 	xfr map[int]int
 	yfr map[int]int
 }
