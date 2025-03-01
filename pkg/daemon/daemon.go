@@ -118,7 +118,6 @@ func New(c Config) *Daemon {
 	{
 		fil = filler.New(filler.Config{
 			Don: c.Don,
-			Env: c.Env,
 			Log: log,
 		})
 	}

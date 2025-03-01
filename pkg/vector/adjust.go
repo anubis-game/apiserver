@@ -47,7 +47,7 @@ const (
 
 // TODO:game Vector.Adjust must call Vector.Smooth() every second (once in 25 Adjust() calls)
 
-func (v *Vector) Adjust(del int, qdr byte, agl byte, vlc byte) {
+func (v *Vector) Adjust(del int, qdr byte, agl byte, rac byte) {
 	crx := v.crx.Get()
 
 	// Increment or decrement size based on the given delta.
@@ -77,7 +77,7 @@ func (v *Vector) Adjust(del int, qdr byte, agl byte, vlc byte) {
 
 	dis := Dis
 	lim := crx.Als
-	if vlc == Rcn {
+	if rac == Rcn {
 		dis = Ris
 		lim = crx.Alr
 	}

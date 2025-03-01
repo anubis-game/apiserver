@@ -7,6 +7,7 @@ const (
 	Drop = 0x0
 )
 
+// Turn contains a player's desired direction of travel.
 type Turn struct {
 	Uid byte
 	Qdr byte

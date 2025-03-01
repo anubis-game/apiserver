@@ -3,7 +3,6 @@ package filler
 import (
 	"fmt"
 
-	"github.com/anubis-game/apiserver/pkg/envvar"
 	"github.com/anubis-game/apiserver/pkg/matrix"
 	"github.com/anubis-game/apiserver/pkg/random"
 	"github.com/xh3b4sd/logger"
@@ -13,7 +12,6 @@ import (
 type Config struct {
 	Cap int
 	Don <-chan struct{}
-	Env envvar.Env
 	Log logger.Interface
 }
 

@@ -46,7 +46,6 @@ type Vector struct {
 	// lifetime.
 	uid byte
 
-	// TODO:refactor move those counters to Vector.Screen
 	xfr map[int]int
 	yfr map[int]int
 }
