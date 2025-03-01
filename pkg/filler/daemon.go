@@ -11,6 +11,8 @@ func (f *Filler) Daemon() {
 		select {
 		case <-f.don:
 			return
+		case f.nrg <- f.energy():
+			// repeat
 		case f.vec <- f.vector():
 			// repeat
 		}

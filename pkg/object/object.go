@@ -15,6 +15,10 @@ const (
 	Len = 6
 )
 
+var (
+	zer Object
+)
+
 // Object contains the coordinates X and Y, describing a precise pixel location
 // within the coordinate system.
 type Object struct {
@@ -41,6 +45,10 @@ func (o Object) Byt() [Len]byte {
 		byte(o.X % 64),
 		byte(o.Y % 64),
 	}
+}
+
+func (o Object) Zer() bool {
+	return o == zer
 }
 
 // Prt returns the partitioned representation of this Object, which helps to

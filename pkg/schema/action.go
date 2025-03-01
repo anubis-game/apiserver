@@ -106,13 +106,15 @@ const (
 	// Race is sent from the client to the server, with a buffer length of 1.
 	// There are no additional parameters.
 	//
-	//     [0xa]
+	//     [action]
+	//     [1 byte]
 	//
 	Race Action = 0xc
 
 	// Kill TODO:game
 	//
-	//     [0xb]
+	//     [action] ...
+	//     [1 byte] ...
 	//
 	Kill Action = 0xd
 )

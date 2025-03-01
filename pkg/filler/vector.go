@@ -5,27 +5,19 @@ import (
 	"github.com/anubis-game/apiserver/pkg/vector"
 )
 
-type Vector struct {
-	Qdr int
-	Agl int
-	Obx int
-	Oby int
+func (f *Filler) Vector() *vector.Vector {
+	return <-f.vec
 }
 
-func (f *Filler) Vector(uid byte) *vector.Vector {
-	var vfl Vector
-	{
-		vfl = <-f.vec
-	}
-
+func (f *Filler) vector() *vector.Vector {
 	// Create a new Motion object so we can point new players towards a randomized
 	// direction.
 
 	var mot vector.Motion
 	{
 		mot = vector.Motion{
-			Qdr: byte(vfl.Qdr),
-			Agl: byte(vfl.Agl),
+			Qdr: byte(f.qdr.Random()),
+			Agl: byte(f.agl.Random()),
 		}
 	}
 
@@ -40,11 +32,10 @@ func (f *Filler) Vector(uid byte) *vector.Vector {
 			Mot: mot,
 			Obj: []object.Object{
 				{
-					X: vfl.Obx,
-					Y: vfl.Oby,
+					X: f.crd.Random(),
+					Y: f.crd.Random(),
 				},
 			},
-			Uid: uid,
 		})
 	}
 
@@ -61,14 +52,4 @@ func (f *Filler) Vector(uid byte) *vector.Vector {
 	}
 
 	return vec
-}
-
-// vector is to simply prepare randomized Vector configuration in advance.
-func (f *Filler) vector() Vector {
-	return Vector{
-		Qdr: f.qdr.Random(),
-		Agl: f.agl.Random(),
-		Obx: f.crd.Random(),
-		Oby: f.crd.Random(),
-	}
 }

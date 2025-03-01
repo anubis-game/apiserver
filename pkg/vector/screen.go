@@ -22,12 +22,9 @@ type Screen struct {
 	Bot int
 	Lef int
 
-	// Prt represents the most recently discovered partition coordinates. For a
-	// new Vector those partitions represent the Vector's entire range of sight.
-	// For Vectors being expanded or rotated, those partitions represent the slice
-	// of partition coordinates on the screen that have just been revealed by
-	// movement towards any given direction.
-	Prt []object.Object
+	// TODO:infra we probably need to maintain a consistent representation of all
+	// visible partitions at all times.
+	Prt map[object.Object]struct{}
 }
 
 // Screen returns the boundary information of this Vector's view, expressed in

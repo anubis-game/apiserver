@@ -669,7 +669,7 @@ func Benchmark_Vector_Pointer(b *testing.B) {
 	testCases := []struct {
 		f func() *Screen
 	}{
-		// Case 000, ~15.80 ns/op
+		// Case 000, ~108 ns/op, 1 allocs/op
 		{
 			f: func() *Screen {
 				return &Screen{
@@ -680,7 +680,7 @@ func Benchmark_Vector_Pointer(b *testing.B) {
 				}
 			},
 		},
-		// Case 001, ~1.90 ns/op
+		// Case 001, ~55 ns/op, 0 allocs/op
 		{
 			f: func() *Screen {
 				scr.Top = 1

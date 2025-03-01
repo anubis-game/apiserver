@@ -5,6 +5,7 @@ import (
 
 	"github.com/anubis-game/apiserver/pkg/matrix"
 	"github.com/anubis-game/apiserver/pkg/random"
+	"github.com/anubis-game/apiserver/pkg/vector"
 	"github.com/xh3b4sd/logger"
 	"github.com/xh3b4sd/tracer"
 )
@@ -20,7 +21,8 @@ type Filler struct {
 	crd *random.Random
 	don <-chan struct{}
 	qdr *random.Random
-	vec chan Vector
+	nrg chan Energy
+	vec chan *vector.Vector
 }
 
 func New(c Config) *Filler {
@@ -65,6 +67,7 @@ func New(c Config) *Filler {
 		agl: agl,
 		crd: crd,
 		qdr: qdr,
-		vec: make(chan Vector, c.Cap),
+		nrg: make(chan Energy, c.Cap),
+		vec: make(chan *vector.Vector, c.Cap),
 	}
 }

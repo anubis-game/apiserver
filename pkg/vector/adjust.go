@@ -47,7 +47,7 @@ const (
 
 // TODO:game Vector.Adjust must call Vector.Smooth() every second (once in 25 Adjust() calls)
 
-func (v *Vector) Adjust(del int, qdr byte, agl byte, rac byte) {
+func (v *Vector) Adjust(del int, qdr byte, agl byte, rac byte) (object.Object, object.Object, object.Object) {
 	crx := v.crx.Get()
 
 	// Increment or decrement size based on the given delta.
@@ -130,14 +130,20 @@ func (v *Vector) Adjust(del int, qdr byte, agl byte, rac byte) {
 		v.scr.Prt = nil
 	}
 
-	if len < v.len {
-		v.Shrink()
-	}
-
 	if len > v.len {
 		v.Expand(hea)
-	} else {
-		v.Rotate(hea)
+	}
+
+	// TODO:test ensure tl1 and tl2 are constructed properly per call to Vector.Adjust()
+
+	var tl1 object.Object
+	if len == v.len {
+		tl1 = v.Rotate(hea)
+	}
+
+	var tl2 object.Object
+	if len < v.len {
+		tl2 = v.Shrink()
 	}
 
 	// Track the latest character settings according to the reconciliation between
@@ -146,6 +152,8 @@ func (v *Vector) Adjust(del int, qdr byte, agl byte, rac byte) {
 	{
 		v.crx.Set(crx)
 	}
+
+	return hea, tl1, tl2
 }
 
 // See https://www.desmos.com/calculator/kni7qb0o9y for probably outdated full

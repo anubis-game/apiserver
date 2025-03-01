@@ -117,6 +117,7 @@ func New(c Config) *Daemon {
 	var fil *filler.Filler
 	{
 		fil = filler.New(filler.Config{
+			Cap: c.Env.EngineCapacity,
 			Don: c.Don,
 			Log: log,
 		})

@@ -21,20 +21,13 @@ type Occupy struct {
 	Bot int
 	Lef int
 
-	// New is the newly occupied partition.
-	New object.Object
-	// Old is the partition that this Vector left most recently.
-	Old object.Object
-
-	// Prt only contains the vectors initially occupied partition coordinates.
-	// Meaning, this list is only filled once during Vector creation. In order to
-	// see the Vector's updated occupied partitions, check the values of New and
-	// Old.
-	Prt []object.Object
+	// Prt contains a consistent representation of all occupied partitions at all
+	// times. Keys are partition coordinates. Values are Vector coordinates.
+	Prt map[object.Object][]object.Object
 }
 
 // Occupy returns those partition coordinates that are currently occupied by
 // this Vector's body parts.
-func (v *Vector) Occupy() *Occupy {
-	return v.occ
+func (v *Vector) Occupy() map[object.Object][]object.Object {
+	return v.occ.Prt
 }
