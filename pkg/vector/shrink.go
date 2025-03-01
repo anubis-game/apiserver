@@ -4,7 +4,7 @@ import (
 	"github.com/anubis-game/apiserver/pkg/object"
 )
 
-func (v *Vector) Shrink() {
+func (v *Vector) Shrink() object.Object {
 	// Remember the current tail so we can use its value to shrink this Vector
 	// below.
 
@@ -23,6 +23,8 @@ func (v *Vector) Shrink() {
 	{
 		v.shrink(tai.val)
 	}
+
+	return tai.val
 }
 
 func (v *Vector) shrink(old object.Object) {
