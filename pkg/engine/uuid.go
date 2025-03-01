@@ -64,42 +64,6 @@ func (e *Engine) join(uid byte, wal common.Address, fcn chan<- []byte) {
 		buf = ini
 	}
 
-	e.mem.ply.Range(func(k byte, v *player.Player) bool {
-		// Only add the new player's body parts to the current view of an existing
-		// player, if the body parts of the new player are visible inside the view
-		// of the existing player. Note that every player joining the game must push
-		// its own identity to all active players first, so the following body parts
-		// can be identified using the player's byte Id. Further note that any
-		// buffer modifications of existing players must be synchronized, which is
-		// why we are using MapOf.Compute() below.
-
-		if vec.Inside(v.Vec.Screen()) {
-			e.fbf.Compute(uid, func(b []byte, _ bool) ([]byte, bool) {
-				b = append(b, ini...)
-				return b, false
-			})
-		}
-
-		// Only share the existing player's information with the new player, if the
-		// body parts of the existing player are visible inside the view of the new
-		// player.
-
-		if v.Vec.Inside(vec.Screen()) {
-			var c vector.Charax
-			{
-				c = v.Vec.Charax().Get()
-			}
-
-			{
-				buf = append(buf, v.Wallet()...)
-				buf = append(buf, c.Size()...)
-				buf = append(buf, c.Type()...) // TODO:infra how can we prevent sending type twice?
-			}
-		}
-
-		return true
-	})
-
 	// Stream all relevant map details for the initial view of the new player.
 	// This process implies to find all relevant energy and player details visible
 	// to the new player.
