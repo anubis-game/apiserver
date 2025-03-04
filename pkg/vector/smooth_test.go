@@ -32,7 +32,7 @@ func Test_Vector_Smooth(t *testing.T) {
 		}
 
 		{
-			vec.Smooth()
+			vec.smooth()
 		}
 	}
 
@@ -150,7 +150,7 @@ func Benchmark_Vector_Smooth(b *testing.B) {
 
 	b.Run(fmt.Sprintf("%03d", 0), func(b *testing.B) {
 		for b.Loop() {
-			vec.Smooth()
+			vec.smooth()
 		}
 	})
 }

@@ -27,20 +27,9 @@ func (v *Vector) newScr() {
 	lef := prt.X - pxl
 
 	{
-		// TODO:test ensure that fos (factor of sight) as computed by sight()
-		// allocates the exact amount of partition coordinates for all append()
-		// calls below.
 		n := (fos * 2) + 1
 		v.scr = make([]matrix.Partition, n*n)
 	}
-
-	// for y := bot; y <= top; y += matrix.Prt {
-	// 	for x := lef; x <= rig; x += matrix.Prt {
-	// 		v.scr[ind].X = x
-	// 		v.scr[ind].Y = y
-	// 		ind++
-	// 	}
-	// }
 
 	for y := top; y >= bot; y -= matrix.Prt {
 		for x := lef; x <= rig; x += matrix.Prt {

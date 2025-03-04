@@ -23,15 +23,15 @@ type Vector struct {
 	// ocd, occupied coordinate diff,
 	ocd map[matrix.Partition][]matrix.Coordinate
 
-	// hea is this Vector's first segment. The Vector's head defines a player's
+	// hea is this Vector's first node. The Vector's head defines a player's
 	// direction of travel.
 	hea *Linker
-	// tai is this Vector's last segment.
+	// tai is this Vector's last node.
 	tai *Linker
-	// mhs, maximum hidden segments, describes the maximum amount of hidden
-	// segments that this Vector allowes to exist between the nodes of its
+	// mhn, maximum hidden nodes, describes the maximum amount of hidden
+	// nodes that this Vector allowes to exist between the nodes of its
 	// underlying linked list.
-	mhs int8
+	mhn int8
 	len int
 
 	// scr contains all partition coordinates of this Vector's view, which entails
@@ -53,11 +53,11 @@ type Vector struct {
 }
 
 func New(c Config) *Vector {
-	// Ensure we start with unique *Linker pointers for the head and tail segment,
-	// so that we do not overwrite one when updating the other during the initial
-	// Vector expansion. Note that we have to initialize the head *Linker with a
-	// hidden count of -1, so that the very first Vector expansion can split the
-	// root coordinate without misrepresenting the head's hidden segments.
+	// Ensure that we start with unique *Linker pointers for the head and tail
+	// nodes, so that we do not overwrite the tail when we update the head during
+	// initial Vector expansion. Note that we have to initialize the head *Linker
+	// with a hidden node count of -1, so that the very first Vector expansion can
+	// split the root coordinate without misrepresenting the head's hidden nodes.
 
 	var hea *Linker
 	var tai *Linker
@@ -83,7 +83,7 @@ func New(c Config) *Vector {
 
 		hea: hea,
 		tai: tai,
-		mhs: 3,
+		mhn: 3,
 		len: 1,
 	}
 }

@@ -9,6 +9,7 @@ import (
 )
 
 // TODO:test move screen top, bottom, left
+// TODO:test different player sizes and screen sizes, fos should differ
 
 func Test_Vector_Screen_move_right(t *testing.T) {
 	var vec *Vector
@@ -91,6 +92,9 @@ func Test_Vector_Screen_move_right(t *testing.T) {
 		sort.Sort(matrix.Partitions(act))
 	}
 
+	if cap(vec.scr) != 25 {
+		t.Fatalf("expected %#v got %#v", 25, cap(vec.scr))
+	}
 	if len(act) != 25 {
 		t.Fatalf("expected %#v got %#v", 25, len(act))
 	}

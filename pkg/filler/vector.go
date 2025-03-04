@@ -35,9 +35,9 @@ func (f *Filler) vector() *vector.Vector {
 		})
 	}
 
-	// We initialize the head of the new vector above with a single coordinate
-	// object. Below we use this head segment as basis for the Vector's expansion.
-	// 1 head plus 4 expansions gives us a vector with 5 segments lined up towards
+	// We initialize the head of the new Vector above with a single coordinate
+	// object. Below we use this head node as basis for the Vector's expansion. 1
+	// head plus 4 expansions gives us a Vector with 5 nodes, all lined up towards
 	// the same direction, because we use the same motion configuration every
 	// time.
 

@@ -88,12 +88,12 @@ func (e *Engine) join(uid byte, wal common.Address, fcn chan<- []byte) {
 		}
 
 		{
-			// Search for all the player segments located within the partition x.
+			// Search for all the player coordinates located within the partition x.
 
 			lkp, _ := e.lkp.ply.Load(x)
 
-			// For every player segment in partition x, add its encoded representation to
-			// the new player's fanout buffer.
+			// For every player coordinate in partition x, add its encoded
+			// representation to the new player's fanout buffer.
 
 			for k := range lkp {
 				var p *player.Player

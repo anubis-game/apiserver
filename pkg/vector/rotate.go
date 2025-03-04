@@ -2,16 +2,16 @@ package vector
 
 import "github.com/anubis-game/apiserver/pkg/matrix"
 
-// rotate moves the vector along the direction of the given target coordinates
-// without expanding the underlying amount of segments.
+// rotate moves this Vector along the direction of the given target coordinate,
+// without changing the underlying amount of nodes.
 func (v *Vector) rotate(hea matrix.Coordinate, hid byte) matrix.Coordinate {
 	// Vector.rotate() can prevent extra allocations if both the head and the tail
-	// segments have to be rotated together. If either of the head or the tail
-	// segment is able to move by accumulating a hidden segment, then we have to
-	// expand the head and shrink the tail separately, which incurs extra memory
-	// allocation and garbage collection pressure.
+	// nodes have to be rotated together. If either of the head or the tail node
+	// is able to move further by means of accumulating a hidden node, then we
+	// have to modify the head and and the tail nodes separately. This then incurs
+	// extra memory allocation and garbage collection pressure.
 
-	if v.tai.nxt.hid > 0 || v.hea.hid < v.mhs {
+	if v.tai.nxt.hid > 0 || v.hea.hid < v.mhn {
 		v.expand(hea, hid)
 		return v.shrink(hid)
 	}

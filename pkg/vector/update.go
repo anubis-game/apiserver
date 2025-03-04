@@ -140,9 +140,9 @@ func (v *Vector) Update(del int, qdr byte, agl byte, rac byte) {
 		v.occRem(old)
 	}
 
-	// At this point a tail segment may or may not have been already removed. We
-	// can now either expand if we are supposed to grow larger, or simply rotate
-	// forwards.
+	// At this point a tail node may or may not have been already removed. We can
+	// now either expand if we are supposed to grow larger, or simply rotate
+	// forward.
 
 	if len > v.len {
 		v.len++

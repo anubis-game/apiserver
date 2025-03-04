@@ -7,8 +7,9 @@ import (
 )
 
 func (v *Vector) shrink(hid byte) matrix.Coordinate {
-	// Move the current tail closer to the body instead of removing it entirely,
-	// but only if the tail's neighbour carry's at least one hidden segment.
+	// Move the current tail node closer to the body instead of removing it
+	// entirely, but only if the tail's neighbour node carries at least one hidden
+	// node.
 
 	if v.tai.nxt.hid > 0 {
 		old := v.tai.crd

@@ -2,6 +2,7 @@ package vector
 
 import (
 	"slices"
+	"sort"
 	"testing"
 
 	"github.com/anubis-game/apiserver/pkg/matrix"
@@ -23,6 +24,11 @@ func Test_Vector_Occupy_initial(t *testing.T) {
 		exp = []matrix.Coordinate{
 			{X: 1000, Y: 1000},
 		}
+	}
+
+	{
+		sort.Sort(matrix.Coordinates(exp))
+		sort.Sort(matrix.Coordinates(act))
 	}
 
 	if len(vec.ocl) != 1 {
@@ -47,6 +53,11 @@ func Test_Vector_Occupy_initial(t *testing.T) {
 			{X: 1000, Y: 1010},
 			{X: 1000, Y: 1005}, // T
 		}
+	}
+
+	{
+		sort.Sort(matrix.Coordinates(exp))
+		sort.Sort(matrix.Coordinates(act))
 	}
 
 	if len(vec.ocl) != 1 {

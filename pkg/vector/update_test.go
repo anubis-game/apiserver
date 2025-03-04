@@ -482,17 +482,7 @@ func Test_Vector_Update(t *testing.T) {
 				{X: 1000, Y: 1220},
 				{X: 1000, Y: 1215}, // T
 			},
-			upd: func(vec *Vector) {
-				{
-					vec.Update(190, 0x1, 0x0, Nrm)
-				}
-				for range 57 {
-					vec.Update(int(Si/Li), 0x1, 0x0, Nrm)
-				}
-				for range 62 {
-					vec.Update(int(Si/Li), 0x2, 0x0, Nrm)
-				}
-			},
+			upd: tesUpd,
 		},
 	}
 

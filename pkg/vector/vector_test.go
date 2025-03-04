@@ -61,8 +61,8 @@ func tesVec() *Vector {
 	})
 }
 
-// testUpd creates a Vector that is 78 segments long at a size of 785 points,
-// given the test *Vector returned by tesVec().
+// testUpd creates a Vector that is 21 nodes long and contains 57 hidden nodes
+// at a player size of 785 points, given the test *Vector returned by tesVec().
 func tesUpd(vec *Vector) {
 	//
 	//     +---------HR
@@ -71,17 +71,27 @@ func tesUpd(vec *Vector) {
 	//     |
 	//     T
 	//
-	//     {X: 4004, Y: 4003}, // H
-	//     {X: 3999, Y: 4003},
-	//     ...
-	//     {X: 1014, Y: 4003},
-	//     {X: 1009, Y: 4002},
-	//     {X: 1005, Y: 3099}, // +
-	//     {X: 1002, Y: 3095},
-	//     {X: 1000, Y: 3090},
-	//     ...
-	//     {X: 1000, Y: 1010},
-	//     {X: 1000, Y: 1005}, // T
+	//     {X: 1304, Y: 1303}, // H
+	//     {X: 1284, Y: 1303},
+	//     {X: 1264, Y: 1303},
+	//     {X: 1244, Y: 1303},
+	//     {X: 1224, Y: 1303},
+	//     {X: 1204, Y: 1303},
+	//     {X: 1184, Y: 1303},
+	//     {X: 1164, Y: 1303},
+	//     {X: 1144, Y: 1303},
+	//     {X: 1124, Y: 1303},
+	//     {X: 1104, Y: 1303},
+	//     {X: 1084, Y: 1303},
+	//     {X: 1064, Y: 1303},
+	//     {X: 1044, Y: 1303},
+	//     {X: 1024, Y: 1303},
+	//     {X: 1005, Y: 1299},
+	//     {X: 1000, Y: 1280},
+	//     {X: 1000, Y: 1260},
+	//     {X: 1000, Y: 1240},
+	//     {X: 1000, Y: 1220},
+	//     {X: 1000, Y: 1215}, // T
 	//
 
 	{
