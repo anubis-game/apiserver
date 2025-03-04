@@ -12,6 +12,8 @@ type Config struct {
 	Wal common.Address
 }
 
+// TODO:infra remove the concept of a player. All we need is to track the Vector
+// and Wallet.
 type Player struct {
 	Vec *vector.Vector
 

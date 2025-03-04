@@ -1,8 +1,8 @@
 package matrix
 
 const (
-	// Max is the upper boundary of the game map in pixels, 64^3.
-	Max = 262_144
+	// Max is the upper boundary of the game map in pixels, 262,144.
+	Max = 64 * 64 * 64
 	// Min is the upper boundary of the game map in pixels.
 	Min = 0
 	// Prt is the scaling value allowing us to partition the X and Y axis into

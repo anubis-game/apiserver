@@ -6,7 +6,7 @@ import (
 
 	"github.com/anubis-game/apiserver/pkg/energy"
 	"github.com/anubis-game/apiserver/pkg/filler"
-	"github.com/anubis-game/apiserver/pkg/object"
+	"github.com/anubis-game/apiserver/pkg/matrix"
 	"github.com/anubis-game/apiserver/pkg/player"
 	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/tokenx"
@@ -96,12 +96,12 @@ func New(c Config) *Engine {
 		fcn: make([]chan<- []byte, c.Cap),
 		fil: c.Fil,
 		lkp: &lookup{
-			nrg: xsync.NewMapOf[object.Object, map[object.Object]struct{}](),
-			ply: xsync.NewMapOf[object.Object, map[byte]struct{}](),
+			nrg: xsync.NewMapOf[matrix.Partition, map[matrix.Coordinate]struct{}](),
+			ply: xsync.NewMapOf[matrix.Partition, map[byte]struct{}](),
 		},
 		log: c.Log,
 		mem: &memory{
-			nrg: xsync.NewMapOf[object.Object, *energy.Energy](),
+			nrg: xsync.NewMapOf[matrix.Coordinate, *energy.Energy](),
 			ply: xsync.NewMapOf[byte, *player.Player](),
 		},
 		rac: make([]byte, c.Cap),

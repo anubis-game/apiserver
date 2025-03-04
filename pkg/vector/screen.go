@@ -1,37 +1,52 @@
 package vector
 
-import "github.com/anubis-game/apiserver/pkg/object"
+import (
+	"github.com/anubis-game/apiserver/pkg/matrix"
+)
 
-type Screen struct {
-	// Top, Rig, Bot and Lef are the outer partition coordinates of this Vector's
-	// view that this Vector can see right now, based on the Vector's header
-	// position, which is marked with H in the illustration below.
-	//
-	//                Top
-	//         +---------------+
-	//         |               |
-	//         |               |
-	//     Lef |    ###H       | Rig
-	//         |    #          |
-	//     T######  #          |
-	//         +-#--#----------+
-	//           #### Bot
-	//
-	Top int
-	Rig int
-	Bot int
-	Lef int
-
-	// Prt represents the most recently discovered partition coordinates. For a
-	// new Vector those partitions represent the Vector's entire range of sight.
-	// For Vectors being expanded or rotated, those partitions represent the slice
-	// of partition coordinates on the screen that have just been revealed by
-	// movement towards any given direction.
-	Prt []object.Object
+// Screen returns the partition coordinates of this Vector's current view. The
+// representation of what a player sees must be maintained efficiently. This set
+// of partitions changes at the outer sides of the screen while the amount of
+// visible partitions remains constant. The amount of partitions may also change
+// if the player grows to see farther. The input for changing the outer sides is
+// the change in head partition. The input for adding an additional outer layer
+// is the result of a player size dependent calculation.
+func (v *Vector) Screen() []matrix.Partition {
+	return v.scr
 }
 
-// Screen returns the boundary information of this Vector's view, expressed in
-// partition coordinates.
-func (v *Vector) Screen() *Screen {
-	return v.scr
+func (v *Vector) newScr() {
+	prt := v.hea.crd.Prt()
+	fos := v.crx.Fos
+	pxl := fos * matrix.Prt
+	ind := 0
+
+	top := prt.Y + pxl
+	rig := prt.X + pxl
+	bot := prt.Y - pxl
+	lef := prt.X - pxl
+
+	{
+		// TODO:test ensure that fos (factor of sight) as computed by sight()
+		// allocates the exact amount of partition coordinates for all append()
+		// calls below.
+		n := (fos * 2) + 1
+		v.scr = make([]matrix.Partition, n*n)
+	}
+
+	// for y := bot; y <= top; y += matrix.Prt {
+	// 	for x := lef; x <= rig; x += matrix.Prt {
+	// 		v.scr[ind].X = x
+	// 		v.scr[ind].Y = y
+	// 		ind++
+	// 	}
+	// }
+
+	for y := top; y >= bot; y -= matrix.Prt {
+		for x := lef; x <= rig; x += matrix.Prt {
+			v.scr[ind].X = x
+			v.scr[ind].Y = y
+			ind++
+		}
+	}
 }

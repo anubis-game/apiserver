@@ -2,7 +2,7 @@ package engine
 
 import (
 	"github.com/anubis-game/apiserver/pkg/energy"
-	"github.com/anubis-game/apiserver/pkg/object"
+	"github.com/anubis-game/apiserver/pkg/matrix"
 	"github.com/anubis-game/apiserver/pkg/player"
 	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/vector"
@@ -25,12 +25,7 @@ func (e *Engine) join(uid byte, wal common.Address, fcn chan<- []byte) {
 
 	var vec *vector.Vector
 	{
-		vec = e.fil.Vector(uid)
-	}
-
-	var crx vector.Charax
-	{
-		crx = vec.Charax().Get()
+		vec = e.fil.Vector()
 	}
 
 	var ply *player.Player
@@ -52,8 +47,8 @@ func (e *Engine) join(uid byte, wal common.Address, fcn chan<- []byte) {
 
 		copy(ini[:22], ply.Wallet())   // len(22)
 		copy(ini[22:55], vec.Encode()) // len(33)
-		copy(ini[55:58], crx.Size())   // len(3)
-		copy(ini[58:61], crx.Type())   // len(3)
+		// copy(ini[55:58], crx.Size())   // len(3)
+		// copy(ini[58:61], crx.Type())   // len(3)
 	}
 
 	// Send the new player's own wallet information first so every player can self
@@ -68,11 +63,11 @@ func (e *Engine) join(uid byte, wal common.Address, fcn chan<- []byte) {
 	// This process implies to find all relevant energy and player details visible
 	// to the new player.
 
-	for _, x := range vec.Screen().Prt {
+	for _, x := range vec.Screen() {
 		{
 			// Search for all the energy packets located within the partition x.
 
-			var lkp map[object.Object]struct{}
+			var lkp map[matrix.Coordinate]struct{}
 			{
 				lkp, _ = e.lkp.nrg.Load(x)
 			}
@@ -106,38 +101,12 @@ func (e *Engine) join(uid byte, wal common.Address, fcn chan<- []byte) {
 					p, _ = e.mem.ply.Load(k)
 				}
 
-				{
-					buf = append(buf, p.Vec.Buffer(x)...)
+				for _, y := range p.Vec.Ocdiff(x) {
+					b := y.Byt()
+					buf = append(buf, b[:]...)
 				}
 			}
 		}
-	}
-
-	// Add the new player to the lookup table based on its currently occupied
-	// coordinates.
-
-	for _, x := range vec.Occupy().Prt {
-		e.lkp.ply.Compute(x, func(old map[byte]struct{}, exi bool) (map[byte]struct{}, bool) {
-			if !exi {
-				old = map[byte]struct{}{}
-			}
-
-			{
-				old[uid] = struct{}{}
-			}
-
-			return old, false
-		})
-	}
-
-	// After we add all initially occupied partitions to the lookup table, we can
-	// reset the occupied partitions once below, because all further updates on
-	// the Vector's occupied partitions will be tracked using the Occupy.New and
-	// Occupy.Old fields. The reason for this is the fact that once initialized, a
-	// Vector does only ever change one occupied partition at a time.
-
-	{
-		vec.Occupy().Prt = nil
 	}
 
 	// Add the new player object to the memory table. This ensures that this new

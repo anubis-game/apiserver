@@ -7,7 +7,7 @@ import (
 
 	"github.com/anubis-game/apiserver/pkg/energy"
 	"github.com/anubis-game/apiserver/pkg/filler"
-	"github.com/anubis-game/apiserver/pkg/object"
+	"github.com/anubis-game/apiserver/pkg/matrix"
 	"github.com/anubis-game/apiserver/pkg/player"
 	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/unique"
@@ -37,11 +37,11 @@ func Test_Engine_uuid(t *testing.T) {
 			fcn: make([]chan<- []byte, 6),
 			fil: fil,
 			lkp: &lookup{
-				nrg: xsync.NewMapOf[object.Object, map[object.Object]struct{}](),
-				ply: xsync.NewMapOf[object.Object, map[byte]struct{}](),
+				nrg: xsync.NewMapOf[matrix.Partition, map[matrix.Coordinate]struct{}](),
+				ply: xsync.NewMapOf[matrix.Partition, map[byte]struct{}](),
 			},
 			mem: &memory{
-				nrg: xsync.NewMapOf[object.Object, *energy.Energy](),
+				nrg: xsync.NewMapOf[matrix.Coordinate, *energy.Energy](),
 				ply: xsync.NewMapOf[byte, *player.Player](),
 			},
 			uni: unique.New[common.Address, byte](),
@@ -96,11 +96,11 @@ func Benchmark_Engine_uuid(b *testing.B) {
 				fcn: make([]chan<- []byte, 6),
 				fil: fil,
 				lkp: &lookup{
-					nrg: xsync.NewMapOf[object.Object, map[object.Object]struct{}](),
-					ply: xsync.NewMapOf[object.Object, map[byte]struct{}](),
+					nrg: xsync.NewMapOf[matrix.Partition, map[matrix.Coordinate]struct{}](),
+					ply: xsync.NewMapOf[matrix.Partition, map[byte]struct{}](),
 				},
 				mem: &memory{
-					nrg: xsync.NewMapOf[object.Object, *energy.Energy](),
+					nrg: xsync.NewMapOf[matrix.Coordinate, *energy.Energy](),
 					ply: xsync.NewMapOf[byte, *player.Player](),
 				},
 				uni: unique.New[common.Address, byte](),

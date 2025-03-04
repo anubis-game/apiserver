@@ -3,7 +3,7 @@ package energy
 import (
 	"fmt"
 
-	"github.com/anubis-game/apiserver/pkg/object"
+	"github.com/anubis-game/apiserver/pkg/matrix"
 )
 
 // decode is only used for testing Energy encoding.
@@ -13,7 +13,7 @@ func decode(byt []byte) *Energy {
 	}
 
 	return New(Config{
-		Obj: object.New(byt[1 : 1+object.Len]),
+		Obj: matrix.NewCoordinate(byt[1 : 1+matrix.CoordinateBytes]),
 		Siz: byt[7],
 		Typ: byt[8],
 	})

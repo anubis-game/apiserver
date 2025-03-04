@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/anubis-game/apiserver/pkg/object"
+	"github.com/anubis-game/apiserver/pkg/matrix"
 )
 
 func Test_Window_Has_True(t *testing.T) {
 	testCases := []struct {
-		obj object.Object
+		obj matrix.Coordinate
 	}{
 		// Case 000
 		//
@@ -22,7 +22,7 @@ func Test_Window_Has_True(t *testing.T) {
 		//         100
 		//
 		{
-			obj: object.Object{X: 100, Y: 200},
+			obj: matrix.Coordinate{X: 100, Y: 200},
 		},
 		// Case 001
 		//
@@ -35,7 +35,7 @@ func Test_Window_Has_True(t *testing.T) {
 		//         100
 		//
 		{
-			obj: object.Object{X: 150, Y: 200},
+			obj: matrix.Coordinate{X: 150, Y: 200},
 		},
 		// Case 002
 		//
@@ -48,7 +48,7 @@ func Test_Window_Has_True(t *testing.T) {
 		//         100
 		//
 		{
-			obj: object.Object{X: 200, Y: 200},
+			obj: matrix.Coordinate{X: 200, Y: 200},
 		},
 		// Case 003
 		//
@@ -61,7 +61,7 @@ func Test_Window_Has_True(t *testing.T) {
 		//         100
 		//
 		{
-			obj: object.Object{X: 200, Y: 150},
+			obj: matrix.Coordinate{X: 200, Y: 150},
 		},
 		// Case 004
 		//
@@ -74,7 +74,7 @@ func Test_Window_Has_True(t *testing.T) {
 		//         100
 		//
 		{
-			obj: object.Object{X: 200, Y: 100},
+			obj: matrix.Coordinate{X: 200, Y: 100},
 		},
 		// Case 005
 		//
@@ -87,7 +87,7 @@ func Test_Window_Has_True(t *testing.T) {
 		//         100
 		//
 		{
-			obj: object.Object{X: 150, Y: 100},
+			obj: matrix.Coordinate{X: 150, Y: 100},
 		},
 		// Case 006
 		//
@@ -100,7 +100,7 @@ func Test_Window_Has_True(t *testing.T) {
 		//         100
 		//
 		{
-			obj: object.Object{X: 100, Y: 100},
+			obj: matrix.Coordinate{X: 100, Y: 100},
 		},
 		// Case 007
 		//
@@ -113,7 +113,7 @@ func Test_Window_Has_True(t *testing.T) {
 		//         100
 		//
 		{
-			obj: object.Object{X: 100, Y: 150},
+			obj: matrix.Coordinate{X: 100, Y: 150},
 		},
 		// Case 008
 		//
@@ -126,15 +126,15 @@ func Test_Window_Has_True(t *testing.T) {
 		//         100
 		//
 		{
-			obj: object.Object{X: 137, Y: 143},
+			obj: matrix.Coordinate{X: 137, Y: 143},
 		},
 	}
 
 	for i, tc := range testCases {
 		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
 			win := &Window{
-				cbl: object.Object{X: 100, Y: 100},
-				ctr: object.Object{X: 200, Y: 200},
+				cbl: matrix.Coordinate{X: 100, Y: 100},
+				ctr: matrix.Coordinate{X: 200, Y: 200},
 			}
 
 			has := win.Has(tc.obj)
@@ -148,7 +148,7 @@ func Test_Window_Has_True(t *testing.T) {
 
 func Test_Window_Has_False(t *testing.T) {
 	testCases := []struct {
-		obj []object.Object
+		obj []matrix.Coordinate
 	}{
 		// Case 000
 		//
@@ -161,7 +161,7 @@ func Test_Window_Has_False(t *testing.T) {
 		//         100
 		//
 		{
-			obj: []object.Object{
+			obj: []matrix.Coordinate{
 				{X: 86, Y: 206},
 				{X: 99, Y: 201},
 				{X: 99, Y: 200},
@@ -179,7 +179,7 @@ func Test_Window_Has_False(t *testing.T) {
 		//         100
 		//
 		{
-			obj: []object.Object{
+			obj: []matrix.Coordinate{
 				{X: 150, Y: 201},
 				{X: 149, Y: 201},
 				{X: 151, Y: 236},
@@ -196,7 +196,7 @@ func Test_Window_Has_False(t *testing.T) {
 		//         100
 		//
 		{
-			obj: []object.Object{
+			obj: []matrix.Coordinate{
 				{X: 208, Y: 299},
 				{X: 201, Y: 201},
 				{X: 201, Y: 200},
@@ -214,7 +214,7 @@ func Test_Window_Has_False(t *testing.T) {
 		//         100
 		//
 		{
-			obj: []object.Object{
+			obj: []matrix.Coordinate{
 				{X: 201, Y: 151},
 				{X: 201, Y: 150},
 				{X: 264, Y: 149},
@@ -231,7 +231,7 @@ func Test_Window_Has_False(t *testing.T) {
 		//         100          x
 		//
 		{
-			obj: []object.Object{
+			obj: []matrix.Coordinate{
 				{X: 256, Y: 87},
 				{X: 201, Y: 99},
 				{X: 200, Y: 99},
@@ -249,7 +249,7 @@ func Test_Window_Has_False(t *testing.T) {
 		//         100  x
 		//
 		{
-			obj: []object.Object{
+			obj: []matrix.Coordinate{
 				{X: 149, Y: 99},
 				{X: 150, Y: 99},
 				{X: 151, Y: 85},
@@ -266,7 +266,7 @@ func Test_Window_Has_False(t *testing.T) {
 		//       x 100
 		//
 		{
-			obj: []object.Object{
+			obj: []matrix.Coordinate{
 				{X: 96, Y: 92},
 				{X: 99, Y: 99},
 				{X: 99, Y: 100},
@@ -284,7 +284,7 @@ func Test_Window_Has_False(t *testing.T) {
 		//         100
 		//
 		{
-			obj: []object.Object{
+			obj: []matrix.Coordinate{
 				{X: 99, Y: 149},
 				{X: 99, Y: 150},
 				{X: 92, Y: 151},
@@ -295,8 +295,8 @@ func Test_Window_Has_False(t *testing.T) {
 	for i, tc := range testCases {
 		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
 			win := &Window{
-				cbl: object.Object{X: 100, Y: 100},
-				ctr: object.Object{X: 200, Y: 200},
+				cbl: matrix.Coordinate{X: 100, Y: 100},
+				ctr: matrix.Coordinate{X: 200, Y: 200},
 			}
 
 			for _, x := range tc.obj {
@@ -312,83 +312,83 @@ func Test_Window_Has_False(t *testing.T) {
 
 func Benchmark_Window_Has(b *testing.B) {
 	testCases := []struct {
-		obj object.Object
+		obj matrix.Coordinate
 	}{
 		// Case 000, 1.70 ns/op
 		{
-			obj: object.Object{X: 100, Y: 200},
+			obj: matrix.Coordinate{X: 100, Y: 200},
 		},
 		// Case 001, 1.70 ns/op
 		{
-			obj: object.Object{X: 150, Y: 200},
+			obj: matrix.Coordinate{X: 150, Y: 200},
 		},
 		// Case 002, 1.70 ns/op
 		{
-			obj: object.Object{X: 200, Y: 200},
+			obj: matrix.Coordinate{X: 200, Y: 200},
 		},
 		// Case 003, 1.70 ns/op
 		{
-			obj: object.Object{X: 200, Y: 150},
+			obj: matrix.Coordinate{X: 200, Y: 150},
 		},
 		// Case 004, 1.70 ns/op
 		{
-			obj: object.Object{X: 200, Y: 100},
+			obj: matrix.Coordinate{X: 200, Y: 100},
 		},
 		// Case 005, 1.70 ns/op
 		{
-			obj: object.Object{X: 150, Y: 100},
+			obj: matrix.Coordinate{X: 150, Y: 100},
 		},
 		// Case 006, 1.70 ns/op
 		{
-			obj: object.Object{X: 100, Y: 100},
+			obj: matrix.Coordinate{X: 100, Y: 100},
 		},
 		// Case 007, 1.70 ns/op
 		{
-			obj: object.Object{X: 100, Y: 150},
+			obj: matrix.Coordinate{X: 100, Y: 150},
 		},
 		// Case 008, 1.70 ns/op
 		{
-			obj: object.Object{X: 137, Y: 143},
+			obj: matrix.Coordinate{X: 137, Y: 143},
 		},
 		// Case 009, 1.70 ns/op
 		{
-			obj: object.Object{X: 86, Y: 206},
+			obj: matrix.Coordinate{X: 86, Y: 206},
 		},
 		// Case 010, 1.70 ns/op
 		{
-			obj: object.Object{X: 149, Y: 201},
+			obj: matrix.Coordinate{X: 149, Y: 201},
 		},
 		// Case 011, 1.70 ns/op
 		{
-			obj: object.Object{X: 201, Y: 200},
+			obj: matrix.Coordinate{X: 201, Y: 200},
 		},
 		// Case 012, 1.70 ns/op
 		{
-			obj: object.Object{X: 264, Y: 149},
+			obj: matrix.Coordinate{X: 264, Y: 149},
 		},
 		// Case 013, 1.70 ns/op
 		{
-			obj: object.Object{X: 201, Y: 99},
+			obj: matrix.Coordinate{X: 201, Y: 99},
 		},
 		// Case 014, 1.70 ns/op
 		{
-			obj: object.Object{X: 149, Y: 99},
+			obj: matrix.Coordinate{X: 149, Y: 99},
 		},
 		// Case 015, 1.70 ns/op
 		{
-			obj: object.Object{X: 100, Y: 99},
+			obj: matrix.Coordinate{X: 100, Y: 99},
 		},
 		// Case 016, 1.70 ns/op
 		{
-			obj: object.Object{X: 99, Y: 150},
+			obj: matrix.Coordinate{X: 99, Y: 150},
 		},
 	}
 
 	for i, tc := range testCases {
 		b.Run(fmt.Sprintf("%03d", i), func(b *testing.B) {
 			win := &Window{
-				cbl: object.Object{X: 100, Y: 100},
-				ctr: object.Object{X: 200, Y: 200},
+				cbl: matrix.Coordinate{X: 100, Y: 100},
+				ctr: matrix.Coordinate{X: 200, Y: 200},
 			}
 
 			for b.Loop() {

@@ -1,11 +1,11 @@
 package vector
 
-import "github.com/anubis-game/apiserver/pkg/object"
+import "github.com/anubis-game/apiserver/pkg/matrix"
 
-func (v *Vector) Ranger(fnc func(object.Object)) {
-	cur := v.tai
+func (v *Vector) ranger(fnc func(matrix.Coordinate)) {
+	cur := v.hea
 	for cur != nil {
-		fnc(cur.val)
-		cur = cur.nxt
+		fnc(cur.crd)
+		cur = cur.prv
 	}
 }
