@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/anubis-game/apiserver/pkg/object"
+	"github.com/anubis-game/apiserver/pkg/matrix"
 )
 
 func Test_Vector_Impact_True(t *testing.T) {
 	testCases := []struct {
-		oxy object.Object
+		oxy matrix.Coordinate
 		osz byte
-		txy object.Object
+		txy matrix.Coordinate
 		tsz byte
 	}{
 		// Case 000
@@ -21,8 +21,8 @@ func Test_Vector_Impact_True(t *testing.T) {
 		//        | e
 		//
 		{
-			oxy: object.Object{X: 477_999, Y: 510_401}, osz: 80,
-			txy: object.Object{X: 478_109, Y: 510_326}, tsz: 60,
+			oxy: matrix.Coordinate{X: 477_999, Y: 510_401}, osz: 80,
+			txy: matrix.Coordinate{X: 478_109, Y: 510_326}, tsz: 60,
 		},
 		// Case 001
 		//
@@ -31,8 +31,8 @@ func Test_Vector_Impact_True(t *testing.T) {
 		//      e |
 		//
 		{
-			oxy: object.Object{X: 478_087, Y: 510_381}, osz: 50,
-			txy: object.Object{X: 478_047, Y: 510_324}, tsz: 20,
+			oxy: matrix.Coordinate{X: 478_087, Y: 510_381}, osz: 50,
+			txy: matrix.Coordinate{X: 478_047, Y: 510_324}, tsz: 20,
 		},
 		// Case 002
 		//
@@ -41,8 +41,8 @@ func Test_Vector_Impact_True(t *testing.T) {
 		//        |
 		//
 		{
-			oxy: object.Object{X: 478_222, Y: 510_389}, osz: 50,
-			txy: object.Object{X: 478_131, Y: 510_389}, tsz: 50,
+			oxy: matrix.Coordinate{X: 478_222, Y: 510_389}, osz: 50,
+			txy: matrix.Coordinate{X: 478_131, Y: 510_389}, tsz: 50,
 		},
 		// Case 003
 		//
@@ -51,8 +51,8 @@ func Test_Vector_Impact_True(t *testing.T) {
 		//      e |
 		//
 		{
-			oxy: object.Object{X: 478_305, Y: 510_389}, osz: 30,
-			txy: object.Object{X: 478_305, Y: 510_334}, tsz: 40,
+			oxy: matrix.Coordinate{X: 478_305, Y: 510_389}, osz: 30,
+			txy: matrix.Coordinate{X: 478_305, Y: 510_334}, tsz: 40,
 		},
 		// Case 004
 		//
@@ -61,8 +61,8 @@ func Test_Vector_Impact_True(t *testing.T) {
 		//        |
 		//
 		{
-			oxy: object.Object{X: 478_305, Y: 510_312}, osz: 10,
-			txy: object.Object{X: 478_305, Y: 510_312}, tsz: 25,
+			oxy: matrix.Coordinate{X: 478_305, Y: 510_312}, osz: 10,
+			txy: matrix.Coordinate{X: 478_305, Y: 510_312}, tsz: 25,
 		},
 	}
 
@@ -79,9 +79,9 @@ func Test_Vector_Impact_True(t *testing.T) {
 
 func Test_Vector_Impact_False(t *testing.T) {
 	testCases := []struct {
-		oxy object.Object
+		oxy matrix.Coordinate
 		osz byte
-		txy object.Object
+		txy matrix.Coordinate
 		tsz byte
 	}{
 		// Case 000
@@ -91,8 +91,8 @@ func Test_Vector_Impact_False(t *testing.T) {
 		//        | e
 		//
 		{
-			oxy: object.Object{X: 477_999, Y: 510_401}, osz: 80,
-			txy: object.Object{X: 478_109, Y: 510_326}, tsz: 20,
+			oxy: matrix.Coordinate{X: 477_999, Y: 510_401}, osz: 80,
+			txy: matrix.Coordinate{X: 478_109, Y: 510_326}, tsz: 20,
 		},
 		// Case 001
 		//
@@ -101,8 +101,8 @@ func Test_Vector_Impact_False(t *testing.T) {
 		//      e |
 		//
 		{
-			oxy: object.Object{X: 478_087, Y: 510_381}, osz: 40,
-			txy: object.Object{X: 478_047, Y: 510_324}, tsz: 20,
+			oxy: matrix.Coordinate{X: 478_087, Y: 510_381}, osz: 40,
+			txy: matrix.Coordinate{X: 478_047, Y: 510_324}, tsz: 20,
 		},
 		// Case 002
 		//
@@ -111,8 +111,8 @@ func Test_Vector_Impact_False(t *testing.T) {
 		//        |
 		//
 		{
-			oxy: object.Object{X: 478_222, Y: 510_389}, osz: 40,
-			txy: object.Object{X: 478_131, Y: 510_389}, tsz: 20,
+			oxy: matrix.Coordinate{X: 478_222, Y: 510_389}, osz: 40,
+			txy: matrix.Coordinate{X: 478_131, Y: 510_389}, tsz: 20,
 		},
 		// Case 003
 		//
@@ -121,8 +121,8 @@ func Test_Vector_Impact_False(t *testing.T) {
 		//      e |
 		//
 		{
-			oxy: object.Object{X: 478_305, Y: 510_389}, osz: 10,
-			txy: object.Object{X: 478_305, Y: 510_334}, tsz: 40,
+			oxy: matrix.Coordinate{X: 478_305, Y: 510_389}, osz: 10,
+			txy: matrix.Coordinate{X: 478_305, Y: 510_334}, tsz: 40,
 		},
 	}
 
@@ -139,35 +139,35 @@ func Test_Vector_Impact_False(t *testing.T) {
 
 func Benchmark_Vector_Impact(b *testing.B) {
 	testCases := []struct {
-		oxy object.Object
+		oxy matrix.Coordinate
 		osz byte
-		txy object.Object
+		txy matrix.Coordinate
 		tsz byte
 	}{
-		// Case 000, ~1.80 ns/op
+		// Case 000, ~38 ns/op
 		{
-			oxy: object.Object{X: 477_999, Y: 510_401}, osz: 80,
-			txy: object.Object{X: 478_109, Y: 510_326}, tsz: 60,
+			oxy: matrix.Coordinate{X: 477_999, Y: 510_401}, osz: 80,
+			txy: matrix.Coordinate{X: 478_109, Y: 510_326}, tsz: 60,
 		},
-		// Case 001, ~1.80 ns/op
+		// Case 001, ~38 ns/op
 		{
-			oxy: object.Object{X: 478_087, Y: 510_381}, osz: 50,
-			txy: object.Object{X: 478_047, Y: 510_324}, tsz: 20,
+			oxy: matrix.Coordinate{X: 478_087, Y: 510_381}, osz: 50,
+			txy: matrix.Coordinate{X: 478_047, Y: 510_324}, tsz: 20,
 		},
-		// Case 002, ~1.80 ns/op
+		// Case 002, ~38 ns/op
 		{
-			oxy: object.Object{X: 478_222, Y: 510_389}, osz: 50,
-			txy: object.Object{X: 478_131, Y: 510_389}, tsz: 50,
+			oxy: matrix.Coordinate{X: 478_222, Y: 510_389}, osz: 50,
+			txy: matrix.Coordinate{X: 478_131, Y: 510_389}, tsz: 50,
 		},
-		// Case 003, ~1.80 ns/op
+		// Case 003, ~38 ns/op
 		{
-			oxy: object.Object{X: 478_305, Y: 510_389}, osz: 30,
-			txy: object.Object{X: 478_305, Y: 510_334}, tsz: 40,
+			oxy: matrix.Coordinate{X: 478_305, Y: 510_389}, osz: 30,
+			txy: matrix.Coordinate{X: 478_305, Y: 510_334}, tsz: 40,
 		},
-		// Case 004, ~1.80 ns/op
+		// Case 004, ~38 ns/op
 		{
-			oxy: object.Object{X: 478_305, Y: 510_312}, osz: 10,
-			txy: object.Object{X: 478_305, Y: 510_312}, tsz: 25,
+			oxy: matrix.Coordinate{X: 478_305, Y: 510_312}, osz: 10,
+			txy: matrix.Coordinate{X: 478_305, Y: 510_312}, tsz: 25,
 		},
 	}
 

@@ -3,7 +3,7 @@ package vector
 import (
 	"math"
 
-	"github.com/anubis-game/apiserver/pkg/object"
+	"github.com/anubis-game/apiserver/pkg/matrix"
 )
 
 const (
@@ -36,26 +36,26 @@ func init() {
 	}
 }
 
-func (v *Vector) Target(qdr byte, agl byte, dis float64) object.Object {
-	tpx := v.hea.val
+func (v *Vector) target(qdr byte, agl byte, dis float64) matrix.Coordinate {
+	trg := v.hea.crd
 
 	// Update both coordinates based on the current position and the desired
 	// direction.
 
 	switch qdr {
 	case 0x1:
-		tpx.X += int(dis*sin[agl] + 0.5)
-		tpx.Y += int(dis*cos[agl] + 0.5)
+		trg.X += int(dis*sin[agl] + 0.5)
+		trg.Y += int(dis*cos[agl] + 0.5)
 	case 0x2:
-		tpx.X += int(dis*cos[agl] + 0.5)
-		tpx.Y -= int(dis*sin[agl] + 0.5)
+		trg.X += int(dis*cos[agl] + 0.5)
+		trg.Y -= int(dis*sin[agl] + 0.5)
 	case 0x3:
-		tpx.X -= int(dis*sin[agl] + 0.5)
-		tpx.Y -= int(dis*cos[agl] + 0.5)
+		trg.X -= int(dis*sin[agl] + 0.5)
+		trg.Y -= int(dis*cos[agl] + 0.5)
 	case 0x4:
-		tpx.X -= int(dis*cos[agl] + 0.5)
-		tpx.Y += int(dis*sin[agl] + 0.5)
+		trg.X -= int(dis*cos[agl] + 0.5)
+		trg.Y += int(dis*sin[agl] + 0.5)
 	}
 
-	return tpx
+	return trg
 }

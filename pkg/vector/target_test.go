@@ -2,51 +2,50 @@ package vector
 
 import (
 	"fmt"
-	"reflect"
 	"testing"
 
-	"github.com/anubis-game/apiserver/pkg/object"
+	"github.com/anubis-game/apiserver/pkg/matrix"
 )
 
-func Test_Vector_Target(t *testing.T) {
+func Test_Vector_target(t *testing.T) {
 	testCases := []struct {
-		obj object.Object
+		hea matrix.Coordinate
 		qdr byte
 		agl byte
 		dis float64
-		hea object.Object
+		trg matrix.Coordinate
 	}{
 		// Case 000
 		{
-			obj: object.Object{X: 621_359, Y: 539_073},
-			qdr: byte(1),                               // quadrant 1
-			agl: byte(108),                             // 38.12° from 0°
-			dis: Dis,                                   // normal speed
-			hea: object.Object{X: 621_362, Y: 539_077}, // x+3 y+4
+			hea: matrix.Coordinate{X: 621_359, Y: 539_073},
+			qdr: byte(1),                                   // quadrant 1
+			agl: byte(108),                                 // 38.12° from 0°
+			dis: nrm,                                       // normal speed
+			trg: matrix.Coordinate{X: 621_362, Y: 539_077}, // x+3 y+4
 		},
 		// Case 001
 		{
-			obj: object.Object{X: 621_359, Y: 539_073},
-			qdr: byte(2),                               // quadrant 2
-			agl: byte(253),                             // 89.29° from 90°
-			dis: Ris,                                   // racing speed
-			hea: object.Object{X: 621_359, Y: 539_053}, // y-18
+			hea: matrix.Coordinate{X: 621_359, Y: 539_073},
+			qdr: byte(2),                                   // quadrant 2
+			agl: byte(253),                                 // 89.29° from 90°
+			dis: nrm * 4,                                   // racing speed
+			trg: matrix.Coordinate{X: 621_359, Y: 539_053}, // y-18
 		},
 		// Case 002
 		{
-			obj: object.Object{X: 621_359, Y: 539_073},
-			qdr: byte(3),                               // quadrant 3
-			agl: byte(253),                             // 89.29° from 180°
-			dis: Ris,                                   // racing speed
-			hea: object.Object{X: 621_339, Y: 539_073}, // x-18
+			hea: matrix.Coordinate{X: 621_359, Y: 539_073},
+			qdr: byte(3),                                   // quadrant 3
+			agl: byte(253),                                 // 89.29° from 180°
+			dis: nrm * 4,                                   // racing speed
+			trg: matrix.Coordinate{X: 621_339, Y: 539_073}, // x-18
 		},
 		// Case 003
 		{
-			obj: object.Object{X: 621_359, Y: 539_073},
-			qdr: byte(4),                               // quadrant 4
-			agl: byte(108),                             // 38.12° from 180°
-			dis: Dis,                                   // normal speed
-			hea: object.Object{X: 621_355, Y: 539_076}, // x-4 y+3
+			hea: matrix.Coordinate{X: 621_359, Y: 539_073},
+			qdr: byte(4),                                   // quadrant 4
+			agl: byte(108),                                 // 38.12° from 180°
+			dis: nrm,                                       // normal speed
+			trg: matrix.Coordinate{X: 621_355, Y: 539_076}, // x-4 y+3
 		},
 	}
 
@@ -55,58 +54,56 @@ func Test_Vector_Target(t *testing.T) {
 			var vec *Vector
 			{
 				vec = New(Config{
-					Obj: []object.Object{
-						tc.obj,
-					},
+					Hea: tc.hea,
 				})
 			}
 
-			var hea object.Object
+			var trg matrix.Coordinate
 			{
-				hea = vec.Target(tc.qdr, tc.agl, tc.dis)
+				trg = vec.target(tc.qdr, tc.agl, tc.dis)
 			}
 
-			if !reflect.DeepEqual(hea, tc.hea) {
-				t.Fatalf("expected %#v got %#v", tc.hea, hea)
+			if trg != tc.trg {
+				t.Fatalf("expected %#v got %#v", tc.trg, trg)
 			}
 		})
 	}
 }
 
-func Benchmark_Vector_Target(b *testing.B) {
+func Benchmark_Vector_target(b *testing.B) {
 	testCases := []struct {
-		obj object.Object
+		hea matrix.Coordinate
 		qdr byte
 		agl byte
 		dis float64
 	}{
-		// Case 000, ~1.90 ns/op
+		// Case 000, ~53 ns/op
 		{
-			obj: object.Object{X: 621_359, Y: 539_073},
+			hea: matrix.Coordinate{X: 621_359, Y: 539_073},
 			qdr: byte(1),   // quadrant 1
 			agl: byte(108), // 38.12° from 0°
-			dis: Dis,       // normal speed
+			dis: nrm,       // normal speed
 		},
-		// Case 001, ~1.90 ns/op
+		// Case 001, ~53 ns/op
 		{
-			obj: object.Object{X: 621_359, Y: 539_073},
+			hea: matrix.Coordinate{X: 621_359, Y: 539_073},
 			qdr: byte(2),   // quadrant 2
 			agl: byte(253), // 89.29° from 90°
-			dis: Ris,       // racing speed
+			dis: nrm * 4,   // racing speed
 		},
-		// Case 002, ~1.90 ns/op
+		// Case 002, ~53 ns/op
 		{
-			obj: object.Object{X: 621_359, Y: 539_073},
+			hea: matrix.Coordinate{X: 621_359, Y: 539_073},
 			qdr: byte(3),   // quadrant 3
 			agl: byte(253), // 89.29° from 180°
-			dis: Ris,       // racing speed
+			dis: nrm * 4,   // racing speed
 		},
-		// Case 003, ~1.90 ns/op
+		// Case 003, ~53 ns/op
 		{
-			obj: object.Object{X: 621_359, Y: 539_073},
+			hea: matrix.Coordinate{X: 621_359, Y: 539_073},
 			qdr: byte(4),   // quadrant 4
 			agl: byte(108), // 38.12° from 180°
-			dis: Dis,       // normal speed
+			dis: nrm,       // normal speed
 		},
 	}
 
@@ -115,14 +112,12 @@ func Benchmark_Vector_Target(b *testing.B) {
 			var vec *Vector
 			{
 				vec = New(Config{
-					Obj: []object.Object{
-						tc.obj,
-					},
+					Hea: tc.hea,
 				})
 			}
 
 			for b.Loop() {
-				vec.Target(tc.qdr, tc.agl, tc.dis)
+				vec.target(tc.qdr, tc.agl, tc.dis)
 			}
 		})
 	}

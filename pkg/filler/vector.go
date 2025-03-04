@@ -1,74 +1,49 @@
 package filler
 
 import (
-	"github.com/anubis-game/apiserver/pkg/object"
+	"github.com/anubis-game/apiserver/pkg/matrix"
 	"github.com/anubis-game/apiserver/pkg/vector"
 )
 
-type Vector struct {
-	Qdr int
-	Agl int
-	Obx int
-	Oby int
+func (f *Filler) Vector() *vector.Vector {
+	return <-f.vec
 }
 
-func (f *Filler) Vector(uid byte) *vector.Vector {
-	var vfl Vector
-	{
-		vfl = <-f.vec
-	}
-
+// vector is to simply prepare randomized Vector instances in advance.
+func (f *Filler) vector() *vector.Vector {
 	// Create a new Motion object so we can point new players towards a randomized
 	// direction.
 
 	var mot vector.Motion
 	{
 		mot = vector.Motion{
-			Qdr: byte(vfl.Qdr),
-			Agl: byte(vfl.Agl),
+			Qdr: byte(f.qdr.Random()),
+			Agl: byte(f.agl.Random()),
 		}
 	}
 
-	// vector.New() allocates a full slice of X and Y coordinates. Allocating most
-	// of the vectors required at runtime helps us to increase runtime
-	// performance, because the vector allocation is not done within performance
-	// sensitive contexts.
+	// Create a new Vector instance using a random head node.
 
 	var vec *vector.Vector
 	{
 		vec = vector.New(vector.Config{
-			Mot: mot,
-			Obj: []object.Object{
-				{
-					X: vfl.Obx,
-					Y: vfl.Oby,
-				},
+			Hea: matrix.Coordinate{
+				X: f.crd.Random(),
+				Y: f.crd.Random(),
 			},
-			Uid: uid,
+			Mot: mot,
 		})
 	}
 
-	// We initialize the head of the new vector above with a single object. Below
-	// we use this head as basis for vector expansion. 1 head plus 4 expansions
-	// gives us a vector with 5 segments lined up towards the same direction,
-	// because we use the same motion configuration every time.
+	// We initialize the head of the new Vector above with a single coordinate
+	// object. Below we use this head node as basis for the Vector's expansion. 1
+	// head plus 4 expansions gives us a Vector with 5 nodes, all lined up towards
+	// the same direction, because we use the same motion configuration every
+	// time.
 
-	{
-		vec.Expand(vec.Target(mot.Qdr, mot.Agl, vector.Dis))
-		vec.Expand(vec.Target(mot.Qdr, mot.Agl, vector.Dis))
-		vec.Expand(vec.Target(mot.Qdr, mot.Agl, vector.Dis))
-		vec.Expand(vec.Target(mot.Qdr, mot.Agl, vector.Dis))
+	for range 4 {
+		vec.Update(int(vector.Si/vector.Li), mot.Qdr, mot.Agl, vector.Nrm)
 	}
 
 	return vec
-}
-
-// vector is to simply prepare randomized Vector configuration in advance.
-func (f *Filler) vector() Vector {
-	return Vector{
-		Qdr: f.qdr.Random(),
-		Agl: f.agl.Random(),
-		Obx: f.crd.Random(),
-		Oby: f.crd.Random(),
-	}
 }

@@ -1,51 +1,69 @@
 package vector
 
 import (
+	"slices"
+	"sort"
 	"testing"
 
-	"github.com/anubis-game/apiserver/pkg/object"
+	"github.com/anubis-game/apiserver/pkg/matrix"
 )
 
-func Test_Vector_Occupy(t *testing.T) {
-	//
-	//     +---------HR
-	//     │
-	//     │
-	//     |
-	//     T
-	//
+func Test_Vector_Occupy_initial(t *testing.T) {
 	var vec *Vector
 	{
-		vec = New(Config{
-			Mot: Motion{
-				Qdr: 0x1,
-				Agl: 0x80,
-			},
-			Obj: []object.Object{
-				{X: 100, Y: 100}, // T
-				{X: 100, Y: 150},
-				{X: 100, Y: 200},
-				{X: 100, Y: 250},
-				{X: 100, Y: 300},
-				{X: 100, Y: 350},
-				{X: 100, Y: 400},
-				{X: 150, Y: 400},
-				{X: 200, Y: 400},
-				{X: 250, Y: 400},
-				{X: 300, Y: 400}, // H
-			},
-		})
+		vec = tesVec()
 	}
 
-	if len(vec.Occupy().Prt) != 12 {
-		t.Fatalf("expected %#v got %#v", 12, len(vec.Occupy().Prt))
+	var act []matrix.Coordinate
+	{
+		act = vec.Oclist(matrix.Partition{X: 896, Y: 896})
+	}
+
+	var exp []matrix.Coordinate
+	{
+		exp = []matrix.Coordinate{
+			{X: 1000, Y: 1000},
+		}
 	}
 
 	{
-		vec.Occupy().Prt = nil
+		sort.Sort(matrix.Coordinates(exp))
+		sort.Sort(matrix.Coordinates(act))
 	}
 
-	if len(vec.Occupy().Prt) != 0 {
-		t.Fatalf("expected %#v got %#v", 0, len(vec.Occupy().Prt))
+	if len(vec.ocl) != 1 {
+		t.Fatalf("expected %#v got %#v", 1, len(vec.ocl))
+	}
+	if !slices.Equal(act, exp) {
+		t.Fatalf("expected %#v got %#v", exp, act)
+	}
+
+	for range 4 {
+		vec.Update(int(Si/Li), vec.mot.Qdr, vec.mot.Agl, Nrm)
+	}
+
+	{
+		act = vec.Oclist(matrix.Partition{X: 896, Y: 896})
+	}
+
+	{
+		exp = []matrix.Coordinate{
+			{X: 1000, Y: 1020}, // H
+			{X: 1000, Y: 1015},
+			{X: 1000, Y: 1010},
+			{X: 1000, Y: 1005}, // T
+		}
+	}
+
+	{
+		sort.Sort(matrix.Coordinates(exp))
+		sort.Sort(matrix.Coordinates(act))
+	}
+
+	if len(vec.ocl) != 1 {
+		t.Fatalf("expected %#v got %#v", 1, len(vec.ocl))
+	}
+	if !slices.Equal(act, exp) {
+		t.Fatalf("expected %#v got %#v", exp, act)
 	}
 }

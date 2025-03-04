@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/anubis-game/apiserver/pkg/object"
+	"github.com/anubis-game/apiserver/pkg/matrix"
 	"github.com/anubis-game/apiserver/pkg/schema"
 )
 
@@ -17,7 +17,7 @@ func Test_Energy_Encode(t *testing.T) {
 		// Case 000
 		{
 			e: New(Config{
-				Obj: object.Object{X: 12_547, Y: 512},
+				Obj: matrix.Coordinate{X: 12_547, Y: 512},
 				Siz: 0x7c,
 				Typ: 0x3,
 			}),
