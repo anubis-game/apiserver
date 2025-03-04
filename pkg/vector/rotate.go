@@ -16,6 +16,9 @@ func (v *Vector) rotate(hea matrix.Coordinate, hid byte) matrix.Coordinate {
 		return v.shrink(hid)
 	}
 
+	// TODO:test write a unit test to verify that the head and the tail can be
+	// replaced simultaneously.
+
 	new := v.tai   // remember tail pointer as new head pointer
 	old := new.crd // old tail coordinates get removed
 

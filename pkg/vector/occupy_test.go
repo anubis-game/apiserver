@@ -42,10 +42,10 @@ func Test_Vector_Occupy_initial(t *testing.T) {
 
 	{
 		exp = []matrix.Coordinate{
-			{X: 1000, Y: 1005},
-			{X: 1000, Y: 1010},
+			{X: 1000, Y: 1020}, // H
 			{X: 1000, Y: 1015},
-			{X: 1000, Y: 1020},
+			{X: 1000, Y: 1010},
+			{X: 1000, Y: 1005}, // T
 		}
 	}
 
