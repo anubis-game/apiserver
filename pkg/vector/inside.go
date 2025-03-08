@@ -15,7 +15,7 @@ func (v *Vector) Inside(stp int, srg int, sbt int, slf int) map[matrix.Partition
 	// Check whether any overlap exists before attempting to collect any of the
 	// overlapping partitions.
 
-	if srg < v.olf || stp < v.obt || slf > v.org || sbt > v.otp {
+	if stp < v.obt || srg < v.olf || sbt > v.otp || slf > v.org {
 		return nil
 	}
 
@@ -24,15 +24,13 @@ func (v *Vector) Inside(stp int, srg int, sbt int, slf int) map[matrix.Partition
 	bot := maxInt(sbt, v.obt)
 	lef := maxInt(slf, v.olf)
 
-	// TODO:test we need to verify that the correct coordinates can be found
-	// within the correct partitions across various scenarious.
-
 	var ins map[matrix.Partition][]matrix.Coordinate
 
 	// Walk along all Vector nodes. We can afford the full loop here for several
 	// reasons.
 	//
-	//     1. Vector.Inside() is called relatively rarely.
+	//     1. Vector.Inside() is only called when players join the game, which
+	//        is relatively rarely.
 	//
 	//     2. The number of partitions to iterate for any potential
 	//        overlapping area is relatively small.
@@ -40,11 +38,19 @@ func (v *Vector) Inside(stp int, srg int, sbt int, slf int) map[matrix.Partition
 	//     3. The number of Vector nodes within any given partition is
 	//        relatively limited.
 	//
+	//     4. The number of Vector nodes to iterate in total is significantly
+	//        reduced due to dynamic hidden nodes.
+	//
 
 	for n := v.hea; n != nil; n = n.prv {
 		// If this node is not inside the overlapping area, then skip it.
 
-		if rig < n.crd.X || top < n.crd.Y || lef > n.crd.X || bot > n.crd.Y {
+		var p matrix.Partition
+		{
+			p = n.crd.Prt()
+		}
+
+		if top < p.Y || rig < p.X || bot > p.Y || lef > p.X {
 			continue
 		}
 
@@ -60,7 +66,7 @@ func (v *Vector) Inside(stp int, srg int, sbt int, slf int) map[matrix.Partition
 		}
 
 		{
-			ins[n.crd.Prt()] = append(ins[n.crd.Prt()], n.crd)
+			ins[p] = append(ins[p], n.crd)
 		}
 	}
 
