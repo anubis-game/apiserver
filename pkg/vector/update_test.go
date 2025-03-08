@@ -2,6 +2,7 @@ package vector
 
 import (
 	"fmt"
+	"reflect"
 	"slices"
 	"sort"
 	"testing"
@@ -15,7 +16,8 @@ func Test_Vector_Update(t *testing.T) {
 		agl byte
 		hid int
 		len int
-		obj []matrix.Coordinate
+		nod []matrix.Coordinate
+		ocd map[matrix.Partition][]matrix.Coordinate
 		upd func(*Vector)
 	}{
 		// Case 000, siz: 5
@@ -24,9 +26,14 @@ func Test_Vector_Update(t *testing.T) {
 			agl: 0x0,
 			hid: 0,
 			len: 2,
-			obj: []matrix.Coordinate{
+			nod: []matrix.Coordinate{
 				{X: 1000, Y: 1005}, // H
 				{X: 1000, Y: 1000}, // T
+			},
+			ocd: map[matrix.Partition][]matrix.Coordinate{
+				{X: 896, Y: 896}: {
+					{X: 1000, Y: 1005}, // H
+				},
 			},
 			upd: func(vec *Vector) {
 				for range 1 {
@@ -40,9 +47,16 @@ func Test_Vector_Update(t *testing.T) {
 			agl: 0x0,
 			hid: 0,
 			len: 2,
-			obj: []matrix.Coordinate{
+			nod: []matrix.Coordinate{
 				{X: 1000, Y: 1010}, // H
 				{X: 1000, Y: 1005}, // T
+			},
+			ocd: map[matrix.Partition][]matrix.Coordinate{
+				{X: 896, Y: 896}: {
+					{X: 1000, Y: 1010}, // H
+					{X: 1000, Y: 1005}, // T
+					{X: 1000, Y: 1000}, // t
+				},
 			},
 			upd: func(vec *Vector) {
 				for range 2 {
@@ -56,10 +70,15 @@ func Test_Vector_Update(t *testing.T) {
 			agl: 0x0,
 			hid: 1,
 			len: 3,
-			obj: []matrix.Coordinate{
+			nod: []matrix.Coordinate{
 				{X: 1000, Y: 1015}, // H
 				// x=1000 y=1010
 				{X: 1000, Y: 1005}, // T
+			},
+			ocd: map[matrix.Partition][]matrix.Coordinate{
+				{X: 896, Y: 896}: {
+					{X: 1000, Y: 1015}, // H
+				},
 			},
 			upd: func(vec *Vector) {
 				for range 3 {
@@ -73,11 +92,16 @@ func Test_Vector_Update(t *testing.T) {
 			agl: 0x3a,
 			hid: 2,
 			len: 4,
-			obj: []matrix.Coordinate{
+			nod: []matrix.Coordinate{
 				{X: 1002, Y: 1020}, // H
 				// x=1000 y=1015
 				// x=1000 y=1010
 				{X: 1000, Y: 1005}, // T
+			},
+			ocd: map[matrix.Partition][]matrix.Coordinate{
+				{X: 896, Y: 896}: {
+					{X: 1002, Y: 1020}, // H
+				},
 			},
 			upd: func(vec *Vector) {
 				for range 3 {
@@ -94,12 +118,17 @@ func Test_Vector_Update(t *testing.T) {
 			agl: 0x74,
 			hid: 3,
 			len: 5,
-			obj: []matrix.Coordinate{
+			nod: []matrix.Coordinate{
 				{X: 1005, Y: 1024}, // H
 				// x=1002 y=1020
 				// x=1000 y=1015
 				// x=1000 y=1010
 				{X: 1000, Y: 1005}, // T
+			},
+			ocd: map[matrix.Partition][]matrix.Coordinate{
+				{X: 896, Y: 1024}: {
+					{X: 1005, Y: 1024}, // H
+				},
 			},
 			upd: func(vec *Vector) {
 				for range 3 {
@@ -116,13 +145,18 @@ func Test_Vector_Update(t *testing.T) {
 			agl: 0xae,
 			hid: 3,
 			len: 6,
-			obj: []matrix.Coordinate{
+			nod: []matrix.Coordinate{
 				{X: 1009, Y: 1026}, // H
 				{X: 1005, Y: 1024},
 				// x=1002 y=1020
 				// x=1000 y=1015
 				// x=1000 y=1010
 				{X: 1000, Y: 1005}, // T
+			},
+			ocd: map[matrix.Partition][]matrix.Coordinate{
+				{X: 896, Y: 1024}: {
+					{X: 1009, Y: 1026}, // H
+				},
 			},
 			upd: func(vec *Vector) {
 				for range 3 {
@@ -139,13 +173,22 @@ func Test_Vector_Update(t *testing.T) {
 			agl: 0xe8,
 			hid: 3,
 			len: 6,
-			obj: []matrix.Coordinate{
+			nod: []matrix.Coordinate{
 				{X: 1014, Y: 1027}, // H
 				// x=1009 y=1026
 				{X: 1005, Y: 1024},
 				// x=1002 y=1020
 				// x=1000 y=1015
 				{X: 1001, Y: 1010}, // T
+			},
+			ocd: map[matrix.Partition][]matrix.Coordinate{
+				{X: 896, Y: 1024}: {
+					{X: 1014, Y: 1027}, // H
+				},
+				{X: 896, Y: 896}: {
+					{X: 1001, Y: 1010}, // T
+					{X: 1000, Y: 1005}, // t
+				},
 			},
 			upd: func(vec *Vector) {
 				for range 3 {
@@ -162,7 +205,7 @@ func Test_Vector_Update(t *testing.T) {
 			agl: 0x0,
 			hid: 4,
 			len: 7,
-			obj: []matrix.Coordinate{
+			nod: []matrix.Coordinate{
 				{X: 1019, Y: 1027}, // H
 				// x=1014 y=1027
 				// x=1009 y=1026
@@ -170,6 +213,11 @@ func Test_Vector_Update(t *testing.T) {
 				// x=1002 y=1020
 				// x=1000 y=1015
 				{X: 1001, Y: 1010}, // T
+			},
+			ocd: map[matrix.Partition][]matrix.Coordinate{
+				{X: 896, Y: 1024}: {
+					{X: 1019, Y: 1027}, // H
+				},
 			},
 			upd: func(vec *Vector) {
 				for range 3 {
@@ -186,7 +234,7 @@ func Test_Vector_Update(t *testing.T) {
 			agl: 0x0,
 			hid: 5,
 			len: 8,
-			obj: []matrix.Coordinate{
+			nod: []matrix.Coordinate{
 				{X: 1024, Y: 1027}, // H
 				// x=1019 y=1027
 				// x=1014 y=1027
@@ -195,6 +243,11 @@ func Test_Vector_Update(t *testing.T) {
 				// x=1002 y=1020
 				// x=1000 y=1015
 				{X: 1001, Y: 1010}, // T
+			},
+			ocd: map[matrix.Partition][]matrix.Coordinate{
+				{X: 1024, Y: 1024}: {
+					{X: 1024, Y: 1027}, // H
+				},
 			},
 			upd: func(vec *Vector) {
 				for range 3 {
@@ -211,7 +264,7 @@ func Test_Vector_Update(t *testing.T) {
 			agl: 0x0,
 			hid: 4,
 			len: 8,
-			obj: []matrix.Coordinate{
+			nod: []matrix.Coordinate{
 				{X: 1029, Y: 1027}, // H
 				{X: 1024, Y: 1027},
 				// x=1019 y=1027
@@ -220,6 +273,15 @@ func Test_Vector_Update(t *testing.T) {
 				{X: 1005, Y: 1024},
 				// x=1002 y=1020
 				{X: 1002, Y: 1015}, // T
+			},
+			ocd: map[matrix.Partition][]matrix.Coordinate{
+				{X: 1024, Y: 1024}: {
+					{X: 1029, Y: 1027}, // H
+				},
+				{X: 896, Y: 896}: {
+					{X: 1002, Y: 1015}, // T
+					{X: 1001, Y: 1010}, // t
+				},
 			},
 			upd: func(vec *Vector) {
 				for range 3 {
@@ -236,7 +298,7 @@ func Test_Vector_Update(t *testing.T) {
 			agl: 0x0,
 			hid: 4,
 			len: 8,
-			obj: []matrix.Coordinate{
+			nod: []matrix.Coordinate{
 				{X: 1034, Y: 1027}, // H
 				// x=1029 y=1027
 				{X: 1024, Y: 1027},
@@ -245,6 +307,15 @@ func Test_Vector_Update(t *testing.T) {
 				// x=1009 y=1026
 				{X: 1005, Y: 1024},
 				{X: 1004, Y: 1020}, // T
+			},
+			ocd: map[matrix.Partition][]matrix.Coordinate{
+				{X: 1024, Y: 1024}: {
+					{X: 1034, Y: 1027}, // H
+				},
+				{X: 896, Y: 896}: {
+					{X: 1004, Y: 1020}, // T
+					{X: 1002, Y: 1015}, // t
+				},
 			},
 			upd: func(vec *Vector) {
 				for range 3 {
@@ -264,7 +335,7 @@ func Test_Vector_Update(t *testing.T) {
 			agl: 0x0,
 			hid: 4,
 			len: 7,
-			obj: []matrix.Coordinate{
+			nod: []matrix.Coordinate{
 				{X: 1039, Y: 1027}, // H
 				// x=1034 y=1027
 				// x=1029 y=1027
@@ -272,6 +343,18 @@ func Test_Vector_Update(t *testing.T) {
 				// x=1019 y=1027
 				// x=1014 y=1027
 				{X: 1010, Y: 1025}, // T
+			},
+			ocd: map[matrix.Partition][]matrix.Coordinate{
+				{X: 1024, Y: 1024}: {
+					{X: 1039, Y: 1027}, // H
+				},
+				{X: 896, Y: 1024}: {
+					{X: 1010, Y: 1025}, // T
+					{X: 1005, Y: 1024}, // t
+				},
+				{X: 896, Y: 896}: {
+					{X: 1004, Y: 1020}, // t
+				},
 			},
 			upd: func(vec *Vector) {
 				for range 3 {
@@ -291,13 +374,23 @@ func Test_Vector_Update(t *testing.T) {
 			agl: 0x0,
 			hid: 3,
 			len: 6,
-			obj: []matrix.Coordinate{
+			nod: []matrix.Coordinate{
 				{X: 1044, Y: 1027}, // H
 				// x=1039 y=1027
 				// x=1034 y=1027
 				// x=1029 y=1027
 				{X: 1024, Y: 1027},
 				{X: 1020, Y: 1027}, // T
+			},
+			ocd: map[matrix.Partition][]matrix.Coordinate{
+				{X: 1024, Y: 1024}: {
+					{X: 1044, Y: 1027}, // H
+				},
+				{X: 896, Y: 1024}: {
+					{X: 1020, Y: 1027}, // T
+					{X: 1015, Y: 1026}, // t
+					{X: 1010, Y: 1025}, // t
+				},
 			},
 			upd: func(vec *Vector) {
 				for range 3 {
@@ -317,13 +410,22 @@ func Test_Vector_Update(t *testing.T) {
 			agl: 0x0,
 			hid: 3,
 			len: 6,
-			obj: []matrix.Coordinate{
+			nod: []matrix.Coordinate{
 				{X: 1049, Y: 1027}, // H
 				{X: 1044, Y: 1027},
 				// x=1039 y=1027
 				// x=1034 y=1027
 				// x=1029 y=1027
 				{X: 1024, Y: 1027}, // T
+			},
+			ocd: map[matrix.Partition][]matrix.Coordinate{
+				{X: 1024, Y: 1024}: {
+					{X: 1049, Y: 1027}, // H
+					{X: 1024, Y: 1027}, // T
+				},
+				{X: 896, Y: 1024}: {
+					{X: 1020, Y: 1027}, // t
+				},
 			},
 			upd: func(vec *Vector) {
 				for range 3 {
@@ -343,12 +445,20 @@ func Test_Vector_Update(t *testing.T) {
 			agl: 0x0,
 			hid: 2,
 			len: 5,
-			obj: []matrix.Coordinate{
+			nod: []matrix.Coordinate{
 				{X: 1054, Y: 1027}, // H
 				// x=1049 y=1027
 				{X: 1044, Y: 1027},
 				// x=1039 y=1027
 				{X: 1034, Y: 1027}, // T
+			},
+			ocd: map[matrix.Partition][]matrix.Coordinate{
+				{X: 1024, Y: 1024}: {
+					{X: 1054, Y: 1027}, // H
+					{X: 1034, Y: 1027}, // T
+					{X: 1029, Y: 1027}, // t
+					{X: 1024, Y: 1027}, // t
+				},
 			},
 			upd: func(vec *Vector) {
 				for range 3 {
@@ -368,11 +478,19 @@ func Test_Vector_Update(t *testing.T) {
 			agl: 0x0,
 			hid: 2,
 			len: 4,
-			obj: []matrix.Coordinate{
+			nod: []matrix.Coordinate{
 				{X: 1059, Y: 1027}, // H
 				// x=1054 y=1027
 				// x=1049 y=1027
 				{X: 1044, Y: 1027}, // T
+			},
+			ocd: map[matrix.Partition][]matrix.Coordinate{
+				{X: 1024, Y: 1024}: {
+					{X: 1059, Y: 1027}, // H
+					{X: 1044, Y: 1027}, // T
+					{X: 1039, Y: 1027}, // t
+					{X: 1034, Y: 1027}, // t
+				},
 			},
 			upd: func(vec *Vector) {
 				for range 3 {
@@ -392,10 +510,18 @@ func Test_Vector_Update(t *testing.T) {
 			agl: 0x0,
 			hid: 1,
 			len: 3,
-			obj: []matrix.Coordinate{
+			nod: []matrix.Coordinate{
 				{X: 1064, Y: 1027}, // H
 				// x=1059 y=1027
 				{X: 1054, Y: 1027}, // T
+			},
+			ocd: map[matrix.Partition][]matrix.Coordinate{
+				{X: 1024, Y: 1024}: {
+					{X: 1064, Y: 1027}, // H
+					{X: 1054, Y: 1027}, // T
+					{X: 1049, Y: 1027}, // t
+					{X: 1044, Y: 1027}, // t
+				},
 			},
 			upd: func(vec *Vector) {
 				for range 3 {
@@ -415,9 +541,17 @@ func Test_Vector_Update(t *testing.T) {
 			agl: 0x0,
 			hid: 0,
 			len: 2,
-			obj: []matrix.Coordinate{
+			nod: []matrix.Coordinate{
 				{X: 1069, Y: 1027}, // H
 				{X: 1064, Y: 1027}, // T
+			},
+			ocd: map[matrix.Partition][]matrix.Coordinate{
+				{X: 1024, Y: 1024}: {
+					{X: 1069, Y: 1027}, // H
+					{X: 1064, Y: 1027}, // T
+					{X: 1059, Y: 1027}, // t
+					{X: 1054, Y: 1027}, // t
+				},
 			},
 			upd: func(vec *Vector) {
 				for range 3 {
@@ -437,9 +571,16 @@ func Test_Vector_Update(t *testing.T) {
 			agl: 0x0,
 			hid: 0,
 			len: 2,
-			obj: []matrix.Coordinate{
+			nod: []matrix.Coordinate{
 				{X: 1074, Y: 1027}, // H
 				{X: 1069, Y: 1027}, // T
+			},
+			ocd: map[matrix.Partition][]matrix.Coordinate{
+				{X: 1024, Y: 1024}: {
+					{X: 1074, Y: 1027}, // H
+					{X: 1069, Y: 1027}, // T
+					{X: 1064, Y: 1027}, // t
+				},
 			},
 			upd: func(vec *Vector) {
 				for range 3 {
@@ -459,7 +600,7 @@ func Test_Vector_Update(t *testing.T) {
 			agl: 0x0,
 			hid: 57,
 			len: 78,
-			obj: []matrix.Coordinate{
+			nod: []matrix.Coordinate{
 				{X: 1304, Y: 1303}, // H
 				{X: 1284, Y: 1303},
 				{X: 1264, Y: 1303},
@@ -482,6 +623,11 @@ func Test_Vector_Update(t *testing.T) {
 				{X: 1000, Y: 1220},
 				{X: 1000, Y: 1215}, // T
 			},
+			ocd: map[matrix.Partition][]matrix.Coordinate{
+				{X: 1280, Y: 1280}: {
+					{X: 1304, Y: 1303}, // H
+				},
+			},
 			upd: tesUpd,
 		},
 	}
@@ -500,18 +646,18 @@ func Test_Vector_Update(t *testing.T) {
 			var hea matrix.Coordinate
 			var tai matrix.Coordinate
 			{
-				hea = tc.obj[0]
-				tai = tc.obj[len(tc.obj)-1]
+				hea = tc.nod[0]
+				tai = tc.nod[len(tc.nod)-1]
 			}
 
-			var obj []matrix.Coordinate
+			var nod []matrix.Coordinate
 			vec.ranger(func(o matrix.Coordinate) {
-				obj = append(obj, o)
+				nod = append(nod, o)
 			})
 
 			{
-				sort.Sort(matrix.Coordinates(tc.obj))
-				sort.Sort(matrix.Coordinates(obj))
+				sort.Sort(matrix.Coordinates(tc.nod))
+				sort.Sort(matrix.Coordinates(nod))
 			}
 
 			if vec.hea.crd != hea {
@@ -520,8 +666,11 @@ func Test_Vector_Update(t *testing.T) {
 			if vec.tai.crd != tai {
 				t.Fatalf("expected %#v got %#v", tai, vec.tai.crd)
 			}
-			if !slices.Equal(obj, tc.obj) {
-				t.Fatalf("expected %#v got %#v", tc.obj, obj)
+			if !slices.Equal(nod, tc.nod) {
+				t.Fatalf("expected %#v got %#v", tc.nod, nod)
+			}
+			if !reflect.DeepEqual(vec.ocd, tc.ocd) {
+				t.Fatalf("expected %#v got %#v", tc.ocd, vec.ocd)
 			}
 			if vec.hidden() != tc.hid {
 				t.Fatalf("expected %#v got %#v", tc.hid, vec.hidden())
@@ -529,8 +678,8 @@ func Test_Vector_Update(t *testing.T) {
 			if vec.len != tc.len {
 				t.Fatalf("expected %#v got %#v", tc.len, vec.len)
 			}
-			if vec.len != len(tc.obj)+tc.hid {
-				t.Fatalf("expected %#v got %#v", len(tc.obj)+tc.hid, vec.len)
+			if vec.len != len(tc.nod)+tc.hid {
+				t.Fatalf("expected %#v got %#v", len(tc.nod)+tc.hid, vec.len)
 			}
 			if vec.mot.Qdr != tc.qdr {
 				t.Fatalf("expected %#v got %#v", tc.qdr, vec.mot.Qdr)
@@ -1148,6 +1297,22 @@ func Test_Vector_Update_trgAgl(t *testing.T) {
 	}
 }
 
+// ~353 ns/op 5 allocs/op
+func Benchmark_Vector_Update(b *testing.B) {
+	var vec *Vector
+	{
+		vec = tesVec()
+	}
+
+	{
+		tesUpd(vec)
+	}
+
+	for b.Loop() {
+		vec.Update(0, 0x2, 0x0, Nrm)
+	}
+}
+
 func Benchmark_Vector_Update_trgAgl(b *testing.B) {
 	testCases := []struct {
 		pqd byte
@@ -1156,7 +1321,7 @@ func Benchmark_Vector_Update_trgAgl(b *testing.B) {
 		nag byte
 		lim byte
 	}{
-		// Case 000, ~45 ns/op
+		// Case 000, ~2 ns/op
 		{
 			pqd: byte(1),
 			pag: byte(107),
@@ -1164,7 +1329,7 @@ func Benchmark_Vector_Update_trgAgl(b *testing.B) {
 			nag: byte(87),
 			lim: byte(100),
 		},
-		// Case 001, ~45 ns/op
+		// Case 001, ~2 ns/op
 		{
 			pqd: byte(1),
 			pag: byte(107),
@@ -1172,7 +1337,7 @@ func Benchmark_Vector_Update_trgAgl(b *testing.B) {
 			nag: byte(87),
 			lim: byte(100),
 		},
-		// Case 002, ~45 ns/op
+		// Case 002, ~2 ns/op
 		{
 			pqd: byte(1),
 			pag: byte(5),
@@ -1180,7 +1345,7 @@ func Benchmark_Vector_Update_trgAgl(b *testing.B) {
 			nag: byte(4), // under 180°, move clockwise
 			lim: byte(100),
 		},
-		// Case 003, ~45 ns/op
+		// Case 003, ~2 ns/op
 		{
 			pqd: byte(1),
 			pag: byte(5),
@@ -1188,7 +1353,7 @@ func Benchmark_Vector_Update_trgAgl(b *testing.B) {
 			nag: byte(5), // exactly 180°, move clockwise
 			lim: byte(100),
 		},
-		// Case 004, ~45 ns/op
+		// Case 004, ~2 ns/op
 		{
 			pqd: byte(1),
 			pag: byte(5),
@@ -1196,7 +1361,7 @@ func Benchmark_Vector_Update_trgAgl(b *testing.B) {
 			nag: byte(6), // over 180°, move counter clockwise
 			lim: byte(100),
 		},
-		// Case 005, ~45 ns/op
+		// Case 005, ~2 ns/op
 		{
 			pqd: byte(4),
 			pag: byte(161),
@@ -1204,7 +1369,7 @@ func Benchmark_Vector_Update_trgAgl(b *testing.B) {
 			nag: byte(1), // under 180°, move counter clockwise
 			lim: byte(100),
 		},
-		// Case 006, ~45 ns/op
+		// Case 006, ~2 ns/op
 		{
 			pqd: byte(2),
 			pag: byte(88),
@@ -1212,7 +1377,7 @@ func Benchmark_Vector_Update_trgAgl(b *testing.B) {
 			nag: byte(77), // under 180°, move clockwise
 			lim: byte(75),
 		},
-		// Case 007, ~45 ns/op
+		// Case 007, ~2 ns/op
 		{
 			pqd: byte(2),
 			pag: byte(88),
@@ -1220,7 +1385,7 @@ func Benchmark_Vector_Update_trgAgl(b *testing.B) {
 			nag: byte(99), // above 180°, move counter clockwise
 			lim: byte(75),
 		},
-		// Case 008, ~45 ns/op
+		// Case 008, ~2 ns/op
 		{
 			pqd: byte(2),
 			pag: byte(88),
@@ -1228,7 +1393,7 @@ func Benchmark_Vector_Update_trgAgl(b *testing.B) {
 			nag: byte(90), // under 180°, move clockwise
 			lim: byte(175),
 		},
-		// Case 009, ~45 ns/op
+		// Case 009, ~2 ns/op
 		{
 			pqd: byte(2),
 			pag: byte(88),
@@ -1236,7 +1401,7 @@ func Benchmark_Vector_Update_trgAgl(b *testing.B) {
 			nag: byte(85), // under 180°, move clockwise
 			lim: byte(175),
 		},
-		// Case 010, ~45 ns/op
+		// Case 010, ~2 ns/op
 		{
 			pqd: byte(2),
 			pag: byte(88),
@@ -1244,7 +1409,7 @@ func Benchmark_Vector_Update_trgAgl(b *testing.B) {
 			nag: byte(2), // under 180°, move counter clockwise
 			lim: byte(175),
 		},
-		// Case 011, ~45 ns/op
+		// Case 011, ~2 ns/op
 		{
 			pqd: byte(2),
 			pag: byte(88),
@@ -1252,7 +1417,7 @@ func Benchmark_Vector_Update_trgAgl(b *testing.B) {
 			nag: byte(88), // exactly 180°, move clockwise
 			lim: byte(175),
 		},
-		// Case 012, ~45 ns/op
+		// Case 012, ~2 ns/op
 		{
 			pqd: byte(2),
 			pag: byte(88),

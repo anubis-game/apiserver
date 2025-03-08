@@ -1,11 +1,10 @@
 package engine
 
 import (
-	"fmt"
 	"testing"
 )
 
-// ~290.00 ns/op
+// ~294 ns/op
 func Benchmark_daemon_dynamic_goroutines(b *testing.B) {
 	c := make(chan struct{}, 8)
 
@@ -22,7 +21,7 @@ func Benchmark_daemon_dynamic_goroutines(b *testing.B) {
 	close(c)
 }
 
-// ~130.00 ns/op
+// ~130 ns/op
 func Benchmark_daemon_worker_pool_range(b *testing.B) {
 	c := make(chan struct{}, 8)
 
@@ -40,7 +39,7 @@ func Benchmark_daemon_worker_pool_range(b *testing.B) {
 	close(c)
 }
 
-// ~265.00 ns/op
+// ~255 ns/op
 func Benchmark_daemon_worker_pool_select_2(b *testing.B) {
 	c := make(chan struct{}, 8)
 	d := make(chan struct{})
@@ -64,7 +63,7 @@ func Benchmark_daemon_worker_pool_select_2(b *testing.B) {
 	close(d)
 }
 
-// ~345.00 ns/op
+// ~325 ns/op
 func Benchmark_daemon_worker_pool_select_3(b *testing.B) {
 	c := make(chan struct{}, 8)
 	d := make(chan struct{})
@@ -91,28 +90,24 @@ func Benchmark_daemon_worker_pool_select_3(b *testing.B) {
 	close(e)
 }
 
-// ~2.00 ns/op
+// ~2 ns/op
 func Benchmark_Engine_Daemon_without_goroutine(b *testing.B) {
-	b.Run(fmt.Sprintf("%03d", 0), func(b *testing.B) {
-		foo := func() int {
-			return 5
-		}
+	foo := func() int {
+		return 5
+	}
 
-		for b.Loop() {
-			foo()
-		}
-	})
+	for b.Loop() {
+		foo()
+	}
 }
 
-// ~250.00 ns/op
+// ~225.00 ns/op, 1 allocs/op
 func Benchmark_Engine_Daemon_with_goroutine(b *testing.B) {
-	b.Run(fmt.Sprintf("%03d", 0), func(b *testing.B) {
-		foo := func() int {
-			return 5
-		}
+	foo := func() int {
+		return 5
+	}
 
-		for b.Loop() {
-			go foo()
-		}
-	})
+	for b.Loop() {
+		go foo()
+	}
 }

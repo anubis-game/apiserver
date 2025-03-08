@@ -41,7 +41,8 @@ const (
 	rcn float64 = float64(Rcn) * nrm
 )
 
-// TODO:game Vector.Adjust must call Vector.Smooth() every second (once in 25 Adjust() calls)
+// TODO:game Vector.Update() must call Vector.Smooth() every second or so (once
+// in 25 calls).
 
 func (v *Vector) Update(del int, qdr byte, agl byte, rac byte) {
 	// Increment or decrement size based on the given delta.
@@ -67,15 +68,24 @@ func (v *Vector) Update(del int, qdr byte, agl byte, rac byte) {
 		fos = sight(siz)
 	}
 
-	// We have to check whether the player screen has to be expanded or shrunk
+	// We have to check whether the player's screen has to be expanded or shrunk
 	// based on the current and desired factor of sight. If those two values
-	// differ then we have to re-allocate the Vector's screen partitions. This
-	// re-allocation may mean to grow or shrink the amount of partition
-	// coordinates visible to the player.
+	// differ then we have to either add or remove a layer of partition
+	// coordinates. Simple increments of the outer bounds works here because the
+	// factor of sight increments or decrements too.
 
-	var rsz bool
-	if v.crx.Fos != fos {
-		rsz = true
+	if fos > v.crx.Fos {
+		v.stp += matrix.Prt
+		v.srg += matrix.Prt
+		v.sbt -= matrix.Prt
+		v.slf -= matrix.Prt
+	}
+
+	if fos < v.crx.Fos {
+		v.stp -= matrix.Prt
+		v.srg -= matrix.Prt
+		v.sbt += matrix.Prt
+		v.slf += matrix.Prt
 	}
 
 	// Update the rest of the character settings.
@@ -110,52 +120,97 @@ func (v *Vector) Update(del int, qdr byte, agl byte, rac byte) {
 	}
 
 	// The reconciled range of motion enables us now to define the next target
-	// coordinates. The updated player size will indicate if the Vector has to
-	// shrink, expand or only rotate towards the new target coordinates.
+	// coordinates. We also remember the current tail so that we can track the
+	// changes properly, that we applied during this update cycle.
 
 	var hea matrix.Coordinate
 	{
 		hea = v.target(v.mot.Qdr, v.mot.Agl, dis)
 	}
 
-	var len int
+	var ta1 matrix.Coordinate
+	var ta2 matrix.Coordinate
+	var ta3 matrix.Coordinate
 	{
-		len = length(siz)
+		ta1 = v.tai.crd
 	}
 
-	// Reset the occupied coordinate diff before we add to it below. This enables
-	// us to only track the change of coordinate movements that this Vector
-	// applied during this update cycle.
+	// The updated player size will indicate whether the Vector has to shrink,
+	// expand or only rotate towards the new target coordinates.
 
+	var nod int
 	{
-		v.ocd = map[matrix.Partition][]matrix.Coordinate{}
+		nod = length(siz)
 	}
 
 	// Shrink if we are too long. Note that we shrink first so that we do not
 	// create observational side effects for Vector.expand() and Vector.rotate().
 
-	if len < v.len {
+	if nod < v.len {
 		v.len--
-		old := v.shrink(hid)
-		v.occRem(old)
+		ta2 = v.shrink(hid)
+		v.occRem(ta2)
 	}
 
 	// At this point a tail node may or may not have been already removed. We can
 	// now either expand if we are supposed to grow larger, or simply rotate
 	// forward.
+	// Vector.rotate() can prevent extra allocations if both the head and the tail
+	// nodes have to be rotated together. If either of the head or the tail node
+	// is able to move further by means of accumulating a hidden node, then we
+	// have to modify the head and and the tail nodes separately. This then incurs
+	// extra memory allocation and garbage collection pressure.
 
-	if len > v.len {
+	if nod > v.len {
 		v.len++
 		v.expand(hea, hid)
-		v.occAdd(rsz)
+		v.occAdd()
+	} else if v.tai.nxt.hid > 0 || v.hea.hid < v.mhn {
+		v.expand(hea, hid)
+		ta3 = v.shrink(hid)
+		v.occAdd()
+		v.occRem(ta3)
 	} else {
-		old := v.rotate(hea, hid)
-		v.occAdd(rsz)
-		v.occRem(old)
+		ta3 = v.rotate(hea)
+		v.occAdd() // TODO:test we have no coverage on screen and occupied boundaries
+		v.occRem(ta3)
 	}
 
-	if rsz {
-		v.newScr()
+	// Reset the occupied coordinate diff with the change of coordinate movements
+	// that this Vector applied during this update cycle. There is always a new
+	// head to track. There may be a new tail if we rotated or shrunk. There may
+	// be an old tail if we just rotated. And there may be another old tail if we
+	// rotated and shrunk.
+
+	{
+		v.ocd = map[matrix.Partition][]matrix.Coordinate{}
+	}
+
+	{
+		cur := v.hea.crd
+		chp := cur.Prt()
+		v.ocd[chp] = append(v.ocd[chp], cur)
+	}
+
+	if !ta1.Eql(v.tai.crd) {
+		cur := v.tai.crd
+		ctp := cur.Prt()
+		v.ocd[ctp] = append(v.ocd[ctp], cur)
+	}
+
+	// If we shrink and rotate within the same update cycle, then we remove two
+	// tail nodes. If we then care about the order of changed tail nodes to
+	// consume using Vector.Change(), then we have to add ta3 to the delta
+	// directly after the new tail node. If ta2 exists, add that after ta3.
+
+	if !ta3.Zer() {
+		ptp := ta3.Prt()
+		v.ocd[ptp] = append(v.ocd[ptp], ta3)
+	}
+
+	if !ta2.Zer() {
+		ptp := ta2.Prt()
+		v.ocd[ptp] = append(v.ocd[ptp], ta2)
 	}
 }
 

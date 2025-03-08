@@ -1,8 +1,6 @@
 package vector
 
 import (
-	"math"
-
 	"github.com/anubis-game/apiserver/pkg/matrix"
 )
 
@@ -12,8 +10,8 @@ func Impact(oxy matrix.Coordinate, osz byte, txy matrix.Coordinate, tsz byte) bo
 	var a float64
 	var b float64
 	{
-		a = math.Abs(float64(oxy.X) - float64(txy.X))
-		b = math.Abs(float64(oxy.Y) - float64(txy.Y))
+		a = absInt(oxy.X - txy.X)
+		b = absInt(oxy.Y - txy.Y)
 	}
 
 	// Sum the player sizes to get the maximum allowed distance between two
@@ -35,4 +33,12 @@ func Impact(oxy matrix.Coordinate, osz byte, txy matrix.Coordinate, tsz byte) bo
 	// radiuses.
 
 	return (s * s) > ((a * a) + (b * b))
+}
+
+func absInt(i int) float64 {
+	if i >= 0 {
+		return float64(i)
+	}
+
+	return -float64(i)
 }

@@ -8,15 +8,17 @@ func (v *Vector) expand(hea matrix.Coordinate, hid byte) {
 	if v.hea.hid < v.mhn {
 		v.hea.hid += int8(hid)
 		v.hea.crd = hea
-	} else {
-		lin := &Linker{
-			crd: hea,
-			prv: v.hea,
-		}
 
-		{
-			v.hea.nxt = lin
-			v.hea = lin
-		}
+		return
+	}
+
+	lnk := &Linker{
+		crd: hea,
+		prv: v.hea,
+	}
+
+	{
+		v.hea.nxt = lnk
+		v.hea = lnk
 	}
 }

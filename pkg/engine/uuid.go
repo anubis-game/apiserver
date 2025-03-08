@@ -1,8 +1,6 @@
 package engine
 
 import (
-	"github.com/anubis-game/apiserver/pkg/energy"
-	"github.com/anubis-game/apiserver/pkg/matrix"
 	"github.com/anubis-game/apiserver/pkg/player"
 	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/vector"
@@ -63,51 +61,51 @@ func (e *Engine) join(uid byte, wal common.Address, fcn chan<- []byte) {
 	// This process implies to find all relevant energy and player details visible
 	// to the new player.
 
-	for _, x := range vec.Screen() {
-		{
-			// Search for all the energy packets located within the partition x.
+	// for _, x := range vec.Screen() {
+	// 	{
+	// 		// Search for all the energy packets located within the partition x.
 
-			var lkp map[matrix.Coordinate]struct{}
-			{
-				lkp, _ = e.lkp.nrg.Load(x)
-			}
+	// 		var lkp map[matrix.Coordinate]struct{}
+	// 		{
+	// 			lkp, _ = e.lkp.nrg.Load(x)
+	// 		}
 
-			// For every energy packet in partition x, add its encoded representation to
-			// the new player's fanout buffer.
+	// 		// For every energy packet in partition x, add its encoded representation to
+	// 		// the new player's fanout buffer.
 
-			for k := range lkp {
-				var n *energy.Energy
-				{
-					n, _ = e.mem.nrg.Load(k)
-				}
+	// 		for k := range lkp {
+	// 			var n *energy.Energy
+	// 			{
+	// 				n, _ = e.mem.nrg.Load(k)
+	// 			}
 
-				{
-					buf = append(buf, n.Encode()...)
-				}
-			}
-		}
+	// 			{
+	// 				buf = append(buf, n.Encode()...)
+	// 			}
+	// 		}
+	// 	}
 
-		{
-			// Search for all the player coordinates located within the partition x.
+	// 	{
+	// 		// Search for all the player coordinates located within the partition x.
 
-			lkp, _ := e.lkp.ply.Load(x)
+	// 		lkp, _ := e.lkp.ply.Load(x)
 
-			// For every player coordinate in partition x, add its encoded
-			// representation to the new player's fanout buffer.
+	// 		// For every player coordinate in partition x, add its encoded
+	// 		// representation to the new player's fanout buffer.
 
-			for k := range lkp {
-				var p *player.Player
-				{
-					p, _ = e.mem.ply.Load(k)
-				}
+	// 		for k := range lkp {
+	// 			var p *player.Player
+	// 			{
+	// 				p, _ = e.mem.ply.Load(k)
+	// 			}
 
-				for _, y := range p.Vec.Ocdiff(x) {
-					b := y.Byt()
-					buf = append(buf, b[:]...)
-				}
-			}
-		}
-	}
+	// 			for _, y := range p.Vec.Ocdiff(x) {
+	// 				b := y.Byt()
+	// 				buf = append(buf, b[:]...)
+	// 			}
+	// 		}
+	// 	}
+	// }
 
 	// Add the new player object to the memory table. This ensures that this new
 	// player is part of the update loop moving forward. Also store the player's

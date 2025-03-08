@@ -77,28 +77,28 @@ func Benchmark_Vector_target(b *testing.B) {
 		agl byte
 		dis float64
 	}{
-		// Case 000, ~53 ns/op
+		// Case 000, ~2 ns/op
 		{
 			hea: matrix.Coordinate{X: 621_359, Y: 539_073},
 			qdr: byte(1),   // quadrant 1
 			agl: byte(108), // 38.12° from 0°
 			dis: nrm,       // normal speed
 		},
-		// Case 001, ~53 ns/op
+		// Case 001, ~2 ns/op
 		{
 			hea: matrix.Coordinate{X: 621_359, Y: 539_073},
 			qdr: byte(2),   // quadrant 2
 			agl: byte(253), // 89.29° from 90°
 			dis: nrm * 4,   // racing speed
 		},
-		// Case 002, ~53 ns/op
+		// Case 002, ~2 ns/op
 		{
 			hea: matrix.Coordinate{X: 621_359, Y: 539_073},
 			qdr: byte(3),   // quadrant 3
 			agl: byte(253), // 89.29° from 180°
 			dis: nrm * 4,   // racing speed
 		},
-		// Case 003, ~53 ns/op
+		// Case 003, ~2 ns/op
 		{
 			hea: matrix.Coordinate{X: 621_359, Y: 539_073},
 			qdr: byte(4),   // quadrant 4

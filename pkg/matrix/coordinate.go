@@ -47,6 +47,10 @@ func (c Coordinate) Byt() [CoordinateBytes]byte {
 	}
 }
 
+func (c Coordinate) Eql(crd Coordinate) bool {
+	return c.X == crd.X && c.Y == crd.Y
+}
+
 // Prt returns the partitioned representation of this Coordinate, which helps to
 // group coordinates for caching purposes.
 func (c Coordinate) Prt() Partition {
@@ -54,4 +58,8 @@ func (c Coordinate) Prt() Partition {
 		X: (c.X / Prt) * Prt,
 		Y: (c.Y / Prt) * Prt,
 	}
+}
+
+func (c Coordinate) Zer() bool {
+	return c.X == 0 && c.Y == 0
 }

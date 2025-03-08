@@ -8,7 +8,7 @@ import (
 	"github.com/anubis-game/apiserver/pkg/matrix"
 )
 
-// https://www.desmos.com/calculator/gewoldajer
+// https://www.desmos.com/calculator/kylhyiav4m
 func Test_Vector_Smooth(t *testing.T) {
 	var vec *Vector
 	{
@@ -137,7 +137,7 @@ func Test_Vector_smooth(t *testing.T) {
 	}
 }
 
-// ~840 ns/op
+// ~96 ns/op
 func Benchmark_Vector_Smooth(b *testing.B) {
 	var vec *Vector
 	{
@@ -148,11 +148,9 @@ func Benchmark_Vector_Smooth(b *testing.B) {
 		tesUpd(vec)
 	}
 
-	b.Run(fmt.Sprintf("%03d", 0), func(b *testing.B) {
-		for b.Loop() {
-			vec.smooth()
-		}
-	})
+	for b.Loop() {
+		vec.smooth()
+	}
 }
 
 func Benchmark_Vector_smooth(b *testing.B) {
@@ -163,37 +161,37 @@ func Benchmark_Vector_smooth(b *testing.B) {
 		smx int
 		smy int
 	}{
-		// Case 000, ~39 ns/op
+		// Case 000, ~2 ns/op
 		{
 			lef: matrix.Coordinate{X: 00, Y: 00},
 			mid: matrix.Coordinate{X: 05, Y: 10},
 			rig: matrix.Coordinate{X: 10, Y: 00},
 		},
-		// Case 001, ~39 ns/op
+		// Case 001, ~2 ns/op
 		{
 			lef: matrix.Coordinate{X: 00, Y: 20},
 			mid: matrix.Coordinate{X: 05, Y: 10},
 			rig: matrix.Coordinate{X: 10, Y: 20},
 		},
-		// Case 002, ~39 ns/op
+		// Case 002, ~2 ns/op
 		{
 			lef: matrix.Coordinate{X: 00, Y: 00},
 			mid: matrix.Coordinate{X: 05, Y: 00},
 			rig: matrix.Coordinate{X: 10, Y: 00},
 		},
-		// Case 003, ~39 ns/op
+		// Case 003, ~2 ns/op
 		{
 			lef: matrix.Coordinate{X: 04, Y: 12},
 			mid: matrix.Coordinate{X: 05, Y: 12},
 			rig: matrix.Coordinate{X: 11, Y: 12},
 		},
-		// Case 004, ~39 ns/op
+		// Case 004, ~2 ns/op
 		{
 			lef: matrix.Coordinate{X: 04, Y: 02},
 			mid: matrix.Coordinate{X: 05, Y: 12},
 			rig: matrix.Coordinate{X: 11, Y: 02},
 		},
-		// Case 005, ~39 ns/op
+		// Case 005, ~2 ns/op
 		{
 			lef: matrix.Coordinate{X: 5, Y: 63},
 			mid: matrix.Coordinate{X: 30, Y: 96},
