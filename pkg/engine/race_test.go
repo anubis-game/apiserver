@@ -1,7 +1,6 @@
 package engine
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/anubis-game/apiserver/pkg/vector"
@@ -65,23 +64,21 @@ func Test_Engine_race(t *testing.T) {
 	}
 }
 
-// ~2.00 ns/op
+// ~2 ns/op
 func Benchmark_Engine_race(b *testing.B) {
-	b.Run(fmt.Sprintf("%03d", 0), func(b *testing.B) {
-		var eng *Engine
-		{
-			eng = &Engine{
-				rac: make([]byte, 6),
-			}
+	var eng *Engine
+	{
+		eng = &Engine{
+			rac: make([]byte, 6),
 		}
+	}
 
-		var uid byte
-		{
-			uid = 0x5
-		}
+	var uid byte
+	{
+		uid = 0x5
+	}
 
-		for b.Loop() {
-			eng.race(uid)
-		}
-	})
+	for b.Loop() {
+		eng.race(uid)
+	}
 }

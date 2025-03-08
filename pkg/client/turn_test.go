@@ -77,39 +77,39 @@ func Benchmark_Client_turn_quadrant_one_condition(b *testing.B) {
 	testCases := []struct {
 		b byte
 	}{
-		// Case 000, ~1.00 ns/op
+		// Case 000, ~1 ns/op
 		{
 			b: 0,
 		},
-		// Case 001, ~1.00 ns/op
+		// Case 001, ~1 ns/op
 		{
 			b: 1,
 		},
-		// Case 002, ~1.00 ns/op
+		// Case 002, ~1 ns/op
 		{
 			b: 2,
 		},
-		// Case 003, ~1.00 ns/op
+		// Case 003, ~1 ns/op
 		{
 			b: 3,
 		},
-		// Case 004, ~1.00 ns/op
+		// Case 004, ~1 ns/op
 		{
 			b: 4,
 		},
-		// Case 005, ~1.00 ns/op
+		// Case 005, ~1 ns/op
 		{
 			b: 5,
 		},
-		// Case 006, ~1.00 ns/op
+		// Case 006, ~1 ns/op
 		{
 			b: 6,
 		},
-		// Case 007, ~1.00 ns/op
+		// Case 007, ~1 ns/op
 		{
 			b: 188,
 		},
-		// Case 008, ~1.00 ns/op
+		// Case 008, ~1 ns/op
 		{
 			b: 255,
 		},
@@ -128,39 +128,39 @@ func Benchmark_Client_turn_quadrant_two_conditions(b *testing.B) {
 	testCases := []struct {
 		b byte
 	}{
-		// Case 000, ~1.00 ns/op
+		// Case 000, ~1 ns/op
 		{
 			b: 0,
 		},
-		// Case 001, ~1.00 ns/op
+		// Case 001, ~1 ns/op
 		{
 			b: 1,
 		},
-		// Case 002, ~1.00 ns/op
+		// Case 002, ~1 ns/op
 		{
 			b: 2,
 		},
-		// Case 003, ~1.00 ns/op
+		// Case 003, ~1 ns/op
 		{
 			b: 3,
 		},
-		// Case 004, ~1.00 ns/op
+		// Case 004, ~1 ns/op
 		{
 			b: 4,
 		},
-		// Case 005, ~1.00 ns/op
+		// Case 005, ~1 ns/op
 		{
 			b: 5,
 		},
-		// Case 006, ~1.00 ns/op
+		// Case 006, ~1 ns/op
 		{
 			b: 6,
 		},
-		// Case 007, ~1.00 ns/op
+		// Case 007, ~1 ns/op
 		{
 			b: 188,
 		},
-		// Case 008, ~1.00 ns/op
+		// Case 008, ~1 ns/op
 		{
 			b: 255,
 		},

@@ -12,3 +12,11 @@ func (p Partition) Byt() [CoordinateBytes]byte {
 		byte(p.Y % 64),
 	}
 }
+
+func (p Partition) Eql(prt Partition) bool {
+	return p.X == prt.X && p.Y == prt.Y
+}
+
+func (p Partition) Zer() bool {
+	return p.X == 0 && p.Y == 0
+}

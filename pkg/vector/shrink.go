@@ -7,33 +7,40 @@ import (
 )
 
 func (v *Vector) shrink(hid byte) matrix.Coordinate {
-	// Move the current tail node closer to the body instead of removing it
-	// entirely, but only if the tail's neighbour node carries at least one hidden
-	// node.
-
-	if v.tai.nxt.hid > 0 {
-		old := v.tai.crd
-
-		v.tai.nxt.hid -= int8(hid)
-		v.tai.crd.X, v.tai.crd.Y = closer(v.tai.crd, v.tai.nxt.crd)
-
-		return old
-	}
-
 	// Remember the current tail so we can use its value to shrink this Vector
 	// below.
 
-	old := v.tai
+	cur := v.tai
+	nxt := cur.nxt
+	prv := cur.crd
+
+	// Move the current tail node closer to the body instead of removing it
+	// entirely, but only if the tail's neighbour node carries at least one hidden
+	// node. We can calculate the last step of closing in on the body more
+	// efficiently, because calculating the mid point of a line does not require
+	// math.Sqrt().
+
+	if nxt.hid == 1 {
+		nxt.hid = 0
+		cur.crd.X, cur.crd.Y = roundI(float64(cur.crd.X+nxt.crd.X)/2), roundI(float64(cur.crd.Y+nxt.crd.Y)/2)
+
+		return prv
+	} else if nxt.hid > 1 {
+		nxt.hid -= int8(hid)
+		cur.crd.X, cur.crd.Y = closer(cur.crd, nxt.crd)
+
+		return prv
+	}
 
 	// The next item of the old tail becomes the new tail. Also reduce the
 	// internal length counter.
 
 	{
-		v.tai = old.nxt
+		v.tai = nxt
 		v.tai.prv = nil
 	}
 
-	return old.crd
+	return prv
 }
 
 // closer brings "lef" closer to "rig" by returning the updated coordinates of
