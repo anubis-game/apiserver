@@ -172,6 +172,7 @@ func (v *Vector) Update(del int, qdr byte, agl byte, rac byte) {
 		v.occRem(ta3)
 	} else {
 		ta3 = v.rotate(hea)
+		v.occAdd() // TODO:test we have no coverage on screen and occupied boundaries
 		v.occRem(ta3)
 	}
 

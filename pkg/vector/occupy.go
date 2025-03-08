@@ -4,10 +4,6 @@ import (
 	"github.com/anubis-game/apiserver/pkg/matrix"
 )
 
-func (v *Vector) Change(prt matrix.Partition) []matrix.Coordinate {
-	return v.ocd[prt]
-}
-
 // occAdd adds data about the partitions and coordinates that this Vector
 // occupies. The coordinates we are working with internally represent the
 // Vector's current and previous head node. It is therefore important that
