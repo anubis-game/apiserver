@@ -30,7 +30,7 @@ func (v *Vector) Inside(stp int, srg int, sbt int, slf int) map[matrix.Partition
 	// reasons.
 	//
 	//     1. Vector.Inside() is only called when players join the game, which
-	//        is relatively rarely.
+	//        is relatively rare.
 	//
 	//     2. The number of partitions to iterate for any potential
 	//        overlapping area is relatively small.
