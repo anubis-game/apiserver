@@ -107,6 +107,10 @@ func New(c Config) *Vector {
 		len: 1,
 
 		ocd: map[matrix.Partition][]matrix.Coordinate{},
+		otp: prt.Y,
+		org: prt.X,
+		obt: prt.Y,
+		olf: prt.X,
 		ofx: map[int]int{prt.X: 1},
 		ofy: map[int]int{prt.Y: 1},
 
