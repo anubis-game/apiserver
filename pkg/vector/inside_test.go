@@ -701,3 +701,139 @@ func Test_Vector_Inside(t *testing.T) {
 		})
 	}
 }
+
+func Benchmark_Vector_Inside(b *testing.B) {
+	testCases := []struct {
+		scr screen
+	}{
+		// Case 000, ~2 ns/op
+		{
+			scr: screen{},
+		},
+		// Case 001, ~2 ns/op
+		{
+			scr: screen{top: 1792, rig: 768, bot: 1280, lef: 256},
+		},
+		// Case 002, ~135 ns/op, 4 allocs/op
+		{
+			scr: screen{top: 1792, rig: 896, bot: 1280, lef: 384},
+		},
+		// Case 003, ~277 ns/op, 8 allocs/op
+		{
+			scr: screen{top: 1792, rig: 1024, bot: 1280, lef: 512},
+		},
+		// Case 004, ~413 ns/op, 12 allocs/op
+		{
+			scr: screen{top: 1792, rig: 1152, bot: 1280, lef: 640},
+		},
+		// Case 005, ~474 ns/op, 14 allocs/op
+		{
+			scr: screen{top: 1792, rig: 1280, bot: 1280, lef: 768},
+		},
+		// Case 006, ~426 ns/op, 12 allocs/op
+		{
+			scr: screen{top: 1792, rig: 1536, bot: 1280, lef: 1024},
+		},
+		// Case 007, ~273 ns/op, 8 allocs/op
+		{
+			scr: screen{top: 1792, rig: 1664, bot: 1280, lef: 1152},
+		},
+		// Case 008, ~138 ns/op, 4 allocs/op
+		{
+			scr: screen{top: 1792, rig: 1792, bot: 1280, lef: 1280},
+		},
+		// Case 009, ~2 ns/op
+		{
+			scr: screen{top: 1792, rig: 1920, bot: 1280, lef: 1408},
+		},
+		// Case 010, ~2 ns/op
+		{
+			scr: screen{top: 1536, rig: 1920, bot: 1024, lef: 1408},
+		},
+		// Case 011, ~157 ns/op, 4 allocs/op
+		{
+			scr: screen{top: 1536, rig: 1792, bot: 1024, lef: 1280},
+		},
+		// Case 012, ~287 ns/op, 8 allocs/op
+		{
+			scr: screen{top: 1536, rig: 1664, bot: 1024, lef: 1152},
+		},
+		// Case 013, ~433 ns/op, 12 allocs/op
+		{
+			scr: screen{top: 1536, rig: 1536, bot: 1024, lef: 1024},
+		},
+		// Case 014, ~590 ns/op, 17 allocs/op
+		{
+			scr: screen{top: 1536, rig: 1408, bot: 1024, lef: 896},
+		},
+		// Case 015, ~532 ns/op, 15 allocs/op
+		{
+			scr: screen{top: 1536, rig: 1152, bot: 1024, lef: 640},
+		},
+		// Case 016, ~397 ns/op, 11 allocs/op
+		{
+			scr: screen{top: 1536, rig: 1024, bot: 1024, lef: 512},
+		},
+		// Case 017, ~229 ns/op, 7 allocs/op
+		{
+			scr: screen{top: 1536, rig: 896, bot: 1024, lef: 384},
+		},
+		// Case 018, ~2 ns/op
+		{
+			scr: screen{top: 1536, rig: 768, bot: 1024, lef: 256},
+		},
+		// Case 019, ~2 ns/op
+		{
+			scr: screen{top: 1152, rig: 768, bot: 640, lef: 256},
+		},
+		// Case 020, ~179 ns/op, 5 allocs/op
+		{
+			scr: screen{top: 1152, rig: 896, bot: 640, lef: 384},
+		},
+		// Case 021, ~180 ns/op, 5 allocs/op
+		{
+			scr: screen{top: 1152, rig: 1024, bot: 640, lef: 512},
+		},
+		// Case 022, ~172 ns/op, 5 allocs/op
+		{
+			scr: screen{top: 1152, rig: 1152, bot: 640, lef: 640},
+		},
+		// Case 023, ~173 ns/op, 5 allocs/op
+		{
+			scr: screen{top: 1152, rig: 1280, bot: 640, lef: 768},
+		},
+		// Case 024, ~15 ns/op
+		{
+			scr: screen{top: 1152, rig: 1536, bot: 640, lef: 1024},
+		},
+		// Case 025, ~16 ns/op
+		{
+			scr: screen{top: 1152, rig: 1664, bot: 640, lef: 1152},
+		},
+		// Case 026, ~15 ns/op
+		{
+			scr: screen{top: 1152, rig: 1792, bot: 640, lef: 1280},
+		},
+		// Case 027, ~2 ns/op
+		{
+			scr: screen{top: 1152, rig: 1920, bot: 640, lef: 1408},
+		},
+	}
+
+	for i, tc := range testCases {
+		b.Run(fmt.Sprintf("%03d", i), func(b *testing.B) {
+			var vec *Vector
+			{
+				vec = tesVec()
+			}
+
+			{
+				tesUpd(vec)
+			}
+
+			for b.Loop() {
+				vec.Inside(tc.scr.top, tc.scr.rig, tc.scr.bot, tc.scr.lef)
+			}
+		})
+	}
+}
