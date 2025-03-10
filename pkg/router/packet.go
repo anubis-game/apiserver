@@ -25,8 +25,8 @@ type Uuid struct {
 	Jod byte
 	// Wal
 	Wal common.Address
-	// Fcn is the fanout channel provided by a client to receive fanout buffers.
+	// Cli is the fanout channel provided by a client to receive fanout buffers.
 	// Using a non-blocking channel allows us to decouple the ticker based fanout
 	// procedure from the blocking operations of a client connection.
-	Fcn chan<- []byte
+	Cli chan<- []byte
 }

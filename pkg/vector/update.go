@@ -56,12 +56,7 @@ func (v *Vector) Update(del int, qdr byte, agl byte, rac byte) {
 		siz = float64(v.crx.Siz)
 	}
 
-	// Get the player's desired factor of sight, given the new player size. This
-	// factor here will be multiplied by the length of our matrix partition like
-	// shown below.
-	//
-	//     ((fos * 2) + 1) * matrix.Prt
-	//
+	// Get the player's desired factor of sight, given the new player size.
 
 	var fos int
 	{
@@ -75,17 +70,17 @@ func (v *Vector) Update(del int, qdr byte, agl byte, rac byte) {
 	// factor of sight increments or decrements too.
 
 	if fos > v.crx.Fos {
-		v.stp += matrix.Prt
-		v.srg += matrix.Prt
-		v.sbt -= matrix.Prt
-		v.slf -= matrix.Prt
+		v.stp += matrix.Pt1
+		v.srg += matrix.Pt1
+		v.sbt -= matrix.Pt1
+		v.slf -= matrix.Pt1
 	}
 
 	if fos < v.crx.Fos {
-		v.stp -= matrix.Prt
-		v.srg -= matrix.Prt
-		v.sbt += matrix.Prt
-		v.slf += matrix.Prt
+		v.stp -= matrix.Pt1
+		v.srg -= matrix.Pt1
+		v.sbt += matrix.Pt1
+		v.slf += matrix.Pt1
 	}
 
 	// Update the rest of the character settings.
@@ -188,13 +183,13 @@ func (v *Vector) Update(del int, qdr byte, agl byte, rac byte) {
 
 	{
 		cur := v.hea.crd
-		chp := cur.Prt()
+		chp := cur.Pt1()
 		v.ocd[chp] = append(v.ocd[chp], cur)
 	}
 
 	if !ta1.Eql(v.tai.crd) {
 		cur := v.tai.crd
-		ctp := cur.Prt()
+		ctp := cur.Pt1()
 		v.ocd[ctp] = append(v.ocd[ctp], cur)
 	}
 
@@ -204,12 +199,12 @@ func (v *Vector) Update(del int, qdr byte, agl byte, rac byte) {
 	// directly after the new tail node. If ta2 exists, add that after ta3.
 
 	if !ta3.Zer() {
-		ptp := ta3.Prt()
+		ptp := ta3.Pt1()
 		v.ocd[ptp] = append(v.ocd[ptp], ta3)
 	}
 
 	if !ta2.Zer() {
-		ptp := ta2.Prt()
+		ptp := ta2.Pt1()
 		v.ocd[ptp] = append(v.ocd[ptp], ta2)
 	}
 }

@@ -12,6 +12,6 @@ import (
 // does not provide their own desired change in direction, the player keeps
 // moving in the same direction.
 func (e *Engine) turn(pac router.Turn) {
-	e.tur[pac.Uid].Qdr = pac.Qdr
-	e.tur[pac.Uid].Agl = pac.Agl
+	e.ply.tur[pac.Uid].Qdr = pac.Qdr
+	e.ply.tur[pac.Uid].Agl = pac.Agl
 }

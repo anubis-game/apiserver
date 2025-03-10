@@ -6,13 +6,13 @@ func (e *Engine) tick() {
 	for u := range e.uni.Length() {
 		// Skip all inactive players.
 
-		if !e.act[u] {
+		if e.ply.cli[u] == nil {
 			continue
 		}
 
 		var tur router.Turn
 		{
-			tur = e.tur[u]
+			tur = e.ply.tur[u]
 		}
 
 		// It may happen that a new player is being processed here, while said
@@ -26,6 +26,6 @@ func (e *Engine) tick() {
 			_ = 0 // TODO:game use current motion
 		}
 
-		// ...
+		// TODO:infra manage all changes in movement
 	}
 }

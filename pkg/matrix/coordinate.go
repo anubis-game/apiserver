@@ -20,9 +20,6 @@ type Coordinate struct {
 	Y int
 }
 
-// TODO:infra instead of computing the coordinate partitions and byte
-// representations over and over again, we should generate them once.
-
 func NewCoordinate(byt []byte) Coordinate {
 	return Coordinate{
 		X: (int(byt[X0]) * 4096) + (int(byt[X1]) * 64) + int(byt[X2]),
@@ -48,18 +45,33 @@ func (c Coordinate) Byt() [CoordinateBytes]byte {
 }
 
 func (c Coordinate) Eql(crd Coordinate) bool {
-	return c.X == crd.X && c.Y == crd.Y
+	// return c.X == crd.X && c.Y == crd.Y
+	return c == crd
 }
 
-// Prt returns the partitioned representation of this Coordinate, which helps to
-// group coordinates for caching purposes.
-func (c Coordinate) Prt() Partition {
+// TODO:bench instead of computing the coordinate partitions and byte
+// representations over and over again, we could generate them once, if that
+// approach turns out to be more efficient.
+
+// Pt1 returns the small partition of this Coordinate.
+func (c Coordinate) Pt1() Partition {
 	return Partition{
-		X: (c.X / Prt) * Prt,
-		Y: (c.Y / Prt) * Prt,
+		X: (c.X / Pt1) * Pt1,
+		Y: (c.Y / Pt1) * Pt1,
 	}
 }
 
+// Pt8 returns the large partition of this Coordinate.
+func (c Coordinate) Pt8() Partition {
+	return Partition{
+		X: (c.X / Pt8) * Pt8,
+		Y: (c.Y / Pt8) * Pt8,
+	}
+}
+
+var zer Coordinate
+
 func (c Coordinate) Zer() bool {
-	return c.X == 0 && c.Y == 0
+	// return c.X == 0 && c.Y == 0
+	return c == zer
 }

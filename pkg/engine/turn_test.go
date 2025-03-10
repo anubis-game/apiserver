@@ -9,9 +9,7 @@ import (
 func Test_Engine_turn(t *testing.T) {
 	var eng *Engine
 	{
-		eng = &Engine{
-			tur: make([]router.Turn, 6),
-		}
+		eng = tesEng(250)
 	}
 
 	var uid byte
@@ -19,53 +17,53 @@ func Test_Engine_turn(t *testing.T) {
 		uid = 0x5
 	}
 
-	if eng.tur[uid].Qdr != 0x0 {
-		t.Fatalf("expected %#v got %#v", 0x0, eng.tur[uid].Qdr)
+	if eng.ply.tur[uid].Qdr != 0x0 {
+		t.Fatalf("expected %#v got %#v", 0x0, eng.ply.tur[uid].Qdr)
 	}
-	if eng.tur[uid].Agl != 0x0 {
-		t.Fatalf("expected %#v got %#v", 0x0, eng.tur[uid].Agl)
+	if eng.ply.tur[uid].Agl != 0x0 {
+		t.Fatalf("expected %#v got %#v", 0x0, eng.ply.tur[uid].Agl)
 	}
 
 	eng.turn(router.Turn{Uid: uid, Qdr: 0x1, Agl: 0x80})
 
-	if eng.tur[uid].Qdr != 0x1 {
-		t.Fatalf("expected %#v got %#v", 0x1, eng.tur[uid].Qdr)
+	if eng.ply.tur[uid].Qdr != 0x1 {
+		t.Fatalf("expected %#v got %#v", 0x1, eng.ply.tur[uid].Qdr)
 	}
-	if eng.tur[uid].Agl != 0x80 {
-		t.Fatalf("expected %#v got %#v", 0x80, eng.tur[uid].Agl)
+	if eng.ply.tur[uid].Agl != 0x80 {
+		t.Fatalf("expected %#v got %#v", 0x80, eng.ply.tur[uid].Agl)
 	}
 
 	{
 		eng.turn(router.Turn{Uid: uid, Qdr: 0x1, Agl: 0x76})
 	}
 
-	if eng.tur[uid].Qdr != 0x1 {
-		t.Fatalf("expected %#v got %#v", 0x1, eng.tur[uid].Qdr)
+	if eng.ply.tur[uid].Qdr != 0x1 {
+		t.Fatalf("expected %#v got %#v", 0x1, eng.ply.tur[uid].Qdr)
 	}
-	if eng.tur[uid].Agl != 0x76 {
-		t.Fatalf("expected %#v got %#v", 0x76, eng.tur[uid].Agl)
+	if eng.ply.tur[uid].Agl != 0x76 {
+		t.Fatalf("expected %#v got %#v", 0x76, eng.ply.tur[uid].Agl)
 	}
 
 	{
 		eng.turn(router.Turn{Uid: uid, Qdr: 0x3, Agl: 0xa})
 	}
 
-	if eng.tur[uid].Qdr != 0x3 {
-		t.Fatalf("expected %#v got %#v", 0x3, eng.tur[uid].Qdr)
+	if eng.ply.tur[uid].Qdr != 0x3 {
+		t.Fatalf("expected %#v got %#v", 0x3, eng.ply.tur[uid].Qdr)
 	}
-	if eng.tur[uid].Agl != 0xa {
-		t.Fatalf("expected %#v got %#v", 0xa, eng.tur[uid].Agl)
+	if eng.ply.tur[uid].Agl != 0xa {
+		t.Fatalf("expected %#v got %#v", 0xa, eng.ply.tur[uid].Agl)
 	}
 
 	{
 		eng.turn(router.Turn{Uid: uid, Qdr: 0x1, Agl: 0x80})
 	}
 
-	if eng.tur[uid].Qdr != 0x1 {
-		t.Fatalf("expected %#v got %#v", 0x1, eng.tur[uid].Qdr)
+	if eng.ply.tur[uid].Qdr != 0x1 {
+		t.Fatalf("expected %#v got %#v", 0x1, eng.ply.tur[uid].Qdr)
 	}
-	if eng.tur[uid].Agl != 0x80 {
-		t.Fatalf("expected %#v got %#v", 0x80, eng.tur[uid].Agl)
+	if eng.ply.tur[uid].Agl != 0x80 {
+		t.Fatalf("expected %#v got %#v", 0x80, eng.ply.tur[uid].Agl)
 	}
 }
 
@@ -73,9 +71,7 @@ func Test_Engine_turn(t *testing.T) {
 func Benchmark_Engine_turn(b *testing.B) {
 	var eng *Engine
 	{
-		eng = &Engine{
-			tur: make([]router.Turn, 6),
-		}
+		eng = tesEng(250)
 	}
 
 	var uid byte

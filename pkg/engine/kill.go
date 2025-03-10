@@ -19,10 +19,6 @@ import (
 func (e *Engine) Kill(uid byte, _ *client.Client, inp []byte) error {
 	var err error
 
-	{
-		e.mem.vec.Delete(uid)
-	}
-
 	//
 	//     inp[0]        action
 	//     inp[1:21]     winner

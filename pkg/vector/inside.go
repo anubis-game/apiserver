@@ -47,7 +47,7 @@ func (v *Vector) Inside(stp int, srg int, sbt int, slf int) map[matrix.Partition
 
 		var p matrix.Partition
 		{
-			p = n.crd.Prt()
+			p = n.crd.Pt1()
 		}
 
 		if top < p.Y || rig < p.X || bot > p.Y || lef > p.X {

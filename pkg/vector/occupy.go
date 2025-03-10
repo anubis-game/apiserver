@@ -13,8 +13,8 @@ func (v *Vector) occAdd() {
 	cur := v.hea.crd
 	prv := v.hea.prv.crd
 
-	chp := cur.Prt()
-	php := prv.Prt()
+	chp := cur.Pt1()
+	php := prv.Pt1()
 
 	// Always keep track of the amount of partition coordinates that the nodes of
 	// this Vector occupy along the X and Y axis.
@@ -40,26 +40,26 @@ func (v *Vector) occAdd() {
 
 		if chp.Y > php.Y {
 			v.otp = chp.Y
-			v.stp += matrix.Prt
-			v.sbt += matrix.Prt
+			v.stp += matrix.Pt1
+			v.sbt += matrix.Pt1
 		}
 
 		if chp.X > php.X {
 			v.org = chp.X
-			v.slf += matrix.Prt
-			v.srg += matrix.Prt
+			v.slf += matrix.Pt1
+			v.srg += matrix.Pt1
 		}
 
 		if chp.Y < php.Y {
 			v.obt = chp.Y
-			v.stp -= matrix.Prt
-			v.sbt -= matrix.Prt
+			v.stp -= matrix.Pt1
+			v.sbt -= matrix.Pt1
 		}
 
 		if chp.X < php.X {
 			v.olf = chp.X
-			v.slf -= matrix.Prt
-			v.srg -= matrix.Prt
+			v.slf -= matrix.Pt1
+			v.srg -= matrix.Pt1
 		}
 	}
 }
@@ -68,8 +68,8 @@ func (v *Vector) occAdd() {
 // occupies. The given coordinate represents the Vector's old tail node, that
 // got removed from the underlying linked list.
 func (v *Vector) occRem(prv matrix.Coordinate) {
-	ctp := v.tai.crd.Prt()
-	ptp := prv.Prt()
+	ctp := v.tai.crd.Pt1()
+	ptp := prv.Pt1()
 
 	// Always keep track of the amount of partition coordinates that the nodes of
 	// this Vector occupy along the X and Y axis.

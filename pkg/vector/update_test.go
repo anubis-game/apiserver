@@ -651,7 +651,7 @@ func Test_Vector_Update(t *testing.T) {
 			}
 
 			var nod []matrix.Coordinate
-			vec.ranger(func(o matrix.Coordinate) {
+			vec.Ranger(func(o matrix.Coordinate) {
 				nod = append(nod, o)
 			})
 

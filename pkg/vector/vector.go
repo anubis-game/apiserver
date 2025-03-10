@@ -92,9 +92,9 @@ func New(c Config) *Vector {
 	var fos int
 	var pxl int
 	{
-		prt = c.Hea.Prt()
+		prt = c.Hea.Pt1()
 		fos = sight(0)
-		pxl = fos * matrix.Prt
+		pxl = fos * matrix.Pt1
 	}
 
 	return &Vector{
