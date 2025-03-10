@@ -3,7 +3,7 @@ package engine
 import (
 	"github.com/anubis-game/apiserver/pkg/energy"
 	"github.com/anubis-game/apiserver/pkg/matrix"
-	"github.com/anubis-game/apiserver/pkg/player"
+	"github.com/anubis-game/apiserver/pkg/vector"
 	"github.com/puzpuzpuz/xsync/v3"
 )
 
@@ -14,7 +14,6 @@ type memory struct {
 	// to energy packets using their position only because energy packets don't
 	// move.
 	nrg *xsync.MapOf[matrix.Coordinate, *energy.Energy]
-	// ply contains all active player information, including their connected
-	// clients.
-	ply *xsync.MapOf[byte, *player.Player]
+	// vec contains all Vectors for the mapped byte ID.
+	vec *xsync.MapOf[byte, *vector.Vector]
 }

@@ -1,4 +1,4 @@
-package unique
+package number
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ type Number interface {
 	uint8 | uint16 | int8 | int16
 }
 
-func length[T Number]() int {
+func Length[T Number]() int {
 	var z T
 
 	switch t := any(z).(type) {

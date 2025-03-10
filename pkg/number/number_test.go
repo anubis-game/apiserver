@@ -1,19 +1,19 @@
-package unique
+package number
 
 import "testing"
 
-func Test_Unique_Number_length(t *testing.T) {
+func Test_Number_Length(t *testing.T) {
 	var byt int
 	var u08 int
 	var u16 int
 	var i08 int
 	var i16 int
 	{
-		byt = length[byte]()
-		u08 = length[uint8]()
-		u16 = length[uint16]()
-		i08 = length[int8]()
-		i16 = length[int16]()
+		byt = Length[byte]()
+		u08 = Length[uint8]()
+		u16 = Length[uint16]()
+		i08 = Length[int8]()
+		i16 = Length[int16]()
 	}
 
 	if byt != 255 {
