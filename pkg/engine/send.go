@@ -19,31 +19,9 @@ func (e *Engine) send(tic time.Time) {
 	// data that it meant to send out to the client.
 
 	for u := range e.uni.Length() {
-		// Get the player specific buffer and reset it for the next cycle. Buffers
-		// may be empty if player IDs have been allocated upon joining a game, while
-		// no buffer has been prepared just yet.
+		// Skip all inactive players.
 
-		var b []byte
-		{
-			b, _ = e.fbf.LoadAndDelete(u)
-		}
-
-		if len(b) == 0 {
-			continue
-		}
-
-		// Get the player specific fanout channel so we can forward the prepared
-		// fanout buffer to the underlying client. Channels may be nil if player IDs
-		// have been allocated upon joining a game, while no client has been setup
-		// just yet. It is also possible for players to get disconnected
-		// intermittently, which would nil the formerly established channel as well.
-
-		var c chan<- []byte
-		{
-			c = e.fcn[u]
-		}
-
-		if c == nil {
+		if !e.act[u] {
 			continue
 		}
 
@@ -52,7 +30,13 @@ func (e *Engine) send(tic time.Time) {
 		// block.
 
 		{
-			c <- b
+			e.fcn[u] <- e.fbf[u]
+		}
+
+		// Reset the player specific fanout buffer for the next cycle.
+
+		{
+			e.fbf[u] = nil
 		}
 	}
 }

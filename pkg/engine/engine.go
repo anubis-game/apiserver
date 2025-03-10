@@ -7,10 +7,10 @@ import (
 	"github.com/anubis-game/apiserver/pkg/energy"
 	"github.com/anubis-game/apiserver/pkg/filler"
 	"github.com/anubis-game/apiserver/pkg/matrix"
-	"github.com/anubis-game/apiserver/pkg/player"
 	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/tokenx"
 	"github.com/anubis-game/apiserver/pkg/unique"
+	"github.com/anubis-game/apiserver/pkg/vector"
 	"github.com/anubis-game/apiserver/pkg/worker"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/puzpuzpuz/xsync/v3"
@@ -21,7 +21,7 @@ import (
 type Config struct {
 	Cap int
 	Don <-chan struct{}
-	Fil *filler.Filler
+	Fil filler.Interface
 	Log logger.Interface
 	Rtr *router.Engine
 	Tkx *tokenx.TokenX[common.Address]
@@ -30,19 +30,20 @@ type Config struct {
 }
 
 type Engine struct {
+	act []bool
 	// don is the global channel to signal program termination. If this channel is
 	// closed, then all streaming connections should be terminated gracefully.
 	don <-chan struct{}
 	// fbf contains the fanout buffers ready to be sent out to every player during
 	// the ticker based fanout procedure. Any respective byte slice may be empty,
 	// or contain one, or multiple encoded messages.
-	fbf *xsync.MapOf[byte, []byte]
+	fbf [][]byte
 	// fcn contains the fanout channels for every player. It is critically
 	// important that modifications on fcn are only done sequentially by a single
 	// writer.
 	fcn []chan<- []byte
 	// filler
-	fil *filler.Filler
+	fil filler.Interface
 	// lkp
 	lkp *lookup
 	// log is a simple logger interface to print system relevant information.
@@ -91,8 +92,9 @@ func New(c Config) *Engine {
 	}
 
 	return &Engine{
+		act: make([]bool, c.Cap),
 		don: c.Don,
-		fbf: xsync.NewMapOf[byte, []byte](),
+		fbf: make([][]byte, c.Cap),
 		fcn: make([]chan<- []byte, c.Cap),
 		fil: c.Fil,
 		lkp: &lookup{
@@ -102,7 +104,7 @@ func New(c Config) *Engine {
 		log: c.Log,
 		mem: &memory{
 			nrg: xsync.NewMapOf[matrix.Coordinate, *energy.Energy](),
-			ply: xsync.NewMapOf[byte, *player.Player](),
+			vec: xsync.NewMapOf[byte, *vector.Vector](),
 		},
 		rac: make([]byte, c.Cap),
 		rtr: c.Rtr,

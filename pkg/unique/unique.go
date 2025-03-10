@@ -3,23 +3,25 @@ package unique
 import (
 	"sync"
 	"sync/atomic"
+
+	"github.com/anubis-game/apiserver/pkg/number"
 )
 
 // Unique generates numerical IDs in constant time within a given capacity. Note
 // that we use a normal sync.Mutex for synchronization instead of a
 // sync.RWMutex, because the synchronized code is many times faster than the
 // additional overhead incurred by sync.RWMutex.
-type Unique[K comparable, V Number] struct {
+type Unique[K comparable, V number.Number] struct {
 	ind *atomic.Int32
 	lis []V
 	mut sync.Mutex
 	rev map[K]V
 }
 
-func New[K comparable, V Number]() *Unique[K, V] {
+func New[K comparable, V number.Number]() *Unique[K, V] {
 	var len int
 	{
-		len = length[V]()
+		len = number.Length[V]()
 	}
 
 	// The mechanism of this stack based ID generation does only work if there is

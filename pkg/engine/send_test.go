@@ -10,10 +10,8 @@ import (
 
 	"github.com/anubis-game/apiserver/pkg/client"
 	"github.com/anubis-game/apiserver/pkg/tokenx"
-	"github.com/anubis-game/apiserver/pkg/unique"
 	"github.com/coder/websocket"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/puzpuzpuz/xsync/v3"
 	"github.com/xh3b4sd/logger"
 	"go.uber.org/ratelimit"
 )
@@ -21,16 +19,12 @@ import (
 func Test_Engine_worker_read(t *testing.T) {
 	var eng *Engine
 	{
-		eng = &Engine{
-			fbf: xsync.NewMapOf[byte, []byte](),
-			uni: unique.New[common.Address, byte](),
-			fcn: make([]chan<- []byte, 6),
-		}
+		eng = tesEng(250)
 	}
 
 	var uid byte
 	{
-		uid = eng.uni.Ensure(common.Address{})
+		uid = 0x5
 	}
 
 	var fcn chan []byte
@@ -67,7 +61,7 @@ func Test_Engine_worker_read(t *testing.T) {
 
 	for range 10 {
 		{
-			eng.fbf.Store(uid, buf)
+			eng.fbf[uid] = buf
 		}
 
 		var dur time.Duration
@@ -98,43 +92,43 @@ func Benchmark_Engine_send(b *testing.B) {
 	testCases := []struct {
 		buf []byte
 	}{
-		// Case 000, ~3,800 ns/op, 1 allocs/op
+		// Case 000, ~3,800 ns/op, 0 allocs/op
 		{
 			buf: make([]byte, 2),
 		},
-		// Case 001, ~3,800 ns/op, 2 allocs/op
+		// Case 001, ~3,800 ns/op, 1 allocs/op
 		{
 			buf: make([]byte, 32),
 		},
-		// Case 002, ~3,800 ns/op, 2 allocs/op
+		// Case 002, ~3,800 ns/op, 1 allocs/op
 		{
 			buf: make([]byte, 64),
 		},
-		// Case 003, ~3,800 ns/op, 2 allocs/op
+		// Case 003, ~3,800 ns/op, 1 allocs/op
 		{
 			buf: make([]byte, 128),
 		},
-		// Case 004, ~3,800 ns/op, 2 allocs/op
+		// Case 004, ~3,900 ns/op, 1 allocs/op
 		{
 			buf: make([]byte, 256),
 		},
-		// Case 005, ~3,900 ns/op, 2 allocs/op
+		// Case 005, ~4,000 ns/op, 1 allocs/op
 		{
 			buf: make([]byte, 512),
 		},
-		// Case 006, ~4,000 ns/op, 3 allocs/op
+		// Case 006, ~4,100 ns/op, 2 allocs/op
 		{
 			buf: make([]byte, 1024),
 		},
-		// Case 007, ~6,300 ns/op, 5 allocs/op
+		// Case 007, ~6,800 ns/op, 4 allocs/op
 		{
 			buf: make([]byte, 2048),
 		},
-		// Case 008, ~10,000 ns/op, 8 allocs/op
+		// Case 008, ~10,000 ns/op, 7 allocs/op
 		{
 			buf: make([]byte, 4096),
 		},
-		// Case 009, ~18,000 ns/op, 10 allocs/op
+		// Case 009, ~17,800 ns/op, 9 allocs/op
 		{
 			buf: make([]byte, 8192),
 		},
@@ -142,16 +136,12 @@ func Benchmark_Engine_send(b *testing.B) {
 
 	var eng *Engine
 	{
-		eng = &Engine{
-			fbf: xsync.NewMapOf[byte, []byte](),
-			uni: unique.New[common.Address, byte](),
-			fcn: make([]chan<- []byte, 6),
-		}
+		eng = tesEng(250)
 	}
 
 	var uid byte
 	{
-		uid = eng.uni.Ensure(common.Address{})
+		uid = 0x5
 	}
 
 	var fcn chan []byte
@@ -176,6 +166,7 @@ func Benchmark_Engine_send(b *testing.B) {
 	}
 
 	{
+		eng.act[uid] = true
 		eng.fcn[uid] = fcn
 	}
 
@@ -184,7 +175,7 @@ func Benchmark_Engine_send(b *testing.B) {
 	for i, tc := range testCases {
 		b.Run(fmt.Sprintf("%03d", i), func(b *testing.B) {
 			for b.Loop() {
-				eng.fbf.Store(uid, tc.buf)
+				eng.fbf[uid] = tc.buf
 				eng.send(tic)
 			}
 		})

@@ -4,6 +4,12 @@ import "github.com/anubis-game/apiserver/pkg/router"
 
 func (e *Engine) tick() {
 	for u := range e.uni.Length() {
+		// Skip all inactive players.
+
+		if !e.act[u] {
+			continue
+		}
+
 		var tur router.Turn
 		{
 			tur = e.tur[u]
