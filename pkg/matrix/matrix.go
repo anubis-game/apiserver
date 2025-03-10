@@ -5,12 +5,12 @@ const (
 	Max = 64 * 64 * 64
 	// Min is the upper boundary of the game map in pixels.
 	Min = 0
-	// Prt is the scaling value allowing us to partition the X and Y axis into
-	// logical buckets similar to quadtrees. 128*2048 = 64^3
-	Prt = 128 // TODO:infra rename to Pt1 and add Pt8 with 1024 pixels for secondary partitions
-	// Thr is the pixel threshold around the edges of the game map in which
-	// players cannot be placed initially upon joining the game. The purpose of
-	// this buffer region is to not put players too close to the edges of the
-	// game, so that they can not run into the wall accidentally.
-	Thr = 1_024
+	// Pt1 is the side length of a small partition in pixels, dividing the game
+	// map into smaller logical buckets. There are 2048*2048 small partitions
+	// based on Max.
+	Pt1 = 128
+	// Pt8 is the side length of a large partition in pixels, dividing the game
+	// map into larger logical buckets. There are 256*256 large partitions based
+	// on Max.
+	Pt8 = 128 * 8
 )

@@ -11,9 +11,9 @@ import (
 // every player operating at normal speed. The first call to Engine.race() must
 // therefore switch to racing mode.
 func (e *Engine) race(uid byte) {
-	if e.rac[uid] == vector.Rcn {
-		e.rac[uid] = vector.Nrm
+	if e.ply.rac[uid] == vector.Rcn {
+		e.ply.rac[uid] = vector.Nrm
 	} else {
-		e.rac[uid] = vector.Rcn
+		e.ply.rac[uid] = vector.Rcn
 	}
 }

@@ -19,9 +19,14 @@ func (e *Engine) send(tic time.Time) {
 	// data that it meant to send out to the client.
 
 	for u := range e.uni.Length() {
+		var cli chan<- []byte
+		{
+			cli = e.ply.cli[u]
+		}
+
 		// Skip all inactive players.
 
-		if !e.act[u] {
+		if cli == nil {
 			continue
 		}
 
@@ -30,13 +35,13 @@ func (e *Engine) send(tic time.Time) {
 		// block.
 
 		{
-			e.fcn[u] <- e.fbf[u]
+			cli <- e.ply.buf[u]
 		}
 
 		// Reset the player specific fanout buffer for the next cycle.
 
 		{
-			e.fbf[u] = nil
+			e.ply.buf[u] = nil
 		}
 	}
 }

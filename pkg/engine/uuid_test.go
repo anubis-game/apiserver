@@ -24,21 +24,21 @@ func Test_Engine_uuid(t *testing.T) {
 			wal = tesWal(u)
 		}
 
-		act := eng.act[u]
-		if act == true {
-			t.Fatalf("expected %#v got %#v", false, true)
+		cli := eng.ply.cli[u]
+		if cli != nil {
+			t.Fatalf("expected %#v got %#v", nil, cli)
 		}
 
 		{
-			eng.uuid(router.Uuid{Uid: u, Jod: router.Join, Wal: wal})
+			eng.uuid(router.Uuid{Uid: u, Jod: router.Join, Wal: wal, Cli: make(chan<- []byte)})
 		}
 
-		act = eng.act[u]
-		if act == false {
-			t.Fatalf("expected %#v got %#v", true, false)
+		cli = eng.ply.cli[u]
+		if cli == nil {
+			t.Fatalf("expected %T got %#v", make(chan<- []byte), nil)
 		}
 
-		vec, _ := eng.mem.vec.Load(u)
+		vec := eng.mem.vec[u]
 		if vec == nil {
 			t.Fatalf("expected %T got %#v", &vector.Vector{}, nil)
 		}
@@ -49,7 +49,7 @@ func Test_Engine_uuid(t *testing.T) {
 	}
 }
 
-// ~2,265 ns/op, 28 allocs/op
+// ~2,603 ns/op, 38 allocs/op
 func Benchmark_Engine_uuid(b *testing.B) {
 	var eng *Engine
 	{
@@ -62,6 +62,6 @@ func Benchmark_Engine_uuid(b *testing.B) {
 	}
 
 	for b.Loop() {
-		eng.uuid(router.Uuid{Uid: uid, Jod: router.Join, Wal: tesWal(uid)})
+		eng.uuid(router.Uuid{Uid: uid, Jod: router.Join, Wal: tesWal(uid), Cli: make(chan<- []byte)})
 	}
 }

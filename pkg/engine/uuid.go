@@ -1,7 +1,6 @@
 package engine
 
 import (
-	"github.com/anubis-game/apiserver/pkg/energy"
 	"github.com/anubis-game/apiserver/pkg/matrix"
 	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/vector"
@@ -10,13 +9,14 @@ import (
 
 func (e *Engine) uuid(pac router.Uuid) {
 	if pac.Jod == router.Join {
-		e.join(pac.Uid, pac.Wal, pac.Fcn)
+		e.join(pac.Uid, pac.Wal, pac.Cli)
 	} else {
 		e.drop(pac.Uid)
 	}
 }
 
-func (e *Engine) join(uid byte, _ common.Address, fcn chan<- []byte) {
+func (e *Engine) join(uid byte, _ common.Address, cli chan<- []byte) {
+	all := map[byte]struct{}{}
 
 	// Generating a new player object for the connected client effectively puts
 	// the player randomly onto the game map due to the Filler.Vector()
@@ -49,53 +49,32 @@ func (e *Engine) join(uid byte, _ common.Address, fcn chan<- []byte) {
 		buf = ini
 	}
 
-	// Stream all relevant map details for the initial view of the new player.
+	// Search for all the energy packets located within the partitions that the
+	// new player can see.
 
-	all := map[byte]struct{}{}
-	for _, x := range matrix.PfromS(vec.Screen()) {
-		{
-			// Search for all the energy packets located within the partition x.
-
-			var lkp map[matrix.Coordinate]struct{}
-			{
-				lkp, _ = e.lkp.nrg.Load(x)
-			}
-
-			// For every energy packet in partition x, add its encoded representation to
-			// the new player's fanout buffer.
-
-			for k := range lkp {
-				var n *energy.Energy
-				{
-					n, _ = e.mem.nrg.Load(k)
-				}
-
-				{
-					buf = append(buf, n.Encode()...)
-				}
-			}
-		}
-
-		{
-			// Search for all the unique byte IDs located within partition x.
-
-			var lkp map[byte]struct{}
-			{
-				lkp, _ = e.lkp.ply.Load(x)
-			}
-
-			for k := range lkp {
-				all[k] = struct{}{}
-			}
+	for _, p := range matrix.Pt1Scr(vec.Screen()) {
+		for k := range e.lkp.nrg[p] {
+			buf = append(buf, e.mem.nrg[k].Encode()...)
 		}
 	}
 
-	// Render all existing players inside the view of the new player.
+	// Search for all the unique byte IDs located around the new player's head
+	// node. The area we are searching through here contains a single layer of
+	// large partitions around the new player's head node. That is 9 partitions.
+
+	for _, p := range matrix.Pt8Scr(vec.Header().Pt8()) {
+		for u := range e.lkp.pt8[p] {
+			all[u] = struct{}{}
+		}
+	}
+
+	// Render all existing players inside the view of the new player, and render
+	// the new player in the view of all existing players.
 
 	for u := range all {
 		var v *vector.Vector
 		{
-			v, _ = e.mem.vec.Load(u)
+			v = e.mem.vec[u]
 		}
 
 		for _, l := range v.Inside(vec.Screen()) {
@@ -105,30 +84,65 @@ func (e *Engine) join(uid byte, _ common.Address, fcn chan<- []byte) {
 				buf = append(buf, b[:]...)
 			}
 		}
+
+		for _, l := range vec.Inside(v.Screen()) {
+			for _, c := range l {
+				b := c.Byt()
+				// TODO:infra the body messages still need to be encoded.
+				buf = append(buf, b[:]...)
+			}
+		}
 	}
+
+	// Add the new byte ID to the partition indices.
+
+	vec.Ranger(func(c matrix.Coordinate) {
+		// Add every node coordinate of the new player to the small partitions.
+
+		{
+			prt := c.Pt1()
+
+			pt1, exi := e.lkp.pt1[prt]
+			if !exi {
+				pt1 = map[byte]struct{}{uid: {}}
+			} else {
+				pt1[uid] = struct{}{}
+			}
+
+			e.lkp.pt1[prt] = pt1
+		}
+
+		// Add every node coordinate of the new player to the large partitions.
+
+		{
+			prt := c.Pt8()
+
+			pt8, exi := e.lkp.pt8[prt]
+			if !exi {
+				pt8 = map[byte]struct{}{uid: {}}
+			} else {
+				pt8[uid] = struct{}{}
+			}
+
+			e.lkp.pt8[prt] = pt8
+		}
+	})
 
 	// Add the new player object to the memory table. This ensures that this new
 	// player is part of the update loop moving forward. Also store the player's
 	// buffer in the player's setter.
 
 	{
-		e.fbf[uid] = buf
-		e.fcn[uid] = fcn
-		e.mem.vec.Store(uid, vec)
-	}
-
-	// As the very last step, activate the joined player for further our fanout
-	// procedure.
-
-	{
-		e.act[uid] = true
+		e.ply.buf[uid] = buf
+		e.ply.cli[uid] = cli
+		e.mem.vec[uid] = vec
 	}
 }
 
 func (e *Engine) drop(uid byte) {
-	e.act[uid] = false
-	e.fbf[uid] = nil
-	e.fcn[uid] = nil // TODO:test ensure we can concurrently read while a single writer modifies the fanout channel
+	e.ply.buf[uid] = nil
+	e.ply.cli[uid] = nil // TODO:test ensure we can concurrently read while a single writer modifies the fanout channel
+	e.mem.vec[uid] = nil
 }
 
 // var uid []byte

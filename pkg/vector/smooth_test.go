@@ -22,7 +22,7 @@ func Test_Vector_Smooth(t *testing.T) {
 	for i := range 100 {
 		if i <= 5 || i == 99 {
 			var lis []string
-			vec.ranger(func(obj matrix.Coordinate) {
+			vec.Ranger(func(obj matrix.Coordinate) {
 				lis = append(lis, fmt.Sprintf("(%d,%d)", obj.X, obj.Y))
 			})
 			fmt.Printf("%03d\n", i)

@@ -40,14 +40,19 @@ func New(c Config) *Filler {
 		})
 	}
 
+	// We generate random coordinates based on a threshold around the edges of the
+	// game map, in which players cannot be placed initially, upon joining the
+	// game. The purpose of this buffer region is to not put players too close to
+	// the edges of the game, so that they cannot run into the wall accidentally.
+
 	var crd *random.Random
 	{
 		crd = random.New(random.Config{
 			Buf: c.Cap * 2,
 			Don: c.Don,
 			Log: c.Log,
-			Max: matrix.Max - matrix.Thr,
-			Min: matrix.Min + matrix.Thr,
+			Max: matrix.Max - matrix.Pt8,
+			Min: matrix.Min + matrix.Pt8,
 		})
 	}
 

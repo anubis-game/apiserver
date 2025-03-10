@@ -9,9 +9,7 @@ import (
 func Test_Engine_race(t *testing.T) {
 	var eng *Engine
 	{
-		eng = &Engine{
-			rac: make([]byte, 6),
-		}
+		eng = tesEng(250)
 	}
 
 	var uid byte
@@ -22,8 +20,8 @@ func Test_Engine_race(t *testing.T) {
 	// A new *Engine type starts out without any racing information. Therefore the
 	// zero bytes.
 
-	if eng.rac[uid] != 0x0 {
-		t.Fatalf("expected %#v got %#v", 0x0, eng.rac[uid])
+	if eng.ply.rac[uid] != 0x0 {
+		t.Fatalf("expected %#v got %#v", 0x0, eng.ply.rac[uid])
 	}
 
 	{
@@ -32,8 +30,8 @@ func Test_Engine_race(t *testing.T) {
 
 	// The first call to Engine.race() must switch to racing mode.
 
-	if eng.rac[uid] != vector.Rcn {
-		t.Fatalf("expected %#v got %#v", vector.Rcn, eng.rac[uid])
+	if eng.ply.rac[uid] != vector.Rcn {
+		t.Fatalf("expected %#v got %#v", vector.Rcn, eng.ply.rac[uid])
 	}
 
 	{
@@ -43,24 +41,24 @@ func Test_Engine_race(t *testing.T) {
 	// Further calls to Engine.race() must alternative between normal and racing
 	// speed.
 
-	if eng.rac[uid] != vector.Nrm {
-		t.Fatalf("expected %#v got %#v", vector.Nrm, eng.rac[uid])
+	if eng.ply.rac[uid] != vector.Nrm {
+		t.Fatalf("expected %#v got %#v", vector.Nrm, eng.ply.rac[uid])
 	}
 
 	{
 		eng.race(uid)
 	}
 
-	if eng.rac[uid] != vector.Rcn {
-		t.Fatalf("expected %#v got %#v", vector.Rcn, eng.rac[uid])
+	if eng.ply.rac[uid] != vector.Rcn {
+		t.Fatalf("expected %#v got %#v", vector.Rcn, eng.ply.rac[uid])
 	}
 
 	{
 		eng.race(uid)
 	}
 
-	if eng.rac[uid] != vector.Nrm {
-		t.Fatalf("expected %#v got %#v", vector.Nrm, eng.rac[uid])
+	if eng.ply.rac[uid] != vector.Nrm {
+		t.Fatalf("expected %#v got %#v", vector.Nrm, eng.ply.rac[uid])
 	}
 }
 
@@ -68,9 +66,7 @@ func Test_Engine_race(t *testing.T) {
 func Benchmark_Engine_race(b *testing.B) {
 	var eng *Engine
 	{
-		eng = &Engine{
-			rac: make([]byte, 6),
-		}
+		eng = tesEng(250)
 	}
 
 	var uid byte

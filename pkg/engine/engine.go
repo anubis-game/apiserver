@@ -13,7 +13,6 @@ import (
 	"github.com/anubis-game/apiserver/pkg/vector"
 	"github.com/anubis-game/apiserver/pkg/worker"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/puzpuzpuz/xsync/v3"
 	"github.com/xh3b4sd/logger"
 	"github.com/xh3b4sd/tracer"
 )
@@ -30,18 +29,9 @@ type Config struct {
 }
 
 type Engine struct {
-	act []bool
 	// don is the global channel to signal program termination. If this channel is
 	// closed, then all streaming connections should be terminated gracefully.
 	don <-chan struct{}
-	// fbf contains the fanout buffers ready to be sent out to every player during
-	// the ticker based fanout procedure. Any respective byte slice may be empty,
-	// or contain one, or multiple encoded messages.
-	fbf [][]byte
-	// fcn contains the fanout channels for every player. It is critically
-	// important that modifications on fcn are only done sequentially by a single
-	// writer.
-	fcn []chan<- []byte
 	// filler
 	fil filler.Interface
 	// lkp
@@ -50,8 +40,8 @@ type Engine struct {
 	log logger.Interface
 	// mem
 	mem *memory
-	// rac
-	rac []byte
+	// ply
+	ply *player
 	// rtr is the bridge synchronizing the server handler and the game engine
 	rtr *router.Engine
 	// tic is the global pointer keeping track of the fanout related time ticks.
@@ -60,8 +50,6 @@ type Engine struct {
 	tic time.Time
 	// tkx
 	tkx *tokenx.TokenX[common.Address]
-	// tur
-	tur []router.Turn
 	// uni
 	uni *unique.Unique[common.Address, byte]
 	// wrk
@@ -92,24 +80,26 @@ func New(c Config) *Engine {
 	}
 
 	return &Engine{
-		act: make([]bool, c.Cap),
 		don: c.Don,
-		fbf: make([][]byte, c.Cap),
-		fcn: make([]chan<- []byte, c.Cap),
 		fil: c.Fil,
 		lkp: &lookup{
-			nrg: xsync.NewMapOf[matrix.Partition, map[matrix.Coordinate]struct{}](),
-			ply: xsync.NewMapOf[matrix.Partition, map[byte]struct{}](),
+			nrg: map[matrix.Partition]map[matrix.Coordinate]struct{}{},
+			pt1: map[matrix.Partition]map[byte]struct{}{},
+			pt8: map[matrix.Partition]map[byte]struct{}{},
 		},
 		log: c.Log,
 		mem: &memory{
-			nrg: xsync.NewMapOf[matrix.Coordinate, *energy.Energy](),
-			vec: xsync.NewMapOf[byte, *vector.Vector](),
+			nrg: map[matrix.Coordinate]*energy.Energy{},
+			vec: map[byte]*vector.Vector{},
 		},
-		rac: make([]byte, c.Cap),
+		ply: &player{
+			buf: make([][]byte, c.Cap),
+			cli: make([]chan<- []byte, c.Cap),
+			rac: make([]byte, c.Cap),
+			tur: make([]router.Turn, c.Cap),
+		},
 		rtr: c.Rtr,
 		tkx: c.Tkx,
-		tur: make([]router.Turn, c.Cap),
 		uni: c.Uni,
 		wrk: c.Wrk,
 	}
