@@ -17,7 +17,7 @@ func Test_Vector_Update(t *testing.T) {
 		hid int
 		len int
 		nod []matrix.Coordinate
-		ocd map[matrix.Partition][]matrix.Coordinate
+		ocd Change
 		upd func(*Vector)
 	}{
 		// Case 000, siz: 5
@@ -30,10 +30,8 @@ func Test_Vector_Update(t *testing.T) {
 				{X: 1000, Y: 1005}, // H
 				{X: 1000, Y: 1000}, // T
 			},
-			ocd: map[matrix.Partition][]matrix.Coordinate{
-				{X: 896, Y: 896}: {
-					{X: 1000, Y: 1005}, // H
-				},
+			ocd: Change{
+				Hea: matrix.Coordinate{X: 1000, Y: 1005},
 			},
 			upd: func(vec *Vector) {
 				for range 1 {
@@ -51,11 +49,11 @@ func Test_Vector_Update(t *testing.T) {
 				{X: 1000, Y: 1010}, // H
 				{X: 1000, Y: 1005}, // T
 			},
-			ocd: map[matrix.Partition][]matrix.Coordinate{
-				{X: 896, Y: 896}: {
-					{X: 1000, Y: 1010}, // H
-					{X: 1000, Y: 1005}, // T
-					{X: 1000, Y: 1000}, // t
+			ocd: Change{
+				Hea: matrix.Coordinate{X: 1000, Y: 1010},
+				Tai: matrix.Coordinate{X: 1000, Y: 1005},
+				Rem: []matrix.Coordinate{
+					{X: 1000, Y: 1000},
 				},
 			},
 			upd: func(vec *Vector) {
@@ -75,10 +73,8 @@ func Test_Vector_Update(t *testing.T) {
 				// x=1000 y=1010
 				{X: 1000, Y: 1005}, // T
 			},
-			ocd: map[matrix.Partition][]matrix.Coordinate{
-				{X: 896, Y: 896}: {
-					{X: 1000, Y: 1015}, // H
-				},
+			ocd: Change{
+				Hea: matrix.Coordinate{X: 1000, Y: 1015},
 			},
 			upd: func(vec *Vector) {
 				for range 3 {
@@ -98,10 +94,8 @@ func Test_Vector_Update(t *testing.T) {
 				// x=1000 y=1010
 				{X: 1000, Y: 1005}, // T
 			},
-			ocd: map[matrix.Partition][]matrix.Coordinate{
-				{X: 896, Y: 896}: {
-					{X: 1002, Y: 1020}, // H
-				},
+			ocd: Change{
+				Hea: matrix.Coordinate{X: 1002, Y: 1020},
 			},
 			upd: func(vec *Vector) {
 				for range 3 {
@@ -125,10 +119,8 @@ func Test_Vector_Update(t *testing.T) {
 				// x=1000 y=1010
 				{X: 1000, Y: 1005}, // T
 			},
-			ocd: map[matrix.Partition][]matrix.Coordinate{
-				{X: 896, Y: 1024}: {
-					{X: 1005, Y: 1024}, // H
-				},
+			ocd: Change{
+				Hea: matrix.Coordinate{X: 1005, Y: 1024},
 			},
 			upd: func(vec *Vector) {
 				for range 3 {
@@ -153,10 +145,8 @@ func Test_Vector_Update(t *testing.T) {
 				// x=1000 y=1010
 				{X: 1000, Y: 1005}, // T
 			},
-			ocd: map[matrix.Partition][]matrix.Coordinate{
-				{X: 896, Y: 1024}: {
-					{X: 1009, Y: 1026}, // H
-				},
+			ocd: Change{
+				Hea: matrix.Coordinate{X: 1009, Y: 1026},
 			},
 			upd: func(vec *Vector) {
 				for range 3 {
@@ -181,13 +171,11 @@ func Test_Vector_Update(t *testing.T) {
 				// x=1000 y=1015
 				{X: 1001, Y: 1010}, // T
 			},
-			ocd: map[matrix.Partition][]matrix.Coordinate{
-				{X: 896, Y: 1024}: {
-					{X: 1014, Y: 1027}, // H
-				},
-				{X: 896, Y: 896}: {
-					{X: 1001, Y: 1010}, // T
-					{X: 1000, Y: 1005}, // t
+			ocd: Change{
+				Hea: matrix.Coordinate{X: 1014, Y: 1027},
+				Tai: matrix.Coordinate{X: 1001, Y: 1010},
+				Rem: []matrix.Coordinate{
+					{X: 1000, Y: 1005},
 				},
 			},
 			upd: func(vec *Vector) {
@@ -214,10 +202,8 @@ func Test_Vector_Update(t *testing.T) {
 				// x=1000 y=1015
 				{X: 1001, Y: 1010}, // T
 			},
-			ocd: map[matrix.Partition][]matrix.Coordinate{
-				{X: 896, Y: 1024}: {
-					{X: 1019, Y: 1027}, // H
-				},
+			ocd: Change{
+				Hea: matrix.Coordinate{X: 1019, Y: 1027},
 			},
 			upd: func(vec *Vector) {
 				for range 3 {
@@ -244,10 +230,8 @@ func Test_Vector_Update(t *testing.T) {
 				// x=1000 y=1015
 				{X: 1001, Y: 1010}, // T
 			},
-			ocd: map[matrix.Partition][]matrix.Coordinate{
-				{X: 1024, Y: 1024}: {
-					{X: 1024, Y: 1027}, // H
-				},
+			ocd: Change{
+				Hea: matrix.Coordinate{X: 1024, Y: 1027},
 			},
 			upd: func(vec *Vector) {
 				for range 3 {
@@ -274,13 +258,11 @@ func Test_Vector_Update(t *testing.T) {
 				// x=1002 y=1020
 				{X: 1002, Y: 1015}, // T
 			},
-			ocd: map[matrix.Partition][]matrix.Coordinate{
-				{X: 1024, Y: 1024}: {
-					{X: 1029, Y: 1027}, // H
-				},
-				{X: 896, Y: 896}: {
-					{X: 1002, Y: 1015}, // T
-					{X: 1001, Y: 1010}, // t
+			ocd: Change{
+				Hea: matrix.Coordinate{X: 1029, Y: 1027},
+				Tai: matrix.Coordinate{X: 1002, Y: 1015},
+				Rem: []matrix.Coordinate{
+					{X: 1001, Y: 1010},
 				},
 			},
 			upd: func(vec *Vector) {
@@ -308,13 +290,11 @@ func Test_Vector_Update(t *testing.T) {
 				{X: 1005, Y: 1024},
 				{X: 1004, Y: 1020}, // T
 			},
-			ocd: map[matrix.Partition][]matrix.Coordinate{
-				{X: 1024, Y: 1024}: {
-					{X: 1034, Y: 1027}, // H
-				},
-				{X: 896, Y: 896}: {
-					{X: 1004, Y: 1020}, // T
-					{X: 1002, Y: 1015}, // t
+			ocd: Change{
+				Hea: matrix.Coordinate{X: 1034, Y: 1027},
+				Tai: matrix.Coordinate{X: 1004, Y: 1020},
+				Rem: []matrix.Coordinate{
+					{X: 1002, Y: 1015},
 				},
 			},
 			upd: func(vec *Vector) {
@@ -344,16 +324,12 @@ func Test_Vector_Update(t *testing.T) {
 				// x=1014 y=1027
 				{X: 1010, Y: 1025}, // T
 			},
-			ocd: map[matrix.Partition][]matrix.Coordinate{
-				{X: 1024, Y: 1024}: {
-					{X: 1039, Y: 1027}, // H
-				},
-				{X: 896, Y: 1024}: {
-					{X: 1010, Y: 1025}, // T
-					{X: 1005, Y: 1024}, // t
-				},
-				{X: 896, Y: 896}: {
-					{X: 1004, Y: 1020}, // t
+			ocd: Change{
+				Hea: matrix.Coordinate{X: 1039, Y: 1027},
+				Tai: matrix.Coordinate{X: 1010, Y: 1025},
+				Rem: []matrix.Coordinate{
+					{X: 1005, Y: 1024},
+					{X: 1004, Y: 1020},
 				},
 			},
 			upd: func(vec *Vector) {
@@ -382,14 +358,12 @@ func Test_Vector_Update(t *testing.T) {
 				{X: 1024, Y: 1027},
 				{X: 1020, Y: 1027}, // T
 			},
-			ocd: map[matrix.Partition][]matrix.Coordinate{
-				{X: 1024, Y: 1024}: {
-					{X: 1044, Y: 1027}, // H
-				},
-				{X: 896, Y: 1024}: {
-					{X: 1020, Y: 1027}, // T
-					{X: 1015, Y: 1026}, // t
-					{X: 1010, Y: 1025}, // t
+			ocd: Change{
+				Hea: matrix.Coordinate{X: 1044, Y: 1027},
+				Tai: matrix.Coordinate{X: 1020, Y: 1027},
+				Rem: []matrix.Coordinate{
+					{X: 1015, Y: 1026},
+					{X: 1010, Y: 1025},
 				},
 			},
 			upd: func(vec *Vector) {
@@ -418,13 +392,11 @@ func Test_Vector_Update(t *testing.T) {
 				// x=1029 y=1027
 				{X: 1024, Y: 1027}, // T
 			},
-			ocd: map[matrix.Partition][]matrix.Coordinate{
-				{X: 1024, Y: 1024}: {
-					{X: 1049, Y: 1027}, // H
-					{X: 1024, Y: 1027}, // T
-				},
-				{X: 896, Y: 1024}: {
-					{X: 1020, Y: 1027}, // t
+			ocd: Change{
+				Hea: matrix.Coordinate{X: 1049, Y: 1027},
+				Tai: matrix.Coordinate{X: 1024, Y: 1027},
+				Rem: []matrix.Coordinate{
+					{X: 1020, Y: 1027},
 				},
 			},
 			upd: func(vec *Vector) {
@@ -452,12 +424,12 @@ func Test_Vector_Update(t *testing.T) {
 				// x=1039 y=1027
 				{X: 1034, Y: 1027}, // T
 			},
-			ocd: map[matrix.Partition][]matrix.Coordinate{
-				{X: 1024, Y: 1024}: {
-					{X: 1054, Y: 1027}, // H
-					{X: 1034, Y: 1027}, // T
-					{X: 1029, Y: 1027}, // t
-					{X: 1024, Y: 1027}, // t
+			ocd: Change{
+				Hea: matrix.Coordinate{X: 1054, Y: 1027},
+				Tai: matrix.Coordinate{X: 1034, Y: 1027},
+				Rem: []matrix.Coordinate{
+					{X: 1029, Y: 1027},
+					{X: 1024, Y: 1027},
 				},
 			},
 			upd: func(vec *Vector) {
@@ -484,12 +456,12 @@ func Test_Vector_Update(t *testing.T) {
 				// x=1049 y=1027
 				{X: 1044, Y: 1027}, // T
 			},
-			ocd: map[matrix.Partition][]matrix.Coordinate{
-				{X: 1024, Y: 1024}: {
-					{X: 1059, Y: 1027}, // H
-					{X: 1044, Y: 1027}, // T
-					{X: 1039, Y: 1027}, // t
-					{X: 1034, Y: 1027}, // t
+			ocd: Change{
+				Hea: matrix.Coordinate{X: 1059, Y: 1027},
+				Tai: matrix.Coordinate{X: 1044, Y: 1027},
+				Rem: []matrix.Coordinate{
+					{X: 1039, Y: 1027},
+					{X: 1034, Y: 1027},
 				},
 			},
 			upd: func(vec *Vector) {
@@ -515,12 +487,12 @@ func Test_Vector_Update(t *testing.T) {
 				// x=1059 y=1027
 				{X: 1054, Y: 1027}, // T
 			},
-			ocd: map[matrix.Partition][]matrix.Coordinate{
-				{X: 1024, Y: 1024}: {
-					{X: 1064, Y: 1027}, // H
-					{X: 1054, Y: 1027}, // T
-					{X: 1049, Y: 1027}, // t
-					{X: 1044, Y: 1027}, // t
+			ocd: Change{
+				Hea: matrix.Coordinate{X: 1064, Y: 1027},
+				Tai: matrix.Coordinate{X: 1054, Y: 1027},
+				Rem: []matrix.Coordinate{
+					{X: 1049, Y: 1027},
+					{X: 1044, Y: 1027},
 				},
 			},
 			upd: func(vec *Vector) {
@@ -545,12 +517,12 @@ func Test_Vector_Update(t *testing.T) {
 				{X: 1069, Y: 1027}, // H
 				{X: 1064, Y: 1027}, // T
 			},
-			ocd: map[matrix.Partition][]matrix.Coordinate{
-				{X: 1024, Y: 1024}: {
-					{X: 1069, Y: 1027}, // H
-					{X: 1064, Y: 1027}, // T
-					{X: 1059, Y: 1027}, // t
-					{X: 1054, Y: 1027}, // t
+			ocd: Change{
+				Hea: matrix.Coordinate{X: 1069, Y: 1027},
+				Tai: matrix.Coordinate{X: 1064, Y: 1027},
+				Rem: []matrix.Coordinate{
+					{X: 1059, Y: 1027},
+					{X: 1054, Y: 1027},
 				},
 			},
 			upd: func(vec *Vector) {
@@ -575,11 +547,11 @@ func Test_Vector_Update(t *testing.T) {
 				{X: 1074, Y: 1027}, // H
 				{X: 1069, Y: 1027}, // T
 			},
-			ocd: map[matrix.Partition][]matrix.Coordinate{
-				{X: 1024, Y: 1024}: {
-					{X: 1074, Y: 1027}, // H
-					{X: 1069, Y: 1027}, // T
-					{X: 1064, Y: 1027}, // t
+			ocd: Change{
+				Hea: matrix.Coordinate{X: 1074, Y: 1027},
+				Tai: matrix.Coordinate{X: 1069, Y: 1027},
+				Rem: []matrix.Coordinate{
+					{X: 1064, Y: 1027},
 				},
 			},
 			upd: func(vec *Vector) {
@@ -623,10 +595,8 @@ func Test_Vector_Update(t *testing.T) {
 				{X: 1000, Y: 1220},
 				{X: 1000, Y: 1215}, // T
 			},
-			ocd: map[matrix.Partition][]matrix.Coordinate{
-				{X: 1280, Y: 1280}: {
-					{X: 1304, Y: 1303}, // H
-				},
+			ocd: Change{
+				Hea: matrix.Coordinate{X: 1304, Y: 1303},
 			},
 			upd: tesUpd,
 		},
@@ -1297,7 +1267,7 @@ func Test_Vector_Update_trgAgl(t *testing.T) {
 	}
 }
 
-// ~353 ns/op 5 allocs/op
+// ~215 ns/op 1 allocs/op
 func Benchmark_Vector_Update(b *testing.B) {
 	var vec *Vector
 	{

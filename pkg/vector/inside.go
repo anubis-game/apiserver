@@ -11,7 +11,7 @@ import "github.com/anubis-game/apiserver/pkg/matrix"
 // called once for new players joining the game, in order to get a full
 // representation of a Vector's occupied coordinates. All other players will get
 // reconciled based on the game map delta as provided by Vector.Change().
-func (v *Vector) Inside(stp int, srg int, sbt int, slf int) map[matrix.Partition][]matrix.Coordinate {
+func (v *Vector) Inside(stp int, srg int, sbt int, slf int) []matrix.Coordinate {
 	// Check whether any overlap exists before attempting to collect any of the
 	// overlapping partitions.
 
@@ -24,22 +24,16 @@ func (v *Vector) Inside(stp int, srg int, sbt int, slf int) map[matrix.Partition
 	bot := maxInt(sbt, v.obt)
 	lef := maxInt(slf, v.olf)
 
-	var ins map[matrix.Partition][]matrix.Coordinate
+	var ins []matrix.Coordinate
 
 	// Walk along all Vector nodes. We can afford the full loop here for several
 	// reasons.
 	//
-	//     1. Vector.Inside() is only called when players join the game, which
-	//        is relatively rare.
-	//
-	//     2. The number of partitions to iterate for any potential
+	//     1. The number of partitions to iterate for any potential
 	//        overlapping area is relatively small.
 	//
-	//     3. The number of Vector nodes within any given partition is
+	//     2. The number of Vector nodes within any given partition is
 	//        relatively limited.
-	//
-	//     4. The number of Vector nodes to iterate in total is significantly
-	//        reduced due to dynamic hidden nodes.
 	//
 
 	for n := v.hea; n != nil; n = n.prv {
@@ -54,19 +48,8 @@ func (v *Vector) Inside(stp int, srg int, sbt int, slf int) map[matrix.Partition
 			continue
 		}
 
-		// Only allocate a map if there are any Vector coordinates within the
-		// verified overlap. It might be that rectancles overlap on one side,
-		// while the Vector coordinates forming the rectangle are located on the
-		// other side of the overlapping area. In such a case we iterate over all
-		// overlapping partitions without finding any Vector coordinates. And so
-		// we do not have to allocate any map before we really need it.
-
-		if ins == nil {
-			ins = map[matrix.Partition][]matrix.Coordinate{}
-		}
-
 		{
-			ins[p] = append(ins[p], n.crd)
+			ins = append(ins, n.crd)
 		}
 	}
 

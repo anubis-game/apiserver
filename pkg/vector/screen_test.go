@@ -33,7 +33,7 @@ func Test_Vector_Screen_move_right(t *testing.T) {
 	var abt int
 	var alf int
 	{
-		atp, arg, abt, alf = vec.Screen()
+		atp, arg, abt, alf = vec.Screen(vec.Charax().Fos)
 	}
 
 	//
@@ -79,7 +79,7 @@ func Test_Vector_Screen_move_right(t *testing.T) {
 	}
 
 	{
-		atp, arg, abt, alf = vec.Screen()
+		atp, arg, abt, alf = vec.Screen(vec.Charax().Fos)
 	}
 
 	//
@@ -179,25 +179,22 @@ func Test_Vector_Screen_fos_2_to_7(t *testing.T) {
 		},
 	}
 
-	// Since the screen management is continuous, we have to work on the same
-	// Vector instance across dependent test cases.
-
-	var vec *Vector
-	{
-		vec = New(Config{
-			Hea: matrix.Coordinate{
-				X: 3000,
-				Y: 4000,
-			},
-			Mot: Motion{
-				Qdr: 0x1,
-				Agl: 0x0,
-			},
-		})
-	}
-
 	for i, tc := range testCases {
 		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
+			var vec *Vector
+			{
+				vec = New(Config{
+					Hea: matrix.Coordinate{
+						X: 3000,
+						Y: 4000,
+					},
+					Mot: Motion{
+						Qdr: 0x1,
+						Agl: 0x0,
+					},
+				})
+			}
+
 			{
 				vec.Update(tc.siz, 0x1, 0x0, Nrm)
 			}
@@ -207,7 +204,7 @@ func Test_Vector_Screen_fos_2_to_7(t *testing.T) {
 			var bot int
 			var lef int
 			{
-				top, rig, bot, lef = vec.Screen()
+				top, rig, bot, lef = vec.Screen(vec.Charax().Fos)
 			}
 
 			if vec.crx.Fos != tc.fos {
@@ -228,3 +225,5 @@ func Test_Vector_Screen_fos_2_to_7(t *testing.T) {
 		})
 	}
 }
+
+type screen struct{ top, rig, bot, lef int }

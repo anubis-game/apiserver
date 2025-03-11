@@ -10,11 +10,8 @@ import (
 // Vector.occAdd() is only called after a new head node got added to this
 // Vector.
 func (v *Vector) occAdd() {
-	cur := v.hea.crd
-	prv := v.hea.prv.crd
-
-	chp := cur.Pt1()
-	php := prv.Pt1()
+	chp := v.hea.crd.Pt1()
+	php := v.hea.prv.crd.Pt1()
 
 	// Always keep track of the amount of partition coordinates that the nodes of
 	// this Vector occupy along the X and Y axis.
@@ -40,26 +37,18 @@ func (v *Vector) occAdd() {
 
 		if chp.Y > php.Y {
 			v.otp = chp.Y
-			v.stp += matrix.Pt1
-			v.sbt += matrix.Pt1
 		}
 
 		if chp.X > php.X {
 			v.org = chp.X
-			v.slf += matrix.Pt1
-			v.srg += matrix.Pt1
 		}
 
 		if chp.Y < php.Y {
 			v.obt = chp.Y
-			v.stp -= matrix.Pt1
-			v.sbt -= matrix.Pt1
 		}
 
 		if chp.X < php.X {
 			v.olf = chp.X
-			v.slf -= matrix.Pt1
-			v.srg -= matrix.Pt1
 		}
 	}
 }

@@ -32,3 +32,7 @@ type Motion struct {
 	//
 	Agl byte
 }
+
+func (v *Vector) Motion() Motion {
+	return v.mot
+}

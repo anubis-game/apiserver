@@ -1,8 +1,8 @@
 package engine
 
-import "github.com/anubis-game/apiserver/pkg/router"
-
 type player struct {
+	// agl
+	agl []byte
 	// buf contains the fanout buffers ready to be sent out to every player during
 	// the ticker based fanout procedure. Any respective byte slice may be empty,
 	// or contain one, or multiple encoded messages.
@@ -11,8 +11,8 @@ type player struct {
 	// important that modifications on cli are only done sequentially by a single
 	// writer.
 	cli []chan<- []byte
+	// qdr
+	qdr []byte
 	// rac
 	rac []byte
-	// tur
-	tur []router.Turn
 }
