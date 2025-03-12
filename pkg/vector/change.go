@@ -4,7 +4,7 @@ import "github.com/anubis-game/apiserver/pkg/matrix"
 
 type Change struct {
 	Hea matrix.Coordinate
-	Tai matrix.Coordinate
+	Tai matrix.Coordinate // TODO:infra what do we even need this new tail change for?
 	Rem []matrix.Coordinate
 }
 
