@@ -23,7 +23,6 @@ type player struct {
 }
 
 func newPlayer(c int) *player {
-
 	var buf [][]byte
 	{
 		buf = make([][]byte, c)
