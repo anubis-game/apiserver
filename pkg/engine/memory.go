@@ -14,12 +14,12 @@ type memory struct {
 	// move.
 	nrg map[matrix.Coordinate]*energy.Energy
 	// vec
-	vec map[byte]*vector.Vector
+	vec []*vector.Vector
 }
 
-func newMemory(_ int) *memory {
+func newMemory(c int) *memory {
 	return &memory{
 		nrg: map[matrix.Coordinate]*energy.Energy{},
-		vec: map[byte]*vector.Vector{},
+		vec: make([]*vector.Vector, c),
 	}
 }
