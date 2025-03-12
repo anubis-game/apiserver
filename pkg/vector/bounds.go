@@ -17,7 +17,15 @@ import "github.com/anubis-game/apiserver/pkg/matrix"
 //	    +-#--#----------+
 //	      #### bot
 func (v *Vector) Bounds(fos ...int) (int, int, int, int) {
-	chp := v.hea.crd.Pt1()
+	// The Vector's view is based on the Vector's current head node.
+
+	var chp matrix.Partition
+	{
+		chp = v.hea.crd.Pt1()
+	}
+
+	// The default factor of sight is used of there was no parameter provided.
+
 	var pxl int
 	if len(fos) == 1 {
 		pxl = fos[0] * matrix.Pt1

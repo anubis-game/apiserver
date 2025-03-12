@@ -123,16 +123,16 @@ func (e *Engine) lookup(u byte, c vector.Change) {
 	}
 }
 
-func (e *Engine) screen(c vector.Change, u byte, w *vector.Vector) {
+func (e *Engine) screen(c vector.Change, b byte, w *vector.Vector) {
 	l, m, n, o := w.Bounds()
 
 	if c.Hea.Pt1().Ins(l, m, n, o) {
-		e.ply.buf[u] = append(e.ply.buf[u], 0x0) // TODO:infra encode head create message properly
+		e.ply.buf[b] = append(e.ply.buf[b], 0x0) // TODO:infra encode head create message properly
 	}
 
 	for _, t := range c.Rem {
 		if t.Pt1().Ins(l, m, n, o) {
-			e.ply.buf[u] = append(e.ply.buf[u], 0x0) // TODO:infra encode tail remove message properly
+			e.ply.buf[b] = append(e.ply.buf[b], 0x0) // TODO:infra encode tail delete message properly
 		}
 	}
 }
