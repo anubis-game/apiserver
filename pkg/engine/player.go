@@ -40,7 +40,7 @@ func newPlayer(c int) *player {
 	//
 
 	for i := range buf {
-		buf[i] = make([]byte, 1, 128)
+		buf[i] = []byte{0x0}
 	}
 
 	return &player{
