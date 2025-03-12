@@ -13,7 +13,7 @@ type memory struct {
 	// to energy packets using their position only because energy packets don't
 	// move.
 	nrg map[matrix.Coordinate]*energy.Energy
-	// vec
+	// vec contains all player Vectors. Active players have non-nil Vectors.
 	vec []*vector.Vector
 }
 

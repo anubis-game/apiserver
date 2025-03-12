@@ -77,15 +77,15 @@ func Benchmark_Schema_BytesToInt64(b *testing.B) {
 	testCases := []struct {
 		b []byte
 	}{
-		// Case 000, ~82 ns/op
+		// Case 000, ~2 ns/op
 		{
 			b: []byte{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0},
 		},
-		// Case 001, ~82 ns/op
+		// Case 001, ~2 ns/op
 		{
 			b: []byte{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x4, 0xd2},
 		},
-		// Case 002, ~82 ns/op
+		// Case 002, ~2 ns/op
 		{
 			b: []byte{0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff},
 		},
@@ -104,15 +104,15 @@ func Benchmark_Schema_Int64ToBytes(b *testing.B) {
 	testCases := []struct {
 		i int64
 	}{
-		// Case 000, ~109 ns/op, 1 allocs/op
+		// Case 000, ~8 ns/op, 1 allocs/op
 		{
 			i: 0,
 		},
-		// Case 001, ~109 ns/op, 1 allocs/op
+		// Case 001, ~8 ns/op, 1 allocs/op
 		{
 			i: 1234,
 		},
-		// Case 002, ~109 ns/op, 1 allocs/op
+		// Case 002, ~8 ns/op, 1 allocs/op
 		{
 			i: 9223372036854775807,
 		},
