@@ -99,43 +99,43 @@ func Benchmark_Engine_send(b *testing.B) {
 	testCases := []struct {
 		buf []byte
 	}{
-		// Case 000, ~4,400 ns/op, 0 allocs/op
+		// Case 000, ~4,000 ns/op, 2 allocs/op
 		{
 			buf: make([]byte, 16),
 		},
-		// Case 001, ~4,400 ns/op, 1 allocs/op
+		// Case 001, ~4,000 ns/op, 3 allocs/op
 		{
 			buf: make([]byte, 32),
 		},
-		// Case 002, ~4,400 ns/op, 1 allocs/op
+		// Case 002, ~4,000 ns/op, 3 allocs/op
 		{
 			buf: make([]byte, 64),
 		},
-		// Case 003, ~4,400 ns/op, 1 allocs/op
+		// Case 003, ~4,000 ns/op, 3 allocs/op
 		{
 			buf: make([]byte, 128),
 		},
-		// Case 004, ~4,400 ns/op, 1 allocs/op
+		// Case 004, ~4,000 ns/op, 3 allocs/op
 		{
 			buf: make([]byte, 256),
 		},
-		// Case 005, ~4,500 ns/op, 1 allocs/op
+		// Case 005, ~4,000 ns/op, 3 allocs/op
 		{
 			buf: make([]byte, 512),
 		},
-		// Case 006, ~4,600 ns/op, 2 allocs/op
+		// Case 006, ~4,200 ns/op, 4 allocs/op
 		{
 			buf: make([]byte, 1024),
 		},
-		// Case 007, ~6,800 ns/op, 4 allocs/op
+		// Case 007, ~7,100 ns/op, 6 allocs/op
 		{
 			buf: make([]byte, 2048),
 		},
-		// Case 008, ~11,200 ns/op, 7 allocs/op
+		// Case 008, ~11,100 ns/op, 9 allocs/op
 		{
 			buf: make([]byte, 4096),
 		},
-		// Case 009, ~17,500 ns/op, 9 allocs/op
+		// Case 009, ~16,500 ns/op, 10 allocs/op
 		{
 			buf: make([]byte, 8192),
 		},
