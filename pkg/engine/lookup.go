@@ -10,6 +10,14 @@ type lookup struct {
 	pt8 map[matrix.Partition]map[byte]struct{}
 }
 
+func newLookup(_ int) *lookup {
+	return &lookup{
+		nrg: map[matrix.Partition]map[matrix.Coordinate]struct{}{},
+		pt1: map[matrix.Partition]map[byte]struct{}{},
+		pt8: map[matrix.Partition]map[byte]struct{}{},
+	}
+}
+
 func (l *lookup) add(u byte, c matrix.Coordinate) {
 	// Add the given node coordinate to the small partitions.
 

@@ -21,3 +21,35 @@ type player struct {
 	// rac
 	rac []byte
 }
+
+func newPlayer(c int) *player {
+
+	var buf [][]byte
+	{
+		buf = make([][]byte, c)
+	}
+
+	// Pre-allocate a fanout buffer for every potential player using the same
+	// sequence byte 0x0. This sequence byte is incremented every update cycle.
+	//
+	//     [
+	//         [0x0, ...], // player 1
+	//         [0x0, ...], // player 2
+	//         ...
+	//         [0x0, ...], // player N
+	//     ]
+	//
+
+	for i := range buf {
+		buf[i] = make([]byte, 1, 64)
+	}
+
+	return &player{
+		act: make([]bool, c),
+		agl: make([]byte, c),
+		buf: buf,
+		cli: make([]chan<- []byte, c),
+		qdr: make([]byte, c),
+		rac: make([]byte, c),
+	}
+}

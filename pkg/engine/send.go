@@ -33,12 +33,20 @@ func (e *Engine) send(tic time.Time) {
 			cli <- e.ply.buf[u]
 		}
 
-		// Reset the player specific fanout buffer for the next cycle. In case
-		// active players have no connected client, we discard all fanout buffers
-		// without sending, until the player comes back online or dies.
+		// Reset the player specific fanout buffer for the next cycle. We keep the
+		// existing sequence byte and prevent re-allocation of the underlying data
+		// array using the resclicing operation [:1]. In case active players have no
+		// connected client, we discard all fanout buffers without sending, until
+		// the player comes back online or dies.
 
 		{
-			e.ply.buf[u] = nil
+			e.ply.buf[u] = e.ply.buf[u][:1]
+		}
+
+		// Increment the sequence byte for the next cycle.
+
+		{
+			e.ply.buf[u][0]++
 		}
 	}
 }

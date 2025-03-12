@@ -5,13 +5,11 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/anubis-game/apiserver/pkg/cache"
 	"github.com/anubis-game/apiserver/pkg/contract/registry"
 	"github.com/anubis-game/apiserver/pkg/transaction"
 	"github.com/anubis-game/apiserver/pkg/worker/action"
 	"github.com/anubis-game/apiserver/pkg/worker/record"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/google/uuid"
 	"github.com/xh3b4sd/logger"
 	"github.com/xh3b4sd/tracer"
 )
@@ -29,7 +27,6 @@ type Worker struct {
 	log logger.Interface
 	que chan action.Interface
 	reg *registry.Registry
-	req *cache.Time[uuid.UUID]
 	seq chan action.Interface
 	sig map[string]Signer
 }
@@ -54,12 +51,11 @@ func New(c Config) *Worker {
 	}
 
 	return &Worker{
-		all: make([]action.Interface, 0),
+		all: make([]action.Interface, 0, 5000),
 		don: c.Don,
 		log: c.Log,
 		que: make(chan action.Interface, 5000),
 		reg: c.Reg,
-		req: cache.NewTime[uuid.UUID](),
 		seq: make(chan action.Interface, 1),
 		sig: sig,
 	}
@@ -68,12 +64,6 @@ func New(c Config) *Worker {
 // TODO:test write some unit tests for this entire reconciliation complexity
 
 func (w *Worker) Daemon() {
-	// Setup the re-queue cache to check all expiration callbacks every so often.
-
-	{
-		go w.req.Expire(time.Second)
-	}
-
 	// We need to persist every action whether it is going to succeed or not,
 	// so that we can provide a full record of all worker actions being
 	// processed throughout the Guardian's lifetime.
@@ -133,19 +123,22 @@ func (w *Worker) Daemon() {
 				if a.Rec().Sta().Get() != record.Success {
 					var fai int
 
-					for range a.Rec().Len() {
-						if a.Rec().Sta().Get() == record.Failure {
+					// TODO:test verify that we count the number of failed actions
+					// properly.
+
+					for i := range a.Rec().Len() {
+						if a.Rec().Get(i).Sta().Get() == record.Failure {
 							fai++
 						}
 					}
 
 					// We do not want to sign more than 3 transactions per action if
-					// signing keeps failing. So when an action failed twice already, we
+					// signing keeps failing. So, when an action failed twice already, we
 					// re-schedule for another attempt until the given action either
 					// succeeds, or fails a third time, which is when we give up on it.
 
 					if fai < 3 {
-						w.req.Ensure(a.Uid(), a.Rec().Wai().Get(), func() {
+						time.AfterFunc(a.Rec().Wai().Get(), func() {
 							w.que <- a
 						})
 					}

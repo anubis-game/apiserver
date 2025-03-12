@@ -16,3 +16,10 @@ type memory struct {
 	// vec
 	vec map[byte]*vector.Vector
 }
+
+func newMemory(_ int) *memory {
+	return &memory{
+		nrg: map[matrix.Coordinate]*energy.Energy{},
+		vec: map[byte]*vector.Vector{},
+	}
+}
