@@ -13,7 +13,7 @@ import (
 func (e *Engine) allpt8(u byte, v *vector.Vector) map[byte]struct{} {
 	all := map[byte]struct{}{}
 
-	for _, p := range v.Header(1, matrix.Pt8) {
+	for _, p := range v.Layers(1, matrix.Pt8) {
 		for b := range e.lkp.pt8[p] {
 			if u != b {
 				all[b] = struct{}{}

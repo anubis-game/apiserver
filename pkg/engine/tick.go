@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"github.com/anubis-game/apiserver/pkg/matrix"
 	"github.com/anubis-game/apiserver/pkg/vector"
 )
 
@@ -76,20 +77,28 @@ func (e *Engine) change(u byte, c vector.Change) {
 }
 
 func (e *Engine) impact(v *vector.Vector, w *vector.Vector) {
-	for _, c := range w.Inside(v.Screen(2)) {
-		var i bool
-		{
-			i = v.Impact(c, w.Charax().Rad)
-		}
+	// We need to define the partition coordinates to search through for the
+	// impact check below using the factor of sight f. The search area can be
+	// smaller as long as the body part radii of Vector v and w combined fit into
+	// the required layer of small partitions. E.g. Rv=25 Rw=17 requires only a
+	// single layer because 42 is smaller than 128.
 
-		if i {
-			// The head node of Vector v has collided with the node c of another
-			// Vector w. By default this means that Vector v gets killed, because
-			// that player was running into the body of another player. The
-			// exception here is that Vector w gets killed instead, if the
-			// colliding node c is the head node of Vector w, while the head node
-			// of Vector v is larger. In other words, if two heads collide, then
-			// the larger player wins.
+	var f int
+	{
+		f = ((v.Charax().Fos + w.Charax().Fos) / matrix.Pt1) + 1
+	}
+
+	// Iterate over all node coordinates of Vector w that are close to Vector v's
+	// head node.
+
+	for _, c := range w.Inside(v.Bounds(f)) {
+		if v.Impact(c, w.Charax().Rad) {
+			// The head node of Vector v has collided with the node coordinate c of
+			// Vector w. By default this means that Vector v gets killed, because that
+			// player v was running into the body of another player w. The exception
+			// here is that Vector w gets killed instead, if the colliding node c is
+			// the head node of Vector w, while the head node of Vector v is larger.
+			// In other words, if two heads collide, then the larger player wins.
 
 			if c == w.Change().Hea && v.Charax().Rad > w.Charax().Rad {
 				// TODO:infra kill w, break loops
@@ -115,7 +124,7 @@ func (e *Engine) lookup(u byte, c vector.Change) {
 }
 
 func (e *Engine) screen(c vector.Change, u byte, w *vector.Vector) {
-	l, m, n, o := w.Screen(w.Charax().Fos)
+	l, m, n, o := w.Bounds()
 
 	if c.Hea.Pt1().Ins(l, m, n, o) {
 		e.ply.buf[u] = append(e.ply.buf[u], 0x0) // TODO:infra encode head create message properly

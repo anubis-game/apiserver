@@ -52,7 +52,7 @@ func (e *Engine) join(u byte, _ common.Address, c chan<- []byte) {
 	// Search for all the energy packets located within the partitions that the
 	// new player can see.
 
-	for _, p := range v.Header(v.Charax().Fos, matrix.Pt1) {
+	for _, p := range v.Layers(v.Charax().Fos, matrix.Pt1) {
 		for k := range e.lkp.nrg[p] {
 			f = append(f, e.mem.nrg[k].Encode()...)
 		}
@@ -61,7 +61,7 @@ func (e *Engine) join(u byte, _ common.Address, c chan<- []byte) {
 	// Render all existing players inside the view of the new player, and render
 	// the new player in the view of all existing players.
 
-	l, m, n, o := v.Screen(v.Charax().Fos)
+	l, m, n, o := v.Bounds()
 
 	for b := range e.allpt8(u, v) {
 		var w *vector.Vector
@@ -75,7 +75,7 @@ func (e *Engine) join(u byte, _ common.Address, c chan<- []byte) {
 			f = append(f, b[:]...)
 		}
 
-		for _, c := range v.Inside(w.Screen(w.Charax().Fos)) {
+		for _, c := range v.Inside(w.Bounds()) {
 			b := c.Byt()
 			// TODO:infra the body messages still need to be encoded.
 			f = append(f, b[:]...)

@@ -4,10 +4,10 @@ import "github.com/anubis-game/apiserver/pkg/matrix"
 
 // TODO:test make sure Header does not panic
 
-// Header returns a symmetric set of partition coordinates around the current
+// Layers returns a symmetric set of partition coordinates around the current
 // head node of this Vector, based on the provided factor of sight and partition
-// size. E.g. fos=len, 1=9, 2=25, 3=47 etc.
-func (v *Vector) Header(fos int, prt int) []matrix.Partition {
+// length. E.g. fos=len, 1=9, 2=25, 3=47 etc.
+func (v *Vector) Layers(fos int, prt int) []matrix.Partition {
 	var chp matrix.Partition
 	if prt == matrix.Pt8 {
 		chp = v.hea.crd.Pt8()

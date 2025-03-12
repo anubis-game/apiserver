@@ -7,10 +7,7 @@ import "github.com/anubis-game/apiserver/pkg/matrix"
 // and screen boundaries do not overlap at all, then nil is returned. Nil is
 // also returned if the given areas overlap, while no Vector coordinates are
 // actually located in the overlapping area. The preliminary overlap is verified
-// using an AABB check (Axis-Aligned Bounding Box). Vector.Inside() is only
-// called once for new players joining the game, in order to get a full
-// representation of a Vector's occupied coordinates. All other players will get
-// reconciled based on the game map delta as provided by Vector.Change().
+// using an AABB check (Axis-Aligned Bounding Box).
 func (v *Vector) Inside(stp int, srg int, sbt int, slf int) []matrix.Coordinate {
 	// Check whether any overlap exists before attempting to collect any of the
 	// overlapping partitions.
