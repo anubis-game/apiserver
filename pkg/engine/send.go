@@ -24,21 +24,18 @@ func (e *Engine) send(tic time.Time) {
 			cli = e.ply.cli[u]
 		}
 
-		// Skip all inactive players.
-
-		if cli == nil {
-			continue
-		}
-
 		// Forward the fanout buffer to the client specific goroutine for capacity
 		// aware processing. The buffer channels provided by each client must never
-		// block.
+		// block. Client specific fanout channels may be nil if active players
+		// disconnected.
 
-		{
+		if cli != nil {
 			cli <- e.ply.buf[u]
 		}
 
-		// Reset the player specific fanout buffer for the next cycle.
+		// Reset the player specific fanout buffer for the next cycle. In case
+		// active players have no connected client, we discard all fanout buffers
+		// without sending, until the player comes back online or dies.
 
 		{
 			e.ply.buf[u] = nil

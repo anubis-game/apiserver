@@ -7,7 +7,7 @@ func (p Partition) Eql(prt Partition) bool {
 }
 
 func (p Partition) Ins(stp int, srg int, sbt int, slf int) bool {
-	return !(stp < p.Y || srg < p.X || sbt > p.Y+Pt1 || slf > p.X+Pt1)
+	return !(stp < p.Y || srg < p.X || sbt > p.Y || slf > p.X) // TODO:test partitions are detected to be inside screen boundaries
 }
 
 var zrp Partition

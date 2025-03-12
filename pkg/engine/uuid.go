@@ -93,6 +93,7 @@ func (e *Engine) join(u byte, _ common.Address, c chan<- []byte) {
 	// buffer in the player's setter.
 
 	{
+		e.ply.act[u] = true
 		e.ply.qdr[u] = v.Motion().Qdr
 		e.ply.buf[u] = f
 		e.ply.cli[u] = c

@@ -93,6 +93,7 @@ func New(c Config) *Engine {
 			vec: map[byte]*vector.Vector{},
 		},
 		ply: &player{
+			act: make([]bool, c.Cap),
 			agl: make([]byte, c.Cap),
 			buf: make([][]byte, c.Cap),
 			cli: make([]chan<- []byte, c.Cap),

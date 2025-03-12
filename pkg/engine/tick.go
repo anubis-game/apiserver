@@ -8,7 +8,7 @@ func (e *Engine) tick() {
 	for u := range e.uni.Length() {
 		// Skip all inactive players.
 
-		if e.ply.cli[u] == nil {
+		if !e.ply.act[u] {
 			continue
 		}
 
@@ -20,7 +20,7 @@ func (e *Engine) tick() {
 		}
 
 		{
-			v.Update(0, e.ply.qdr[u], e.ply.agl[u], e.ply.rac[u]) // TODO the eaten food must be added
+			v.Update(0, e.ply.qdr[u], e.ply.agl[u], e.ply.rac[u]) // TODO:infra the eaten food must be added
 		}
 
 		var c vector.Change

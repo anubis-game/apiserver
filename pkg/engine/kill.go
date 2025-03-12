@@ -19,6 +19,10 @@ import (
 func (e *Engine) Kill(uid byte, _ *client.Client, inp []byte) error {
 	var err error
 
+	{
+		// e.ply.act[u] = false
+	}
+
 	//
 	//     inp[0]        action
 	//     inp[1:21]     winner

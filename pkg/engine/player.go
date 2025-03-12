@@ -1,6 +1,11 @@
 package engine
 
 type player struct {
+	// act contains all active flags for us to know whether players are still in
+	// the game or not. Players may be part of the game without having a client
+	// connected. In that case we want to keep reconciling all relevant game
+	// state, even if we do not send any data to the disconnected client.
+	act []bool
 	// agl
 	agl []byte
 	// buf contains the fanout buffers ready to be sent out to every player during
