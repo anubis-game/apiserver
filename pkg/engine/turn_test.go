@@ -17,53 +17,53 @@ func Test_Engine_turn(t *testing.T) {
 		uid = 0x5
 	}
 
-	if eng.ply.tur[uid].Qdr != 0x0 {
-		t.Fatalf("expected %#v got %#v", 0x0, eng.ply.tur[uid].Qdr)
+	if eng.ply.qdr[uid] != 0x0 {
+		t.Fatalf("expected %#v got %#v", 0x0, eng.ply.qdr[uid])
 	}
-	if eng.ply.tur[uid].Agl != 0x0 {
-		t.Fatalf("expected %#v got %#v", 0x0, eng.ply.tur[uid].Agl)
+	if eng.ply.agl[uid] != 0x0 {
+		t.Fatalf("expected %#v got %#v", 0x0, eng.ply.agl[uid])
 	}
 
 	eng.turn(router.Turn{Uid: uid, Qdr: 0x1, Agl: 0x80})
 
-	if eng.ply.tur[uid].Qdr != 0x1 {
-		t.Fatalf("expected %#v got %#v", 0x1, eng.ply.tur[uid].Qdr)
+	if eng.ply.qdr[uid] != 0x1 {
+		t.Fatalf("expected %#v got %#v", 0x1, eng.ply.qdr[uid])
 	}
-	if eng.ply.tur[uid].Agl != 0x80 {
-		t.Fatalf("expected %#v got %#v", 0x80, eng.ply.tur[uid].Agl)
+	if eng.ply.agl[uid] != 0x80 {
+		t.Fatalf("expected %#v got %#v", 0x80, eng.ply.agl[uid])
 	}
 
 	{
 		eng.turn(router.Turn{Uid: uid, Qdr: 0x1, Agl: 0x76})
 	}
 
-	if eng.ply.tur[uid].Qdr != 0x1 {
-		t.Fatalf("expected %#v got %#v", 0x1, eng.ply.tur[uid].Qdr)
+	if eng.ply.qdr[uid] != 0x1 {
+		t.Fatalf("expected %#v got %#v", 0x1, eng.ply.qdr[uid])
 	}
-	if eng.ply.tur[uid].Agl != 0x76 {
-		t.Fatalf("expected %#v got %#v", 0x76, eng.ply.tur[uid].Agl)
+	if eng.ply.agl[uid] != 0x76 {
+		t.Fatalf("expected %#v got %#v", 0x76, eng.ply.agl[uid])
 	}
 
 	{
 		eng.turn(router.Turn{Uid: uid, Qdr: 0x3, Agl: 0xa})
 	}
 
-	if eng.ply.tur[uid].Qdr != 0x3 {
-		t.Fatalf("expected %#v got %#v", 0x3, eng.ply.tur[uid].Qdr)
+	if eng.ply.qdr[uid] != 0x3 {
+		t.Fatalf("expected %#v got %#v", 0x3, eng.ply.qdr[uid])
 	}
-	if eng.ply.tur[uid].Agl != 0xa {
-		t.Fatalf("expected %#v got %#v", 0xa, eng.ply.tur[uid].Agl)
+	if eng.ply.agl[uid] != 0xa {
+		t.Fatalf("expected %#v got %#v", 0xa, eng.ply.agl[uid])
 	}
 
 	{
 		eng.turn(router.Turn{Uid: uid, Qdr: 0x1, Agl: 0x80})
 	}
 
-	if eng.ply.tur[uid].Qdr != 0x1 {
-		t.Fatalf("expected %#v got %#v", 0x1, eng.ply.tur[uid].Qdr)
+	if eng.ply.qdr[uid] != 0x1 {
+		t.Fatalf("expected %#v got %#v", 0x1, eng.ply.qdr[uid])
 	}
-	if eng.ply.tur[uid].Agl != 0x80 {
-		t.Fatalf("expected %#v got %#v", 0x80, eng.ply.tur[uid].Agl)
+	if eng.ply.agl[uid] != 0x80 {
+		t.Fatalf("expected %#v got %#v", 0x80, eng.ply.agl[uid])
 	}
 }
 

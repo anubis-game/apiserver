@@ -69,9 +69,9 @@ func (c Coordinate) Pt8() Partition {
 	}
 }
 
-var zer Coordinate
+var zrc Coordinate
 
 func (c Coordinate) Zer() bool {
 	// return c.X == 0 && c.Y == 0
-	return c == zer
+	return c == zrc
 }

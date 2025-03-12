@@ -11,15 +11,14 @@ func (f *Filler) Vector() *vector.Vector {
 
 // vector is to simply prepare randomized Vector instances in advance.
 func (f *Filler) vector() *vector.Vector {
-	// Create a new Motion object so we can point new players towards a randomized
-	// direction.
+	// Create random quadrant and angle bytes, so we can point new players towards
+	// a randomized direction.
 
-	var mot vector.Motion
+	var qdr byte
+	var agl byte
 	{
-		mot = vector.Motion{
-			Qdr: byte(f.qdr.Random()),
-			Agl: byte(f.agl.Random()),
-		}
+		qdr = byte(f.qdr.Random())
+		agl = byte(f.agl.Random())
 	}
 
 	// Create a new Vector instance using a random head node.
@@ -31,7 +30,10 @@ func (f *Filler) vector() *vector.Vector {
 				X: f.crd.Random(),
 				Y: f.crd.Random(),
 			},
-			Mot: mot,
+			Mot: vector.Motion{
+				Qdr: qdr,
+				Agl: agl,
+			},
 		})
 	}
 
@@ -42,7 +44,7 @@ func (f *Filler) vector() *vector.Vector {
 	// time.
 
 	for range 4 {
-		vec.Update(int(vector.Si/vector.Li), mot.Qdr, mot.Agl, vector.Nrm)
+		vec.Update(int(vector.Si/vector.Li), qdr, agl, vector.Nrm)
 	}
 
 	return vec
