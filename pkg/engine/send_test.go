@@ -59,9 +59,16 @@ func Test_Engine_worker_read(t *testing.T) {
 
 	//
 
-	for range 10 {
+	for i := range 10 {
+		// Verify that the sequence byte is being incremented properly with every
+		// update cycle.
+
+		if eng.ply.buf[uid][0] != byte(i) {
+			t.Fatalf("expected %#v got %#v", byte(i), eng.ply.buf[uid][0])
+		}
+
 		{
-			eng.ply.buf[uid] = buf
+			eng.ply.buf[uid] = append(eng.ply.buf[uid], buf...)
 		}
 
 		var dur time.Duration
@@ -72,8 +79,8 @@ func Test_Engine_worker_read(t *testing.T) {
 		}
 
 		// We are effectively only making sure that some message is actually being
-		// send to a non-blocking channel. This should happen under 100
-		// microseconds.
+		// send to a non-blocking channel. This should happen in under 100
+		// microseconds, even on limited CI providers.
 
 		if dur > 100*time.Microsecond {
 			t.Fatalf("expected %s got %s", "under 100 microseconds", dur)
@@ -92,43 +99,43 @@ func Benchmark_Engine_send(b *testing.B) {
 	testCases := []struct {
 		buf []byte
 	}{
-		// Case 000, ~3,900 ns/op, 0 allocs/op
+		// Case 000, ~4,000 ns/op, 2 allocs/op
 		{
-			buf: make([]byte, 2),
+			buf: make([]byte, 16),
 		},
-		// Case 001, ~4,200 ns/op, 1 allocs/op
+		// Case 001, ~4,000 ns/op, 3 allocs/op
 		{
 			buf: make([]byte, 32),
 		},
-		// Case 002, ~4,200 ns/op, 1 allocs/op
+		// Case 002, ~4,000 ns/op, 3 allocs/op
 		{
 			buf: make([]byte, 64),
 		},
-		// Case 003, ~4,300 ns/op, 1 allocs/op
+		// Case 003, ~4,000 ns/op, 3 allocs/op
 		{
 			buf: make([]byte, 128),
 		},
-		// Case 004, ~4,300 ns/op, 1 allocs/op
+		// Case 004, ~4,000 ns/op, 3 allocs/op
 		{
 			buf: make([]byte, 256),
 		},
-		// Case 005, ~4,300 ns/op, 1 allocs/op
+		// Case 005, ~4,000 ns/op, 3 allocs/op
 		{
 			buf: make([]byte, 512),
 		},
-		// Case 006, ~4,400 ns/op, 2 allocs/op
+		// Case 006, ~4,200 ns/op, 4 allocs/op
 		{
 			buf: make([]byte, 1024),
 		},
-		// Case 007, ~6,300 ns/op, 5 allocs/op
+		// Case 007, ~7,100 ns/op, 6 allocs/op
 		{
 			buf: make([]byte, 2048),
 		},
-		// Case 008, ~10,400 ns/op, 7 allocs/op
+		// Case 008, ~11,100 ns/op, 9 allocs/op
 		{
 			buf: make([]byte, 4096),
 		},
-		// Case 009, ~18,000 ns/op, 9 allocs/op
+		// Case 009, ~16,500 ns/op, 10 allocs/op
 		{
 			buf: make([]byte, 8192),
 		},
@@ -174,7 +181,7 @@ func Benchmark_Engine_send(b *testing.B) {
 	for i, tc := range testCases {
 		b.Run(fmt.Sprintf("%03d", i), func(b *testing.B) {
 			for b.Loop() {
-				eng.ply.buf[uid] = tc.buf
+				eng.ply.buf[uid] = append(eng.ply.buf[uid], tc.buf...)
 				eng.send(tic)
 			}
 		})

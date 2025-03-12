@@ -4,13 +4,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/anubis-game/apiserver/pkg/energy"
 	"github.com/anubis-game/apiserver/pkg/filler"
-	"github.com/anubis-game/apiserver/pkg/matrix"
 	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/tokenx"
 	"github.com/anubis-game/apiserver/pkg/unique"
-	"github.com/anubis-game/apiserver/pkg/vector"
 	"github.com/anubis-game/apiserver/pkg/worker"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/xh3b4sd/logger"
@@ -34,14 +31,8 @@ type Engine struct {
 	don <-chan struct{}
 	// filler
 	fil filler.Interface
-	// lkp
-	lkp *lookup
 	// log is a simple logger interface to print system relevant information.
 	log logger.Interface
-	// mem
-	mem *memory
-	// ply
-	ply *player
 	// rtr is the bridge synchronizing the server handler and the game engine
 	rtr *router.Engine
 	// tic is the global pointer keeping track of the fanout related time ticks.
@@ -54,6 +45,13 @@ type Engine struct {
 	uni *unique.Unique[common.Address, byte]
 	// wrk
 	wrk worker.Ensure
+
+	// lkp
+	lkp *lookup
+	// mem
+	mem *memory
+	// ply
+	ply *player
 }
 
 func New(c Config) *Engine {
@@ -82,27 +80,14 @@ func New(c Config) *Engine {
 	return &Engine{
 		don: c.Don,
 		fil: c.Fil,
-		lkp: &lookup{
-			nrg: map[matrix.Partition]map[matrix.Coordinate]struct{}{},
-			pt1: map[matrix.Partition]map[byte]struct{}{},
-			pt8: map[matrix.Partition]map[byte]struct{}{},
-		},
 		log: c.Log,
-		mem: &memory{
-			nrg: map[matrix.Coordinate]*energy.Energy{},
-			vec: map[byte]*vector.Vector{},
-		},
-		ply: &player{
-			act: make([]bool, c.Cap),
-			agl: make([]byte, c.Cap),
-			buf: make([][]byte, c.Cap),
-			cli: make([]chan<- []byte, c.Cap),
-			qdr: make([]byte, c.Cap),
-			rac: make([]byte, c.Cap),
-		},
 		rtr: c.Rtr,
 		tkx: c.Tkx,
 		uni: c.Uni,
 		wrk: c.Wrk,
+
+		lkp: newLookup(c.Cap),
+		mem: newMemory(c.Cap),
+		ply: newPlayer(c.Cap),
 	}
 }

@@ -40,13 +40,13 @@ func Benchmark_Schema_Encode(b *testing.B) {
 	testCases := []struct {
 		f func(Action, []byte) []byte
 	}{
-		// Case 000, ~59.40 ns/op
+		// Case 000, ~60 ns/op
 		{
 			f: func(act Action, mes []byte) []byte {
 				return bytes.Join(append([][]byte{{byte(act)}}, mes), nil)
 			},
 		},
-		// Case 001, ~26.00 ns/op
+		// Case 001, ~26 ns/op
 		{
 			f: Encode,
 		},

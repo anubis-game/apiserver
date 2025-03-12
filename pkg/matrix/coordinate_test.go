@@ -52,19 +52,19 @@ func Benchmark_Matrix_Coordinate_Byt(b *testing.B) {
 	testCases := []struct {
 		c Coordinate
 	}{
-		// Case 000, ~19 ns/op
+		// Case 000, ~2 ns/op
 		{
 			c: Coordinate{X: 0, Y: 0},
 		},
-		// Case 001, ~19 ns/op
+		// Case 001, ~2 ns/op
 		{
 			c: Coordinate{X: 5, Y: 0},
 		},
-		// Case 002, ~19 ns/op
+		// Case 002, ~2 ns/op
 		{
 			c: Coordinate{X: 255, Y: 256},
 		},
-		// Case 003, ~19 ns/op
+		// Case 003, ~2 ns/op
 		{
 			c: Coordinate{X: 4_096, Y: 11_623},
 		},
@@ -83,19 +83,19 @@ func Benchmark_Matrix_Coordinate_New(b *testing.B) {
 	testCases := []struct {
 		b [CoordinateBytes]byte
 	}{
-		// Case 000, ~65 ns/op
+		// Case 000, ~2 ns/op
 		{
 			b: [CoordinateBytes]byte{0x0, 0x0, 0x0, 0x0, 0x0, 0x0},
 		},
-		// Case 001, ~65 ns/op
+		// Case 001, ~2 ns/op
 		{
 			b: [CoordinateBytes]byte{0x0, 0x0, 0x0, 0x0, 0x5, 0x0},
 		},
-		// Case 002, ~65 ns/op
+		// Case 002, ~2 ns/op
 		{
 			b: [CoordinateBytes]byte{0x0, 0x0, 0x3, 0x4, 0x3f, 0x0},
 		},
-		// Case 003, ~65 ns/op
+		// Case 003, ~2 ns/op
 		{
 			b: [CoordinateBytes]byte{0x1, 0x2, 0x0, 0x35, 0x0, 0x27},
 		},

@@ -1,5 +1,17 @@
+// Package schema defines the buffer encoding used between all client-server
+// communication. Every websocket message starts with a sequence byte, followed
+// by at least one game message. Clients can keep track of the sequence byte in
+// order to ensure that they received all messages in the order that the server
+// intended to send. Every game message starts with an action byte, followed by
+// action specific information.
+//
+//     [ sqnc ]    [action]    [  ...  ]    [action]    [  ...  ]
+//     [1 byte]    [1 byte]    [N bytes]    [1 byte]    [N bytes]
+//
+
 package schema
 
+// Action defines the game message type and instructs how to read that message.
 type Action byte
 
 const (

@@ -13,6 +13,13 @@ type memory struct {
 	// to energy packets using their position only because energy packets don't
 	// move.
 	nrg map[matrix.Coordinate]*energy.Energy
-	// vec
-	vec map[byte]*vector.Vector
+	// vec contains all player Vectors. Active players have non-nil Vectors.
+	vec []*vector.Vector
+}
+
+func newMemory(c int) *memory {
+	return &memory{
+		nrg: map[matrix.Coordinate]*energy.Energy{},
+		vec: make([]*vector.Vector, c),
+	}
 }
