@@ -16,12 +16,13 @@ func (v *Vector) Inside(stp int, srg int, sbt int, slf int) []matrix.Coordinate 
 		return nil
 	}
 
+	// Define the boundaries of the overlapping area in terms of partition
+	// coordinates.
+
 	top := minInt(stp, v.otp)
 	rig := minInt(srg, v.org)
 	bot := maxInt(sbt, v.obt)
 	lef := maxInt(slf, v.olf)
-
-	var ins []matrix.Coordinate
 
 	// Walk along all Vector nodes. We can afford the full loop here for several
 	// reasons.
@@ -29,17 +30,18 @@ func (v *Vector) Inside(stp int, srg int, sbt int, slf int) []matrix.Coordinate 
 	//     1. The number of partitions to iterate for any potential
 	//        overlapping area is relatively small.
 	//
-	//     2. The number of Vector nodes within any given partition is
-	//        relatively limited.
+	//     2. The number of nodes within any given Vector is relatively limited.
 	//
 
-	for n := v.hea; n != nil; n = n.prv {
-		// If this node is not inside the overlapping area, then skip it.
+	var ins []matrix.Coordinate
 
+	for n := v.hea; n != nil; n = n.prv {
 		var p matrix.Partition
 		{
 			p = n.crd.Pt1()
 		}
+
+		// Skip this node if it is not inside the overlapping partition.
 
 		if top < p.Y || rig < p.X || bot > p.Y || lef > p.X {
 			continue
