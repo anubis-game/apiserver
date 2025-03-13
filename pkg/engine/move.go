@@ -48,7 +48,7 @@ func (e *Engine) move() {
 		// Look for all byte IDs and their associated Vectors that are located near
 		// v's new head node.
 
-		e.allpt8(u, v.Change().Hea.Pt8(), matrix.Pt8, func(b byte, w *vector.Vector) {
+		e.screen(u, v.Change().Hea.Pt8(), func(b byte, w *vector.Vector) {
 			// Check whether v or w gets killed upon impact.
 
 			{
@@ -96,15 +96,15 @@ func (e *Engine) impact(v *vector.Vector, w *vector.Vector) {
 	// the required layer of small partitions. E.g. Rv=25 Rw=17 requires only a
 	// single layer because 42 is smaller than 128.
 
-	var f int
+	var l, m, n, o int
 	{
-		f = ((v.Charax().Fos + w.Charax().Fos) / matrix.Pt1) + 1
+		l, m, n, o = v.Bounds(((v.Charax().Fos + w.Charax().Fos) / matrix.Pt1) + 1)
 	}
 
 	// Iterate over all node coordinates of Vector w that are close to Vector v's
 	// head node.
 
-	for _, c := range w.Inside(v.Bounds(f)) {
+	w.Inside(l, m, n, o, func(c matrix.Coordinate) bool {
 		if v.Impact(c, w.Charax().Rad) {
 			// The head node of Vector v has collided with the node coordinate c of
 			// Vector w. By default this means that Vector v gets killed, because that
@@ -115,15 +115,17 @@ func (e *Engine) impact(v *vector.Vector, w *vector.Vector) {
 
 			if c == w.Change().Hea && v.Charax().Rad > w.Charax().Rad {
 				// TODO:infra kill w, break loops
-				return
+				return false
 			}
 
 			{
 				// TODO:infra kill v, break loops
-				return
+				return false
 			}
 		}
-	}
+
+		return true
+	})
 }
 
 func (e *Engine) lookup(u byte, c vector.Change) {

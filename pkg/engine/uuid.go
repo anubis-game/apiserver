@@ -65,18 +65,22 @@ func (e *Engine) join(u byte, w common.Address, c chan<- []byte) {
 
 	l, m, n, o := v.Bounds()
 
-	e.allpt8(u, v.Change().Hea.Pt8(), matrix.Pt8, func(b byte, w *vector.Vector) {
-		for _, c := range w.Inside(l, m, n, o) {
+	e.screen(u, v.Change().Hea.Pt8(), func(b byte, w *vector.Vector) {
+		w.Inside(l, m, n, o, func(c matrix.Coordinate) bool {
 			b := c.Byt()
 			// TODO:infra the body messages still need to be encoded.
 			f = append(f, b[:]...)
-		}
+			return true
+		})
 
-		for _, c := range v.Inside(w.Bounds()) {
+		p, q, r, s := w.Bounds()
+
+		v.Inside(p, q, r, s, func(c matrix.Coordinate) bool {
 			b := c.Byt()
 			// TODO:infra the body messages still need to be encoded.
 			f = append(f, b[:]...)
-		}
+			return true
+		})
 	})
 
 	// TODO:infra send the new player information to all players that can see the

@@ -2,18 +2,19 @@ package vector
 
 import "github.com/anubis-game/apiserver/pkg/matrix"
 
-// Inside returns the occupied coordinates of this Vector that the screen
-// boundaries as returned by Vector.Screen() can see. If the given Vector nodes
-// and screen boundaries do not overlap at all, then nil is returned. Nil is
-// also returned if the given areas overlap, while no Vector coordinates are
-// actually located in the overlapping area. The preliminary overlap is verified
-// using an AABB check (Axis-Aligned Bounding Box).
-func (v *Vector) Inside(stp int, srg int, sbt int, slf int) []matrix.Coordinate {
+// Inside executes the given callback for every occupied coordinate of this
+// Vector that the screen boundaries as returned by Vector.Screen() can see. If
+// the given Vector nodes and screen boundaries do not overlap at all, then fnc
+// is not executed at all. The same is true if the given areas overlap, while no
+// Vector coordinates are actually located in the overlapping area. The
+// preliminary overlap is verified using an AABB check (Axis-Aligned Bounding
+// Box). Inside stops processing if fnc returns false.
+func (v *Vector) Inside(stp int, srg int, sbt int, slf int, fnc func(matrix.Coordinate) bool) {
 	// Check whether any overlap exists before attempting to collect any of the
 	// overlapping partitions.
 
 	if stp < v.obt || srg < v.olf || sbt > v.otp || slf > v.org {
-		return nil
+		return
 	}
 
 	// Define the boundaries of the overlapping area in terms of partition
@@ -32,8 +33,8 @@ func (v *Vector) Inside(stp int, srg int, sbt int, slf int) []matrix.Coordinate 
 	//
 	//     2. The number of nodes within any given Vector is relatively limited.
 	//
-
-	var ins []matrix.Coordinate
+	//     3. We do not allocate by calling Vector.Inside().
+	//
 
 	for n := v.hea; n != nil; n = n.prv {
 		var p matrix.Partition
@@ -47,12 +48,10 @@ func (v *Vector) Inside(stp int, srg int, sbt int, slf int) []matrix.Coordinate 
 			continue
 		}
 
-		{
-			ins = append(ins, n.crd)
+		if !fnc(n.crd) {
+			break
 		}
 	}
-
-	return ins
 }
 
 func minInt(a, b int) int {

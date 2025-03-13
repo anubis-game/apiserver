@@ -8,7 +8,7 @@ import (
 	"github.com/anubis-game/apiserver/pkg/matrix"
 )
 
-func Test_Vector_Inside(t *testing.T) {
+func Test_Vector_Inside_true(t *testing.T) {
 	testCases := []struct {
 		scr screen
 		ins []matrix.Coordinate
@@ -653,7 +653,497 @@ func Test_Vector_Inside(t *testing.T) {
 				tesUpd(vec)
 			}
 
-			ins := vec.Inside(tc.scr.top, tc.scr.rig, tc.scr.bot, tc.scr.lef)
+			var ins []matrix.Coordinate
+			vec.Inside(tc.scr.top, tc.scr.rig, tc.scr.bot, tc.scr.lef, func(crd matrix.Coordinate) bool {
+				ins = append(ins, crd)
+				return true
+			})
+
+			if !slices.Equal(ins, tc.ins) {
+				t.Fatalf("expected %#v got %#v", tc.ins, ins)
+			}
+		})
+	}
+}
+
+func Test_Vector_Inside_false(t *testing.T) {
+	testCases := []struct {
+		scr screen
+		ins []matrix.Coordinate
+	}{
+		// Case 000
+		{
+			scr: screen{},
+			ins: nil,
+		},
+		// Case 001
+		//
+		//     +---------------+
+		//     |               |
+		//     |               |
+		//     |       s       |
+		//     |               |
+		//     |               | P   P   P   P
+		//     +---------------+
+		//                       P   p   p   p
+		//
+		{
+			scr: screen{top: 1792, rig: 768, bot: 1280, lef: 256},
+			ins: nil,
+		},
+		// Case 002
+		//
+		//     +---------------+
+		//     |               |
+		//     |               |
+		//     |       s       |
+		//     |               |
+		//     |             P | P   P   P
+		//     +---------------+
+		//                   P   p   p   p
+		//
+		{
+			scr: screen{top: 1792, rig: 896, bot: 1280, lef: 384},
+			ins: []matrix.Coordinate{
+				// x=896 y=1280
+				{X: 1005, Y: 1299},
+			},
+		},
+		// Case 003
+		//
+		//     +---------------+
+		//     |               |
+		//     |               |
+		//     |       s       |
+		//     |               |
+		//     |         P   P | P   P
+		//     +---------------+
+		//               P   p   p   p
+		//
+		{
+			scr: screen{top: 1792, rig: 1024, bot: 1280, lef: 512},
+			ins: []matrix.Coordinate{
+				// x=1024 y=1280
+				{X: 1144, Y: 1303},
+			},
+		},
+		// Case 004
+		//
+		//     +---------------+
+		//     |               |
+		//     |               |
+		//     |       s       |
+		//     |               |
+		//     |     P   P   P | P
+		//     +---------------+
+		//           P   p   p   p
+		//
+		{
+			scr: screen{top: 1792, rig: 1152, bot: 1280, lef: 640},
+			ins: []matrix.Coordinate{
+				// x=1152 y=1280
+				{X: 1264, Y: 1303},
+			},
+		},
+		// Case 005
+		//
+		//     +---------------+
+		//     |               |
+		//     |               |
+		//     |       s       |
+		//     |               |
+		//     | P   P   P   P |
+		//     +---------------+
+		//       P   p   p   p
+		//
+		{
+			scr: screen{top: 1792, rig: 1280, bot: 1280, lef: 768},
+			ins: []matrix.Coordinate{
+				// x=1280 y=1280
+				{X: 1304, Y: 1303}, // H
+			},
+		},
+		// Case 006
+		//
+		//       +---------------+
+		//       |               |
+		//       |               |
+		//       |       s       |
+		//       |               |
+		//     P | P   P   P     |
+		//       +---------------+
+		//     P   p   p   p
+		//
+		{
+			scr: screen{top: 1792, rig: 1536, bot: 1280, lef: 1024},
+			ins: []matrix.Coordinate{
+				// x=1280 y=1280
+				{X: 1304, Y: 1303}, // H
+			},
+		},
+		// Case 007
+		//
+		//           +---------------+
+		//           |               |
+		//           |               |
+		//           |       s       |
+		//           |               |
+		//     P   P | P   P         |
+		//           +---------------+
+		//     P   p   p   p
+		//
+		{
+			scr: screen{top: 1792, rig: 1664, bot: 1280, lef: 1152},
+			ins: []matrix.Coordinate{
+				// x=1280 y=1280
+				{X: 1304, Y: 1303}, // H
+			},
+		},
+		// Case 008
+		//
+		//               +---------------+
+		//               |               |
+		//               |               |
+		//               |       s       |
+		//               |               |
+		//     P   P   P | P             |
+		//               +---------------+
+		//     P   p   p   p
+		//
+		{
+			scr: screen{top: 1792, rig: 1792, bot: 1280, lef: 1280},
+			ins: []matrix.Coordinate{
+				// x=1280 y=1280
+				{X: 1304, Y: 1303}, // H
+			},
+		},
+		// Case 009
+		//
+		//                   +---------------+
+		//                   |               |
+		//                   |               |
+		//                   |       s       |
+		//                   |               |
+		//     P   P   P   P |               |
+		//                   +---------------+
+		//     P   p   p   p
+		//
+		{
+			scr: screen{top: 1792, rig: 1920, bot: 1280, lef: 1408},
+			ins: nil,
+		},
+		// Case 010
+		//
+		//                   +---------------+
+		//                   |               |
+		//     P   P   P   P |               |
+		//                   |       s       |
+		//     P   p   p   p |               |
+		//                   |               |
+		//                   +---------------+
+		//
+		{
+			scr: screen{top: 1536, rig: 1920, bot: 1024, lef: 1408},
+			ins: nil,
+		},
+		// Case 011
+		//
+		//               +---------------+
+		//               |               |
+		//     P   P   P | P             |
+		//               |       s       |
+		//     P   p   p | p             |
+		//               |               |
+		//               +---------------+
+		//
+		{
+			scr: screen{top: 1536, rig: 1792, bot: 1024, lef: 1280},
+			ins: []matrix.Coordinate{
+				// x=1280 y=1280
+				{X: 1304, Y: 1303}, // H
+			},
+		},
+		// Case 012
+		//
+		//           +---------------+
+		//           |               |
+		//     P   P | P   P         |
+		//           |       s       |
+		//     P   p | p   p         |
+		//           |               |
+		//           +---------------+
+		//
+		{
+			scr: screen{top: 1536, rig: 1664, bot: 1024, lef: 1152},
+			ins: []matrix.Coordinate{
+				// x=1280 y=1280
+				{X: 1304, Y: 1303}, // H
+			},
+		},
+		// Case 013
+		//
+		//       +---------------+
+		//       |               |
+		//     P | P   P   P     |
+		//       |       s       |
+		//     P | p   p   p     |
+		//       |               |
+		//       +---------------+
+		//
+		{
+			scr: screen{top: 1536, rig: 1536, bot: 1024, lef: 1024},
+			ins: []matrix.Coordinate{
+				// x=1280 y=1280
+				{X: 1304, Y: 1303}, // H
+			},
+		},
+		// Case 014
+		//
+		//     +---------------+
+		//     |               |
+		//     | P   P   P   P |
+		//     |       s       |
+		//     | P   p   p   p |
+		//     |               |
+		//     +---------------+
+		//
+		{
+			scr: screen{top: 1536, rig: 1408, bot: 1024, lef: 896},
+			ins: []matrix.Coordinate{
+				// x=1280 y=1280
+				{X: 1304, Y: 1303}, // H
+			},
+		},
+		// Case 015
+		//
+		//     +---------------+
+		//     |               |
+		//     |     P   P   P | P
+		//     |       s       |
+		//     |     P   p   p | p
+		//     |               |
+		//     +---------------+
+		//
+		{
+			scr: screen{top: 1536, rig: 1152, bot: 1024, lef: 640},
+			ins: []matrix.Coordinate{
+				// x=1152 y=1280
+				{X: 1264, Y: 1303},
+			},
+		},
+		// Case 016
+		//
+		//     +---------------+
+		//     |               |
+		//     |         P   P | P   P
+		//     |       s       |
+		//     |         P   p | p   p
+		//     |               |
+		//     +---------------+
+		//
+		{
+			scr: screen{top: 1536, rig: 1024, bot: 1024, lef: 512},
+			ins: []matrix.Coordinate{
+				// x=1024 y=1280
+				{X: 1144, Y: 1303},
+			},
+		},
+		// Case 017
+		//
+		//     +---------------+
+		//     |               |
+		//     |             P | P   P   P
+		//     |       s       |
+		//     |             P | p   p   p
+		//     |               |
+		//     +---------------+
+		//
+		{
+			scr: screen{top: 1536, rig: 896, bot: 1024, lef: 384},
+			ins: []matrix.Coordinate{
+				// x=896 y=1280
+				{X: 1005, Y: 1299},
+			},
+		},
+		// Case 018
+		//
+		//     +---------------+
+		//     |               |
+		//     |               | P   P   P   P
+		//     |       s       |
+		//     |               | P   p   p   p
+		//     |               |
+		//     +---------------+
+		//
+		{
+			scr: screen{top: 1536, rig: 768, bot: 1024, lef: 256},
+			ins: nil,
+		},
+		// Case 019
+		//
+		//                       P   P   P   P
+		//     +---------------+
+		//     |               | P   p   p   p
+		//     |               |
+		//     |       s       |
+		//     |               |
+		//     |               |
+		//     +---------------+
+		//
+		{
+			scr: screen{top: 1152, rig: 768, bot: 640, lef: 256},
+			ins: nil,
+		},
+		// Case 020
+		//
+		//                   P   P   P   P
+		//     +---------------+
+		//     |             P | p   p   p
+		//     |               |
+		//     |       s       |
+		//     |               |
+		//     |               |
+		//     +---------------+
+		//
+		{
+			scr: screen{top: 1152, rig: 896, bot: 640, lef: 384},
+			ins: []matrix.Coordinate{
+				// x=896 y=1152
+				{X: 1000, Y: 1260},
+			},
+		},
+		// Case 021
+		//
+		//               P   P   P   P
+		//     +---------------+
+		//     |         P   p | p   p
+		//     |               |
+		//     |       s       |
+		//     |               |
+		//     |               |
+		//     +---------------+
+		//
+		{
+			scr: screen{top: 1152, rig: 1024, bot: 640, lef: 512},
+			ins: []matrix.Coordinate{
+				// x=896 y=1152
+				{X: 1000, Y: 1260},
+			},
+		},
+		// Case 022
+		//
+		//           P   P   P   P
+		//     +---------------+
+		//     |     P   p   p | p
+		//     |               |
+		//     |       s       |
+		//     |               |
+		//     |               |
+		//     +---------------+
+		//
+		{
+			scr: screen{top: 1152, rig: 1152, bot: 640, lef: 640},
+			ins: []matrix.Coordinate{
+				// x=896 y=1152
+				{X: 1000, Y: 1260},
+			},
+		},
+		// Case 023
+		//
+		//       P   P   P   P
+		//     +---------------+
+		//     | P   p   p   p |
+		//     |               |
+		//     |       s       |
+		//     |               |
+		//     |               |
+		//     +---------------+
+		//
+		{
+			scr: screen{top: 1152, rig: 1280, bot: 640, lef: 768},
+			ins: []matrix.Coordinate{
+				// x=896 y=1152
+				{X: 1000, Y: 1260},
+			},
+		},
+		// Case 024
+		//
+		//     P   P   P   P
+		//       +---------------+
+		//     P | p   p   p     |
+		//       |               |
+		//       |       s       |
+		//       |               |
+		//       |               |
+		//       +---------------+
+		//
+		{
+			scr: screen{top: 1152, rig: 1536, bot: 640, lef: 1024},
+			ins: nil,
+		},
+		// Case 025
+		//
+		//     P   P   P   P
+		//           +---------------+
+		//     P   p | p   p         |
+		//           |               |
+		//           |       s       |
+		//           |               |
+		//           |               |
+		//           +---------------+
+		//
+		{
+			scr: screen{top: 1152, rig: 1664, bot: 640, lef: 1152},
+			ins: nil,
+		},
+		// Case 026
+		//
+		//     P   P   P   P
+		//               +---------------+
+		//     P   p   p | p             |
+		//               |               |
+		//               |       s       |
+		//               |               |
+		//               |               |
+		//               +---------------+
+		//
+		{
+			scr: screen{top: 1152, rig: 1792, bot: 640, lef: 1280},
+			ins: nil,
+		},
+		// Case 027
+		//
+		//     P   P   P   P
+		//                   +---------------+
+		//     P   p   p   p |               |
+		//                   |               |
+		//                   |       s       |
+		//                   |               |
+		//                   |               |
+		//                   +---------------+
+		//
+		{
+			scr: screen{top: 1152, rig: 1920, bot: 640, lef: 1408},
+			ins: nil,
+		},
+	}
+
+	for i, tc := range testCases {
+		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
+			var vec *Vector
+			{
+				vec = tesVec()
+			}
+
+			{
+				tesUpd(vec)
+			}
+
+			var ins []matrix.Coordinate
+			vec.Inside(tc.scr.top, tc.scr.rig, tc.scr.bot, tc.scr.lef, func(crd matrix.Coordinate) bool {
+				ins = append(ins, crd)
+				return false
+			})
 
 			if !slices.Equal(ins, tc.ins) {
 				t.Fatalf("expected %#v got %#v", tc.ins, ins)
@@ -674,31 +1164,31 @@ func Benchmark_Vector_Inside(b *testing.B) {
 		{
 			scr: screen{top: 1792, rig: 768, bot: 1280, lef: 256},
 		},
-		// Case 002, ~42 ns/op, 2 allocs/op
+		// Case 002, ~17 ns/op
 		{
 			scr: screen{top: 1792, rig: 896, bot: 1280, lef: 384},
 		},
-		// Case 003, ~117 ns/op, 5 allocs/op
+		// Case 003, ~20 ns/op
 		{
 			scr: screen{top: 1792, rig: 1024, bot: 1280, lef: 512},
 		},
-		// Case 004, ~119 ns/op, 5 allocs/op
+		// Case 004, ~23 ns/op
 		{
 			scr: screen{top: 1792, rig: 1152, bot: 1280, lef: 640},
 		},
-		// Case 005, ~177 ns/op, 6 allocs/op
+		// Case 005, ~25 ns/op
 		{
 			scr: screen{top: 1792, rig: 1280, bot: 1280, lef: 768},
 		},
-		// Case 006, ~124 ns/op, 5 allocs/op
+		// Case 006, ~26 ns/op
 		{
 			scr: screen{top: 1792, rig: 1536, bot: 1280, lef: 1024},
 		},
-		// Case 007, ~90 ns/op, 4 allocs/op
+		// Case 007, ~26 ns/op
 		{
 			scr: screen{top: 1792, rig: 1664, bot: 1280, lef: 1152},
 		},
-		// Case 008, ~47 ns/op, 2 allocs/op
+		// Case 008, ~22 ns/op
 		{
 			scr: screen{top: 1792, rig: 1792, bot: 1280, lef: 1280},
 		},
@@ -710,31 +1200,31 @@ func Benchmark_Vector_Inside(b *testing.B) {
 		{
 			scr: screen{top: 1536, rig: 1920, bot: 1024, lef: 1408},
 		},
-		// Case 011, ~47 ns/op, 2 allocs/op
+		// Case 011, ~22 ns/op
 		{
 			scr: screen{top: 1536, rig: 1792, bot: 1024, lef: 1280},
 		},
-		// Case 012, ~88 ns/op, 4 allocs/op
+		// Case 012, ~25 ns/op
 		{
 			scr: screen{top: 1536, rig: 1664, bot: 1024, lef: 1152},
 		},
-		// Case 013, ~122 ns/op, 5 allocs/op
+		// Case 013, ~29 ns/op
 		{
 			scr: screen{top: 1536, rig: 1536, bot: 1024, lef: 1024},
 		},
-		// Case 014, ~182 ns/op, 6 allocs/op
+		// Case 014, ~27 ns/op
 		{
 			scr: screen{top: 1536, rig: 1408, bot: 1024, lef: 896},
 		},
-		// Case 015, ~182 ns/op, 6 allocs/op
+		// Case 015, ~25 ns/op
 		{
 			scr: screen{top: 1536, rig: 1152, bot: 1024, lef: 640},
 		},
-		// Case 016, ~120 ns/op, 5 allocs/op
+		// Case 016, ~23 ns/op
 		{
 			scr: screen{top: 1536, rig: 1024, bot: 1024, lef: 512},
 		},
-		// Case 017, ~83 ns/op, 4 allocs/op
+		// Case 017, ~19 ns/op
 		{
 			scr: screen{top: 1536, rig: 896, bot: 1024, lef: 384},
 		},
@@ -746,19 +1236,19 @@ func Benchmark_Vector_Inside(b *testing.B) {
 		{
 			scr: screen{top: 1152, rig: 768, bot: 640, lef: 256},
 		},
-		// Case 020, ~60 ns/op, 3 allocs/op
+		// Case 020, ~17 ns/op
 		{
 			scr: screen{top: 1152, rig: 896, bot: 640, lef: 384},
 		},
-		// Case 021, ~60 ns/op, 3 allocs/op
+		// Case 021, ~17 ns/op
 		{
 			scr: screen{top: 1152, rig: 1024, bot: 640, lef: 512},
 		},
-		// Case 022, ~60 ns/op, 3 allocs/op
+		// Case 022, ~17 ns/op
 		{
 			scr: screen{top: 1152, rig: 1152, bot: 640, lef: 640},
 		},
-		// Case 023, ~70 ns/op, 3 allocs/op
+		// Case 023, ~17 ns/op
 		{
 			scr: screen{top: 1152, rig: 1280, bot: 640, lef: 768},
 		},
@@ -792,7 +1282,9 @@ func Benchmark_Vector_Inside(b *testing.B) {
 			}
 
 			for b.Loop() {
-				vec.Inside(tc.scr.top, tc.scr.rig, tc.scr.bot, tc.scr.lef)
+				vec.Inside(tc.scr.top, tc.scr.rig, tc.scr.bot, tc.scr.lef, func(c matrix.Coordinate) bool {
+					return true
+				})
 			}
 		})
 	}
