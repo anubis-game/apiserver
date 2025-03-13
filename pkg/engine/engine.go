@@ -2,7 +2,6 @@ package engine
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/anubis-game/apiserver/pkg/filler"
 	"github.com/anubis-game/apiserver/pkg/router"
@@ -35,10 +34,6 @@ type Engine struct {
 	log logger.Interface
 	// rtr is the bridge synchronizing the server handler and the game engine
 	rtr *router.Engine
-	// tic is the global pointer keeping track of the fanout related time ticks.
-	// This timestamp tracks at which point the latest fanout procedure has been
-	// executed. The first tick is initialized in Engine.Daemon().
-	tic time.Time
 	// tkx
 	tkx *tokenx.TokenX[common.Address]
 	// uni

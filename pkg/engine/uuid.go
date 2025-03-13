@@ -79,6 +79,10 @@ func (e *Engine) join(u byte, w common.Address, c chan<- []byte) {
 		}
 	})
 
+	// TODO:infra send the new player information to all players that can see the
+	// new Vector, but make sure to not update fanout buffers of active
+	// disconnected players.
+
 	// Add the new player object to the memory table. This ensures that this new
 	// player is part of the update loop moving forward. Also store the player's
 	// buffer in the player's setter.

@@ -1,13 +1,6 @@
 package engine
 
 func (e *Engine) Daemon() {
-	// Initialize the first fanout tick so that we can keep track of the actually
-	// executed interval moving forward.
-
-	{
-		e.tic = <-e.rtr.Tick()
-	}
-
 	// Synchronize all state management for a lock free architecture.
 
 	go func() {
@@ -20,8 +13,7 @@ func (e *Engine) Daemon() {
 			case b := <-e.rtr.Turn():
 				e.turn(b)
 			case t := <-e.rtr.Tick():
-				e.tick()
-				e.send(t)
+				e.tick(t)
 			}
 		}
 	}()

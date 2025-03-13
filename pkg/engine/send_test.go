@@ -77,7 +77,7 @@ func Test_Engine_worker_read(t *testing.T) {
 		var dur time.Duration
 		{
 			sta := time.Now()
-			eng.send(sta)
+			eng.send()
 			dur = time.Since(sta)
 		}
 
@@ -93,7 +93,6 @@ func Test_Engine_worker_read(t *testing.T) {
 		// within the receiving websocket client of our test connection.
 
 		msg := <-frc
-		fmt.Printf("%#v\n", msg)
 		if msg[0] != byte(i) {
 			t.Fatalf("expected %#v got %#v", byte(i), msg[0])
 		}
@@ -107,19 +106,19 @@ func Benchmark_Engine_send(b *testing.B) {
 	testCases := []struct {
 		buf []byte
 	}{
-		// Case 000, ~4,000 ns/op, 2 allocs/op
+		// Case 000, ~3,900 ns/op, 2 allocs/op
 		{
 			buf: make([]byte, 16),
 		},
-		// Case 001, ~4,000 ns/op, 3 allocs/op
+		// Case 001, ~3,900 ns/op, 3 allocs/op
 		{
 			buf: make([]byte, 32),
 		},
-		// Case 002, ~4,000 ns/op, 3 allocs/op
+		// Case 002, ~3,900 ns/op, 3 allocs/op
 		{
 			buf: make([]byte, 64),
 		},
-		// Case 003, ~4,000 ns/op, 3 allocs/op
+		// Case 003, ~3,900 ns/op, 3 allocs/op
 		{
 			buf: make([]byte, 128),
 		},
@@ -127,87 +126,78 @@ func Benchmark_Engine_send(b *testing.B) {
 		{
 			buf: make([]byte, 256),
 		},
-		// Case 005, ~4,000 ns/op, 3 allocs/op
+		// Case 005, ~4,300 ns/op, 4 allocs/op
 		{
 			buf: make([]byte, 512),
 		},
-		// Case 006, ~4,300 ns/op, 4 allocs/op
+		// Case 006, ~4,200 ns/op, 4 allocs/op
 		{
 			buf: make([]byte, 1024),
 		},
-		// Case 007, ~7,300 ns/op, 7 allocs/op
+		// Case 007, ~7,300 ns/op, 6 allocs/op
 		{
 			buf: make([]byte, 2048),
 		},
-		// Case 008, ~11,100 ns/op, 9 allocs/op
+		// Case 008, ~11,400 ns/op, 8 allocs/op
 		{
 			buf: make([]byte, 4096),
 		},
-		// Case 009, ~16,300 ns/op, 11 allocs/op
+		// Case 009, ~17,300 ns/op, 10 allocs/op
 		{
 			buf: make([]byte, 8192),
 		},
 	}
 
-	var eng *Engine
-	{
-		eng = tesEng(250)
-	}
-
-	var uid byte
-	{
-		uid = 0x5
-	}
-
-	var fcn chan []byte
-	var frc chan []byte
-	{
-		fcn = make(chan []byte, 1024)
-		frc = make(chan []byte, 1024)
-	}
-
-	var cli *client.Client
-	{
-		cli = client.New(client.Config{
-			Con: tesCon(frc),
-			Don: make(<-chan struct{}),
-			Fcn: fcn,
-			Lim: ratelimit.New(1),
-			Log: logger.Fake(),
-			Tkx: tokenx.New[common.Address](),
-		})
-	}
-
-	{
-		go cli.Daemon()
-	}
-
-	go func() {
-		for {
-			<-frc
-		}
-	}()
-
-	{
-		eng.ply.cli[uid] = fcn
-	}
-
-	tic := time.Now()
-
 	for i, tc := range testCases {
 		b.Run(fmt.Sprintf("%03d", i), func(b *testing.B) {
+			var eng *Engine
+			{
+				eng = tesEng(250)
+			}
+
+			var uid byte
+			{
+				uid = 0x5
+			}
+
+			var fcn chan []byte
+			var frc chan []byte
+			{
+				fcn = make(chan []byte, 1024)
+				frc = make(chan []byte, 1024)
+			}
+
+			var cli *client.Client
+			{
+				cli = client.New(client.Config{
+					Con: tesCon(frc),
+					Don: make(<-chan struct{}),
+					Fcn: fcn,
+					Lim: ratelimit.New(1),
+					Log: logger.Fake(),
+					Tkx: tokenx.New[common.Address](),
+				})
+			}
+
+			{
+				go cli.Daemon()
+			}
+
+			go func() {
+				for {
+					<-frc
+				}
+			}()
+
+			{
+				eng.ply.cli[uid] = fcn
+			}
+
 			for b.Loop() {
 				eng.ply.buf[uid] = append(eng.ply.buf[uid], tc.buf...)
-				eng.send(tic)
+				eng.send()
 			}
 		})
-	}
-
-	//
-
-	err := cli.Stream([]byte("ping"))
-	if err != nil {
-		b.Fatalf("expected %#v got %#v", nil, err)
 	}
 }
 
