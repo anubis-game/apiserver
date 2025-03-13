@@ -49,7 +49,7 @@ func Test_Engine_uuid(t *testing.T) {
 	}
 }
 
-// ~2,603 ns/op, 38 allocs/op
+// ~2,027 ns/op, 34 allocs/op
 func Benchmark_Engine_uuid(b *testing.B) {
 	var eng *Engine
 	{
@@ -59,6 +59,13 @@ func Benchmark_Engine_uuid(b *testing.B) {
 	var uid byte
 	{
 		uid = 0x5
+	}
+
+	{
+		eng.uuid(router.Uuid{Uid: 0x0, Jod: router.Join, Wal: tesWal(0x0), Cli: make(chan<- []byte)})
+		eng.uuid(router.Uuid{Uid: 0x1, Jod: router.Join, Wal: tesWal(0x1), Cli: make(chan<- []byte)})
+		eng.uuid(router.Uuid{Uid: 0x2, Jod: router.Join, Wal: tesWal(0x2), Cli: make(chan<- []byte)})
+		eng.uuid(router.Uuid{Uid: 0x3, Jod: router.Join, Wal: tesWal(0x3), Cli: make(chan<- []byte)})
 	}
 
 	for b.Loop() {

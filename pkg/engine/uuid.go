@@ -63,7 +63,7 @@ func (e *Engine) join(u byte, _ common.Address, c chan<- []byte) {
 
 	l, m, n, o := v.Bounds()
 
-	for b := range e.allpt8(u, v) {
+	for _, b := range e.allpt8(u, v) {
 		var w *vector.Vector
 		{
 			w = e.mem.vec[b]

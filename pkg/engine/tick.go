@@ -43,7 +43,7 @@ func (e *Engine) tick() {
 
 		// Look for all byte IDs near v's new head node.
 
-		for b := range e.allpt8(u, v) {
+		for _, b := range e.allpt8(u, v) {
 			// Get the Vector w for the impact check and screen updates below.
 
 			var w *vector.Vector
