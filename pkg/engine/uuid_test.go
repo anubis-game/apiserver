@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"bytes"
 	"testing"
 
 	"github.com/anubis-game/apiserver/pkg/router"
@@ -43,13 +44,13 @@ func Test_Engine_uuid(t *testing.T) {
 			t.Fatalf("expected %T got %#v", &vector.Vector{}, nil)
 		}
 
-		// if !bytes.Contains(eng.fuw[u], wal.Bytes()) {
-		// 	panic(fmt.Sprintf("expected %#v got %#v", wal, eng.fuw[u]))
-		// }
+		if !bytes.Contains(eng.ply.buf[u], wal.Bytes()) {
+			t.Fatalf("expected %#v got %#v", wal, eng.ply.buf[u])
+		}
 	}
 }
 
-// ~2,027 ns/op, 34 allocs/op
+// ~2,400 ns/op, 29 allocs/op
 func Benchmark_Engine_uuid(b *testing.B) {
 	var eng *Engine
 	{

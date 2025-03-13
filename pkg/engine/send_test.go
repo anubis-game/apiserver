@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"net/http"
@@ -28,14 +29,16 @@ func Test_Engine_worker_read(t *testing.T) {
 	}
 
 	var fcn chan []byte
+	var frc chan []byte
 	{
 		fcn = make(chan []byte, 1024)
+		frc = make(chan []byte, 1024)
 	}
 
 	var cli *client.Client
 	{
 		cli = client.New(client.Config{
-			Con: tesCon(),
+			Con: tesCon(frc),
 			Don: make(<-chan struct{}),
 			Fcn: fcn,
 			Lim: ratelimit.New(1),
@@ -52,11 +55,6 @@ func Test_Engine_worker_read(t *testing.T) {
 		eng.ply.cli[uid] = fcn
 	}
 
-	var buf []byte
-	{
-		buf = make([]byte, 32)
-	}
-
 	//
 
 	for i := range 10 {
@@ -67,8 +65,13 @@ func Test_Engine_worker_read(t *testing.T) {
 			t.Fatalf("expected %#v got %#v", byte(i), eng.ply.buf[uid][0])
 		}
 
+		var wal common.Address
 		{
-			eng.ply.buf[uid] = append(eng.ply.buf[uid], buf...)
+			wal = tesWal(uid)
+		}
+
+		{
+			eng.ply.buf[uid] = append(eng.ply.buf[uid], wal.Bytes()...)
 		}
 
 		var dur time.Duration
@@ -86,11 +89,16 @@ func Test_Engine_worker_read(t *testing.T) {
 			t.Fatalf("expected %s got %s", "under 100 microseconds", dur)
 		}
 
-		//
+		// Ensure that the fanout receiver channel recorded the message that we sent
+		// within the receiving websocket client of our test connection.
 
-		err := cli.Stream([]byte("ping"))
-		if err != nil {
-			t.Fatalf("expected %#v got %#v", nil, err)
+		msg := <-frc
+		fmt.Printf("%#v\n", msg)
+		if msg[0] != byte(i) {
+			t.Fatalf("expected %#v got %#v", byte(i), msg[0])
+		}
+		if !bytes.Contains(msg, wal.Bytes()) {
+			t.Fatalf("expected %#v got %#v", wal, msg)
 		}
 	}
 }
@@ -123,11 +131,11 @@ func Benchmark_Engine_send(b *testing.B) {
 		{
 			buf: make([]byte, 512),
 		},
-		// Case 006, ~4,200 ns/op, 4 allocs/op
+		// Case 006, ~4,300 ns/op, 4 allocs/op
 		{
 			buf: make([]byte, 1024),
 		},
-		// Case 007, ~7,100 ns/op, 6 allocs/op
+		// Case 007, ~7,300 ns/op, 7 allocs/op
 		{
 			buf: make([]byte, 2048),
 		},
@@ -135,7 +143,7 @@ func Benchmark_Engine_send(b *testing.B) {
 		{
 			buf: make([]byte, 4096),
 		},
-		// Case 009, ~16,500 ns/op, 10 allocs/op
+		// Case 009, ~16,300 ns/op, 11 allocs/op
 		{
 			buf: make([]byte, 8192),
 		},
@@ -152,14 +160,16 @@ func Benchmark_Engine_send(b *testing.B) {
 	}
 
 	var fcn chan []byte
+	var frc chan []byte
 	{
 		fcn = make(chan []byte, 1024)
+		frc = make(chan []byte, 1024)
 	}
 
 	var cli *client.Client
 	{
 		cli = client.New(client.Config{
-			Con: tesCon(),
+			Con: tesCon(frc),
 			Don: make(<-chan struct{}),
 			Fcn: fcn,
 			Lim: ratelimit.New(1),
@@ -171,6 +181,12 @@ func Benchmark_Engine_send(b *testing.B) {
 	{
 		go cli.Daemon()
 	}
+
+	go func() {
+		for {
+			<-frc
+		}
+	}()
 
 	{
 		eng.ply.cli[uid] = fcn
@@ -195,7 +211,7 @@ func Benchmark_Engine_send(b *testing.B) {
 	}
 }
 
-func tesCon() *websocket.Conn {
+func tesCon(c chan<- []byte) *websocket.Conn {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		con, err := websocket.Accept(w, r, nil)
 		if err != nil {
@@ -213,9 +229,13 @@ func tesCon() *websocket.Conn {
 		}
 
 		for {
-			_, _, err := con.Read(context.Background())
+			_, byt, err := con.Read(context.Background())
 			if err != nil {
 				panic(err)
+			}
+
+			{
+				c <- byt
 			}
 		}
 	}))

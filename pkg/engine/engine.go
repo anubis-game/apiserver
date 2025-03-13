@@ -17,7 +17,7 @@ import (
 type Config struct {
 	Cap int
 	Don <-chan struct{}
-	Fil filler.Interface
+	Fil *filler.Filler
 	Log logger.Interface
 	Rtr *router.Engine
 	Tkx *tokenx.TokenX[common.Address]
@@ -30,7 +30,7 @@ type Engine struct {
 	// closed, then all streaming connections should be terminated gracefully.
 	don <-chan struct{}
 	// filler
-	fil filler.Interface
+	fil *filler.Filler
 	// log is a simple logger interface to print system relevant information.
 	log logger.Interface
 	// rtr is the bridge synchronizing the server handler and the game engine

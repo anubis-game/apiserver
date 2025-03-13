@@ -20,53 +20,65 @@ func (e *Engine) tick() {
 			v = e.mem.vec[u]
 		}
 
+		// Update this Vector.
+
 		{
 			v.Update(0, e.ply.qdr[u], e.ply.agl[u], e.ply.rac[u]) // TODO:infra the eaten food must be added
 		}
+
+		// Get the Vector's changed coordinates.
 
 		var c vector.Change
 		{
 			c = v.Change()
 		}
 
-		// Send the player's own change to themselves.
+		// Add its own Vector changes to its own fanout buffer.
 
 		{
-			e.change(u, c)
+			e.bufslf(u, c)
 		}
 
-		// Add the player's change to the lookup tables.
+		// Add the Vector changes to the lookup tables.
 
 		{
 			e.lookup(u, c)
 		}
 
-		// Look for all byte IDs near v's new head node.
+		// Look for all byte IDs and their associated Vectors that are located near
+		// v's new head node.
 
-		for _, b := range e.allpt8(u, v) {
-			// Get the Vector w for the impact check and screen updates below.
-
-			var w *vector.Vector
-			{
-				w = e.mem.vec[b]
-			}
-
+		e.allpt8(u, v.Change().Hea.Pt8(), matrix.Pt8, func(b byte, w *vector.Vector) {
 			// Check whether v or w gets killed upon impact.
 
 			{
 				e.impact(v, w)
 			}
 
-			// Update the screen of Vector w.
+			// Add the Vector changes of v to the fanout buffer of w.
 
 			{
-				e.screen(c, b, w)
+				e.bufply(c, b, w)
 			}
+		})
+	}
+}
+
+func (e *Engine) bufply(c vector.Change, b byte, w *vector.Vector) {
+	l, m, n, o := w.Bounds()
+
+	if c.Hea.Pt1().Ins(l, m, n, o) {
+		e.ply.buf[b] = append(e.ply.buf[b], 0x0) // TODO:infra encode head create message properly
+	}
+
+	for _, t := range c.Rem {
+		if t.Pt1().Ins(l, m, n, o) {
+			e.ply.buf[b] = append(e.ply.buf[b], 0x0) // TODO:infra encode tail delete message properly
 		}
 	}
 }
 
-func (e *Engine) change(u byte, c vector.Change) {
+func (e *Engine) bufslf(u byte, c vector.Change) {
 	{
 		e.ply.buf[u] = append(e.ply.buf[u], 0x0) // TODO:infra encode head create message properly
 	}
@@ -120,19 +132,5 @@ func (e *Engine) lookup(u byte, c vector.Change) {
 
 	for _, t := range c.Rem {
 		e.lkp.rem(u, t)
-	}
-}
-
-func (e *Engine) screen(c vector.Change, b byte, w *vector.Vector) {
-	l, m, n, o := w.Bounds()
-
-	if c.Hea.Pt1().Ins(l, m, n, o) {
-		e.ply.buf[b] = append(e.ply.buf[b], 0x0) // TODO:infra encode head create message properly
-	}
-
-	for _, t := range c.Rem {
-		if t.Pt1().Ins(l, m, n, o) {
-			e.ply.buf[b] = append(e.ply.buf[b], 0x0) // TODO:infra encode tail delete message properly
-		}
 	}
 }

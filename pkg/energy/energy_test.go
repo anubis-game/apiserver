@@ -9,18 +9,18 @@ import (
 	"github.com/anubis-game/apiserver/pkg/schema"
 )
 
-func Test_Energy_Encode(t *testing.T) {
+func Test_Energy_New(t *testing.T) {
 	testCases := []struct {
-		e *Energy
+		c Config
 		b []byte
 	}{
 		// Case 000
 		{
-			e: New(Config{
-				Obj: matrix.Coordinate{X: 12_547, Y: 512},
+			c: Config{
+				Crd: matrix.Coordinate{X: 12_547, Y: 512},
 				Siz: 0x7c,
 				Typ: 0x3,
-			}),
+			},
 			b: []byte{
 				// action
 				byte(schema.Food),
@@ -36,15 +36,26 @@ func Test_Energy_Encode(t *testing.T) {
 
 	for i, tc := range testCases {
 		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
-			b := tc.e.Encode()
-			e := decode(b)
+			b := New(tc.c)
+			c := decode(b)
 
-			if !reflect.DeepEqual(e, tc.e) {
-				t.Fatalf("expected %#v got %#v", tc.e, e)
+			if !reflect.DeepEqual(c, tc.c) {
+				t.Fatalf("expected %#v got %#v", tc.c, c)
 			}
 			if !reflect.DeepEqual(b, tc.b) {
 				t.Fatalf("expected %#v got %#v", tc.b, b)
 			}
+		})
+	}
+}
+
+// ~11 ns/op, 1 allocs/op
+func Benchmark_Energy_New(b *testing.B) {
+	for b.Loop() {
+		New(Config{
+			Crd: matrix.Coordinate{X: 12_547, Y: 512},
+			Siz: 0x7c,
+			Typ: 0x3,
 		})
 	}
 }

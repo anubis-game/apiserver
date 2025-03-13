@@ -45,13 +45,8 @@ func (c Coordinate) Byt() [CoordinateBytes]byte {
 }
 
 func (c Coordinate) Eql(crd Coordinate) bool {
-	// return c.X == crd.X && c.Y == crd.Y
 	return c == crd
 }
-
-// TODO:bench instead of computing the coordinate partitions and byte
-// representations over and over again, we could generate them once, if that
-// approach turns out to be more efficient.
 
 // Pt1 returns the small partition of this Coordinate.
 func (c Coordinate) Pt1() Partition {
@@ -72,6 +67,5 @@ func (c Coordinate) Pt8() Partition {
 var zrc Coordinate
 
 func (c Coordinate) Zer() bool {
-	// return c.X == 0 && c.Y == 0
 	return c == zrc
 }
