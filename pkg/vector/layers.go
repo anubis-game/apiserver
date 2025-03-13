@@ -2,7 +2,7 @@ package vector
 
 import "github.com/anubis-game/apiserver/pkg/matrix"
 
-// TODO:test make sure Header does not panic
+// TODO:test make sure Layers does not panic
 
 // Layers returns a symmetric set of partition coordinates around the current
 // head node of this Vector, based on the provided factor of sight and partition

@@ -3,7 +3,7 @@ package matrix
 type Partition Coordinate // TODO:test unit test Partition.Byt and ensure the results are correct.
 
 func (p Partition) Eql(prt Partition) bool {
-	return p.X == prt.X && p.Y == prt.Y
+	return p == prt
 }
 
 func (p Partition) Ins(stp int, srg int, sbt int, slf int) bool {
@@ -13,6 +13,5 @@ func (p Partition) Ins(stp int, srg int, sbt int, slf int) bool {
 var zrp Partition
 
 func (p Partition) Zer() bool {
-	// return p.X == 0 && p.Y == 0
 	return p == zrp
 }

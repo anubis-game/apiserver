@@ -6,20 +6,12 @@ import (
 )
 
 type Config struct {
-	Obj matrix.Coordinate
+	Crd matrix.Coordinate
 	Siz byte
 	Typ byte
 }
 
-type Energy struct {
-	Obj matrix.Coordinate
-	Siz byte
-	Typ byte
-
-	nrg []byte
-}
-
-func New(c Config) *Energy {
+func New(c Config) []byte {
 	var nrg []byte
 	{
 		nrg = make([]byte, 9)
@@ -30,7 +22,7 @@ func New(c Config) *Energy {
 	}
 
 	{
-		b := c.Obj.Byt()
+		b := c.Crd.Byt()
 		copy(nrg[1:1+matrix.CoordinateBytes], b[:])
 	}
 
@@ -39,11 +31,5 @@ func New(c Config) *Energy {
 		nrg[8] = c.Typ
 	}
 
-	return &Energy{
-		Obj: c.Obj,
-		Siz: c.Siz,
-		Typ: c.Typ,
-
-		nrg: nrg,
-	}
+	return nrg
 }

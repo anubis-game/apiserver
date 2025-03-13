@@ -1,7 +1,6 @@
 package engine
 
 import (
-	"github.com/anubis-game/apiserver/pkg/energy"
 	"github.com/anubis-game/apiserver/pkg/matrix"
 	"github.com/anubis-game/apiserver/pkg/vector"
 )
@@ -12,14 +11,14 @@ type memory struct {
 	// one energy packet can be in the same place at the same time. We can refer
 	// to energy packets using their position only because energy packets don't
 	// move.
-	nrg map[matrix.Coordinate]*energy.Energy
+	nrg map[matrix.Coordinate][]byte
 	// vec contains all player Vectors. Active players have non-nil Vectors.
 	vec []*vector.Vector
 }
 
 func newMemory(c int) *memory {
 	return &memory{
-		nrg: map[matrix.Coordinate]*energy.Energy{},
+		nrg: make(map[matrix.Coordinate][]byte),
 		vec: make([]*vector.Vector, c),
 	}
 }

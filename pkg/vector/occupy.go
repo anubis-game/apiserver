@@ -4,6 +4,10 @@ import (
 	"github.com/anubis-game/apiserver/pkg/matrix"
 )
 
+func (v *Vector) Occupy() (int, int, int, int) {
+	return v.otp, v.org, v.obt, v.olf
+}
+
 // occAdd adds data about the partitions and coordinates that this Vector
 // occupies. The coordinates we are working with internally represent the
 // Vector's current and previous head node. It is therefore important that

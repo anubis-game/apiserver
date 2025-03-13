@@ -1,49 +1,33 @@
 package engine
 
-import (
-	"time"
-)
-
-func (e *Engine) send(tic time.Time) {
-	// TODO:metrics monitor ( tic - e.tic ) to see how regular our fanout
-	// procedure executes throughout the program lifetime.
-
-	{
-		e.tic = tic
-	}
-
-	// Distribute the work across all client specific goroutines. This part must
-	// be called sequentially, because we reset every player's fanout buffer. If
-	// we were to run the iterations below concurrently, then we would potentially
-	// delete the fanout buffer of a goroutine that has not started to write the
-	// data that it meant to send out to the client.
-
+func (e *Engine) send() {
 	for u := range e.uni.Length() {
 		var cli chan<- []byte
 		{
 			cli = e.ply.cli[u]
 		}
 
-		// Skip all inactive players.
+		// Skip all disconnected players, whether they are active or not.
 
 		if cli == nil {
 			continue
 		}
 
-		// Forward the fanout buffer to the client specific goroutine for capacity
-		// aware processing. The buffer channels provided by each client must never
-		// block. Client specific fanout channels may be nil if active players
-		// disconnected.
+		// Forward the fanout buffer of this update cycle to the client specific
+		// goroutine for capacity aware processing. The buffer channels provided by
+		// each client must never block.
 
 		{
 			cli <- e.ply.buf[u]
 		}
 
-		// Reset the player specific fanout buffer for the next cycle, but keep the
-		// existing sequence byte. We have to allocate a new data array in order to
-		// prevent race conditions between the engine and client. In case active
-		// players have no connected client, we discard all fanout buffers without
-		// sending, until the player comes back online or dies.
+		// Reset the player specific fanout buffer, but keep the existing sequence
+		// byte and increment it for the next cycle. We have to allocate a new data
+		// array in order to prevent race conditions between the engine and client.
+		// Active players without a connected client are not processed at this
+		// point, because their fanout channel will be nil as checked above. That is
+		// why the fanout buffers of those types of players must not be written to
+		// as long as they remain active in this disconnected state.
 
 		{
 			e.ply.buf[u] = []byte{e.ply.buf[u][0] + 1}
