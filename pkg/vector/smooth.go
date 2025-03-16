@@ -11,8 +11,8 @@ const (
 
 // smooth constricts this Vector in O(N-2), where N is the number of non hidden
 // nodes within the underlying linked list. Constriction works by lowering the
-// apex of a triangle that connects 3 nodes, causing the middle node to move
-// inwards.
+// apex of a triangle that connects 3 nodes, causing the middle node of the set
+// to move inwards.
 func (v *Vector) smooth() {
 	// Define the first set of nodes that we start out with. We begin at the head,
 	// because we want to pull the body parts towards the direction of travel.

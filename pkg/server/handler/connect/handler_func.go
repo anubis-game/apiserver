@@ -153,6 +153,7 @@ func (h *Handler) handlerFunc(w http.ResponseWriter, r *http.Request) error {
 			Lim: newLim(),
 			Log: h.log,
 			Rtr: h.rtr,
+			Tkx: h.tkx,
 			Uid: uid,
 			Vec: vec,
 			Wal: wal,
