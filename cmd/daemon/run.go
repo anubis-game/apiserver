@@ -38,7 +38,6 @@ func (r *run) runE(cmd *cobra.Command, arg []string) error {
 
 	{
 		go dae.Engine().Daemon()
-		go dae.Filler().Daemon()
 		go dae.Server().Daemon()
 		go dae.TokenX().Daemon()
 		go dae.Worker().Daemon()

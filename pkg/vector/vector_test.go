@@ -23,11 +23,17 @@ func Test_Vector_New(t *testing.T) {
 		}
 	}
 
+	var uid byte
+	{
+		uid = 0x5
+	}
+
 	var vec *Vector
 	{
 		vec = New(Config{
 			Hea: hea,
 			Mot: mot,
+			Uid: uid,
 		})
 	}
 
@@ -46,6 +52,9 @@ func Test_Vector_New(t *testing.T) {
 	if vec.mot.Agl != mot.Agl {
 		t.Fatalf("expected %#v got %#v", mot.Agl, vec.mot.Agl)
 	}
+	if vec.uid != uid {
+		t.Fatalf("expected %#v got %#v", uid, vec.uid)
+	}
 }
 
 func tesVec() *Vector {
@@ -58,6 +67,7 @@ func tesVec() *Vector {
 			Qdr: 0x1,
 			Agl: 0x0,
 		},
+		Uid: 0x5,
 	})
 }
 

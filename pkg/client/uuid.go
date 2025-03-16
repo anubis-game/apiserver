@@ -16,7 +16,13 @@ func (c *Client) uuid(byt []byte) error {
 	// Just send the turn signal to the engine for reconciliation.
 
 	{
-		c.rtr.Uuid() <- router.Uuid{Uid: c.uid, Jod: router.Join, Wal: c.wal, Cli: c.fcn}
+		c.rtr.Uuid() <- router.Uuid{
+			Uid: c.uid,
+			Jod: router.Join,
+			Wal: c.wal,
+			Cli: c.fcn,
+			Vec: c.vec,
+		}
 	}
 
 	return nil

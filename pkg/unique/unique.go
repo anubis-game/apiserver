@@ -4,6 +4,8 @@ import (
 	"sync"
 	"sync/atomic"
 
+	"slices"
+
 	"github.com/anubis-game/apiserver/pkg/number"
 )
 
@@ -15,7 +17,8 @@ type Unique[K comparable, V number.Number] struct {
 	ind *atomic.Int32
 	lis []V
 	mut sync.Mutex
-	rev map[K]V
+	rev []K
+	zer K
 }
 
 func New[K comparable, V number.Number]() *Unique[K, V] {
@@ -39,17 +42,19 @@ func New[K comparable, V number.Number]() *Unique[K, V] {
 	return &Unique[K, V]{
 		ind: &atomic.Int32{},
 		lis: lis,
-		rev: make(map[K]V, len),
+		rev: make([]K, len),
 	}
 }
 
 func (u *Unique[K, V]) Delete(k K) {
 	u.mut.Lock()
 
-	r, e := u.rev[k]
-	if e {
-		delete(u.rev, k)
-		u.lis[u.ind.Add(-1)] = r
+	for i, x := range u.rev {
+		if x == k {
+			u.lis[u.ind.Add(-1)] = V(i)
+			u.rev[i] = u.zer
+			break
+		}
 	}
 
 	u.mut.Unlock()
@@ -60,13 +65,14 @@ func (u *Unique[K, V]) Ensure(k K) V {
 
 	// Returning any allocated value early guarantees idempotency.
 
-	r, e := u.rev[k]
-	if e {
-		u.mut.Unlock()
-		return r
+	for i, x := range u.rev {
+		if x == k {
+			u.mut.Unlock()
+			return V(i)
+		}
 	}
 
-	// If we run out of capacity we stop early
+	// If we run out of capacity we stop early.
 
 	i := u.ind.Load()
 	if int(i) >= len(u.lis) {
@@ -78,8 +84,8 @@ func (u *Unique[K, V]) Ensure(k K) V {
 	// pointer.
 
 	v := u.lis[i]
-	u.rev[k] = v
 	u.ind.Add(+1)
+	u.rev[v] = k
 	u.mut.Unlock()
 
 	return v
@@ -87,9 +93,14 @@ func (u *Unique[K, V]) Ensure(k K) V {
 
 func (u *Unique[K, V]) Exists(k K) bool {
 	u.mut.Lock()
-	_, e := u.rev[k]
+
+	if slices.Contains(u.rev, k) {
+		u.mut.Unlock()
+		return true
+	}
 	u.mut.Unlock()
-	return e
+
+	return false
 }
 
 // Length provides the amount of currently allocated IDs. Since ID allocation is

@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/anubis-game/apiserver/pkg/client"
+	"github.com/anubis-game/apiserver/pkg/matrix"
 	"github.com/anubis-game/apiserver/pkg/schema"
 	"github.com/anubis-game/apiserver/pkg/vector"
 	"github.com/coder/websocket"
@@ -97,6 +98,48 @@ func (h *Handler) handlerFunc(w http.ResponseWriter, r *http.Request) error {
 		}
 	}
 
+	var uid byte
+	{
+		uid = h.uni.Ensure(wal)
+	}
+
+	// Create random quadrant and angle bytes, so we can point new players towards
+	// a randomized direction.
+
+	var qdr byte
+	var agl byte
+	{
+		qdr = byte(h.qdr.Random())
+		agl = byte(h.agl.Random())
+	}
+
+	// Create a new Vector instance using a random head node.
+
+	var vec *vector.Vector
+	{
+		vec = vector.New(vector.Config{
+			Hea: matrix.Coordinate{
+				X: h.crd.Random(),
+				Y: h.crd.Random(),
+			},
+			Mot: vector.Motion{
+				Qdr: qdr,
+				Agl: agl,
+			},
+			Uid: uid,
+		})
+	}
+
+	// We initialize the head of the new Vector above with a single coordinate
+	// object. Below we use this head node as basis for the Vector's expansion. 1
+	// head plus 4 expansions gives us a Vector with 5 nodes, all lined up towards
+	// the same direction, because we use the same motion configuration every
+	// time.
+
+	for range 4 {
+		vec.Update(int(vector.Si/vector.Li), qdr, agl, vector.Nrm)
+	}
+
 	// Create a compact byte ID and associate it with the given wallet address.
 	// If clients ever reconnect using their session tokens, we can allow them to
 	// continue playing their game after any intermittend interruption.
@@ -110,7 +153,8 @@ func (h *Handler) handlerFunc(w http.ResponseWriter, r *http.Request) error {
 			Lim: newLim(),
 			Log: h.log,
 			Rtr: h.rtr,
-			Uid: h.uni.Ensure(wal),
+			Uid: uid,
+			Vec: vec,
 			Wal: wal,
 		})
 	}

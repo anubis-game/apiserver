@@ -9,6 +9,8 @@ type Config struct {
 	Hea matrix.Coordinate
 	// Mot contains the new Vector's direction of travel.
 	Mot Motion
+	// Uid is the unique byte ID associated to the player operating this Vector.
+	Uid byte
 }
 
 type Vector struct {
@@ -51,6 +53,9 @@ type Vector struct {
 	// ofx and ofy contain the frequency counts of the occupied partition
 	// coordinates for X and Y respectively.
 	ofx, ofy map[int]int
+
+	// uid
+	uid byte
 }
 
 func New(c Config) *Vector {
@@ -95,5 +100,7 @@ func New(c Config) *Vector {
 		olf: prt.X,
 		ofx: map[int]int{prt.X: 1},
 		ofy: map[int]int{prt.Y: 1},
+
+		uid: c.Uid,
 	}
 }

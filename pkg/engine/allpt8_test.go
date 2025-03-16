@@ -16,7 +16,7 @@ func Benchmark_Engine_allpt8_map(b *testing.B) {
 				1, 2, 3, 4, 5, 1, 2, 3, 4, 5,
 			},
 		},
-		// Case 001, len 100, ~785 ns/op, 1 allocs/op
+		// Case 001, len 100, ~791 ns/op, 1 allocs/op
 		{
 			lis: []byte{
 				1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5,
@@ -50,7 +50,7 @@ func Benchmark_Engine_allpt8_slice(b *testing.B) {
 				1, 2, 3, 4, 5, 1, 2, 3, 4, 5,
 			},
 		},
-		// Case 001, len 100, ~315 ns/op, 1 allocs/op
+		// Case 001, len 100, ~308 ns/op, 1 allocs/op
 		{
 			lis: []byte{
 				1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5,
