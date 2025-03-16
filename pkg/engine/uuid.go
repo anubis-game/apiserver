@@ -10,31 +10,21 @@ import (
 
 func (e *Engine) uuid(pac router.Uuid) {
 	if pac.Jod == router.Join {
-		e.join(pac.Uid, pac.Wal, pac.Cli)
+		e.join(pac.Uid, pac.Wal, pac.Cli, pac.Vec)
 	} else {
 		e.drop(pac.Uid)
 	}
 }
 
-func (e *Engine) join(u byte, w common.Address, c chan<- []byte) {
-	// Generating a new player object for the connected client effectively puts
-	// the player randomly onto the game map due to the Filler.Vector()
-	// randomization.
-
-	var v *vector.Vector
-	{
-		v = e.fil.Vector()
-	}
-
+func (e *Engine) join(u byte, a common.Address, c chan<- []byte, v *vector.Vector) {
 	var f []byte
 
 	{
-		f = append(f, byte(schema.Uuid), u)
-		f = append(f, w.Bytes()...)
-		f = append(f, byte(schema.Body), u, 0x0)
+		f = append(f, byte(schema.Uuid), u)      // 2
+		f = append(f, a.Bytes()...)              // 20
+		f = append(f, byte(schema.Body), u, 0x0) // 3
 	}
 
-	l := len(f) - 1
 	v.Ranger(func(c matrix.Coordinate) {
 		// Add the new byte ID to the partition indices.
 
@@ -45,40 +35,39 @@ func (e *Engine) join(u byte, w common.Address, c chan<- []byte) {
 		// Add the new Vector's node coordinates to the new fanout buffer.
 
 		{
-			f[l]++
-			a := c.Byt()
-			f = append(f, a[:]...)
+			f[24]++ // 25 - 1
+			x := c.Byt()
+			f = append(f, x[:]...)
 		}
 	})
 
 	// Search for all the energy packets located within the partitions that the
 	// new player can see.
 
-	for _, p := range v.Layers(v.Charax().Fos, matrix.Pt1) {
-		for k := range e.lkp.nrg[p] {
-			f = append(f, e.mem.nrg[k]...)
-		}
-	}
+	e.energy(v, func(e []byte) {
+		f = append(f, e...) // TODO:infra the energy bytes need to be schema encoded
+	})
 
 	// Render all existing players inside the view of the new player, and render
 	// the new player in the view of all existing players.
 
-	l, m, n, o := v.Bounds()
+	var t, r, b, l int
+	{
+		t, r, b, l = v.Screen(matrix.Pt1)
+	}
 
-	e.screen(u, v.Change().Hea.Pt8(), func(b byte, w *vector.Vector) {
-		w.Inside(l, m, n, o, func(c matrix.Coordinate) bool {
-			b := c.Byt()
-			// TODO:infra the body messages still need to be encoded.
-			f = append(f, b[:]...)
+	e.screen(v, func(w *vector.Vector) {
+		w.Inside(t, r, b, l, func(c matrix.Coordinate) bool {
+			x := c.Byt()
+			f = append(f, x[:]...) // TODO:infra the body messages still need to be encoded.
 			return true
 		})
 
-		p, q, r, s := w.Bounds()
+		g, h, i, j := w.Screen(matrix.Pt1)
 
-		v.Inside(p, q, r, s, func(c matrix.Coordinate) bool {
-			b := c.Byt()
-			// TODO:infra the body messages still need to be encoded.
-			f = append(f, b[:]...)
+		v.Inside(g, h, i, j, func(c matrix.Coordinate) bool {
+			x := c.Byt()
+			f = append(f, x[:]...) // TODO:infra the body messages still need to be encoded.
 			return true
 		})
 	})

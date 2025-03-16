@@ -51,16 +51,16 @@ func (c Coordinate) Eql(crd Coordinate) bool {
 // Pt1 returns the small partition of this Coordinate.
 func (c Coordinate) Pt1() Partition {
 	return Partition{
-		X: (c.X / Pt1) * Pt1,
-		Y: (c.Y / Pt1) * Pt1,
+		X: (c.X / int(Pt1)) * int(Pt1),
+		Y: (c.Y / int(Pt1)) * int(Pt1),
 	}
 }
 
 // Pt8 returns the large partition of this Coordinate.
 func (c Coordinate) Pt8() Partition {
 	return Partition{
-		X: (c.X / Pt8) * Pt8,
-		Y: (c.Y / Pt8) * Pt8,
+		X: (c.X / int(Pt8)) * int(Pt8),
+		Y: (c.Y / int(Pt8)) * int(Pt8),
 	}
 }
 

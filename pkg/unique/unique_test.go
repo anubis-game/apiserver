@@ -342,11 +342,10 @@ func Test_Unique_Mutex(t *testing.T) {
 	}
 }
 
-// ~0.11 ns/op
-func Benchmark_Unique_concurrency(b *testing.B) {
+func Test_Unique_concurrency(t *testing.T) {
 	n := 1_000_000
 	k := "key"
-	u := New[string, int16]()
+	u := New[string, int8]()
 
 	w := sync.WaitGroup{}
 	c := make(chan struct{})
@@ -394,4 +393,23 @@ func Benchmark_Unique_concurrency(b *testing.B) {
 	w.Add(4)
 	close(c)
 	w.Wait()
+}
+
+// ~14 ns/op
+func Benchmark_Unique_Ensure(b *testing.B) {
+	var uni *Unique[string, int8]
+	{
+		uni = New[string, int8]()
+	}
+
+	{
+		uni.Ensure("002")
+		uni.Ensure("008")
+		uni.Ensure("003")
+		uni.Ensure("007")
+	}
+
+	for b.Loop() {
+		uni.Ensure("005")
+	}
 }

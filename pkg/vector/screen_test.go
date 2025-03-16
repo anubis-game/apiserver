@@ -9,7 +9,7 @@ import (
 
 // TODO:test move screen top, bottom, left
 
-func Test_Vector_Bounds_move_right(t *testing.T) {
+func Test_Vector_Screen_move_right(t *testing.T) {
 	var vec *Vector
 	{
 		vec = New(Config{
@@ -33,7 +33,7 @@ func Test_Vector_Bounds_move_right(t *testing.T) {
 	var abt int
 	var alf int
 	{
-		atp, arg, abt, alf = vec.Bounds()
+		atp, arg, abt, alf = vec.Screen(matrix.Pt1)
 	}
 
 	//
@@ -79,7 +79,7 @@ func Test_Vector_Bounds_move_right(t *testing.T) {
 	}
 
 	{
-		atp, arg, abt, alf = vec.Bounds()
+		atp, arg, abt, alf = vec.Screen(matrix.Pt1)
 	}
 
 	//
@@ -114,10 +114,10 @@ func Test_Vector_Bounds_move_right(t *testing.T) {
 	}
 }
 
-func Test_Vector_Bounds_fos_2_to_7(t *testing.T) {
+func Test_Vector_Screen_fos_2_to_7(t *testing.T) {
 	testCases := []struct {
 		siz int
-		fos int
+		fos byte
 		top int
 		rig int
 		bot int
@@ -204,7 +204,7 @@ func Test_Vector_Bounds_fos_2_to_7(t *testing.T) {
 			var bot int
 			var lef int
 			{
-				top, rig, bot, lef = vec.Bounds()
+				top, rig, bot, lef = vec.Screen(matrix.Pt1)
 			}
 
 			if vec.crx.Fos != tc.fos {
@@ -227,7 +227,7 @@ func Test_Vector_Bounds_fos_2_to_7(t *testing.T) {
 }
 
 // ~2 ns/op
-func Benchmark_Vector_Bounds_default(b *testing.B) {
+func Benchmark_Vector_Screen_default(b *testing.B) {
 	var vec *Vector
 	{
 		vec = tesVec()
@@ -238,12 +238,12 @@ func Benchmark_Vector_Bounds_default(b *testing.B) {
 	}
 
 	for b.Loop() {
-		vec.Bounds()
+		vec.Screen(matrix.Pt1)
 	}
 }
 
 // ~4 ns/op
-func Benchmark_Vector_Bounds_argument(b *testing.B) {
+func Benchmark_Vector_Screen_argument(b *testing.B) {
 	var vec *Vector
 	{
 		vec = tesVec()
@@ -254,7 +254,7 @@ func Benchmark_Vector_Bounds_argument(b *testing.B) {
 	}
 
 	for b.Loop() {
-		vec.Bounds(vec.Charax().Fos)
+		vec.Screen(matrix.Pt1, vec.Charax().Fos)
 	}
 }
 

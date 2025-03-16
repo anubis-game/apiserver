@@ -8,10 +8,8 @@ import (
 	"github.com/anubis-game/apiserver/pkg/contract/registry"
 	"github.com/anubis-game/apiserver/pkg/engine"
 	"github.com/anubis-game/apiserver/pkg/envvar"
-	"github.com/anubis-game/apiserver/pkg/filler"
 	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/server"
-	"github.com/anubis-game/apiserver/pkg/server/handler/connect"
 	"github.com/anubis-game/apiserver/pkg/tokenx"
 	"github.com/anubis-game/apiserver/pkg/unique"
 	"github.com/anubis-game/apiserver/pkg/worker"
@@ -28,9 +26,7 @@ type Config struct {
 }
 
 type Daemon struct {
-	con *connect.Handler
 	eng *engine.Engine
-	fil *filler.Filler
 	lis net.Listener
 	log logger.Interface
 	reg *registry.Registry
@@ -101,33 +97,11 @@ func New(c Config) *Daemon {
 		uni = unique.New[common.Address, byte]()
 	}
 
-	var con *connect.Handler
-	{
-		con = connect.New(connect.Config{
-			Cap: c.Env.EngineCapacity,
-			Don: c.Don,
-			Log: log,
-			Reg: reg,
-			Rtr: rtr.Client(),
-			Tkx: tkx,
-			Uni: uni,
-		})
-	}
-
-	var fil *filler.Filler
-	{
-		fil = filler.New(filler.Config{
-			Don: c.Don,
-			Log: log,
-		})
-	}
-
 	var eng *engine.Engine
 	{
 		eng = engine.New(engine.Config{
 			Cap: c.Env.EngineCapacity,
 			Don: c.Don,
-			Fil: fil,
 			Log: log,
 			Rtr: rtr.Engine(),
 			Tkx: tkx,
@@ -139,18 +113,19 @@ func New(c Config) *Daemon {
 	var ser *server.Server
 	{
 		ser = server.New(server.Config{
-			Con: con,
 			Don: c.Don,
 			Env: c.Env,
 			Lis: lis,
 			Log: log,
+			Reg: reg,
+			Rtr: rtr.Client(),
+			Tkx: tkx,
+			Uni: uni,
 		})
 	}
 
 	return &Daemon{
-		con: con,
 		eng: eng,
-		fil: fil,
 		lis: lis,
 		log: log,
 		reg: reg,

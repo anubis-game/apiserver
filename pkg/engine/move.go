@@ -48,7 +48,7 @@ func (e *Engine) move() {
 		// Look for all byte IDs and their associated Vectors that are located near
 		// v's new head node.
 
-		e.screen(u, v.Change().Hea.Pt8(), func(b byte, w *vector.Vector) {
+		e.screen(v, func(w *vector.Vector) {
 			// Check whether v or w gets killed upon impact.
 
 			{
@@ -58,33 +58,34 @@ func (e *Engine) move() {
 			// Add the Vector changes of v to the fanout buffer of w, but only if w is
 			// known to be connected.
 
-			if e.ply.cli[b] != nil {
-				e.bufply(c, b, w)
+			if e.ply.cli[w.Uid()] != nil {
+				e.bufply(c, w)
 			}
 		})
 	}
 }
 
-func (e *Engine) bufply(c vector.Change, b byte, w *vector.Vector) {
-	l, m, n, o := w.Bounds()
+func (e *Engine) bufply(v vector.Change, w *vector.Vector) {
+	u := w.Uid()
+	t, r, b, l := w.Screen(matrix.Pt1)
 
-	if c.Hea.Pt1().Ins(l, m, n, o) {
-		e.ply.buf[b] = append(e.ply.buf[b], 0x0) // TODO:infra encode head create message properly
+	if v.Hea.Pt1().Ins(t, r, b, l) {
+		e.ply.buf[u] = append(e.ply.buf[u], 0x0) // TODO:infra encode head create message properly
 	}
 
-	for _, t := range c.Rem {
-		if t.Pt1().Ins(l, m, n, o) {
-			e.ply.buf[b] = append(e.ply.buf[b], 0x0) // TODO:infra encode tail delete message properly
+	for _, c := range v.Rem {
+		if c.Pt1().Ins(t, r, b, l) {
+			e.ply.buf[u] = append(e.ply.buf[u], 0x0) // TODO:infra encode tail delete message properly
 		}
 	}
 }
 
-func (e *Engine) bufslf(u byte, c vector.Change) {
+func (e *Engine) bufslf(u byte, v vector.Change) {
 	{
 		e.ply.buf[u] = append(e.ply.buf[u], 0x0) // TODO:infra encode head create message properly
 	}
 
-	for range c.Rem {
+	for range v.Rem {
 		e.ply.buf[u] = append(e.ply.buf[u], 0x0) // TODO:infra encode tail remove message properly
 	}
 }
@@ -96,15 +97,15 @@ func (e *Engine) impact(v *vector.Vector, w *vector.Vector) {
 	// the required layer of small partitions. E.g. Rv=25 Rw=17 requires only a
 	// single layer because 42 is smaller than 128.
 
-	var l, m, n, o int
+	var t, r, b, l int
 	{
-		l, m, n, o = v.Bounds(((v.Charax().Fos + w.Charax().Fos) / matrix.Pt1) + 1)
+		t, r, b, l = v.Screen(matrix.Pt1, ((v.Charax().Fos+w.Charax().Fos)/byte(matrix.Pt1))+1)
 	}
 
 	// Iterate over all node coordinates of Vector w that are close to Vector v's
 	// head node.
 
-	w.Inside(l, m, n, o, func(c matrix.Coordinate) bool {
+	w.Inside(t, r, b, l, func(c matrix.Coordinate) bool {
 		if v.Impact(c, w.Charax().Rad) {
 			// The head node of Vector v has collided with the node coordinate c of
 			// Vector w. By default this means that Vector v gets killed, because that
@@ -114,12 +115,12 @@ func (e *Engine) impact(v *vector.Vector, w *vector.Vector) {
 			// In other words, if two heads collide, then the larger player wins.
 
 			if c == w.Change().Hea && v.Charax().Rad > w.Charax().Rad {
-				// TODO:infra kill w, break loops
+				// TODO:infra kill w, create energy in place, update surrounding screens
 				return false
 			}
 
 			{
-				// TODO:infra kill v, break loops
+				// TODO:infra kill v, create energy in place, update surrounding screens
 				return false
 			}
 		}

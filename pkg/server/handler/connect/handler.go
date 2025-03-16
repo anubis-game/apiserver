@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/anubis-game/apiserver/pkg/contract/registry"
+	"github.com/anubis-game/apiserver/pkg/random"
 	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/schema"
 	"github.com/anubis-game/apiserver/pkg/tokenx"
@@ -15,13 +16,19 @@ import (
 )
 
 type Config struct {
+	// Agl
+	Agl *random.Random
 	// Cap
 	Cap int
+	// Crd
+	Crd *random.Random
 	// Don is the global channel to signal program termination. If this channel is
 	// closed, then all streaming connections should be terminated gracefully.
 	Don <-chan struct{}
 	// Log is the logger interface for printing structured log messages.
 	Log logger.Interface
+	// Qdr
+	Qdr *random.Random
 	// Reg is the onchain interface for the Registry smart contract.
 	Reg *registry.Registry
 	// Rtr
@@ -35,9 +42,12 @@ type Config struct {
 }
 
 type Handler struct {
+	agl *random.Random
+	crd *random.Random
 	don <-chan struct{}
 	log logger.Interface
 	opt *websocket.AcceptOptions
+	qdr *random.Random
 	reg *registry.Registry
 	rtr *router.Client
 	sem chan struct{}
@@ -46,11 +56,20 @@ type Handler struct {
 }
 
 func New(c Config) *Handler {
+	if c.Agl == nil {
+		tracer.Panic(fmt.Errorf("%T.Agl must not be empty", c))
+	}
+	if c.Crd == nil {
+		tracer.Panic(fmt.Errorf("%T.Crd must not be empty", c))
+	}
 	if c.Don == nil {
 		tracer.Panic(fmt.Errorf("%T.Don must not be empty", c))
 	}
 	if c.Log == nil {
 		tracer.Panic(fmt.Errorf("%T.Log must not be empty", c))
+	}
+	if c.Qdr == nil {
+		tracer.Panic(fmt.Errorf("%T.Qdr must not be empty", c))
 	}
 	if c.Reg == nil {
 		tracer.Panic(fmt.Errorf("%T.Reg must not be empty", c))
@@ -76,14 +95,23 @@ func New(c Config) *Handler {
 		}
 	}
 
+	var sem chan struct{}
+	{
+		sem = make(chan struct{}, c.Cap)
+	}
+
 	return &Handler{
+		agl: c.Agl,
+		crd: c.Crd,
 		don: c.Don,
 		log: c.Log,
-		opt: opt,
+		qdr: c.Qdr,
 		reg: c.Reg,
 		rtr: c.Rtr,
-		sem: make(chan struct{}, c.Cap),
 		tkx: c.Tkx,
 		uni: c.Uni,
+
+		opt: opt,
+		sem: sem,
 	}
 }

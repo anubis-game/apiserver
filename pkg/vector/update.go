@@ -198,7 +198,7 @@ func radius(siz float64) byte {
 	return byte(math.Min(Rl, math.Ceil(rad)))
 }
 
-func sight(siz float64) int {
+func sight(siz float64) byte {
 	switch s := siz; {
 	case s < 250: //    between 0 and 249
 		return 2

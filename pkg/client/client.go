@@ -6,6 +6,7 @@ import (
 
 	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/tokenx"
+	"github.com/anubis-game/apiserver/pkg/vector"
 	"github.com/coder/websocket"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/xh3b4sd/logger"
@@ -22,6 +23,7 @@ type Config struct {
 	Rtr *router.Client
 	Tkx *tokenx.TokenX[common.Address]
 	Uid byte
+	Vec *vector.Vector
 	Wal common.Address
 }
 
@@ -42,6 +44,7 @@ type Client struct {
 	rtr *router.Client
 	tkx *tokenx.TokenX[common.Address]
 	uid byte
+	vec *vector.Vector
 	wal common.Address
 }
 
@@ -73,6 +76,7 @@ func New(c Config) *Client {
 		rtr: c.Rtr,
 		tkx: c.Tkx,
 		uid: c.Uid,
+		vec: c.Vec,
 		wal: c.Wal,
 	}
 }

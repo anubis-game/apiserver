@@ -3,7 +3,6 @@ package engine
 import (
 	"fmt"
 
-	"github.com/anubis-game/apiserver/pkg/filler"
 	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/tokenx"
 	"github.com/anubis-game/apiserver/pkg/unique"
@@ -16,7 +15,6 @@ import (
 type Config struct {
 	Cap int
 	Don <-chan struct{}
-	Fil *filler.Filler
 	Log logger.Interface
 	Rtr *router.Engine
 	Tkx *tokenx.TokenX[common.Address]
@@ -28,8 +26,6 @@ type Engine struct {
 	// don is the global channel to signal program termination. If this channel is
 	// closed, then all streaming connections should be terminated gracefully.
 	don <-chan struct{}
-	// filler
-	fil *filler.Filler
 	// log is a simple logger interface to print system relevant information.
 	log logger.Interface
 	// rtr is the bridge synchronizing the server handler and the game engine
@@ -53,9 +49,6 @@ func New(c Config) *Engine {
 	if c.Don == nil {
 		tracer.Panic(fmt.Errorf("%T.Don must not be empty", c))
 	}
-	if c.Fil == nil {
-		tracer.Panic(fmt.Errorf("%T.Fil must not be empty", c))
-	}
 	if c.Log == nil {
 		tracer.Panic(fmt.Errorf("%T.Log must not be empty", c))
 	}
@@ -74,7 +67,6 @@ func New(c Config) *Engine {
 
 	return &Engine{
 		don: c.Don,
-		fil: c.Fil,
 		log: c.Log,
 		rtr: c.Rtr,
 		tkx: c.Tkx,

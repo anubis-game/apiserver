@@ -1,7 +1,9 @@
 package server
 
 import (
+	"math/rand/v2"
 	"net/http"
+	"time"
 
 	"github.com/anubis-game/apiserver/pkg/runtime"
 	"github.com/xh3b4sd/tracer"
@@ -45,6 +47,10 @@ func (s *Server) router() {
 	// Add a simple version response for the runtime.
 	{
 		s.rtr.NewRoute().Methods("GET").Path("/version").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			{
+				time.Sleep(rand.N(100 * time.Millisecond)) // TODO:infra remove random sleep
+			}
+
 			{
 				w.Header().Set("Access-Control-Allow-Origin", "*")
 				w.Header().Set("Access-Control-Allow-Methods", "GET")

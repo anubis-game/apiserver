@@ -101,7 +101,7 @@ func Benchmark_Engine_Daemon_without_goroutine(b *testing.B) {
 	}
 }
 
-// ~225.00 ns/op, 1 allocs/op
+// ~221 ns/op, 1 allocs/op
 func Benchmark_Engine_Daemon_with_goroutine(b *testing.B) {
 	foo := func() int {
 		return 5
