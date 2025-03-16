@@ -99,7 +99,7 @@ func (e *Engine) impact(v *vector.Vector, w *vector.Vector) {
 
 	var t, r, b, l int
 	{
-		t, r, b, l = v.Screen(matrix.Pt1, ((v.Charax().Fos+w.Charax().Fos)/int(matrix.Pt1))+1)
+		t, r, b, l = v.Screen(matrix.Pt1, ((v.Charax().Fos+w.Charax().Fos)/byte(matrix.Pt1))+1)
 	}
 
 	// Iterate over all node coordinates of Vector w that are close to Vector v's
@@ -115,12 +115,12 @@ func (e *Engine) impact(v *vector.Vector, w *vector.Vector) {
 			// In other words, if two heads collide, then the larger player wins.
 
 			if c == w.Change().Hea && v.Charax().Rad > w.Charax().Rad {
-				// TODO:infra kill w, break loops
+				// TODO:infra kill w, create energy in place, update surrounding screens
 				return false
 			}
 
 			{
-				// TODO:infra kill v, break loops
+				// TODO:infra kill v, create energy in place, update surrounding screens
 				return false
 			}
 		}

@@ -988,106 +988,106 @@ func Test_Vector_Update_radius(t *testing.T) {
 func Test_Vector_Update_sight(t *testing.T) {
 	testCases := []struct {
 		siz float64
-		prt int
+		fos byte
 	}{
 		// Case 000
 		{
 			siz: 10,
-			prt: 2,
+			fos: 2,
 		},
 		// Case 001
 		{
 			siz: 50,
-			prt: 2,
+			fos: 2,
 		},
 		// Case 002
 		{
 			siz: 100,
-			prt: 2,
+			fos: 2,
 		},
 		// Case 003
 		{
 			siz: 250,
-			prt: 3,
+			fos: 3,
 		},
 		// Case 004
 		{
 			siz: 500,
-			prt: 3,
+			fos: 3,
 		},
 		// Case 005
 		{
 			siz: 1_000,
-			prt: 4,
+			fos: 4,
 		},
 		// Case 006
 		{
 			siz: 2_500,
-			prt: 4,
+			fos: 4,
 		},
 		// Case 007
 		{
 			siz: 5_000,
-			prt: 5,
+			fos: 5,
 		},
 		// Case 008
 		{
 			siz: 10_000,
-			prt: 6,
+			fos: 6,
 		},
 		// Case 009
 		{
 			siz: 20_000,
-			prt: 6,
+			fos: 6,
 		},
 		// Case 010
 		{
 			siz: 30_000,
-			prt: 7,
+			fos: 7,
 		},
 		// Case 011
 		{
 			siz: 40_000,
-			prt: 7,
+			fos: 7,
 		},
 		// Case 012
 		{
 			siz: 50_000,
-			prt: 7,
+			fos: 7,
 		},
 		// Case 013
 		{
 			siz: 60_000,
-			prt: 7,
+			fos: 7,
 		},
 		// Case 014
 		{
 			siz: 70_000,
-			prt: 7,
+			fos: 7,
 		},
 		// Case 015
 		{
 			siz: 80_000,
-			prt: 7,
+			fos: 7,
 		},
 		// Case 016
 		{
 			siz: 90_000,
-			prt: 7,
+			fos: 7,
 		},
 		// Case 017
 		{
 			siz: 100_000,
-			prt: 7,
+			fos: 7,
 		},
 	}
 
 	for i, tc := range testCases {
 		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
-			prt := sight(tc.siz)
+			fos := sight(tc.siz)
 
-			if prt != tc.prt {
-				t.Fatalf("expected %#v got %#v", tc.prt, prt)
+			if fos != tc.fos {
+				t.Fatalf("expected %#v got %#v", tc.fos, fos)
 			}
 		})
 	}
@@ -1267,7 +1267,7 @@ func Test_Vector_Update_trgAgl(t *testing.T) {
 	}
 }
 
-// ~215 ns/op 1 allocs/op
+// ~212 ns/op 1 allocs/op
 func Benchmark_Vector_Update(b *testing.B) {
 	var vec *Vector
 	{

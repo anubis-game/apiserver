@@ -1,10 +1,9 @@
 package unique
 
 import (
+	"slices"
 	"sync"
 	"sync/atomic"
-
-	"slices"
 
 	"github.com/anubis-game/apiserver/pkg/number"
 )

@@ -16,7 +16,7 @@ import "github.com/anubis-game/apiserver/pkg/matrix"
 //	T######  #          |
 //	    +-#--#----------+
 //	      #### bot
-func (v *Vector) Screen(prt matrix.PartitionLength, fos ...int) (int, int, int, int) {
+func (v *Vector) Screen(prt matrix.PartitionLength, fos ...byte) (int, int, int, int) {
 	// The Vector's view is based on the Vector's current head node partition.
 
 	var chp matrix.Partition
@@ -30,9 +30,9 @@ func (v *Vector) Screen(prt matrix.PartitionLength, fos ...int) (int, int, int, 
 
 	var pxl int
 	if len(fos) == 1 {
-		pxl = fos[0] * int(prt)
+		pxl = int(fos[0]) * int(prt)
 	} else {
-		pxl = v.crx.Fos * int(prt)
+		pxl = int(v.crx.Fos) * int(prt)
 	}
 
 	return chp.Y + pxl, chp.X + pxl, chp.Y - pxl, chp.X - pxl

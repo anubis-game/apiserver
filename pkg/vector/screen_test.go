@@ -117,7 +117,7 @@ func Test_Vector_Screen_move_right(t *testing.T) {
 func Test_Vector_Screen_fos_2_to_7(t *testing.T) {
 	testCases := []struct {
 		siz int
-		fos int
+		fos byte
 		top int
 		rig int
 		bot int
