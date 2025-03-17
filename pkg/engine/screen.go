@@ -16,7 +16,7 @@ import (
 // partitions around v's head node. That is 9 large partitions in total. Despite
 // the fact that Vector v is also located within the given search area, the
 // provided callback f is not executed for the Vector v itself.
-func (e *Engine) screen(v *vector.Vector, f func(*vector.Vector)) {
+func (e *Engine) screen(v *vector.Vector, f func(byte, *vector.Vector)) {
 	var p matrix.Partition
 
 	a := []byte{v.Uid()}
@@ -29,7 +29,7 @@ func (e *Engine) screen(v *vector.Vector, f func(*vector.Vector)) {
 
 			for u := range e.lkp.pt8[p] {
 				if !slices.Contains(a, u) {
-					f(e.mem.vec[u])
+					f(u, e.mem.vec[u])
 					a = append(a, u)
 				}
 			}

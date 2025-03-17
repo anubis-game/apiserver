@@ -16,77 +16,66 @@ func (e *Engine) uuid(pac router.Uuid) {
 	}
 }
 
-func (e *Engine) join(u byte, a common.Address, c chan<- []byte, v *vector.Vector) {
-	var f []byte
+func (e *Engine) join(ua byte, wa common.Address, ca chan<- []byte, va *vector.Vector) {
+	var fa []byte
 
 	{
-		f = append(f, byte(schema.Uuid), u)      // 2
-		f = append(f, a.Bytes()...)              // 20
-		f = append(f, byte(schema.Body), u, 0x0) // 3
+		fa = append(fa, byte(schema.Uuid), ua)      // 2
+		fa = append(fa, wa.Bytes()...)              // 20
+		fa = append(fa, byte(schema.Body), ua, 0x0) // 3
 	}
 
-	v.Ranger(func(c matrix.Coordinate) {
+	va.Ranger(func(c matrix.Coordinate) {
 		// Add the new byte ID to the partition indices.
 
 		{
-			e.lkp.add(u, c)
+			e.lkp.add(ua, c)
 		}
 
 		// Add the new Vector's node coordinates to the new fanout buffer.
 
 		{
-			f[24]++ // 25 - 1
+			fa[24]++ // 25 - 1
 			x := c.Byt()
-			f = append(f, x[:]...)
+			fa = append(fa, x[:]...)
 		}
 	})
 
 	// Search for all the energy packets located within the partitions that the
-	// new player can see.
+	// new player can see. Note that the stored energy slices are already schema
+	// encoded.
 
-	e.energy(v, func(e []byte) {
-		f = append(f, e...) // TODO:infra the energy bytes need to be schema encoded
+	e.energy(va, func(e []byte) {
+		fa = append(fa, e...)
 	})
 
 	// Render all existing players inside the view of the new player, and render
-	// the new player in the view of all existing players.
+	// the new player inside the view of all existing players, but make sure to
+	// not update fanout buffers of active disconnected players.
 
-	var t, r, b, l int
-	{
-		t, r, b, l = v.Screen(matrix.Pt1)
-	}
+	ta, ra, ba, la := va.Screen(matrix.Pt1)
+	e.screen(va, func(ub byte, vb *vector.Vector) {
+		if e.ply.cli[ub] != nil {
+			tb, rb, bb, lb := vb.Screen(matrix.Pt1)
+			e.ply.buf[ub] = e.inside(e.ply.buf[ub], va, ua, tb, rb, bb, lb)
+		}
 
-	e.screen(v, func(w *vector.Vector) {
-		w.Inside(t, r, b, l, func(c matrix.Coordinate) bool {
-			x := c.Byt()
-			f = append(f, x[:]...) // TODO:infra the body messages still need to be encoded.
-			return true
-		})
-
-		g, h, i, j := w.Screen(matrix.Pt1)
-
-		v.Inside(g, h, i, j, func(c matrix.Coordinate) bool {
-			x := c.Byt()
-			f = append(f, x[:]...) // TODO:infra the body messages still need to be encoded.
-			return true
-		})
+		{
+			fa = e.inside(fa, vb, ub, ta, ra, ba, la)
+		}
 	})
-
-	// TODO:infra send the new player information to all players that can see the
-	// new Vector, but make sure to not update fanout buffers of active
-	// disconnected players.
 
 	// Add the new player object to the memory table. This ensures that this new
 	// player is part of the update loop moving forward. Also store the player's
 	// buffer in the player's setter.
 
 	{
-		e.ply.act[u] = true
-		e.ply.qdr[u] = v.Motion().Qdr
-		e.ply.buf[u] = f
-		e.ply.cli[u] = c
-		e.ply.agl[u] = v.Motion().Agl
-		e.mem.vec[u] = v
+		e.ply.act[ua] = true
+		e.ply.qdr[ua] = va.Motion().Qdr
+		e.ply.buf[ua] = fa
+		e.ply.cli[ua] = ca
+		e.ply.agl[ua] = va.Motion().Agl
+		e.mem.vec[ua] = va
 	}
 }
 
