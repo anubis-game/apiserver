@@ -5,6 +5,8 @@ import (
 )
 
 type lookup struct {
+	// TODO:infra we should remove the second map value and put the coordinates
+	// and bytes into slices.
 	nrg map[matrix.Partition]map[matrix.Coordinate]struct{}
 	pt1 map[matrix.Partition]map[byte]struct{}
 	pt8 map[matrix.Partition]map[byte]struct{}
