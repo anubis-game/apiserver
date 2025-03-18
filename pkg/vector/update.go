@@ -93,7 +93,7 @@ func (v *Vector) Update(del int, qdr byte, agl byte, rac byte) {
 
 	var hea matrix.Coordinate
 	{
-		hea = v.target(v.mot.Qdr, v.mot.Agl, dis)
+		hea.X, hea.Y = target(v.hea.crd.X, v.hea.crd.Y, v.mot.Qdr, v.mot.Agl, dis)
 	}
 
 	var ta1 matrix.Coordinate

@@ -5,6 +5,8 @@ import (
 	"github.com/anubis-game/apiserver/pkg/vector"
 )
 
+// energy calls the given function with the energy bytes that are located within
+// the given Vector's screen.
 func (e *Engine) energy(v *vector.Vector, f func([]byte)) {
 	var p matrix.Partition
 

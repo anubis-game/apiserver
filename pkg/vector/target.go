@@ -2,8 +2,6 @@ package vector
 
 import (
 	"math"
-
-	"github.com/anubis-game/apiserver/pkg/matrix"
 )
 
 const (
@@ -36,26 +34,24 @@ func init() {
 	}
 }
 
-func (v *Vector) target(qdr byte, agl byte, dis float64) matrix.Coordinate {
-	trg := v.hea.crd
-
+func target(chx int, chy int, qdr byte, agl byte, dis float64) (int, int) {
 	// Update both coordinates based on the current position and the desired
 	// direction.
 
 	switch qdr {
 	case 0x1:
-		trg.X += int(dis*sin[agl] + 0.5)
-		trg.Y += int(dis*cos[agl] + 0.5)
+		chx += int(dis*sin[agl] + 0.5)
+		chy += int(dis*cos[agl] + 0.5)
 	case 0x2:
-		trg.X += int(dis*cos[agl] + 0.5)
-		trg.Y -= int(dis*sin[agl] + 0.5)
+		chx += int(dis*cos[agl] + 0.5)
+		chy -= int(dis*sin[agl] + 0.5)
 	case 0x3:
-		trg.X -= int(dis*sin[agl] + 0.5)
-		trg.Y -= int(dis*cos[agl] + 0.5)
+		chx -= int(dis*sin[agl] + 0.5)
+		chy -= int(dis*cos[agl] + 0.5)
 	case 0x4:
-		trg.X -= int(dis*cos[agl] + 0.5)
-		trg.Y += int(dis*sin[agl] + 0.5)
+		chx -= int(dis*cos[agl] + 0.5)
+		chy += int(dis*sin[agl] + 0.5)
 	}
 
-	return trg
+	return chx, chy
 }
