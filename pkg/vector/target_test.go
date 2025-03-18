@@ -51,16 +51,9 @@ func Test_Vector_target(t *testing.T) {
 
 	for i, tc := range testCases {
 		t.Run(fmt.Sprintf("%03d", i), func(t *testing.T) {
-			var vec *Vector
-			{
-				vec = New(Config{
-					Hea: tc.hea,
-				})
-			}
-
 			var trg matrix.Coordinate
 			{
-				trg = vec.target(tc.qdr, tc.agl, tc.dis)
+				trg.X, trg.Y = target(tc.hea.X, tc.hea.Y, tc.qdr, tc.agl, tc.dis)
 			}
 
 			if trg != tc.trg {
@@ -109,15 +102,8 @@ func Benchmark_Vector_target(b *testing.B) {
 
 	for i, tc := range testCases {
 		b.Run(fmt.Sprintf("%03d", i), func(b *testing.B) {
-			var vec *Vector
-			{
-				vec = New(Config{
-					Hea: tc.hea,
-				})
-			}
-
 			for b.Loop() {
-				vec.target(tc.qdr, tc.agl, tc.dis)
+				target(tc.hea.X, tc.hea.Y, tc.qdr, tc.agl, tc.dis)
 			}
 		})
 	}

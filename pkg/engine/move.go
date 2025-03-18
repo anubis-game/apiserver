@@ -116,11 +116,23 @@ func (e *Engine) impact(va *vector.Vector, vb *vector.Vector) {
 			// In other words, if two heads collide, then the larger player wins.
 
 			if c == vb.Change().Hea && va.Charax().Rad > vb.Charax().Rad {
+				// Vector va killed Vector vb, which must be removed from the game. We
+				// will render new energy packets in its place.
+
+				{
+					e.invert(vb)
+				}
+
 				// TODO:infra kill vb, create energy in place, update surrounding screens
 				return false
-			}
+			} else {
+				// Vector vb killed Vector va, which must be removed from the game. We
+				// will render new energy packets in its place.
 
-			{
+				{
+					e.invert(va)
+				}
+
 				// TODO:infra kill va, create energy in place, update surrounding screens
 				return false
 			}
