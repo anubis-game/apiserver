@@ -1267,7 +1267,7 @@ func Test_Vector_Update_trgAgl(t *testing.T) {
 	}
 }
 
-// ~212 ns/op 1 allocs/op
+// ~212 ns/op, 1 allocs/op
 func Benchmark_Vector_Update(b *testing.B) {
 	var vec *Vector
 	{

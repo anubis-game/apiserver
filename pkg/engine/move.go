@@ -120,17 +120,19 @@ func (e *Engine) impact(va *vector.Vector, vb *vector.Vector) {
 				// will render new energy packets in its place.
 
 				{
-					e.invert(vb)
+					e.invert(va, vb)
 				}
 
 				// TODO:infra kill vb, create energy in place, update surrounding screens
+				// for range e.mem.drg[c]
+
 				return false
 			} else {
 				// Vector vb killed Vector va, which must be removed from the game. We
 				// will render new energy packets in its place.
 
 				{
-					e.invert(va)
+					e.invert(vb, va)
 				}
 
 				// TODO:infra kill va, create energy in place, update surrounding screens

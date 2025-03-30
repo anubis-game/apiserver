@@ -33,7 +33,7 @@ func (c *Client) auth(_ []byte) error {
 	// connection that requested this new credential.
 
 	{
-		c.fcn <- schema.Encode(schema.Auth, tok[:])
+		c.fcn <- schema.Encode(byte(schema.Auth), tok[:])
 	}
 
 	return nil

@@ -2,7 +2,12 @@ package energy
 
 import (
 	"github.com/anubis-game/apiserver/pkg/matrix"
-	"github.com/anubis-game/apiserver/pkg/schema"
+)
+
+const (
+	// EnergyBytes is used to derive the byte slice length of a single energy
+	// packet.
+	EnergyBytes = 8
 )
 
 type Config struct {
@@ -12,24 +17,20 @@ type Config struct {
 }
 
 func New(c Config) []byte {
-	var nrg []byte
+	var byt []byte
 	{
-		nrg = make([]byte, 9)
-	}
-
-	{
-		nrg[0] = byte(schema.Food)
+		byt = make([]byte, EnergyBytes)
 	}
 
 	{
 		b := c.Crd.Byt()
-		copy(nrg[1:1+matrix.CoordinateBytes], b[:])
+		copy(byt[:matrix.CoordinateBytes], b[:])
 	}
 
 	{
-		nrg[7] = c.Siz
-		nrg[8] = c.Typ
+		b := [2]byte{c.Siz, c.Typ}
+		copy(byt[matrix.CoordinateBytes:], b[:])
 	}
 
-	return nrg
+	return byt
 }
