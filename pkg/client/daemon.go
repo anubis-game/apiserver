@@ -128,16 +128,16 @@ func (c *Client) reader() error {
 
 		// Dispatch according to the action byte.
 
-		switch schema.Action(byt[0]) {
-		case schema.Ping:
+		switch byt[0] {
+		case byte(schema.Ping):
 			err = c.ping(byt)
-		case schema.Auth:
+		case byte(schema.Auth):
 			err = c.auth(byt)
-		case schema.Uuid:
+		case byte(schema.Uuid):
 			err = c.uuid(byt)
-		case schema.Race:
+		case byte(schema.Race):
 			err = c.race(byt)
-		case schema.Turn:
+		case byte(schema.Turn):
 			err = c.turn(byt)
 		}
 

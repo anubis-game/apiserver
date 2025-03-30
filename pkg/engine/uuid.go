@@ -18,26 +18,37 @@ func (e *Engine) uuid(pac router.Uuid) {
 
 func (e *Engine) join(ua byte, wa common.Address, ca chan<- []byte, va *vector.Vector) {
 	var fa []byte
+	{
+		fa = make([]byte, 25)
+	}
 
 	{
-		fa = append(fa, byte(schema.Uuid), ua)      // 2
-		fa = append(fa, wa.Bytes()...)              // 20
-		fa = append(fa, byte(schema.Body), ua, 0x0) // 3
+		b := [2]byte{byte(schema.Uuid), ua}
+		copy(fa[:2], b[:])
+	}
+
+	{
+		copy(fa[2:22], wa[:])
+	}
+
+	{
+		b := [2]byte{byte(schema.Body), ua}
+		copy(fa[22:24], b[:])
 	}
 
 	va.Ranger(func(c matrix.Coordinate) {
+		// Add the new Vector's node coordinates to the new fanout buffer.
+
+		{
+			fa[24]++
+			b := c.Byt()
+			fa = append(fa, b[:]...)
+		}
+
 		// Add the new byte ID to the partition indices.
 
 		{
 			e.lkp.add(ua, c)
-		}
-
-		// Add the new Vector's node coordinates to the new fanout buffer.
-
-		{
-			fa[24]++ // 25 - 1
-			x := c.Byt()
-			fa = append(fa, x[:]...)
 		}
 	})
 
@@ -45,7 +56,12 @@ func (e *Engine) join(ua byte, wa common.Address, ca chan<- []byte, va *vector.V
 	// new player can see. Note that the stored energy slices are already schema
 	// encoded.
 
+	{
+		fa = append(fa, byte(schema.Food), 0x0)
+	}
+
 	e.energy(va, func(e []byte) {
+		fa[38]++
 		fa = append(fa, e...)
 	})
 
@@ -82,7 +98,7 @@ func (e *Engine) join(ua byte, wa common.Address, ca chan<- []byte, va *vector.V
 func (e *Engine) drop(u byte) {
 	e.ply.qdr[u] = 0
 	e.ply.buf[u] = nil
-	e.ply.cli[u] = nil // TODO:test ensure we can concurrently read while a single writer modifies the fanout channel
+	e.ply.cli[u] = nil
 	e.ply.agl[u] = 0
 	e.mem.vec[u] = nil
 }

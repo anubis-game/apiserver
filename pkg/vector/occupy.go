@@ -4,7 +4,27 @@ import (
 	"github.com/anubis-game/apiserver/pkg/matrix"
 )
 
-func (v *Vector) Occupy() (int, int, int, int) {
+// Occupy returns the outer boundaries of this Vector's occupied partition
+// coordinates. The returned boundaries describe top, right, bottom and left, in
+// this order. An optional partition frame can be specified, which normalizes
+// the outer boundaries to the provided partition length and adds to the
+// surrounding area of occupied map space. By default the boundaries are
+// returned in small partition terms.
+func (v *Vector) Occupy(prt ...matrix.PartitionLength) (int, int, int, int) {
+	// If a partition length is provided, then convert every internally managed
+	// small partition value into a partition value aligned with the given
+	// partition length. And then, add the frame around the occupied area.
+
+	if len(prt) == 1 {
+		pxl := int(prt[0])
+		return ((v.otp / pxl) * pxl) + pxl, // top
+			/**/ ((v.org / pxl) * pxl) + pxl, // right
+			/**/ ((v.obt / pxl) * pxl) - pxl, // bottom
+			/**/ ((v.olf / pxl) * pxl) - pxl //  left
+	}
+
+	// Return the internally managed small partition values by default.
+
 	return v.otp, v.org, v.obt, v.olf
 }
 

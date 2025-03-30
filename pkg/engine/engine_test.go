@@ -3,7 +3,9 @@ package engine
 import (
 	"fmt"
 
+	"github.com/anubis-game/apiserver/pkg/energy"
 	"github.com/anubis-game/apiserver/pkg/matrix"
+	"github.com/anubis-game/apiserver/pkg/random"
 	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/tokenx"
 	"github.com/anubis-game/apiserver/pkg/unique"
@@ -24,6 +26,7 @@ func tesEng(cap int) *Engine {
 	var eng *Engine
 	{
 		eng = New(Config{
+			Crd: &random.Random{},
 			Cap: cap,
 			Don: make(<-chan struct{}),
 			Log: logger.Fake(),
@@ -39,6 +42,34 @@ func tesEng(cap int) *Engine {
 	}
 
 	return eng
+}
+
+func tesNrg(e *Engine, c matrix.Coordinate) {
+	var n []byte
+	{
+		n = energy.New(energy.Config{
+			Crd: c,
+			Siz: 5,
+			Typ: 0,
+		})
+	}
+
+	{
+		p := c.Pt1()
+
+		m, x := e.lkp.nrg[p]
+		if !x {
+			m = map[matrix.Coordinate]struct{}{c: {}}
+		} else {
+			m[c] = struct{}{}
+		}
+
+		e.lkp.nrg[p] = m
+	}
+
+	{
+		e.mem.nrg[c] = n
+	}
 }
 
 func tesVec(u byte) *vector.Vector {

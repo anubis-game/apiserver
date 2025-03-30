@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"testing"
 
+	"github.com/anubis-game/apiserver/pkg/matrix"
 	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/schema"
 	"github.com/anubis-game/apiserver/pkg/vector"
@@ -21,6 +22,11 @@ func Test_Engine_uuid(t *testing.T) {
 	}
 
 	for u := range eng.uni.Length() {
+		{
+			tesNrg(eng, matrix.Coordinate{X: 3005, Y: 4005})
+			tesNrg(eng, matrix.Coordinate{X: 3015, Y: 4015})
+		}
+
 		var vec *vector.Vector
 		{
 			vec = tesVec(u)
@@ -45,28 +51,32 @@ func Test_Engine_uuid(t *testing.T) {
 			t.Fatalf("expected %T got %#v", make(chan<- []byte), nil)
 		}
 
-		act := eng.ply.buf[u]
-		if act[22] != byte(schema.Body) {
-			t.Fatalf("expected %#v got %#v", byte(schema.Body), act[22])
-		}
+		buf := eng.ply.buf[u]
 
-		len := eng.ply.buf[u]
-		if len[24] != 2 {
-			t.Fatalf("expected %#v got %#v", 2, len[24])
+		if !bytes.Contains(buf, wal.Bytes()) {
+			t.Fatalf("expected %#v got %#v", wal, buf)
+		}
+		if buf[22] != byte(schema.Body) {
+			t.Fatalf("expected %#v got %#v", byte(schema.Body), buf[22])
+		}
+		if buf[24] != 2 {
+			t.Fatalf("expected %#v got %#v", 2, buf[24])
+		}
+		if buf[37] != byte(schema.Food) {
+			t.Fatalf("expected %#v got %#v", byte(schema.Food), buf[37])
+		}
+		if buf[38] != 2 {
+			t.Fatalf("expected %#v got %#v", 2, buf[38])
 		}
 
 		vec = eng.mem.vec[u]
 		if vec == nil {
 			t.Fatalf("expected %T got %#v", &vector.Vector{}, nil)
 		}
-
-		if !bytes.Contains(eng.ply.buf[u], wal.Bytes()) {
-			t.Fatalf("expected %#v got %#v", wal, eng.ply.buf[u])
-		}
 	}
 }
 
-// ~798 ns/op, 9 allocs/op
+// ~853 ns/op, 7 allocs/op
 func Benchmark_Engine_uuid(b *testing.B) {
 	var eng *Engine
 	{

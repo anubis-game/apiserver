@@ -3,26 +3,54 @@ package engine
 import (
 	"slices"
 
+	"github.com/anubis-game/apiserver/pkg/energy"
 	"github.com/anubis-game/apiserver/pkg/matrix"
+	"github.com/anubis-game/apiserver/pkg/schema"
 	"github.com/anubis-game/apiserver/pkg/vector"
 )
 
-// invert removes the given Vector from the game map and adds the equivalent
-// amount of energy packets in its place.
-func (e *Engine) invert(v *vector.Vector) {
+// invert removes the Vector of the losing player from the game map and adds the
+// equivalent amount of energy packets in its place. Vector va is the winner and
+// Vector vb is the loser.
+func (e *Engine) invert(va *vector.Vector, vb *vector.Vector) {
 	// Calculate the amount of energy that we should generate per Vector node.
 
+	var a []matrix.Coordinate
+	var v []*vector.Vector
 	var b int
+	var i int
 	{
-		b = v.Charax().Siz / v.Length()
+		b = vb.Charax().Siz / vb.Length()
 	}
+
+	var ua byte
+	var ub byte
+	{
+		ua = va.Uid()
+		ub = vb.Uid()
+	}
+
+	e.occupy(vb, func(uc byte, vc *vector.Vector) {
+		if e.ply.cli[uc] != nil {
+			// Collect the Vectors of all connected players so that they may render
+			// the new energy packets in place of the losing player.
+
+			{
+				v = append(v, vc)
+			}
+
+			// All connected players watching the kill must be informed about the
+			// winning and losing player.
+
+			{
+				e.ply.buf[uc] = append(e.ply.buf[uc], byte(schema.Kill), ua, ub)
+			}
+		}
+	})
 
 	// Range over all Vector nodes.
 
-	var a []matrix.Coordinate
-	var i int
-
-	v.Ranger(func(c matrix.Coordinate) {
+	vb.Ranger(func(c matrix.Coordinate) {
 		// We use a slice for a more performant existence check, so that we
 		// guarantee the generation of unique energy packets. In order to keep this
 		// deduplication mechanism most runtime performant, we reset the slice once
@@ -51,16 +79,33 @@ func (e *Engine) invert(v *vector.Vector) {
 				a = append(a, c)
 			}
 
-			// TODO track new energy packets separately for this update cycle
+			var n []byte
+			{
+				n = energy.New(energy.Config{
+					Crd: c,
+					Siz: 5,
+					Typ: 0, // TODO:infra randomize energy type
+				})
+			}
 
-			// TODO track new energy packets globally
+			// Add the new energy packet to the memory table so that we can find all
+			// energy packets in existence later on.
 
-			// TODO find all connected players that can see this inversion
-			//
-			//     * those players must be informed about a player being killed
-			//
-			//     * those players must render the new energy packets in place
-			//
+			{
+				e.mem.nrg[c] = n
+			}
+
+			// Collect all energy packets in a single byte slice, so that we can
+			// inform all relevant players about the inversion, and increment the
+			// amount of energy packets collected.
+
+			for _, x := range v {
+				if c.Pt1().Ins(x.Screen(matrix.Pt1)) {
+					f = []byte{byte(schema.Food), 0x0}
+					f[1]++
+					f = append(f, n...)
+				}
+			}
 
 			return true
 		})

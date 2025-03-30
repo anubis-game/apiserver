@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/anubis-game/apiserver/pkg/matrix"
-	"github.com/anubis-game/apiserver/pkg/schema"
 )
 
 func Test_Energy_New(t *testing.T) {
@@ -22,9 +21,7 @@ func Test_Energy_New(t *testing.T) {
 				Typ: 0x3,
 			},
 			b: []byte{
-				// action
-				byte(schema.Food),
-				// obj
+				// crd
 				0x3, 0x0, 0x4, 0x8, 0x3, 0x0,
 				// siz
 				0x7c,
@@ -49,7 +46,7 @@ func Test_Energy_New(t *testing.T) {
 	}
 }
 
-// ~11 ns/op, 1 allocs/op
+// ~10 ns/op, 1 allocs/op
 func Benchmark_Energy_New(b *testing.B) {
 	for b.Loop() {
 		New(Config{

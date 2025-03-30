@@ -105,13 +105,12 @@ func New(c Config) *Handler {
 		crd: c.Crd,
 		don: c.Don,
 		log: c.Log,
+		opt: opt,
 		qdr: c.Qdr,
 		reg: c.Reg,
 		rtr: c.Rtr,
+		sem: sem,
 		tkx: c.Tkx,
 		uni: c.Uni,
-
-		opt: opt,
-		sem: sem,
 	}
 }

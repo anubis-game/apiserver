@@ -3,6 +3,7 @@ package engine
 import (
 	"fmt"
 
+	"github.com/anubis-game/apiserver/pkg/random"
 	"github.com/anubis-game/apiserver/pkg/router"
 	"github.com/anubis-game/apiserver/pkg/tokenx"
 	"github.com/anubis-game/apiserver/pkg/unique"
@@ -13,6 +14,7 @@ import (
 )
 
 type Config struct {
+	Crd *random.Random
 	Cap int
 	Don <-chan struct{}
 	Log logger.Interface
@@ -23,6 +25,10 @@ type Config struct {
 }
 
 type Engine struct {
+	// crd
+	crd *random.Random
+	// cyc is the cycle counter that is being incremented on every tick.
+	cyc uint16
 	// don is the global channel to signal program termination. If this channel is
 	// closed, then all streaming connections should be terminated gracefully.
 	don <-chan struct{}
@@ -46,6 +52,9 @@ type Engine struct {
 }
 
 func New(c Config) *Engine {
+	if c.Crd == nil {
+		tracer.Panic(fmt.Errorf("%T.Crd must not be empty", c))
+	}
 	if c.Don == nil {
 		tracer.Panic(fmt.Errorf("%T.Don must not be empty", c))
 	}
@@ -66,6 +75,7 @@ func New(c Config) *Engine {
 	}
 
 	return &Engine{
+		crd: c.Crd,
 		don: c.Don,
 		log: c.Log,
 		rtr: c.Rtr,

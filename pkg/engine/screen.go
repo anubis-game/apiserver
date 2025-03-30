@@ -7,11 +7,7 @@ import (
 	"github.com/anubis-game/apiserver/pkg/vector"
 )
 
-// TODO:infra implement Engine.occupy() just like Engine.screen(), but use
-// Vector.Occupy() for the bounds. The screen is then a square, while the occupy
-// is a rectangle.
-
-// screen searches for all Vectors w located around the given Vector v's head
+// screen searches for all Vectors located around the given Vector v's head
 // node. The area we are searching through here contains a single layer of large
 // partitions around v's head node. That is 9 large partitions in total. Despite
 // the fact that Vector v is also located within the given search area, the
